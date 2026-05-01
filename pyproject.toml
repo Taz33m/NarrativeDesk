@@ -1,0 +1,30 @@
+[project]
+name = "narrativedesk"
+version = "0.1.0"
+description = "Research platform kernel for generating, ranking, and validating competing financial market narratives."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "NarrativeDesk" }
+]
+dependencies = []
+
+[project.optional-dependencies]
+api = [
+  "fastapi>=0.110",
+  "uvicorn[standard]>=0.27"
+]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.4"
+]
+
+[project.scripts]
+narrativedesk = "narrativedesk.cli:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

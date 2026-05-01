@@ -1,0 +1,256 @@
+{
+  "event": {
+    "event_id": "EVT-ORION-2025-08-07",
+    "ticker": "ORION",
+    "company_name": "Orion Streaming Holdings",
+    "event_date": "2025-08-07",
+    "event_timestamp": "2025-08-07T10:00:00-04:00",
+    "event_type": "earnings/guidance",
+    "daily_return": -0.114,
+    "abnormal_return": -0.102,
+    "volume_ratio": 2.4,
+    "sector_etf_return": -0.008,
+    "peer_median_return": -0.012,
+    "event_summary": "Synthetic demo event: a liquid streaming company sells off after earnings. The fixture is designed to exercise replay filtering, narrative ranking, and validation separation."
+  },
+  "narratives": [
+    {
+      "narrative_id": "NARR-001",
+      "event_id": "EVT-ORION-2025-08-07",
+      "ticker": "ORION",
+      "timestamp_created": "2025-08-07T10:00:00-04:00",
+      "title": "Forward demand slowdown",
+      "narrative": "The selloff is primarily driven by concern that future subscriber and revenue growth are slowing, not by a one-time margin issue.",
+      "mechanism": "Lower expected subscriber growth would reduce forward revenue estimates and compress the valuation multiple for a growth-sensitive equity.",
+      "directional_implication": "bearish",
+      "time_horizon": "20 trading days",
+      "expected_observables": [
+        "Analysts reduce forward revenue or subscriber estimates within 30 days",
+        "The stock underperforms a peer basket over the next 20 trading days",
+        "Future company commentary focuses on acquisition efficiency or churn"
+      ],
+      "supporting_evidence": [
+        {
+          "source_id": "SRC-001",
+          "source_type": "earnings_release",
+          "publisher": "Orion Streaming Holdings",
+          "published_at": "2025-08-07T07:05:00-04:00",
+          "claim": "The company lowered next-quarter net addition guidance relative to prior management commentary.",
+          "support_strength": 0.83,
+          "evidence_quality": 0.88,
+          "independence": 0.92,
+          "incentive_conflict": 0.25
+        },
+        {
+          "source_id": "SRC-002",
+          "source_type": "earnings_transcript",
+          "publisher": "Orion Streaming Holdings",
+          "published_at": "2025-08-07T09:20:00-04:00",
+          "claim": "Multiple analyst questions focused on churn, customer acquisition costs, and net additions.",
+          "support_strength": 0.78,
+          "evidence_quality": 0.8,
+          "independence": 0.75,
+          "incentive_conflict": 0.2
+        },
+        {
+          "source_id": "SRC-009",
+          "source_type": "analyst_revision",
+          "publisher": "Synthetic Broker Model",
+          "published_at": "2025-08-13T08:00:00-04:00",
+          "claim": "Future validation fixture: several analysts later reduced forward revenue estimates.",
+          "support_strength": 0.9,
+          "evidence_quality": 0.85,
+          "independence": 0.7,
+          "incentive_conflict": 0.35
+        }
+      ],
+      "contradicting_evidence": [
+        {
+          "source_id": "SRC-003",
+          "source_type": "earnings_release",
+          "publisher": "Orion Streaming Holdings",
+          "published_at": "2025-08-07T07:05:00-04:00",
+          "claim": "Current-quarter revenue still exceeded consensus expectations.",
+          "support_strength": 0.47,
+          "evidence_quality": 0.82,
+          "independence": 0.9,
+          "incentive_conflict": 0.25
+        }
+      ],
+      "scoring_inputs": {
+        "evidence_strength": 0.84,
+        "mechanism_specificity": 0.88,
+        "source_independence": 0.75,
+        "cross_sectional_fit": 0.76,
+        "contradiction_resistance": 0.62,
+        "timestamp_advantage": 0.82,
+        "forward_observable_quality": 0.9,
+        "crowding_risk": 0.31,
+        "unsupported_claim_penalty": 0.03
+      },
+      "validation_status": "pending"
+    },
+    {
+      "narrative_id": "NARR-002",
+      "event_id": "EVT-ORION-2025-08-07",
+      "ticker": "ORION",
+      "timestamp_created": "2025-08-07T10:00:00-04:00",
+      "title": "Margin compression",
+      "narrative": "The stock moved because investors focused on near-term gross margin pressure from content spend and platform costs.",
+      "mechanism": "Lower margins would reduce near-term earnings and free cash flow, pressuring valuation if investors view the cost increase as recurring.",
+      "directional_implication": "bearish",
+      "time_horizon": "5 trading days",
+      "expected_observables": [
+        "Near-term EPS estimates decline more than revenue estimates",
+        "Management emphasizes cost control in follow-up commentary",
+        "Peers with similar margin pressure also trade down"
+      ],
+      "supporting_evidence": [
+        {
+          "source_id": "SRC-004",
+          "source_type": "financial_media",
+          "publisher": "Synthetic Market News",
+          "published_at": "2025-08-07T08:10:00-04:00",
+          "claim": "Early headlines framed the selloff around margin disappointment and rising content spend.",
+          "support_strength": 0.58,
+          "evidence_quality": 0.45,
+          "independence": 0.38,
+          "incentive_conflict": 0.3
+        }
+      ],
+      "contradicting_evidence": [
+        {
+          "source_id": "SRC-005",
+          "source_type": "earnings_release",
+          "publisher": "Orion Streaming Holdings",
+          "published_at": "2025-08-07T07:05:00-04:00",
+          "claim": "Gross margin improved year over year despite higher content spend.",
+          "support_strength": 0.74,
+          "evidence_quality": 0.86,
+          "independence": 0.91,
+          "incentive_conflict": 0.25
+        }
+      ],
+      "scoring_inputs": {
+        "evidence_strength": 0.54,
+        "mechanism_specificity": 0.72,
+        "source_independence": 0.42,
+        "cross_sectional_fit": 0.39,
+        "contradiction_resistance": 0.35,
+        "timestamp_advantage": 0.76,
+        "forward_observable_quality": 0.63,
+        "crowding_risk": 0.58,
+        "unsupported_claim_penalty": 0.1
+      },
+      "validation_status": "pending"
+    },
+    {
+      "narrative_id": "NARR-003",
+      "event_id": "EVT-ORION-2025-08-07",
+      "ticker": "ORION",
+      "timestamp_created": "2025-08-07T10:00:00-04:00",
+      "title": "Sector-wide derating",
+      "narrative": "The move reflects a broader derating of streaming and internet media equities rather than a company-specific issue.",
+      "mechanism": "Higher discount rates or weaker risk appetite would compress multiples across the group, causing peer-correlated price action.",
+      "directional_implication": "mixed",
+      "time_horizon": "5 trading days",
+      "expected_observables": [
+        "Peers and sector ETF experience comparable drawdowns",
+        "Company-specific estimate revisions are limited",
+        "Price action tracks macro or sector factors more than company disclosures"
+      ],
+      "supporting_evidence": [
+        {
+          "source_id": "SRC-006",
+          "source_type": "market_data",
+          "publisher": "Synthetic Price Feed",
+          "published_at": "2025-08-07T10:00:00-04:00",
+          "claim": "The sector ETF was negative on the event morning.",
+          "support_strength": 0.34,
+          "evidence_quality": 0.85,
+          "independence": 0.9,
+          "incentive_conflict": 0.0
+        }
+      ],
+      "contradicting_evidence": [
+        {
+          "source_id": "SRC-007",
+          "source_type": "market_data",
+          "publisher": "Synthetic Price Feed",
+          "published_at": "2025-08-07T10:00:00-04:00",
+          "claim": "Orion underperformed its peer median by roughly ten percentage points during the event window.",
+          "support_strength": 0.82,
+          "evidence_quality": 0.88,
+          "independence": 0.9,
+          "incentive_conflict": 0.0
+        }
+      ],
+      "scoring_inputs": {
+        "evidence_strength": 0.4,
+        "mechanism_specificity": 0.67,
+        "source_independence": 0.71,
+        "cross_sectional_fit": 0.18,
+        "contradiction_resistance": 0.28,
+        "timestamp_advantage": 0.86,
+        "forward_observable_quality": 0.55,
+        "crowding_risk": 0.26,
+        "unsupported_claim_penalty": 0.04
+      },
+      "validation_status": "pending"
+    },
+    {
+      "narrative_id": "NARR-004",
+      "event_id": "EVT-ORION-2025-08-07",
+      "ticker": "ORION",
+      "timestamp_created": "2025-08-07T10:00:00-04:00",
+      "title": "Overreaction to noisy guidance",
+      "narrative": "The market may be overreacting to conservative guidance that does not materially change long-term cash-flow power.",
+      "mechanism": "If the guidance reset is conservative and fundamentals stabilize, the initial selloff could reverse as investors reprice the event as temporary noise.",
+      "directional_implication": "bullish",
+      "time_horizon": "20 trading days",
+      "expected_observables": [
+        "Revenue estimates stabilize after the first wave of revisions",
+        "Management or channel data indicates demand is not deteriorating",
+        "The stock recovers relative to peers after headline pressure fades"
+      ],
+      "supporting_evidence": [
+        {
+          "source_id": "SRC-008",
+          "source_type": "earnings_release",
+          "publisher": "Orion Streaming Holdings",
+          "published_at": "2025-08-07T07:05:00-04:00",
+          "claim": "Full-year free cash flow guidance was maintained despite lower near-term net additions.",
+          "support_strength": 0.63,
+          "evidence_quality": 0.84,
+          "independence": 0.91,
+          "incentive_conflict": 0.25
+        }
+      ],
+      "contradicting_evidence": [
+        {
+          "source_id": "SRC-002",
+          "source_type": "earnings_transcript",
+          "publisher": "Orion Streaming Holdings",
+          "published_at": "2025-08-07T09:20:00-04:00",
+          "claim": "Multiple analyst questions focused on churn, customer acquisition costs, and net additions.",
+          "support_strength": 0.72,
+          "evidence_quality": 0.8,
+          "independence": 0.75,
+          "incentive_conflict": 0.2
+        }
+      ],
+      "scoring_inputs": {
+        "evidence_strength": 0.52,
+        "mechanism_specificity": 0.7,
+        "source_independence": 0.66,
+        "cross_sectional_fit": 0.48,
+        "contradiction_resistance": 0.42,
+        "timestamp_advantage": 0.78,
+        "forward_observable_quality": 0.82,
+        "crowding_risk": 0.22,
+        "unsupported_claim_penalty": 0.06
+      },
+      "validation_status": "pending"
+    }
+  ]
+}

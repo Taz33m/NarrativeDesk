@@ -1,0 +1,23 @@
+{
+  "name": "narrativedesk",
+  "private": true,
+  "version": "0.1.0",
+  "description": "NarrativeDesk synthetic replay workbench and deterministic research kernel.",
+  "workspaces": [
+    "apps/web"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "web:data": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 scripts/generate_demo_assets.py",
+    "web:dev": "npm --workspace apps/web run dev",
+    "web:build": "npm run web:data && npm --workspace apps/web run build",
+    "web:preview": "npm --workspace apps/web run preview",
+    "web:smoke": "npm run web:data && npm --workspace apps/web run smoke",
+    "web:verify": "npm run web:build && npm run web:smoke",
+    "test:python": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m unittest discover -s tests",
+    "verify": "npm run test:python && npm run web:build && npm run web:smoke:static",
+    "web:smoke:static": "npm run web:data && npm --workspace apps/web run smoke:static"
+  }
+}

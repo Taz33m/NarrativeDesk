@@ -1,0 +1,27 @@
+{
+  "name": "narrativedesk-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit -p tsconfig.json && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "smoke": "node smoke.mjs",
+    "verify": "npm run build && npm run smoke",
+    "smoke:static": "node static-smoke.mjs"
+  },
+  "dependencies": {
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@vitejs/plugin-react": "latest",
+    "playwright": "^1.59.1",
+    "typescript": "latest",
+    "vite": "latest"
+  }
+}

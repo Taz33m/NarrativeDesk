@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://narrativedesk.local/schemas/narrative_ledger.schema.json",
+  "title": "NarrativeDesk Narrative Ledger",
+  "type": "object",
+  "required": [
+    "narrative_id",
+    "event_id",
+    "ticker",
+    "timestamp_created",
+    "title",
+    "narrative",
+    "mechanism",
+    "directional_implication",
+    "time_horizon",
+    "supporting_evidence",
+    "contradicting_evidence",
+    "expected_observables",
+    "overall_narrative_score",
+    "validation_status"
+  ],
+  "properties": {
+    "narrative_id": { "type": "string" },
+    "event_id": { "type": "string" },
+    "ticker": { "type": "string" },
+    "timestamp_created": { "type": "string", "format": "date-time" },
+    "title": { "type": "string" },
+    "narrative": { "type": "string" },
+    "mechanism": { "type": "string" },
+    "directional_implication": {
+      "type": "string",
+      "enum": ["bullish", "bearish", "neutral", "mixed"]
+    },
+    "time_horizon": { "type": "string" },
+    "supporting_evidence": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evidence_item" }
+    },
+    "contradicting_evidence": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evidence_item" }
+    },
+    "expected_observables": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "scores": {
+      "type": "object",
+      "additionalProperties": { "type": "number" }
+    },
+    "overall_narrative_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "rank": { "type": ["integer", "null"] },
+    "validation_status": { "type": "string" }
+  },
+  "$defs": {
+    "evidence_item": {
+      "type": "object",
+      "required": ["source_id", "claim", "published_at", "source_type", "relation"],
+      "properties": {
+        "source_id": { "type": "string" },
+        "claim": { "type": "string" },
+        "published_at": { "type": "string", "format": "date-time" },
+        "source_type": { "type": "string" },
+        "publisher": { "type": "string" },
+        "url": { "type": "string" },
+        "relation": { "type": "string", "enum": ["support", "contradict"] },
+        "support_strength": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidence_quality": { "type": "number", "minimum": 0, "maximum": 1 },
+        "independence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "incentive_conflict": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    }
+  }
+}
