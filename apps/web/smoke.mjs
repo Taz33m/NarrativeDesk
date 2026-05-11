@@ -151,7 +151,10 @@ async function main() {
     const lyraText = await page.locator('body').innerText();
     assert.match(lyraText, /Renewal discounting pressure/);
     assert.match(lyraText, /Future sources: LYR-SRC-009/);
-    assert.match(lyraText, /Top validated\s+miss/i);
+    assert.doesNotMatch(lyraText, /headline baseline/i);
+    await page.getByRole('button', { name: /^Benchmark$/i }).click();
+    const lyraBenchmarkText = await page.locator('body').innerText();
+    assert.match(lyraBenchmarkText, /Top validated\s+miss/i);
     const lyraEvaluation = await page.locator('[data-testid="evaluation-checks"]').innerText();
     assert.match(lyraEvaluation, /headline baseline[\s\S]*pass/i);
     assert.match(lyraEvaluation, /evidence only[\s\S]*miss/i);
