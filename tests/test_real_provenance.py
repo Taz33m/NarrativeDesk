@@ -1148,6 +1148,78 @@ class RealProvenanceTests(unittest.TestCase):
         )
         self.assertNotIn("real-case-rehearse", [call[0] for call in calls])
 
+    def test_aapl_rehearsal_runner_preserves_needs_sources_status(self):
+        runner = _load_aapl_rehearsal_runner()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            draft_dir = root / "draft"
+            draft_dir.mkdir()
+            calls = []
+
+            def fake_run_cli(command, **_kwargs):
+                calls.append(command)
+                if command[0] == "real-case-preflight":
+                    return {
+                        "returncode": 0,
+                        "command": command,
+                        "json": {"ok": True, "status": "ready_to_draft"},
+                    }
+                if command[0] == "real-case-draft":
+                    return {"returncode": 0, "command": command, "json": {"ok": True}}
+                if command[0] == "real-case-worksheet":
+                    return {"returncode": 0, "command": command, "json": {"ok": True}}
+                if command[0] == "real-case-curation-template":
+                    (draft_dir / "curated_narratives.template.json").write_text("{}\n")
+                    return {"returncode": 0, "command": command, "json": {"ok": True}}
+                if command[0] == "real-case-status":
+                    return {
+                        "returncode": 1,
+                        "command": command,
+                        "json": {
+                            "ok": False,
+                            "status": "needs_sources",
+                            "next_action": "Fetch or curate additional timestamped sources before narrative curation.",
+                        },
+                    }
+                raise AssertionError(f"Unexpected command: {command}")
+
+            args = SimpleNamespace(
+                ticker="AAPL",
+                company_name="Apple Inc.",
+                event_type="earnings/guidance",
+                event_date="2024-05-02",
+                replay_lock="2024-05-03T10:00:00-04:00",
+                date_from="2024-05-01",
+                date_to="2024-05-20",
+                providers="finnhub,sec",
+                env_file=str(root / ".env.local"),
+                fetch_dir=str(root / "fetch"),
+                draft_dir=str(draft_dir),
+                bundle_dir=str(root / "bundle"),
+                narratives=None,
+                sec_count=5,
+                forms="8-K,10-Q,10-K",
+                no_sec_document_text=False,
+                preflight_only=False,
+                build_bundle=False,
+            )
+            with patch.object(runner, "_run_cli", side_effect=fake_run_cli):
+                response = runner.run_rehearsal(args)
+
+        self.assertFalse(response["ok"])
+        self.assertEqual(response["status"], "needs_sources")
+        self.assertEqual(
+            [call[0] for call in calls],
+            [
+                "real-case-preflight",
+                "real-case-draft",
+                "real-case-worksheet",
+                "real-case-curation-template",
+                "real-case-status",
+            ],
+        )
+        self.assertNotIn("real-case-curated-bundle", [call[0] for call in calls])
+
     def test_aapl_rehearsal_runner_redacts_sensitive_child_output(self):
         runner = _load_aapl_rehearsal_runner()
         with tempfile.TemporaryDirectory() as tmpdir:

@@ -223,6 +223,9 @@ def _run_status_then_bundle(
         status_args.extend(["--narratives", str(narratives_path)])
     status = _run_cli(status_args, redaction_values=redaction_values)
     stages["status"] = status
+    status_name = str(status["json"].get("status") or "")
+    if status["returncode"] != 0 and status_name not in {"missing_bundle", "bundle_failed", "ready_to_bundle"}:
+        return _final(False, status_name or "status_failed", stages, status["json"].get("next_action"))
 
     if narratives_path is None:
         return _final(
