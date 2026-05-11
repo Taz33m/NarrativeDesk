@@ -156,6 +156,28 @@ def _run_draft_status_then_bundle(
     *,
     normalized_dir: str | None = None,
 ) -> dict[str, Any]:
+    if args.market_bars:
+        market_bars_check = _run_cli(
+            [
+                "real-market-bars-check",
+                args.market_bars,
+                "--ticker",
+                args.ticker,
+                "--replay-lock",
+                args.replay_lock,
+            ],
+            redaction_values=redaction_values,
+        )
+        stages["market_bars_check"] = market_bars_check
+        if market_bars_check["returncode"] != 0:
+            errors = market_bars_check["json"].get("errors") or []
+            return _final(
+                False,
+                "market_bars_failed",
+                stages,
+                _market_bars_next_action(errors),
+            )
+
     draft_args = [
         "real-case-draft",
         "--ticker",
@@ -191,6 +213,12 @@ def _run_draft_status_then_bundle(
         return _final(False, "curation_template_failed", stages, "Inspect the drafted real-case config, then rerun curation template generation.")
 
     return _run_status_then_bundle(args, stages, redaction_values)
+
+
+def _market_bars_next_action(errors: Any) -> str:
+    if isinstance(errors, list) and errors:
+        return f"Provide replay-eligible market bars before drafting: {'; '.join(str(error) for error in errors)}"
+    return "Provide replay-eligible market bars before drafting."
 
 
 def _run_preflight(args: argparse.Namespace, redaction_values: list[str]) -> dict[str, Any]:
