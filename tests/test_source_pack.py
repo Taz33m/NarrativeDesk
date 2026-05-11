@@ -8,6 +8,7 @@ from pathlib import Path
 from narrativedesk.case_index import validate_case_index
 from narrativedesk.pipeline import run_replay
 from narrativedesk.source_pack import (
+    assess_real_case_quality,
     assess_source_pack_readiness,
     build_fixture_from_source_pack,
     build_validation_fixture_template_from_source_pack,
@@ -141,6 +142,41 @@ def _ingest_pack():
     }
 
 
+def _quality_ready_pack():
+    payload = _ingest_pack()
+    payload["sources"].extend(
+        [
+            _source(
+                "PK-SRC-004",
+                "Customer expansion commentary remained a separate plausible explanation.",
+                "2025-01-02T08:10:00-05:00",
+                "allowed",
+                supported=["PK-NARR-003"],
+            ),
+            _source(
+                "PK-SRC-005",
+                "Peer shares did not fall enough to explain the full company-specific move.",
+                "2025-01-02T08:15:00-05:00",
+                "allowed",
+                supported=["PK-NARR-001", "PK-NARR-002"],
+            ),
+        ]
+    )
+    payload["narratives"].append(
+        {
+            "narrative_id": "PK-NARR-003",
+            "title": "Company-specific demand reset",
+            "narrative": "The move reflects a company-specific reset in forward demand assumptions.",
+            "mechanism": "Company-specific demand pressure would reduce forward estimates more than peer beta.",
+            "directional_implication": "bearish",
+            "time_horizon": "20 trading days",
+            "expected_observables": ["Company estimate cuts exceed peer estimate cuts"],
+            "scoring_inputs": {**_score_inputs(), "evidence_strength": 0.62},
+        }
+    )
+    return payload
+
+
 class SourcePackTests(unittest.TestCase):
     def test_template_validates(self):
         payload = load_source_pack(ROOT / 'examples' / 'source_pack_template.json')
@@ -202,6 +238,25 @@ class SourcePackTests(unittest.TestCase):
         )
         self.assertEqual(result['checks']['provenance_ready']['missing_hash_source_ids'], ['PK-SRC-002'])
         self.assertEqual(result['checks']['provenance_ready']['missing_retrieved_at_source_ids'], ['PK-SRC-003'])
+
+    def test_real_case_quality_accepts_minimum_quality_pack(self):
+        result = assess_real_case_quality(_quality_ready_pack())
+
+        self.assertTrue(result['ok'])
+        self.assertEqual(result['status'], 'quality_ready')
+        self.assertEqual(result['metrics']['narrative_count'], 3)
+        self.assertEqual(result['metrics']['allowed_source_count'], 5)
+        self.assertEqual(result['metrics']['blocked_future_source_count'], 1)
+        self.assertTrue(result['checks']['contradiction_links']['ok'])
+
+    def test_real_case_quality_flags_rehearsal_that_needs_more_curation(self):
+        result = assess_real_case_quality(_ingest_pack())
+
+        self.assertFalse(result['ok'])
+        self.assertEqual(result['status'], 'needs_curation')
+        self.assertFalse(result['checks']['narrative_count']['ok'])
+        self.assertFalse(result['checks']['replay_time_sources']['ok'])
+        self.assertIn('Curate 3-5 competing narratives', result['next_action'])
 
     def test_missing_fields_fail(self):
         payload = {"case_metadata": {}, "sources": [{}]}
@@ -510,6 +565,74 @@ class SourcePackTests(unittest.TestCase):
         response = json.loads(result.stdout)
         self.assertTrue(response['ok'])
         self.assertEqual(response['status'], 'ready_to_ingest')
+
+    def test_cli_real_case_quality_reports_quality_ready_source_pack(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            source_pack_path = Path(tmpdir) / 'quality_pack.json'
+            source_pack_path.write_text(json.dumps(_quality_ready_pack(), indent=2))
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    '-m',
+                    'narrativedesk.cli',
+                    'real-case-quality',
+                    '--source-pack',
+                    str(source_pack_path),
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+                cwd=ROOT,
+            )
+
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        response = json.loads(result.stdout)
+        self.assertTrue(response['ok'])
+        self.assertEqual(response['status'], 'quality_ready')
+
+    def test_cli_real_case_quality_checks_bundle_verification(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            source_pack_path = Path(tmpdir) / 'source_pack.json'
+            bundle_dir = Path(tmpdir) / 'bundle'
+            source_pack_path.write_text(json.dumps(_ingest_pack(), indent=2))
+            bundle_result = subprocess.run(
+                [
+                    sys.executable,
+                    '-m',
+                    'narrativedesk.cli',
+                    'source-pack-bundle',
+                    str(source_pack_path),
+                    '--out-dir',
+                    str(bundle_dir),
+                    '--label',
+                    'PACK bundled example',
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+                cwd=ROOT,
+            )
+            quality_result = subprocess.run(
+                [
+                    sys.executable,
+                    '-m',
+                    'narrativedesk.cli',
+                    'real-case-quality',
+                    '--bundle-dir',
+                    str(bundle_dir),
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+                cwd=ROOT,
+            )
+
+        self.assertEqual(bundle_result.returncode, 0, bundle_result.stderr + bundle_result.stdout)
+        self.assertEqual(quality_result.returncode, 1, quality_result.stderr + quality_result.stdout)
+        response = json.loads(quality_result.stdout)
+        self.assertFalse(response['ok'])
+        self.assertTrue(response['checks']['bundle_verified']['ok'])
+        self.assertFalse(response['checks']['narrative_count']['ok'])
 
     def test_cli_source_pack_bundle_writes_self_contained_artifacts(self):
         with tempfile.TemporaryDirectory() as tmpdir:
