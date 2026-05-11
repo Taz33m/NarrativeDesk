@@ -60,21 +60,22 @@ async function main() {
     assert.match(bodyText, /Competing market narratives\. Time-locked evidence\. Later validation\./i);
     assert.match(bodyText, /ORION/);
     assert.match(bodyText, /Case library/i);
-    assert.match(bodyText, /Winning Narrative/i);
-    assert.match(bodyText, /Why it won/i);
+    assert.match(bodyText, /Top Replay Narrative/i);
+    assert.match(bodyText, /Why it ranked first/i);
     assert.match(bodyText, /Replay timeline/i);
     assert.match(bodyText, /Replay Lock/i);
-    assert.match(bodyText, /History check/i);
+    assert.match(bodyText, /Future validation/i);
     assert.match(bodyText, /Forward demand slowdown/);
     assert.match(bodyText, /Margin compression/);
     assert.match(bodyText, /Only evidence left of the lock entered ranking/i);
     const orionThesis = await page.locator('[data-testid="event-header"]').innerText();
     assert.match(orionThesis, /surface baseline[\s\S]*Margin compression/i);
     assert.match(orionThesis, /Ranked #4/i);
-    assert.match(orionThesis, /Ranked #1[\s\S]*T\+20 validated the winner/i);
-    assert.match(orionThesis, /winning narrative[\s\S]*Forward demand slowdown/i);
+    assert.match(orionThesis, /Ranked #1 at the lock[\s\S]*T\+20 later supported top replay narrative/i);
+    assert.match(orionThesis, /top replay narrative[\s\S]*Forward demand slowdown/i);
+    assert.match(orionThesis, /Held out from replay scoring/i);
     assert.doesNotMatch(bodyText, /SRC-009/);
-    assert.match(bodyText, /T\+20 validated the winner/i);
+    assert.match(bodyText, /T\+20 later supported top replay narrative/i);
     assert.match(bodyText, /Demo provenance: synthetic benchmark case/i);
 
     await page.getByRole('button', { name: /^Tournament$/i }).click();
@@ -163,8 +164,8 @@ async function main() {
     const lyraThesis = await page.locator('[data-testid="event-header"]').innerText();
     assert.match(lyraThesis, /surface baseline[\s\S]*Renewal discounting pressure/i);
     assert.match(lyraThesis, /Ranked #2/i);
-    assert.match(lyraThesis, /Ranked #1[\s\S]*T\+20 validated rank #2/i);
-    assert.match(lyraThesis, /winning narrative[\s\S]*AI module adoption slowdown/i);
+    assert.match(lyraThesis, /Ranked #1 at the lock[\s\S]*T\+20 later supported rank #2/i);
+    assert.match(lyraThesis, /top replay narrative[\s\S]*AI module adoption slowdown/i);
     await page.getByRole('button', { name: /^Report$/i }).click();
     assert.equal(
       await page.locator('[data-testid="ledger-export"]').getAttribute('download'),

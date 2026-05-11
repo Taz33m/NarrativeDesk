@@ -218,6 +218,14 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertTrue(manifest["ok"])
         self.assertEqual(saved_manifest["artifacts"][0]["params"]["token"], "[REDACTED]")
         self.assertNotIn("secret-token", manifest_text)
+        self.assertNotIn("test@example.com", manifest_text)
+        self.assertTrue(
+            any(
+                artifact.get("provider") == "sec"
+                and artifact.get("headers", {}).get("User-Agent") == "[REDACTED]"
+                for artifact in saved_manifest["artifacts"]
+            )
+        )
         self.assertTrue(any(artifact["endpoint"] == "filing_document" for artifact in saved_manifest["artifacts"]))
         sec_call = next(call for call in fetcher.calls if call["url"].startswith("https://data.sec.gov"))
         self.assertEqual(sec_call["headers"]["User-Agent"], "NarrativeDesk Tests test@example.com")

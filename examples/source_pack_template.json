@@ -4,11 +4,11 @@
     "ticker": "EXMPL",
     "company_name": "Example Co",
     "event_timestamp": "2025-01-02T10:00:00-05:00",
-    "data_provenance_mode": "real-curated"
+    "data_provenance_mode": "synthetic"
   },
   "event": {
     "event_type": "earnings/guidance",
-    "event_summary": "Example source-pack scaffold for timestamped replay ingestion."
+    "event_summary": "Synthetic source-pack scaffold for timestamped replay ingestion."
   },
   "market_snapshot": {
     "event_bar": {

@@ -43,6 +43,7 @@ from narrativedesk.source_pack import (
     build_validation_fixture_template_from_source_pack,
     load_source_pack,
     preview_source_pack,
+    sanitize_source_pack_payload,
     validate_source_pack,
 )
 from narrativedesk.validation_fixture import preview_validation_fixture, validate_validation_fixture
@@ -484,8 +485,19 @@ def run_replay_command(args: argparse.Namespace) -> int:
     return 0
 
 
+def _load_source_pack_or_error(path: str | Path) -> tuple[dict[str, Any], dict[str, Any] | None]:
+    try:
+        payload = load_source_pack(path)
+    except (OSError, json.JSONDecodeError) as exc:
+        return {}, {"ok": False, "status": "invalid_input", "errors": [str(exc)]}
+    return payload, None
+
+
 def run_source_pack_preview(args: argparse.Namespace) -> int:
-    payload = load_source_pack(args.path)
+    payload, error_response = _load_source_pack_or_error(args.path)
+    if error_response:
+        print(json.dumps(error_response, indent=2, sort_keys=True))
+        return 1
     errors = validate_source_pack(payload)
     if errors:
         print(json.dumps({"ok": False, "errors": errors}, indent=2))
@@ -495,7 +507,10 @@ def run_source_pack_preview(args: argparse.Namespace) -> int:
 
 
 def run_source_pack_readiness(args: argparse.Namespace) -> int:
-    payload = load_source_pack(args.path)
+    payload, error_response = _load_source_pack_or_error(args.path)
+    if error_response:
+        print(json.dumps(error_response, indent=2, sort_keys=True))
+        return 1
     result = assess_source_pack_readiness(payload)
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["ok"] else 1
@@ -534,7 +549,10 @@ def run_real_case_quality(args: argparse.Namespace) -> int:
 
 
 def run_source_pack_bundle(args: argparse.Namespace) -> int:
-    payload = load_source_pack(args.path)
+    payload, error_response = _load_source_pack_or_error(args.path)
+    if error_response:
+        print(json.dumps(error_response, indent=2, sort_keys=True))
+        return 1
     response, status = _bundle_source_pack_payload(payload, Path(args.out_dir), label=args.label)
     print(json.dumps(response, indent=2, sort_keys=True))
     return status
@@ -556,8 +574,9 @@ def _bundle_source_pack_payload(
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     source_pack_path = out_dir / "source_pack.json"
+    sanitized_payload = sanitize_source_pack_payload(payload)
     if persist_source_pack_on_failure:
-        _write_json(source_pack_path, payload)
+        _write_json(source_pack_path, sanitized_payload)
 
     readiness = assess_source_pack_readiness(payload)
     readiness_path = out_dir / "readiness.json"
@@ -580,9 +599,9 @@ def _bundle_source_pack_payload(
     case_index_path = out_dir / "case_index.json"
     manifest_path = out_dir / "manifest.json"
 
-    _write_json(source_pack_path, payload)
-    fixture = build_fixture_from_source_pack(payload)
-    validation_fixture = build_validation_fixture_template_from_source_pack(payload)
+    _write_json(source_pack_path, sanitized_payload)
+    fixture = build_fixture_from_source_pack(sanitized_payload)
+    validation_fixture = build_validation_fixture_template_from_source_pack(sanitized_payload)
     _write_json(event_path, fixture)
     _write_json(validation_path, validation_fixture)
 
@@ -654,8 +673,8 @@ def _bundle_source_pack_payload(
 
 def run_real_pack_build(args: argparse.Namespace) -> int:
     config_path = Path(args.config)
-    config = load_real_case_config(config_path)
     try:
+        config = load_real_case_config(config_path)
         env_file_values = _load_env_file(args.env_file) if args.env_file else {}
         payload = build_real_source_pack(
             config,
@@ -692,8 +711,8 @@ def run_real_pack_build(args: argparse.Namespace) -> int:
 
 def run_real_pack_bundle(args: argparse.Namespace) -> int:
     config_path = Path(args.config)
-    config = load_real_case_config(config_path)
     try:
+        config = load_real_case_config(config_path)
         env_file_values = _load_env_file(args.env_file) if args.env_file else {}
         payload = build_real_source_pack(
             config,
@@ -1401,7 +1420,10 @@ def _default_narratives_path(draft_dir: Path) -> Path | None:
 
 
 def run_source_pack_ingest(args: argparse.Namespace) -> int:
-    payload = load_source_pack(args.path)
+    payload, error_response = _load_source_pack_or_error(args.path)
+    if error_response:
+        print(json.dumps(error_response, indent=2, sort_keys=True))
+        return 1
     errors = validate_source_pack(payload, require_narratives=True)
     if errors:
         print(json.dumps({"ok": False, "errors": errors}, indent=2))

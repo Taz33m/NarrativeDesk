@@ -14,7 +14,7 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 from narrativedesk.models import parse_datetime
-from narrativedesk.source_pack import source_content_hash
+from narrativedesk.source_pack import sanitize_source_record, source_content_hash
 
 
 class RealDataError(ValueError):
@@ -1347,7 +1347,7 @@ def _normalize_manual_source(
     if not data.get("content_hash"):
         hash_text = str(data.get("document_text") or data.get("raw_text") or data["claim_extracted"])
         data["content_hash"] = source_content_hash(hash_text)
-    return data
+    return sanitize_source_record(data)
 
 
 def _source_record(

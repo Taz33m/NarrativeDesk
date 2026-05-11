@@ -28,7 +28,16 @@ class RealProvenanceError(ValueError):
 
 CANDIDATE_SOURCE_TYPES = {"filing", "news", "transcript", "estimate", "market_data", "other"}
 CANDIDATE_REPLAY_STATUSES = {"eligible", "blocked_future", "rejected"}
-SECRET_PARAM_NAMES = {"token", "apikey", "apiKey", "api_key", "authorization", "x-api-key"}
+SECRET_PARAM_NAMES = {
+    "token",
+    "apikey",
+    "apiKey",
+    "api_key",
+    "authorization",
+    "cookie",
+    "user-agent",
+    "x-api-key",
+}
 DEFAULT_PROVIDERS = ("finnhub", "sec")
 CURATION_LINK_FIELDS = {
     "supporting_source_ids": ("supported_narrative_ids", "allowed"),

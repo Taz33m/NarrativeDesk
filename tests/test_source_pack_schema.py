@@ -80,6 +80,14 @@ class SourcePackSchemaTests(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, "supported_narrative_ids is required"):
             validate_schema(payload, schema, schema)
 
+    def test_schema_rejects_unknown_source_fields(self):
+        schema = _load_schema()
+        payload = _load_template()
+        payload["sources"][0]["api_key"] = "private-token"
+
+        with self.assertRaisesRegex(AssertionError, "additional properties: api_key"):
+            validate_schema(payload, schema, schema)
+
 
 def _load_schema() -> dict[str, Any]:
     return json.loads(SCHEMA_PATH.read_text())
