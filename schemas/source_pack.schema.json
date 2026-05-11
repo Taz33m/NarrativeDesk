@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://narrativedesk.local/schemas/source_pack.schema.json",
+  "title": "NarrativeDesk Source Pack",
+  "type": "object",
+  "required": ["case_metadata", "sources"],
+  "not": {
+    "anyOf": [
+      { "required": ["validation"] },
+      { "required": ["validation_rows"] }
+    ]
+  },
+  "properties": {
+    "case_metadata": { "$ref": "#/$defs/case_metadata" },
+    "event": { "$ref": "#/$defs/event_overrides" },
+    "market_snapshot": { "$ref": "#/$defs/market_snapshot" },
+    "sources": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/source" },
+      "minItems": 1
+    },
+    "narratives": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/narrative" }
+    }
+  },
+  "$defs": {
+    "score01": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "number": { "type": "number" },
+    "string_array": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "case_metadata": {
+      "type": "object",
+      "required": [
+        "case_id",
+        "ticker",
+        "company_name",
+        "event_timestamp",
+        "data_provenance_mode"
+      ],
+      "properties": {
+        "case_id": { "type": "string" },
+        "ticker": { "type": "string" },
+        "company_name": { "type": "string" },
+        "event_timestamp": { "type": "string", "format": "date-time" },
+        "event_date": { "type": "string" },
+        "event_type": { "type": "string" },
+        "event_summary": { "type": "string" },
+        "data_provenance_mode": {
+          "type": "string",
+          "enum": ["synthetic", "real-curated"]
+        }
+      }
+    },
+    "event_overrides": {
+      "type": "object",
+      "properties": {
+        "event_id": { "type": "string" },
+        "event_date": { "type": "string" },
+        "event_type": { "type": "string" },
+        "event_summary": { "type": "string" },
+        "daily_return": { "$ref": "#/$defs/number" },
+        "abnormal_return": { "$ref": "#/$defs/number" },
+        "volume_ratio": { "$ref": "#/$defs/number" },
+        "sector_etf_return": { "$ref": "#/$defs/number" },
+        "peer_median_return": { "$ref": "#/$defs/number" }
+      }
+    },
+    "market_snapshot": {
+      "type": "object",
+      "properties": {
+        "event_bar": { "$ref": "#/$defs/market_bar" },
+        "peer_bars": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/market_bar" }
+        },
+        "sector_bar": { "$ref": "#/$defs/market_bar" }
+      }
+    },
+    "market_bar": {
+      "type": "object",
+      "required": ["symbol", "open", "close"],
+      "anyOf": [
+        { "required": ["timestamp"] },
+        { "required": ["as_of"] }
+      ],
+      "properties": {
+        "symbol": { "type": "string" },
+        "open": { "$ref": "#/$defs/number" },
+        "close": { "$ref": "#/$defs/number" },
+        "volume": { "$ref": "#/$defs/number" },
+        "average_volume": { "$ref": "#/$defs/number" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "as_of": { "type": "string", "format": "date-time" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "source_id",
+        "source_type",
+        "publisher",
+        "title",
+        "url",
+        "published_at",
+        "retrieved_at",
+        "content_hash",
+        "availability_status",
+        "originality_score",
+        "independence_cluster_id",
+        "claim_extracted",
+        "supported_narrative_ids",
+        "contradicted_narrative_ids"
+      ],
+      "properties": {
+        "source_id": { "type": "string" },
+        "source_type": { "type": "string" },
+        "publisher": { "type": "string" },
+        "title": { "type": "string" },
+        "url": { "type": "string" },
+        "published_at": { "type": "string", "format": "date-time" },
+        "retrieved_at": { "type": "string", "format": "date-time" },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "availability_status": {
+          "type": "string",
+          "enum": ["allowed", "blocked_future", "unavailable", "placeholder"]
+        },
+        "originality_score": { "$ref": "#/$defs/score01" },
+        "independence_cluster_id": { "type": "string" },
+        "claim_extracted": { "type": "string" },
+        "document_text": { "type": "string" },
+        "raw_text": { "type": "string" },
+        "supported_narrative_ids": { "$ref": "#/$defs/string_array" },
+        "contradicted_narrative_ids": { "$ref": "#/$defs/string_array" },
+        "support_strength": { "$ref": "#/$defs/score01" },
+        "evidence_quality": { "$ref": "#/$defs/score01" },
+        "independence": { "$ref": "#/$defs/score01" },
+        "incentive_conflict": { "$ref": "#/$defs/score01" }
+      }
+    },
+    "narrative": {
+      "type": "object",
+      "required": [
+        "narrative_id",
+        "title",
+        "narrative",
+        "mechanism",
+        "directional_implication",
+        "time_horizon",
+        "expected_observables",
+        "scoring_inputs"
+      ],
+      "properties": {
+        "narrative_id": { "type": "string" },
+        "title": { "type": "string" },
+        "narrative": { "type": "string" },
+        "mechanism": { "type": "string" },
+        "directional_implication": {
+          "type": "string",
+          "enum": ["bullish", "bearish", "neutral", "mixed"]
+        },
+        "time_horizon": { "type": "string" },
+        "expected_observables": { "$ref": "#/$defs/string_array" },
+        "scoring_inputs": { "$ref": "#/$defs/scoring_inputs" },
+        "timestamp_created": { "type": "string", "format": "date-time" },
+        "validation_status": { "type": "string" }
+      }
+    },
+    "scoring_inputs": {
+      "type": "object",
+      "required": [
+        "evidence_strength",
+        "mechanism_specificity",
+        "source_independence",
+        "cross_sectional_fit",
+        "contradiction_resistance",
+        "timestamp_advantage",
+        "forward_observable_quality",
+        "crowding_risk",
+        "unsupported_claim_penalty"
+      ],
+      "properties": {
+        "evidence_strength": { "$ref": "#/$defs/score01" },
+        "mechanism_specificity": { "$ref": "#/$defs/score01" },
+        "source_independence": { "$ref": "#/$defs/score01" },
+        "cross_sectional_fit": { "$ref": "#/$defs/score01" },
+        "contradiction_resistance": { "$ref": "#/$defs/score01" },
+        "timestamp_advantage": { "$ref": "#/$defs/score01" },
+        "forward_observable_quality": { "$ref": "#/$defs/score01" },
+        "crowding_risk": { "$ref": "#/$defs/score01" },
+        "unsupported_claim_penalty": { "$ref": "#/$defs/score01" }
+      }
+    }
+  }
+}

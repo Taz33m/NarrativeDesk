@@ -1,0 +1,71 @@
+{
+  "case_metadata": {
+    "case_id": "EVT-REAL-TICKER-YYYY-MM-DD",
+    "ticker": "REPLACE_WITH_TICKER",
+    "company_name": "Replace With Company Name",
+    "event_timestamp": "2025-01-02T10:00:00-05:00",
+    "data_provenance_mode": "real-curated",
+    "event_type": "earnings/guidance",
+    "event_summary": "Curated replay case built from timestamped provider data."
+  },
+  "event": {
+    "event_type": "earnings/guidance",
+    "event_summary": "Replace with a concise event-time summary after reviewing the source pack."
+  },
+  "market_data": {
+    "provider": "finnhub",
+    "resolution": "5",
+    "from": "2025-01-02T07:00:00-05:00",
+    "to": "2025-01-02T10:00:00-05:00",
+    "peers": [
+      "REPLACE_WITH_PEER"
+    ],
+    "sector_symbol": "SPY"
+  },
+  "news": {
+    "provider": "finnhub",
+    "from": "2025-01-02",
+    "to": "2025-01-09",
+    "max_articles": 10
+  },
+  "sec_filings": {
+    "forms": [
+      "8-K",
+      "10-Q",
+      "10-K"
+    ],
+    "count": 2,
+    "include_document_text": true,
+    "document_text_max_chars": 12000
+  },
+  "sec_facts": {
+    "concepts": [
+      {
+        "taxonomy": "us-gaap",
+        "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+        "unit": "USD",
+        "label": "Revenue"
+      }
+    ],
+    "max_facts_per_concept": 2
+  },
+  "transcripts": {
+    "items": [
+      {
+        "provider": "local_text",
+        "path": "transcripts/replace-with-event-transcript.txt",
+        "publisher": "Company investor relations",
+        "title": "Replace With Company earnings call transcript",
+        "url": "https://example.com/transcript",
+        "published_at": "2025-01-02T09:20:00-05:00"
+      }
+    ]
+  },
+  "estimate_revisions": {
+    "provider": "csv",
+    "path": "estimates/replace-with-estimate-revisions.csv",
+    "max_rows": 20
+  },
+  "manual_sources": [],
+  "narratives": []
+}

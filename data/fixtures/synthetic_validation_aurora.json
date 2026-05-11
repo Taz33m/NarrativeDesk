@@ -1,0 +1,37 @@
+{
+  "event_id": "EVT-AURORA-2025-10-22",
+  "future_source_count": 1,
+  "future_source_ids": [
+    "AUR-SRC-009"
+  ],
+  "status": "synthetic",
+  "note": "Synthetic validation is stored separately from event-time replay evidence and must not be visible to generation or ranking steps.",
+  "rows": [
+    {
+      "window": "T+5",
+      "label": "partial",
+      "narrative_id": "AUR-NARR-001",
+      "expected_observable": "The stock underperforms a peer basket after the event.",
+      "future_source_ids": [],
+      "what_happened": "Synthetic replay: AURORA continued to underperform commerce software peers, but estimate revisions were not yet broad enough for a full validation label."
+    },
+    {
+      "window": "T+20",
+      "label": "validated",
+      "narrative_id": "AUR-NARR-001",
+      "expected_observable": "Analysts reduce forward revenue or gross merchandise volume estimates within 30 days.",
+      "future_source_ids": [
+        "AUR-SRC-009"
+      ],
+      "what_happened": "Synthetic replay: forward demand slowdown became the validated narrative as estimate cuts and follow-up commentary centered on merchant expansion and retention."
+    },
+    {
+      "window": "T+60",
+      "label": "pending",
+      "narrative_id": "AUR-NARR-001",
+      "expected_observable": "Future company commentary focuses on merchant retention, sales-cycle length, or attach rates.",
+      "future_source_ids": [],
+      "what_happened": "Synthetic replay: left pending to show that not every validation window should be force-labeled."
+    }
+  ]
+}

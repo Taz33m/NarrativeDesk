@@ -1,0 +1,414 @@
+{
+  "event": {
+    "event_id": "EVT-AURORA-2025-10-22",
+    "ticker": "AURORA",
+    "company_name": "Aurora Commerce Cloud",
+    "event_date": "2025-10-22",
+    "event_timestamp": "2025-10-22T10:00:00-04:00",
+    "event_type": "earnings/guidance",
+    "daily_return": -0.097,
+    "abnormal_return": -0.084,
+    "volume_ratio": 2.1,
+    "sector_etf_return": -0.006,
+    "peer_median_return": -0.013,
+    "event_summary": "Synthetic second fixture: a commerce cloud company sells off after guidance, with the replay designed to test multi-case timestamp filtering and provenance metadata.",
+    "case_id": "EVT-AURORA-2025-10-22",
+    "data_provenance_mode": "synthetic"
+  },
+  "market_snapshot": {
+    "event_bar": {
+      "symbol": "AURORA",
+      "open": 100.0,
+      "close": 90.3,
+      "volume": 18900000,
+      "average_volume": 9000000,
+      "timestamp": "2025-10-22T10:00:00-04:00"
+    },
+    "sector_bar": {
+      "symbol": "SYN-COMMERCE-SOFTWARE",
+      "open": 100.0,
+      "close": 99.4,
+      "as_of": "2025-10-22T10:00:00-04:00"
+    },
+    "peer_bars": [
+      {
+        "symbol": "SYN-COMMERCE-A",
+        "open": 100.0,
+        "close": 97.9,
+        "timestamp": "2025-10-22T10:00:00-04:00"
+      },
+      {
+        "symbol": "SYN-COMMERCE-B",
+        "open": 100.0,
+        "close": 98.7,
+        "timestamp": "2025-10-22T10:00:00-04:00"
+      },
+      {
+        "symbol": "SYN-COMMERCE-C",
+        "open": 100.0,
+        "close": 99.6,
+        "timestamp": "2025-10-22T10:00:00-04:00"
+      }
+    ]
+  },
+  "narratives": [
+    {
+      "narrative_id": "AUR-NARR-001",
+      "event_id": "EVT-AURORA-2025-10-22",
+      "ticker": "AURORA",
+      "timestamp_created": "2025-10-22T10:00:00-04:00",
+      "title": "Forward demand slowdown",
+      "narrative": "The selloff is primarily driven by concern that merchant demand and expansion revenue are slowing, not by a one-time implementation cost issue.",
+      "mechanism": "Lower expected merchant expansion would reduce forward revenue estimates and compress the valuation multiple for a growth-sensitive commerce software equity.",
+      "directional_implication": "bearish",
+      "time_horizon": "20 trading days",
+      "expected_observables": [
+        "Analysts reduce forward revenue or gross merchandise volume estimates within 30 days",
+        "The stock underperforms a peer basket over the next 20 trading days",
+        "Future company commentary focuses on merchant retention, sales-cycle length, or attach rates"
+      ],
+      "supporting_evidence": [
+        {
+          "source_id": "AUR-SRC-001",
+          "source_type": "earnings_release",
+          "publisher": "Aurora Commerce Cloud",
+          "published_at": "2025-10-22T07:05:00-04:00",
+          "claim": "The company lowered next-quarter merchant expansion guidance relative to prior management commentary.",
+          "support_strength": 0.83,
+          "evidence_quality": 0.88,
+          "independence": 0.92,
+          "incentive_conflict": 0.25,
+          "title": "Synthetic source",
+          "url": "https://example.com/synthetic",
+          "retrieved_at": "2025-10-22T10:00:00-04:00",
+          "content_hash": "sha256:aur-src-001",
+          "availability_status": "allowed",
+          "originality_score": 0.6,
+          "independence_cluster_id": "cluster-a",
+          "claim_extracted": "The company lowered next-quarter merchant expansion guidance relative to prior management commentary.",
+          "supported_narrative_ids": [
+            "AUR-NARR-001"
+          ],
+          "contradicted_narrative_ids": []
+        },
+        {
+          "source_id": "AUR-SRC-002",
+          "source_type": "earnings_transcript",
+          "publisher": "Aurora Commerce Cloud",
+          "published_at": "2025-10-22T09:20:00-04:00",
+          "claim": "Multiple analyst questions focused on merchant churn, sales-cycle length, and lower attach-rate commentary.",
+          "support_strength": 0.78,
+          "evidence_quality": 0.8,
+          "independence": 0.75,
+          "incentive_conflict": 0.2,
+          "title": "Synthetic source",
+          "url": "https://example.com/synthetic",
+          "retrieved_at": "2025-10-22T10:00:00-04:00",
+          "content_hash": "sha256:aur-src-002",
+          "availability_status": "allowed",
+          "originality_score": 0.6,
+          "independence_cluster_id": "cluster-a",
+          "claim_extracted": "Multiple analyst questions focused on merchant churn, sales-cycle length, and lower attach-rate commentary.",
+          "supported_narrative_ids": [
+            "AUR-NARR-001"
+          ],
+          "contradicted_narrative_ids": []
+        },
+        {
+          "source_id": "AUR-SRC-009",
+          "source_type": "analyst_revision",
+          "publisher": "Synthetic Broker Model",
+          "published_at": "2025-10-29T08:00:00-04:00",
+          "claim": "Future validation fixture: several analysts later reduced forward revenue and GMV estimates.",
+          "support_strength": 0.9,
+          "evidence_quality": 0.85,
+          "independence": 0.7,
+          "incentive_conflict": 0.35,
+          "title": "Synthetic source",
+          "url": "https://example.com/synthetic",
+          "retrieved_at": "2025-10-22T10:00:00-04:00",
+          "content_hash": "sha256:aur-src-009",
+          "availability_status": "allowed",
+          "originality_score": 0.6,
+          "independence_cluster_id": "cluster-a",
+          "claim_extracted": "Future validation fixture: several analysts later reduced forward revenue and GMV estimates.",
+          "supported_narrative_ids": [
+            "AUR-NARR-001"
+          ],
+          "contradicted_narrative_ids": []
+        }
+      ],
+      "contradicting_evidence": [
+        {
+          "source_id": "AUR-SRC-003",
+          "source_type": "earnings_release",
+          "publisher": "Aurora Commerce Cloud",
+          "published_at": "2025-10-22T07:05:00-04:00",
+          "claim": "Current-quarter revenue still exceeded consensus expectations.",
+          "support_strength": 0.47,
+          "evidence_quality": 0.82,
+          "independence": 0.9,
+          "incentive_conflict": 0.25,
+          "title": "Synthetic source",
+          "url": "https://example.com/synthetic",
+          "retrieved_at": "2025-10-22T10:00:00-04:00",
+          "content_hash": "sha256:aur-src-003",
+          "availability_status": "allowed",
+          "originality_score": 0.6,
+          "independence_cluster_id": "cluster-a",
+          "claim_extracted": "Current-quarter revenue still exceeded consensus expectations.",
+          "supported_narrative_ids": [],
+          "contradicted_narrative_ids": [
+            "AUR-NARR-001"
+          ]
+        }
+      ],
+      "scoring_inputs": {
+        "evidence_strength": 0.84,
+        "mechanism_specificity": 0.88,
+        "source_independence": 0.75,
+        "cross_sectional_fit": 0.76,
+        "contradiction_resistance": 0.62,
+        "timestamp_advantage": 0.82,
+        "forward_observable_quality": 0.9,
+        "crowding_risk": 0.31,
+        "unsupported_claim_penalty": 0.03
+      },
+      "validation_status": "pending"
+    },
+    {
+      "narrative_id": "AUR-NARR-002",
+      "event_id": "EVT-AURORA-2025-10-22",
+      "ticker": "AURORA",
+      "timestamp_created": "2025-10-22T10:00:00-04:00",
+      "title": "Margin compression",
+      "narrative": "The stock moved because investors focused on near-term gross margin pressure from implementation support and infrastructure costs.",
+      "mechanism": "Lower margins would reduce near-term earnings and free cash flow, pressuring valuation if investors view the cost increase as recurring.",
+      "directional_implication": "bearish",
+      "time_horizon": "5 trading days",
+      "expected_observables": [
+        "Near-term EPS estimates decline more than revenue estimates",
+        "Management emphasizes implementation efficiency or infrastructure cost control in follow-up commentary",
+        "Peers with similar margin pressure also trade down"
+      ],
+      "supporting_evidence": [
+        {
+          "source_id": "AUR-SRC-004",
+          "source_type": "financial_media",
+          "publisher": "Synthetic Market News",
+          "published_at": "2025-10-22T08:10:00-04:00",
+          "claim": "Early headlines framed the selloff around margin disappointment and rising implementation support costs.",
+          "support_strength": 0.58,
+          "evidence_quality": 0.45,
+          "independence": 0.38,
+          "incentive_conflict": 0.3,
+          "title": "Synthetic source",
+          "url": "https://example.com/synthetic",
+          "retrieved_at": "2025-10-22T10:00:00-04:00",
+          "content_hash": "sha256:aur-src-004",
+          "availability_status": "allowed",
+          "originality_score": 0.6,
+          "independence_cluster_id": "cluster-a",
+          "claim_extracted": "Early headlines framed the selloff around margin disappointment and rising implementation support costs.",
+          "supported_narrative_ids": [
+            "AUR-NARR-002"
+          ],
+          "contradicted_narrative_ids": []
+        }
+      ],
+      "contradicting_evidence": [
+        {
+          "source_id": "AUR-SRC-005",
+          "source_type": "earnings_release",
+          "publisher": "Aurora Commerce Cloud",
+          "published_at": "2025-10-22T07:05:00-04:00",
+          "claim": "Gross margin improved year over year despite higher implementation support costs.",
+          "support_strength": 0.74,
+          "evidence_quality": 0.86,
+          "independence": 0.91,
+          "incentive_conflict": 0.25,
+          "title": "Synthetic source",
+          "url": "https://example.com/synthetic",
+          "retrieved_at": "2025-10-22T10:00:00-04:00",
+          "content_hash": "sha256:aur-src-005",
+          "availability_status": "allowed",
+          "originality_score": 0.6,
+          "independence_cluster_id": "cluster-a",
+          "claim_extracted": "Gross margin improved year over year despite higher implementation support costs.",
+          "supported_narrative_ids": [],
+          "contradicted_narrative_ids": [
+            "AUR-NARR-002"
+          ]
+        }
+      ],
+      "scoring_inputs": {
+        "evidence_strength": 0.54,
+        "mechanism_specificity": 0.72,
+        "source_independence": 0.42,
+        "cross_sectional_fit": 0.39,
+        "contradiction_resistance": 0.35,
+        "timestamp_advantage": 0.76,
+        "forward_observable_quality": 0.63,
+        "crowding_risk": 0.58,
+        "unsupported_claim_penalty": 0.1
+      },
+      "validation_status": "pending"
+    },
+    {
+      "narrative_id": "AUR-NARR-003",
+      "event_id": "EVT-AURORA-2025-10-22",
+      "ticker": "AURORA",
+      "timestamp_created": "2025-10-22T10:00:00-04:00",
+      "title": "Sector-wide derating",
+      "narrative": "The move reflects a broader derating of commerce software equities rather than a company-specific issue.",
+      "mechanism": "Higher discount rates or weaker risk appetite would compress multiples across the group, causing peer-correlated price action.",
+      "directional_implication": "mixed",
+      "time_horizon": "5 trading days",
+      "expected_observables": [
+        "Peers and sector ETF experience comparable drawdowns",
+        "Company-specific estimate revisions are limited",
+        "Price action tracks macro or sector factors more than company disclosures"
+      ],
+      "supporting_evidence": [
+        {
+          "source_id": "AUR-SRC-006",
+          "source_type": "market_data",
+          "publisher": "Synthetic Price Feed",
+          "published_at": "2025-10-22T10:00:00-04:00",
+          "claim": "The commerce software peer basket was negative on the event morning.",
+          "support_strength": 0.34,
+          "evidence_quality": 0.85,
+          "independence": 0.9,
+          "incentive_conflict": 0.0,
+          "title": "Synthetic source",
+          "url": "https://example.com/synthetic",
+          "retrieved_at": "2025-10-22T10:00:00-04:00",
+          "content_hash": "sha256:aur-src-006",
+          "availability_status": "allowed",
+          "originality_score": 0.6,
+          "independence_cluster_id": "cluster-a",
+          "claim_extracted": "The commerce software peer basket was negative on the event morning.",
+          "supported_narrative_ids": [
+            "AUR-NARR-003"
+          ],
+          "contradicted_narrative_ids": []
+        }
+      ],
+      "contradicting_evidence": [
+        {
+          "source_id": "AUR-SRC-007",
+          "source_type": "market_data",
+          "publisher": "Synthetic Price Feed",
+          "published_at": "2025-10-22T10:00:00-04:00",
+          "claim": "Aurora underperformed its commerce software peer median by roughly ten percentage points during the event window.",
+          "support_strength": 0.82,
+          "evidence_quality": 0.88,
+          "independence": 0.9,
+          "incentive_conflict": 0.0,
+          "title": "Synthetic source",
+          "url": "https://example.com/synthetic",
+          "retrieved_at": "2025-10-22T10:00:00-04:00",
+          "content_hash": "sha256:aur-src-007",
+          "availability_status": "allowed",
+          "originality_score": 0.6,
+          "independence_cluster_id": "cluster-a",
+          "claim_extracted": "Aurora underperformed its commerce software peer median by roughly ten percentage points during the event window.",
+          "supported_narrative_ids": [],
+          "contradicted_narrative_ids": [
+            "AUR-NARR-003"
+          ]
+        }
+      ],
+      "scoring_inputs": {
+        "evidence_strength": 0.4,
+        "mechanism_specificity": 0.67,
+        "source_independence": 0.71,
+        "cross_sectional_fit": 0.18,
+        "contradiction_resistance": 0.28,
+        "timestamp_advantage": 0.86,
+        "forward_observable_quality": 0.55,
+        "crowding_risk": 0.26,
+        "unsupported_claim_penalty": 0.04
+      },
+      "validation_status": "pending"
+    },
+    {
+      "narrative_id": "AUR-NARR-004",
+      "event_id": "EVT-AURORA-2025-10-22",
+      "ticker": "AURORA",
+      "timestamp_created": "2025-10-22T10:00:00-04:00",
+      "title": "Overreaction to noisy guidance",
+      "narrative": "The market may be overreacting to conservative guidance that does not materially change long-term cash-flow power.",
+      "mechanism": "If the guidance reset is conservative and fundamentals stabilize, the initial selloff could reverse as investors reprice the event as temporary noise.",
+      "directional_implication": "bullish",
+      "time_horizon": "20 trading days",
+      "expected_observables": [
+        "Revenue estimates stabilize after the first wave of revisions",
+        "Management or channel data indicates demand is not deteriorating",
+        "The stock recovers relative to peers after headline pressure fades"
+      ],
+      "supporting_evidence": [
+        {
+          "source_id": "AUR-SRC-008",
+          "source_type": "earnings_release",
+          "publisher": "Aurora Commerce Cloud",
+          "published_at": "2025-10-22T07:05:00-04:00",
+          "claim": "Full-year free cash flow guidance was maintained despite lower near-term merchant expansion guidance.",
+          "support_strength": 0.63,
+          "evidence_quality": 0.84,
+          "independence": 0.91,
+          "incentive_conflict": 0.25,
+          "title": "Synthetic source",
+          "url": "https://example.com/synthetic",
+          "retrieved_at": "2025-10-22T10:00:00-04:00",
+          "content_hash": "sha256:aur-src-008",
+          "availability_status": "allowed",
+          "originality_score": 0.6,
+          "independence_cluster_id": "cluster-a",
+          "claim_extracted": "Full-year free cash flow guidance was maintained despite lower near-term merchant expansion guidance.",
+          "supported_narrative_ids": [
+            "AUR-NARR-004"
+          ],
+          "contradicted_narrative_ids": []
+        }
+      ],
+      "contradicting_evidence": [
+        {
+          "source_id": "AUR-SRC-002",
+          "source_type": "earnings_transcript",
+          "publisher": "Aurora Commerce Cloud",
+          "published_at": "2025-10-22T09:20:00-04:00",
+          "claim": "Multiple analyst questions focused on merchant churn, sales-cycle length, and lower attach-rate commentary.",
+          "support_strength": 0.72,
+          "evidence_quality": 0.8,
+          "independence": 0.75,
+          "incentive_conflict": 0.2,
+          "title": "Synthetic source",
+          "url": "https://example.com/synthetic",
+          "retrieved_at": "2025-10-22T10:00:00-04:00",
+          "content_hash": "sha256:aur-src-002",
+          "availability_status": "allowed",
+          "originality_score": 0.6,
+          "independence_cluster_id": "cluster-a",
+          "claim_extracted": "Multiple analyst questions focused on merchant churn, sales-cycle length, and lower attach-rate commentary.",
+          "supported_narrative_ids": [],
+          "contradicted_narrative_ids": [
+            "AUR-NARR-004"
+          ]
+        }
+      ],
+      "scoring_inputs": {
+        "evidence_strength": 0.52,
+        "mechanism_specificity": 0.7,
+        "source_independence": 0.66,
+        "cross_sectional_fit": 0.48,
+        "contradiction_resistance": 0.42,
+        "timestamp_advantage": 0.78,
+        "forward_observable_quality": 0.82,
+        "crowding_risk": 0.22,
+        "unsupported_claim_penalty": 0.06
+      },
+      "validation_status": "pending"
+    }
+  ]
+}

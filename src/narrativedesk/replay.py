@@ -31,7 +31,38 @@ class ReplayAudit:
 
 def is_source_allowed(evidence: EvidenceItem, replay_timestamp: datetime | str) -> bool:
     timestamp = parse_datetime(replay_timestamp)
+    if not _has_timezone_offset(timestamp):
+        raise ValueError("replay timestamp must include a timezone offset")
+    if not _has_timezone_offset(evidence.published_at):
+        raise ValueError(f"{evidence.source_id} published_at must include a timezone offset")
+    if evidence.availability_status == "blocked_future":
+        return False
     return evidence.published_at <= timestamp
+
+
+def _has_timezone_offset(value: datetime) -> bool:
+    return value.tzinfo is not None and value.utcoffset() is not None
+
+
+def blocked_evidence_audit_record(
+    narrative_id: str,
+    evidence: EvidenceItem,
+) -> dict[str, object]:
+    blocked_reason = (
+        "marked_blocked_future"
+        if evidence.availability_status == "blocked_future"
+        else "published_after_replay_timestamp"
+    )
+    return {
+        "source_id": evidence.source_id,
+        "narrative_id": narrative_id,
+        "published_at": evidence.published_at.isoformat(),
+        "source_type": evidence.source_type,
+        "relation": evidence.relation,
+        "availability_status": "blocked_future",
+        "replay_status": "blocked_future",
+        "blocked_reason": blocked_reason,
+    }
 
 
 def split_evidence_for_replay(
@@ -88,13 +119,7 @@ def filter_narratives_for_replay(
             removed[narrative.narrative_id] = [item.source_id for item in blocked]
             for evidence in blocked:
                 blocked_ids.add(evidence.source_id)
-                blocked_evidence.append(
-                    {
-                        "narrative_id": narrative.narrative_id,
-                        **evidence.to_dict(),
-                        "replay_status": "blocked_future_source",
-                    }
-                )
+                blocked_evidence.append(blocked_evidence_audit_record(narrative.narrative_id, evidence))
 
     audit = ReplayAudit(
         replay_timestamp=timestamp,

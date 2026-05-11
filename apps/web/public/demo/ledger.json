@@ -1,8 +1,26 @@
 {
+  "citation_qa": {
+    "allowed_source_count": 8,
+    "blocked_future_source_count": 1,
+    "citation_qa_pass": false,
+    "event_time_integrity_pass": true,
+    "low_quality_evidence_count": 1,
+    "missing_content_hash_count": 8,
+    "missing_publisher_count": 0,
+    "missing_url_count": 8,
+    "narrative_count": 4,
+    "narratives_with_support_count": 4,
+    "provenance_ready": false,
+    "replay_filter_pass": true,
+    "returned_blocked_source_count": 0,
+    "support_coverage_pass": true
+  },
   "event": {
     "abnormal_return": -0.102,
+    "case_id": "EVT-ORION-2025-08-07",
     "company_name": "Orion Streaming Holdings",
     "daily_return": -0.114,
+    "data_provenance_mode": "synthetic",
     "event_date": "2025-08-07",
     "event_id": "EVT-ORION-2025-08-07",
     "event_summary": "Synthetic demo event: a liquid streaming company sells off after earnings. The fixture is designed to exercise replay filtering, narrative ranking, and validation separation.",
@@ -18,16 +36,25 @@
       "confidence": null,
       "contradicting_evidence": [
         {
+          "availability_status": "allowed",
           "claim": "Current-quarter revenue still exceeded consensus expectations.",
+          "claim_extracted": "Current-quarter revenue still exceeded consensus expectations.",
+          "content_hash": "",
+          "contradicted_narrative_ids": [],
           "evidence_quality": 0.82,
           "incentive_conflict": 0.25,
           "independence": 0.9,
+          "independence_cluster_id": "",
+          "originality_score": 0.5,
           "published_at": "2025-08-07T07:05:00-04:00",
           "publisher": "Orion Streaming Holdings",
           "relation": "contradict",
+          "retrieved_at": null,
           "source_id": "SRC-003",
           "source_type": "earnings_release",
           "support_strength": 0.47,
+          "supported_narrative_ids": [],
+          "title": "",
           "url": ""
         }
       ],
@@ -41,7 +68,7 @@
       "mechanism": "Lower expected subscriber growth would reduce forward revenue estimates and compress the valuation multiple for a growth-sensitive equity.",
       "narrative": "The selloff is primarily driven by concern that future subscriber and revenue growth are slowing, not by a one-time margin issue.",
       "narrative_id": "NARR-001",
-      "overall_narrative_score": 0.783888888888889,
+      "overall_narrative_score": 0.7838888888888891,
       "rank": 1,
       "scores": {
         "contradiction_resistance": 0.062,
@@ -50,9 +77,9 @@
         "evidence_strength": 0.168,
         "forward_observable_quality": 0.09000000000000001,
         "mechanism_specificity": 0.132,
-        "overall_narrative_score": 0.783888888888889,
+        "overall_narrative_score": 0.7838888888888891,
         "penalty_score_normalized": 0.018888888888888893,
-        "positive_score_normalized": 0.8027777777777778,
+        "positive_score_normalized": 0.8027777777777779,
         "source_independence": 0.11249999999999999,
         "timestamp_advantage": 0.082,
         "unsupported_claim_penalty": 0.0015
@@ -70,29 +97,47 @@
       },
       "supporting_evidence": [
         {
+          "availability_status": "allowed",
           "claim": "The company lowered next-quarter net addition guidance relative to prior management commentary.",
+          "claim_extracted": "The company lowered next-quarter net addition guidance relative to prior management commentary.",
+          "content_hash": "",
+          "contradicted_narrative_ids": [],
           "evidence_quality": 0.88,
           "incentive_conflict": 0.25,
           "independence": 0.92,
+          "independence_cluster_id": "",
+          "originality_score": 0.5,
           "published_at": "2025-08-07T07:05:00-04:00",
           "publisher": "Orion Streaming Holdings",
           "relation": "support",
+          "retrieved_at": null,
           "source_id": "SRC-001",
           "source_type": "earnings_release",
           "support_strength": 0.83,
+          "supported_narrative_ids": [],
+          "title": "",
           "url": ""
         },
         {
+          "availability_status": "allowed",
           "claim": "Multiple analyst questions focused on churn, customer acquisition costs, and net additions.",
+          "claim_extracted": "Multiple analyst questions focused on churn, customer acquisition costs, and net additions.",
+          "content_hash": "",
+          "contradicted_narrative_ids": [],
           "evidence_quality": 0.8,
           "incentive_conflict": 0.2,
           "independence": 0.75,
+          "independence_cluster_id": "",
+          "originality_score": 0.5,
           "published_at": "2025-08-07T09:20:00-04:00",
           "publisher": "Orion Streaming Holdings",
           "relation": "support",
+          "retrieved_at": null,
           "source_id": "SRC-002",
           "source_type": "earnings_transcript",
           "support_strength": 0.78,
+          "supported_narrative_ids": [],
+          "title": "",
           "url": ""
         }
       ],
@@ -106,16 +151,25 @@
       "confidence": null,
       "contradicting_evidence": [
         {
+          "availability_status": "allowed",
           "claim": "Multiple analyst questions focused on churn, customer acquisition costs, and net additions.",
+          "claim_extracted": "Multiple analyst questions focused on churn, customer acquisition costs, and net additions.",
+          "content_hash": "",
+          "contradicted_narrative_ids": [],
           "evidence_quality": 0.8,
           "incentive_conflict": 0.2,
           "independence": 0.75,
+          "independence_cluster_id": "",
+          "originality_score": 0.5,
           "published_at": "2025-08-07T09:20:00-04:00",
           "publisher": "Orion Streaming Holdings",
           "relation": "contradict",
+          "retrieved_at": null,
           "source_id": "SRC-002",
           "source_type": "earnings_transcript",
           "support_strength": 0.72,
+          "supported_narrative_ids": [],
+          "title": "",
           "url": ""
         }
       ],
@@ -158,16 +212,25 @@
       },
       "supporting_evidence": [
         {
+          "availability_status": "allowed",
           "claim": "Full-year free cash flow guidance was maintained despite lower near-term net additions.",
+          "claim_extracted": "Full-year free cash flow guidance was maintained despite lower near-term net additions.",
+          "content_hash": "",
+          "contradicted_narrative_ids": [],
           "evidence_quality": 0.84,
           "incentive_conflict": 0.25,
           "independence": 0.91,
+          "independence_cluster_id": "",
+          "originality_score": 0.5,
           "published_at": "2025-08-07T07:05:00-04:00",
           "publisher": "Orion Streaming Holdings",
           "relation": "support",
+          "retrieved_at": null,
           "source_id": "SRC-008",
           "source_type": "earnings_release",
           "support_strength": 0.63,
+          "supported_narrative_ids": [],
+          "title": "",
           "url": ""
         }
       ],
@@ -181,16 +244,25 @@
       "confidence": null,
       "contradicting_evidence": [
         {
+          "availability_status": "allowed",
           "claim": "Orion underperformed its peer median by roughly ten percentage points during the event window.",
+          "claim_extracted": "Orion underperformed its peer median by roughly ten percentage points during the event window.",
+          "content_hash": "",
+          "contradicted_narrative_ids": [],
           "evidence_quality": 0.88,
           "incentive_conflict": 0.0,
           "independence": 0.9,
+          "independence_cluster_id": "",
+          "originality_score": 0.5,
           "published_at": "2025-08-07T10:00:00-04:00",
           "publisher": "Synthetic Price Feed",
           "relation": "contradict",
+          "retrieved_at": null,
           "source_id": "SRC-007",
           "source_type": "market_data",
           "support_strength": 0.82,
+          "supported_narrative_ids": [],
+          "title": "",
           "url": ""
         }
       ],
@@ -204,7 +276,7 @@
       "mechanism": "Higher discount rates or weaker risk appetite would compress multiples across the group, causing peer-correlated price action.",
       "narrative": "The move reflects a broader derating of streaming and internet media equities rather than a company-specific issue.",
       "narrative_id": "NARR-003",
-      "overall_narrative_score": 0.5100000000000001,
+      "overall_narrative_score": 0.51,
       "rank": 3,
       "scores": {
         "contradiction_resistance": 0.028000000000000004,
@@ -213,9 +285,9 @@
         "evidence_strength": 0.08000000000000002,
         "forward_observable_quality": 0.05500000000000001,
         "mechanism_specificity": 0.1005,
-        "overall_narrative_score": 0.5100000000000001,
+        "overall_narrative_score": 0.51,
         "penalty_score_normalized": 0.01666666666666667,
-        "positive_score_normalized": 0.5266666666666668,
+        "positive_score_normalized": 0.5266666666666667,
         "source_independence": 0.1065,
         "timestamp_advantage": 0.08600000000000001,
         "unsupported_claim_penalty": 0.002
@@ -233,16 +305,25 @@
       },
       "supporting_evidence": [
         {
+          "availability_status": "allowed",
           "claim": "The sector ETF was negative on the event morning.",
+          "claim_extracted": "The sector ETF was negative on the event morning.",
+          "content_hash": "",
+          "contradicted_narrative_ids": [],
           "evidence_quality": 0.85,
           "incentive_conflict": 0.0,
           "independence": 0.9,
+          "independence_cluster_id": "",
+          "originality_score": 0.5,
           "published_at": "2025-08-07T10:00:00-04:00",
           "publisher": "Synthetic Price Feed",
           "relation": "support",
+          "retrieved_at": null,
           "source_id": "SRC-006",
           "source_type": "market_data",
           "support_strength": 0.34,
+          "supported_narrative_ids": [],
+          "title": "",
           "url": ""
         }
       ],
@@ -256,16 +337,25 @@
       "confidence": null,
       "contradicting_evidence": [
         {
+          "availability_status": "allowed",
           "claim": "Gross margin improved year over year despite higher content spend.",
+          "claim_extracted": "Gross margin improved year over year despite higher content spend.",
+          "content_hash": "",
+          "contradicted_narrative_ids": [],
           "evidence_quality": 0.86,
           "incentive_conflict": 0.25,
           "independence": 0.91,
+          "independence_cluster_id": "",
+          "originality_score": 0.5,
           "published_at": "2025-08-07T07:05:00-04:00",
           "publisher": "Orion Streaming Holdings",
           "relation": "contradict",
+          "retrieved_at": null,
           "source_id": "SRC-005",
           "source_type": "earnings_release",
           "support_strength": 0.74,
+          "supported_narrative_ids": [],
+          "title": "",
           "url": ""
         }
       ],
@@ -308,16 +398,25 @@
       },
       "supporting_evidence": [
         {
+          "availability_status": "allowed",
           "claim": "Early headlines framed the selloff around margin disappointment and rising content spend.",
+          "claim_extracted": "Early headlines framed the selloff around margin disappointment and rising content spend.",
+          "content_hash": "",
+          "contradicted_narrative_ids": [],
           "evidence_quality": 0.45,
           "incentive_conflict": 0.3,
           "independence": 0.38,
+          "independence_cluster_id": "",
+          "originality_score": 0.5,
           "published_at": "2025-08-07T08:10:00-04:00",
           "publisher": "Synthetic Market News",
           "relation": "support",
+          "retrieved_at": null,
           "source_id": "SRC-004",
           "source_type": "financial_media",
           "support_strength": 0.58,
+          "supported_narrative_ids": [],
+          "title": "",
           "url": ""
         }
       ],
@@ -341,19 +440,14 @@
     ],
     "blocked_evidence": [
       {
-        "claim": "Future validation fixture: several analysts later reduced forward revenue estimates.",
-        "evidence_quality": 0.85,
-        "incentive_conflict": 0.35,
-        "independence": 0.7,
+        "availability_status": "blocked_future",
+        "blocked_reason": "published_after_replay_timestamp",
         "narrative_id": "NARR-001",
         "published_at": "2025-08-13T08:00:00-04:00",
-        "publisher": "Synthetic Broker Model",
         "relation": "support",
-        "replay_status": "blocked_future_source",
+        "replay_status": "blocked_future",
         "source_id": "SRC-009",
-        "source_type": "analyst_revision",
-        "support_strength": 0.9,
-        "url": ""
+        "source_type": "analyst_revision"
       }
     ],
     "blocked_source_ids": [
@@ -365,5 +459,380 @@
       ]
     },
     "replay_timestamp": "2025-08-07T10:00:00-04:00"
+  },
+  "source_clustering": {
+    "allowed_source_count": 8,
+    "average_cluster_size": 1.0,
+    "average_derived_originality_score": 1.0,
+    "blocked_future_source_count": 1,
+    "blocked_future_source_ids": [
+      "SRC-009"
+    ],
+    "cluster_count": 8,
+    "clusters": [
+      {
+        "average_fixture_originality_score": 0.5,
+        "cluster_basis": "claim_text_fingerprint",
+        "cluster_id": "claim-0f01554a436c",
+        "derived_originality_score": 1.0,
+        "narrative_ids": [
+          "NARR-001"
+        ],
+        "publishers": [
+          "Orion Streaming Holdings"
+        ],
+        "relation_counts": {
+          "contradict": 1,
+          "support": 0
+        },
+        "representative_claim": "Current-quarter revenue still exceeded consensus expectations.",
+        "source_count": 1,
+        "source_ids": [
+          "SRC-003"
+        ],
+        "source_types": [
+          "earnings_release"
+        ]
+      },
+      {
+        "average_fixture_originality_score": 0.5,
+        "cluster_basis": "claim_text_fingerprint",
+        "cluster_id": "claim-182dc277689d",
+        "derived_originality_score": 1.0,
+        "narrative_ids": [
+          "NARR-001",
+          "NARR-004"
+        ],
+        "publishers": [
+          "Orion Streaming Holdings"
+        ],
+        "relation_counts": {
+          "contradict": 1,
+          "support": 1
+        },
+        "representative_claim": "Multiple analyst questions focused on churn, customer acquisition costs, and net additions.",
+        "source_count": 1,
+        "source_ids": [
+          "SRC-002"
+        ],
+        "source_types": [
+          "earnings_transcript"
+        ]
+      },
+      {
+        "average_fixture_originality_score": 0.5,
+        "cluster_basis": "claim_text_fingerprint",
+        "cluster_id": "claim-280d3ca6e07b",
+        "derived_originality_score": 1.0,
+        "narrative_ids": [
+          "NARR-002"
+        ],
+        "publishers": [
+          "Orion Streaming Holdings"
+        ],
+        "relation_counts": {
+          "contradict": 1,
+          "support": 0
+        },
+        "representative_claim": "Gross margin improved year over year despite higher content spend.",
+        "source_count": 1,
+        "source_ids": [
+          "SRC-005"
+        ],
+        "source_types": [
+          "earnings_release"
+        ]
+      },
+      {
+        "average_fixture_originality_score": 0.5,
+        "cluster_basis": "claim_text_fingerprint",
+        "cluster_id": "claim-38006d17fd5a",
+        "derived_originality_score": 1.0,
+        "narrative_ids": [
+          "NARR-004"
+        ],
+        "publishers": [
+          "Orion Streaming Holdings"
+        ],
+        "relation_counts": {
+          "contradict": 0,
+          "support": 1
+        },
+        "representative_claim": "Full-year free cash flow guidance was maintained despite lower near-term net additions.",
+        "source_count": 1,
+        "source_ids": [
+          "SRC-008"
+        ],
+        "source_types": [
+          "earnings_release"
+        ]
+      },
+      {
+        "average_fixture_originality_score": 0.5,
+        "cluster_basis": "claim_text_fingerprint",
+        "cluster_id": "claim-580edf61be2d",
+        "derived_originality_score": 1.0,
+        "narrative_ids": [
+          "NARR-001"
+        ],
+        "publishers": [
+          "Orion Streaming Holdings"
+        ],
+        "relation_counts": {
+          "contradict": 0,
+          "support": 1
+        },
+        "representative_claim": "The company lowered next-quarter net addition guidance relative to prior management commentary.",
+        "source_count": 1,
+        "source_ids": [
+          "SRC-001"
+        ],
+        "source_types": [
+          "earnings_release"
+        ]
+      },
+      {
+        "average_fixture_originality_score": 0.5,
+        "cluster_basis": "claim_text_fingerprint",
+        "cluster_id": "claim-6bdb98326c41",
+        "derived_originality_score": 1.0,
+        "narrative_ids": [
+          "NARR-003"
+        ],
+        "publishers": [
+          "Synthetic Price Feed"
+        ],
+        "relation_counts": {
+          "contradict": 1,
+          "support": 0
+        },
+        "representative_claim": "Orion underperformed its peer median by roughly ten percentage points during the event window.",
+        "source_count": 1,
+        "source_ids": [
+          "SRC-007"
+        ],
+        "source_types": [
+          "market_data"
+        ]
+      },
+      {
+        "average_fixture_originality_score": 0.5,
+        "cluster_basis": "claim_text_fingerprint",
+        "cluster_id": "claim-772595a6ed95",
+        "derived_originality_score": 1.0,
+        "narrative_ids": [
+          "NARR-003"
+        ],
+        "publishers": [
+          "Synthetic Price Feed"
+        ],
+        "relation_counts": {
+          "contradict": 0,
+          "support": 1
+        },
+        "representative_claim": "The sector ETF was negative on the event morning.",
+        "source_count": 1,
+        "source_ids": [
+          "SRC-006"
+        ],
+        "source_types": [
+          "market_data"
+        ]
+      },
+      {
+        "average_fixture_originality_score": 0.5,
+        "cluster_basis": "claim_text_fingerprint",
+        "cluster_id": "claim-8a13cc3153f0",
+        "derived_originality_score": 1.0,
+        "narrative_ids": [
+          "NARR-002"
+        ],
+        "publishers": [
+          "Synthetic Market News"
+        ],
+        "relation_counts": {
+          "contradict": 0,
+          "support": 1
+        },
+        "representative_claim": "Early headlines framed the selloff around margin disappointment and rising content spend.",
+        "source_count": 1,
+        "source_ids": [
+          "SRC-004"
+        ],
+        "source_types": [
+          "financial_media"
+        ]
+      }
+    ],
+    "duplicate_cluster_count": 0
+  },
+  "source_reliability": {
+    "by_publisher": [
+      {
+        "allowed_source_count": 5,
+        "average_evidence_quality": 0.84,
+        "average_independence": 0.878,
+        "average_originality_score": 0.5,
+        "blocked_future_count": 0,
+        "blocked_future_source_ids": [],
+        "group": "publisher",
+        "key": "Orion Streaming Holdings",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "SRC-001",
+          "SRC-002",
+          "SRC-003",
+          "SRC-005",
+          "SRC-008"
+        ]
+      },
+      {
+        "allowed_source_count": 1,
+        "average_evidence_quality": 0.45,
+        "average_independence": 0.38,
+        "average_originality_score": 0.5,
+        "blocked_future_count": 0,
+        "blocked_future_source_ids": [],
+        "group": "publisher",
+        "key": "Synthetic Market News",
+        "low_quality_source_count": 1,
+        "source_ids": [
+          "SRC-004"
+        ]
+      },
+      {
+        "allowed_source_count": 2,
+        "average_evidence_quality": 0.865,
+        "average_independence": 0.9,
+        "average_originality_score": 0.5,
+        "blocked_future_count": 0,
+        "blocked_future_source_ids": [],
+        "group": "publisher",
+        "key": "Synthetic Price Feed",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "SRC-006",
+          "SRC-007"
+        ]
+      },
+      {
+        "allowed_source_count": 0,
+        "average_evidence_quality": null,
+        "average_independence": null,
+        "average_originality_score": null,
+        "blocked_future_count": 1,
+        "blocked_future_source_ids": [
+          "SRC-009"
+        ],
+        "group": "publisher",
+        "key": "unknown",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "SRC-009"
+        ]
+      }
+    ],
+    "by_source_type": [
+      {
+        "allowed_source_count": 0,
+        "average_evidence_quality": null,
+        "average_independence": null,
+        "average_originality_score": null,
+        "blocked_future_count": 1,
+        "blocked_future_source_ids": [
+          "SRC-009"
+        ],
+        "group": "source_type",
+        "key": "analyst_revision",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "SRC-009"
+        ]
+      },
+      {
+        "allowed_source_count": 4,
+        "average_evidence_quality": 0.85,
+        "average_independence": 0.91,
+        "average_originality_score": 0.5,
+        "blocked_future_count": 0,
+        "blocked_future_source_ids": [],
+        "group": "source_type",
+        "key": "earnings_release",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "SRC-001",
+          "SRC-003",
+          "SRC-005",
+          "SRC-008"
+        ]
+      },
+      {
+        "allowed_source_count": 1,
+        "average_evidence_quality": 0.8,
+        "average_independence": 0.75,
+        "average_originality_score": 0.5,
+        "blocked_future_count": 0,
+        "blocked_future_source_ids": [],
+        "group": "source_type",
+        "key": "earnings_transcript",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "SRC-002"
+        ]
+      },
+      {
+        "allowed_source_count": 1,
+        "average_evidence_quality": 0.45,
+        "average_independence": 0.38,
+        "average_originality_score": 0.5,
+        "blocked_future_count": 0,
+        "blocked_future_source_ids": [],
+        "group": "source_type",
+        "key": "financial_media",
+        "low_quality_source_count": 1,
+        "source_ids": [
+          "SRC-004"
+        ]
+      },
+      {
+        "allowed_source_count": 2,
+        "average_evidence_quality": 0.865,
+        "average_independence": 0.9,
+        "average_originality_score": 0.5,
+        "blocked_future_count": 0,
+        "blocked_future_source_ids": [],
+        "group": "source_type",
+        "key": "market_data",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "SRC-006",
+          "SRC-007"
+        ]
+      }
+    ],
+    "overall": {
+      "allowed_source_count": 8,
+      "average_evidence_quality": 0.7975,
+      "average_independence": 0.8213,
+      "average_originality_score": 0.5,
+      "blocked_future_count": 1,
+      "blocked_future_source_ids": [
+        "SRC-009"
+      ],
+      "group": "overall",
+      "key": "all_sources",
+      "low_quality_source_count": 1,
+      "source_ids": [
+        "SRC-001",
+        "SRC-002",
+        "SRC-003",
+        "SRC-004",
+        "SRC-005",
+        "SRC-006",
+        "SRC-007",
+        "SRC-008",
+        "SRC-009"
+      ]
+    }
   }
 }

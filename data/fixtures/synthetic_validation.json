@@ -1,5 +1,9 @@
 {
   "event_id": "EVT-ORION-2025-08-07",
+  "future_source_count": 1,
+  "future_source_ids": [
+    "SRC-009"
+  ],
   "status": "synthetic_future_fixture",
   "note": "Future validation is stored separately from event-time replay evidence and must not be visible to generation or ranking steps.",
   "rows": [
@@ -8,6 +12,7 @@
       "label": "partial",
       "narrative_id": "NARR-001",
       "expected_observable": "The stock underperforms a peer basket after the event.",
+      "future_source_ids": [],
       "what_happened": "Synthetic replay: ORION continued to underperform the peer basket, but estimate revisions were not yet broad enough for a full validation label."
     },
     {
@@ -15,6 +20,9 @@
       "label": "validated",
       "narrative_id": "NARR-001",
       "expected_observable": "Analysts reduce forward revenue or subscriber estimates within 30 days.",
+      "future_source_ids": [
+        "SRC-009"
+      ],
       "what_happened": "Synthetic replay: forward demand slowdown became the validated narrative as estimate cuts and follow-up commentary centered on net additions and churn."
     },
     {
@@ -22,6 +30,7 @@
       "label": "pending",
       "narrative_id": "NARR-001",
       "expected_observable": "Future company commentary focuses on acquisition efficiency or churn.",
+      "future_source_ids": [],
       "what_happened": "Synthetic replay: left pending to show that not every validation window should be force-labeled."
     }
   ]

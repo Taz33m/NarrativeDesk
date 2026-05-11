@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://narrativedesk.local/schemas/validation_fixture.schema.json",
+  "title": "NarrativeDesk Validation Fixture",
+  "type": "object",
+  "required": ["event_id", "rows"],
+  "not": {
+    "anyOf": [
+      { "required": ["validation"] },
+      { "required": ["sources"] },
+      { "required": ["narratives"] }
+    ]
+  },
+  "properties": {
+    "event_id": { "type": "string" },
+    "status": { "type": "string" },
+    "note": { "type": "string" },
+    "future_source_ids": { "$ref": "#/$defs/string_array" },
+    "future_source_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "rows": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/validation_row" }
+    }
+  },
+  "$defs": {
+    "string_array": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "validation_row": {
+      "type": "object",
+      "required": [
+        "window",
+        "label",
+        "narrative_id",
+        "expected_observable",
+        "what_happened"
+      ],
+      "not": {
+        "anyOf": [
+          { "required": ["source_text"] },
+          { "required": ["document_text"] },
+          { "required": ["raw_text"] },
+          { "required": ["content_hash"] }
+        ]
+      },
+      "properties": {
+        "window": {
+          "type": "string",
+          "enum": ["T+1", "T+5", "T+20", "T+60"]
+        },
+        "label": {
+          "type": "string",
+          "enum": ["pending", "partial", "validated", "invalidated", "inconclusive"]
+        },
+        "narrative_id": { "type": "string" },
+        "expected_observable": { "type": "string" },
+        "future_source_ids": { "$ref": "#/$defs/string_array" },
+        "what_happened": { "type": "string" }
+      }
+    }
+  }
+}
