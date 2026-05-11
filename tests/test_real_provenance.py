@@ -630,6 +630,16 @@ class RealProvenanceTests(unittest.TestCase):
                 )
             )
             bundle_dir = root / "bundle"
+            env_file = root / ".env.local"
+            env_file.write_text(
+                "\n".join(
+                    [
+                        "FINNHUB_API_KEY=file-secret-token",
+                        "SEC_USER_AGENT=AppleAnalyst (contact@example.com)",
+                    ]
+                )
+                + "\n"
+            )
 
             status_before = subprocess.run(
                 [
@@ -688,9 +698,35 @@ class RealProvenanceTests(unittest.TestCase):
                 text=True,
                 check=False,
             )
+            preflight_after = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-case-preflight",
+                    "--ticker",
+                    "EXMPL",
+                    "--event-date",
+                    "2025-01-02",
+                    "--out-root",
+                    str(root),
+                    "--env-file",
+                    str(env_file),
+                    "--narratives",
+                    str(narratives_path),
+                    "--bundle-dir",
+                    str(bundle_dir),
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
             status_before_response = json.loads(status_before.stdout)
             response = json.loads(result.stdout)
             status_after_response = json.loads(status_after.stdout)
+            preflight_after_response = json.loads(preflight_after.stdout)
             verification = json.loads((bundle_dir / "bundle_verify.json").read_text())
             source_pack = json.loads((bundle_dir / "source_pack.json").read_text())
             report_exists = (bundle_dir / "report.md").exists()
@@ -705,6 +741,10 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(status_after.returncode, 0, status_after.stderr + status_after.stdout)
         self.assertEqual(status_after_response["status"], "bundle_verified")
         self.assertTrue(status_after_response["bundle"]["ok"])
+        self.assertEqual(preflight_after.returncode, 0, preflight_after.stderr + preflight_after.stdout)
+        self.assertEqual(preflight_after_response["status"], "bundle_verified")
+        self.assertNotIn("file-secret-token", preflight_after.stdout)
+        self.assertNotIn("contact@example.com", preflight_after.stdout)
         self.assertTrue(verification["ok"])
         self.assertEqual(source_pack["narratives"][0]["narrative_id"], "NARR-REAL-001")
         self.assertTrue(report_exists)
@@ -958,6 +998,44 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertIn("SRC-FUTURE", worksheet)
         self.assertIn("pipe \\| character", worksheet)
         self.assertIn("No winning narrative has been asserted", worksheet)
+
+    def test_cli_real_case_preflight_reports_missing_env_without_values(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-case-preflight",
+                    "--ticker",
+                    "AAPL",
+                    "--event-date",
+                    "2024-05-02",
+                    "--providers",
+                    "finnhub,sec",
+                    "--out-root",
+                    str(root),
+                ],
+                cwd=ROOT,
+                env={
+                    "PYTHONPATH": str(ROOT / "src"),
+                    "PYTHONDONTWRITEBYTECODE": "1",
+                    "FINNHUB_API_KEY": "secret-token",
+                },
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            response = json.loads(result.stdout)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertFalse(response["ok"])
+        self.assertEqual(response["status"], "missing_env")
+        self.assertEqual(response["env"]["present_env"], ["FINNHUB_API_KEY"])
+        self.assertEqual(response["env"]["missing_env"], ["SEC_USER_AGENT"])
+        self.assertIn("aapl-2024-05-02-rehearsal", response["paths"]["draft_dir"])
+        self.assertNotIn("secret-token", result.stdout)
 
     def test_cli_real_data_env_check_reports_names_without_values(self):
         env = {

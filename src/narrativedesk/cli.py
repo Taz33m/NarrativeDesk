@@ -207,6 +207,42 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional dotenv-style file with provider credentials. Environment variables override file values.",
     )
 
+    real_preflight = sub.add_parser(
+        "real-case-preflight",
+        help="Check live-provider env names and scratch real-case paths without fetching data.",
+    )
+    real_preflight.add_argument("--ticker", required=True, help="Ticker symbol for the rehearsal.")
+    real_preflight.add_argument("--event-date", required=True, help="Event date, YYYY-MM-DD.")
+    real_preflight.add_argument(
+        "--providers",
+        default="finnhub,sec",
+        help="Comma-separated provider list: finnhub,sec,newsapi.",
+    )
+    real_preflight.add_argument("--out-root", default=".codex-work", help="Scratch root for default output paths.")
+    real_preflight.add_argument("--fetch-dir", help="Expected frozen fetch directory.")
+    real_preflight.add_argument("--draft-dir", help="Expected real-case draft directory.")
+    real_preflight.add_argument("--bundle-dir", help="Expected replay bundle directory.")
+    real_preflight.add_argument("--narratives", help="Optional curated narratives JSON for status validation.")
+    real_preflight.add_argument(
+        "--finnhub-token-env",
+        default="FINNHUB_API_KEY",
+        help="Environment variable containing the Finnhub API token.",
+    )
+    real_preflight.add_argument(
+        "--sec-user-agent-env",
+        default="SEC_USER_AGENT",
+        help="Environment variable containing the SEC EDGAR User-Agent header.",
+    )
+    real_preflight.add_argument(
+        "--news-api-key-env",
+        default="NEWS_API_KEY",
+        help="Environment variable containing the NewsAPI token.",
+    )
+    real_preflight.add_argument(
+        "--env-file",
+        help="Optional dotenv-style file with provider credentials. Environment variables override file values.",
+    )
+
     real_normalize = sub.add_parser(
         "real-data-normalize",
         help="Normalize a frozen live-fetch directory into source candidates.",
@@ -673,16 +709,13 @@ def run_real_data_env_check(args: argparse.Namespace) -> int:
     except OSError as exc:
         print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
         return 1
-    required_env: list[str] = []
-    providers = [provider.lower() for provider in _split_csv_arg(args.providers)]
-    if "finnhub" in providers:
-        required_env.append(args.finnhub_token_env)
-    if "sec" in providers:
-        required_env.append(args.sec_user_agent_env)
-    if "newsapi" in providers:
-        required_env.append(args.news_api_key_env)
-
-    deduped_required_env = list(dict.fromkeys(required_env))
+    providers = _provider_list(args.providers)
+    deduped_required_env = _provider_env_names(
+        providers,
+        finnhub_token_env=args.finnhub_token_env,
+        sec_user_agent_env=args.sec_user_agent_env,
+        news_api_key_env=args.news_api_key_env,
+    )
     missing_env = [name for name in deduped_required_env if not _env_value(name, env_file_values)]
     present_env = [name for name in deduped_required_env if _env_value(name, env_file_values)]
     response = {
@@ -695,6 +728,185 @@ def run_real_data_env_check(args: argparse.Namespace) -> int:
     }
     print(json.dumps(response, indent=2, sort_keys=True))
     return 0 if response["ok"] else 1
+
+
+def run_real_case_preflight(args: argparse.Namespace) -> int:
+    try:
+        env_file_values = _load_env_file(args.env_file) if args.env_file else {}
+    except OSError as exc:
+        print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
+        return 1
+    response = _real_case_preflight(
+        ticker=args.ticker,
+        event_date=args.event_date,
+        providers=args.providers,
+        out_root=Path(args.out_root),
+        fetch_dir=Path(args.fetch_dir) if args.fetch_dir else None,
+        draft_dir=Path(args.draft_dir) if args.draft_dir else None,
+        bundle_dir=Path(args.bundle_dir) if args.bundle_dir else None,
+        narratives_path=Path(args.narratives) if args.narratives else None,
+        env_file=args.env_file,
+        env_file_values=env_file_values,
+        finnhub_token_env=args.finnhub_token_env,
+        sec_user_agent_env=args.sec_user_agent_env,
+        news_api_key_env=args.news_api_key_env,
+    )
+    print(json.dumps(response, indent=2, sort_keys=True))
+    return 0 if response["ok"] else 1
+
+
+def _provider_list(providers: str | None) -> list[str]:
+    return [provider.lower() for provider in _split_csv_arg(providers)]
+
+
+def _provider_env_names(
+    providers: list[str],
+    *,
+    finnhub_token_env: str,
+    sec_user_agent_env: str,
+    news_api_key_env: str,
+) -> list[str]:
+    required_env: list[str] = []
+    if "finnhub" in providers:
+        required_env.append(finnhub_token_env)
+    if "sec" in providers:
+        required_env.append(sec_user_agent_env)
+    if "newsapi" in providers:
+        required_env.append(news_api_key_env)
+    return list(dict.fromkeys(required_env))
+
+
+def _default_real_case_paths(
+    *,
+    ticker: str,
+    event_date: str,
+    out_root: Path,
+) -> tuple[Path, Path, Path]:
+    slug = _safe_path_slug(f"{ticker.lower()}-{event_date}")
+    return (
+        out_root / "live-fetches" / slug,
+        out_root / "real-cases" / f"{slug}-rehearsal",
+        out_root / "real-cases" / f"{slug}-bundle",
+    )
+
+
+def _safe_path_slug(value: str) -> str:
+    import re
+
+    cleaned = re.sub(r"[^A-Za-z0-9._-]+", "_", value).strip("._")
+    return cleaned or "artifact"
+
+
+def _real_case_preflight(
+    *,
+    ticker: str,
+    event_date: str,
+    providers: str,
+    out_root: Path,
+    fetch_dir: Path | None,
+    draft_dir: Path | None,
+    bundle_dir: Path | None,
+    narratives_path: Path | None,
+    env_file: str | None,
+    env_file_values: dict[str, str],
+    finnhub_token_env: str,
+    sec_user_agent_env: str,
+    news_api_key_env: str,
+) -> dict[str, Any]:
+    provider_names = _provider_list(providers)
+    required_env = _provider_env_names(
+        provider_names,
+        finnhub_token_env=finnhub_token_env,
+        sec_user_agent_env=sec_user_agent_env,
+        news_api_key_env=news_api_key_env,
+    )
+    present_env = [name for name in required_env if _env_value(name, env_file_values)]
+    missing_env = [name for name in required_env if not _env_value(name, env_file_values)]
+    default_fetch, default_draft, default_bundle = _default_real_case_paths(
+        ticker=ticker,
+        event_date=event_date,
+        out_root=out_root,
+    )
+    fetch_path = fetch_dir or default_fetch
+    draft_path = draft_dir or default_draft
+    bundle_path = bundle_dir or default_bundle
+    paths = {
+        "fetch_dir": str(fetch_path),
+        "fetch_manifest": str(fetch_path / "fetch_manifest.json"),
+        "normalized_candidates": str(fetch_path / "normalized" / "source_candidates.json"),
+        "draft_dir": str(draft_path),
+        "real_case_config": str(draft_path / "real_case_config.json"),
+        "curation_template": str(draft_path / "curated_narratives.template.json"),
+        "bundle_dir": str(bundle_path),
+        "bundle_manifest": str(bundle_path / "manifest.json"),
+        "bundle_verify": str(bundle_path / "bundle_verify.json"),
+    }
+    artifacts = {name: Path(path).exists() for name, path in paths.items()}
+    response: dict[str, Any] = {
+        "ok": False,
+        "ticker": ticker.upper(),
+        "event_date": event_date,
+        "providers": provider_names,
+        "env": {
+            "env_file": env_file,
+            "required_env": required_env,
+            "present_env": present_env,
+            "missing_env": missing_env,
+        },
+        "paths": paths,
+        "artifacts": artifacts,
+    }
+
+    if missing_env:
+        response.update(
+            {
+                "status": "missing_env",
+                "next_action": f"Populate {', '.join(missing_env)} locally, then rerun real-case-rehearse.",
+            }
+        )
+        return response
+    if not artifacts["fetch_manifest"]:
+        response.update(
+            {
+                "ok": True,
+                "status": "ready_to_fetch",
+                "next_action": "Run real-case-rehearse to fetch, normalize, draft, and write curation artifacts.",
+            }
+        )
+        return response
+    if not artifacts["normalized_candidates"]:
+        response.update(
+            {
+                "ok": True,
+                "status": "ready_to_normalize",
+                "next_action": "Run real-data-normalize, then real-case-draft.",
+            }
+        )
+        return response
+    if not artifacts["real_case_config"]:
+        response.update(
+            {
+                "ok": True,
+                "status": "ready_to_draft",
+                "next_action": "Run real-case-draft against the normalized source candidates.",
+            }
+        )
+        return response
+
+    status = _real_case_status(
+        draft_path,
+        narratives_path=narratives_path,
+        bundle_dir=bundle_path if bundle_dir is not None or artifacts["bundle_dir"] else None,
+    )
+    response.update(
+        {
+            "ok": bool(status.get("ok")),
+            "status": status.get("status"),
+            "case_status": status,
+            "next_action": status.get("next_action"),
+        }
+    )
+    return response
 
 
 def _env_value(name: str, env_file_values: dict[str, str]) -> str | None:
@@ -1265,6 +1477,8 @@ def main() -> int:
         return run_real_data_fetch(args)
     if args.command == "real-data-env-check":
         return run_real_data_env_check(args)
+    if args.command == "real-case-preflight":
+        return run_real_case_preflight(args)
     if args.command == "real-data-normalize":
         return run_real_data_normalize(args)
     if args.command == "real-case-draft":

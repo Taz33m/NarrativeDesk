@@ -150,6 +150,11 @@ To rehearse live-provider ingestion without committing real claims, fetch raw pr
 
 ```bash
 PYTHONPATH=src python3 -m narrativedesk.cli real-data-env-check --providers finnhub,sec --env-file .env.local
+PYTHONPATH=src python3 -m narrativedesk.cli real-case-preflight \
+  --ticker AAPL --event-date 2024-05-02 \
+  --providers finnhub,sec --env-file .env.local \
+  --fetch-dir .codex-work/live-fetches/aapl-2024-q2 \
+  --draft-dir .codex-work/real-cases/aapl-2024-q2-rehearsal
 PYTHONPATH=src python3 -m narrativedesk.cli real-case-rehearse \
   --ticker AAPL --company-name "Apple Inc." \
   --event-type earnings --event-date 2024-05-02 \
