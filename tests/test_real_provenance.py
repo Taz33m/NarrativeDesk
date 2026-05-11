@@ -1235,6 +1235,12 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(status_after.returncode, 0, status_after.stderr + status_after.stdout)
         self.assertEqual(status_after_response["status"], "bundle_verified")
         self.assertTrue(status_after_response["bundle"]["ok"])
+        self.assertIn("quality", status_after_response)
+        self.assertFalse(status_after_response["quality"]["gates"]["quality"]["ok"])
+        self.assertIn(
+            "narrative_count",
+            status_after_response["quality"]["gates"]["quality"]["failed_checks"],
+        )
         self.assertEqual(preflight_after.returncode, 0, preflight_after.stderr + preflight_after.stdout)
         self.assertEqual(preflight_after_response["status"], "bundle_verified")
         self.assertNotIn("file-secret-token", preflight_after.stdout)

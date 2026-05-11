@@ -1523,6 +1523,7 @@ def _real_case_status(
             )
             return response
         verification = verify_replay_bundle(bundle_dir)
+        quality = _real_case_status_bundle_quality(bundle_dir, verification)
         response["bundle"] = {
             "bundle_dir": str(bundle_dir),
             "exists": True,
@@ -1530,12 +1531,13 @@ def _real_case_status(
             "artifact_count": verification.get("artifact_count"),
             "errors": verification.get("errors", []),
         }
+        response["quality"] = quality
         if verification.get("ok"):
             response.update(
                 {
                     "ok": True,
                     "status": "bundle_verified",
-                    "next_action": "Review the bundle report and decide whether this private case is demo-worthy.",
+                    "next_action": _real_case_status_bundle_next_action(quality),
                 }
             )
         else:
@@ -1547,6 +1549,89 @@ def _real_case_status(
                 }
             )
     return response
+
+
+def _real_case_status_bundle_quality(
+    bundle_dir: Path,
+    verification: dict[str, Any],
+) -> dict[str, Any]:
+    try:
+        payload = load_source_pack(bundle_dir / "source_pack.json")
+        validation_fixture = None
+        validation_path = bundle_dir / "validation_fixture.json"
+        if validation_path.exists():
+            validation_fixture = json.loads(validation_path.read_text())
+        gates = {
+            "quality": assess_real_case_quality(
+                payload,
+                bundle_verification=verification,
+                validation_fixture=validation_fixture,
+            ),
+            "demo": assess_real_case_quality(
+                payload,
+                require_demo_ready=True,
+                bundle_verification=verification,
+                validation_fixture=validation_fixture,
+            ),
+            "public_demo": assess_real_case_quality(
+                payload,
+                require_public_ready=True,
+                bundle_verification=verification,
+                validation_fixture=validation_fixture,
+            ),
+        }
+    except (OSError, json.JSONDecodeError) as exc:
+        return {
+            "ok": False,
+            "errors": [str(exc)],
+            "next_action": "Repair or rebuild the bundle before assessing quality gates.",
+        }
+
+    return {
+        "ok": bool(gates["quality"]["ok"]),
+        "source_pack": str(bundle_dir / "source_pack.json"),
+        "validation_fixture": str(bundle_dir / "validation_fixture.json")
+        if (bundle_dir / "validation_fixture.json").exists()
+        else None,
+        "gates": {
+            name: _real_case_status_compact_quality_gate(result)
+            for name, result in gates.items()
+        },
+    }
+
+
+def _real_case_status_compact_quality_gate(result: dict[str, Any]) -> dict[str, Any]:
+    checks = result.get("checks", {})
+    failed_checks = []
+    if isinstance(checks, dict):
+        failed_checks = sorted(
+            name
+            for name, check in checks.items()
+            if not isinstance(check, dict) or not bool(check.get("ok"))
+        )
+    return {
+        "ok": bool(result.get("ok")),
+        "status": result.get("status"),
+        "failed_checks": failed_checks,
+        "metrics": result.get("metrics", {}),
+        "next_action": result.get("next_action"),
+    }
+
+
+def _real_case_status_bundle_next_action(quality: dict[str, Any]) -> str:
+    gates = quality.get("gates", {})
+    if not isinstance(gates, dict):
+        return "Review the bundle report and decide whether this private case is demo-worthy."
+    public_gate = gates.get("public_demo", {})
+    demo_gate = gates.get("demo", {})
+    quality_gate = gates.get("quality", {})
+    if public_gate.get("ok"):
+        return "Review the report, citations, and product copy before any public demo promotion."
+    if demo_gate.get("ok"):
+        return str(public_gate.get("next_action") or "Resolve public promotion blockers before public demo use.")
+    if quality_gate.get("ok"):
+        return str(demo_gate.get("next_action") or "Resolve private demo blockers before demo use.")
+    return str(quality_gate.get("next_action") or "Resolve quality blockers before demo review.")
 
 
 def _real_case_status_next_action(summary: dict[str, Any]) -> str:
