@@ -513,6 +513,136 @@ def draft_real_case(
     return {"ok": True, **summary}
 
 
+def write_real_case_worksheet(
+    draft_dir: str | Path,
+    *,
+    out: str | Path | None = None,
+    allowed_limit: int = 12,
+    blocked_limit: int = 10,
+) -> dict[str, Any]:
+    draft_path = Path(draft_dir)
+    config = json.loads((draft_path / "real_case_config.json").read_text())
+    summary = json.loads((draft_path / "draft_summary.json").read_text())
+    sources = config.get("manual_sources", [])
+    if not isinstance(sources, list):
+        raise RealProvenanceError("real_case_config.json manual_sources must be a list")
+
+    allowed = [source for source in sources if source.get("availability_status") == "allowed"]
+    blocked = [source for source in sources if source.get("availability_status") == "blocked_future"]
+    allowed.sort(key=lambda source: str(source.get("published_at") or ""), reverse=True)
+    blocked.sort(key=lambda source: str(source.get("published_at") or ""))
+
+    out_path = Path(out) if out else draft_path / "curation_worksheet.md"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    lines = _worksheet_lines(
+        summary=summary,
+        allowed=allowed[: max(0, allowed_limit)],
+        blocked=blocked[: max(0, blocked_limit)],
+    )
+    out_path.write_text("\n".join(lines) + "\n")
+    return {
+        "ok": True,
+        "out": str(out_path),
+        "allowed_source_count": len(allowed),
+        "blocked_future_source_count": len(blocked),
+        "rendered_allowed_source_count": min(len(allowed), max(0, allowed_limit)),
+        "rendered_blocked_future_source_count": min(len(blocked), max(0, blocked_limit)),
+    }
+
+
+def _worksheet_lines(
+    *,
+    summary: dict[str, Any],
+    allowed: list[dict[str, Any]],
+    blocked: list[dict[str, Any]],
+) -> list[str]:
+    missing_requirements = summary.get("missing_requirements") or []
+    missing_text = ", ".join(str(item) for item in missing_requirements) if missing_requirements else "None"
+    lines = [
+        f"# {summary.get('ticker', 'Unknown')} Real-Case Replay Curation Worksheet",
+        "",
+        "Scratch artifact. Do not commit. No winning narrative has been asserted.",
+        "",
+        "## Case",
+        "",
+        f"- Ticker: {summary.get('ticker', 'Unknown')}",
+        f"- Event date: {summary.get('event_date', 'Unknown')}",
+        f"- Replay lock: {summary.get('replay_lock', 'Unknown')}",
+        f"- Case readiness: {summary.get('case_readiness', 'Unknown')}",
+        f"- Accepted replay-time sources: {summary.get('accepted_sources', 0)}",
+        f"- Blocked future sources: {summary.get('blocked_future_sources', 0)}",
+        f"- Rejected sources: {summary.get('rejected_sources', 0)}",
+        f"- Missing requirements: {missing_text}",
+        "",
+        "## Current Evidence Shape",
+        "",
+        "- Replay-eligible sources can support event-time narrative curation.",
+        "- Blocked future sources are quarantined for validation only.",
+        "- This worksheet is for curation triage only; it is not a public real-case claim set.",
+        "",
+        "## Replay-Eligible Sources",
+        "",
+        "| Source | Published At | Title | URL | Excerpt |",
+        "|---|---:|---|---|---|",
+    ]
+    lines.extend(_worksheet_source_row(source) for source in allowed)
+    lines.extend(
+        [
+            "",
+            "## Blocked Future Sources",
+            "",
+            "| Source | Published At | Title | URL | Excerpt |",
+            "|---|---:|---|---|---|",
+        ]
+    )
+    lines.extend(_worksheet_source_row(source) for source in blocked)
+    lines.extend(["", "## Narrative Slots To Curate", ""])
+    for idx in range(1, 6):
+        lines.extend(
+            [
+                f"### Narrative {idx}",
+                "",
+                "- Title: TBD",
+                "- Thesis: TBD",
+                "- Mechanism: TBD",
+                "- Replay-safe supporting source IDs: TBD",
+                "- Contradicting source IDs: TBD",
+                "- Future validation source IDs: TBD",
+                "",
+            ]
+        )
+    lines.extend(
+        [
+            "## Next Evidence Needed",
+            "",
+            "- Frozen market bars for the event company plus peers or sector.",
+            "- Timestamped news, transcript, filing, or estimate evidence available before the replay lock.",
+            "- At least one future source for validation only.",
+            "- A contradiction source for at least one competing narrative.",
+            "- Human-curated 3-5 competing narratives before `real-pack-build --require-narratives` can pass.",
+        ]
+    )
+    return lines
+
+
+def _worksheet_source_row(source: dict[str, Any]) -> str:
+    return (
+        f"| {_markdown_cell(source.get('source_id'))} "
+        f"| {_markdown_cell(source.get('published_at'))} "
+        f"| {_markdown_cell(source.get('title'), limit=120)} "
+        f"| {_markdown_cell(source.get('url'), limit=160)} "
+        f"| {_markdown_cell(source.get('claim_extracted') or source.get('document_text'), limit=320)} |"
+    )
+
+
+def _markdown_cell(value: Any, *, limit: int = 320) -> str:
+    text = " ".join(str(value or "").split())
+    text = text.replace("|", "\\|")
+    if len(text) > limit:
+        return text[: limit - 3].rstrip() + "..."
+    return text
+
+
 def _candidate_from_finnhub_news(
     item: Any,
     *,

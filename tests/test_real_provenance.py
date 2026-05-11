@@ -484,6 +484,77 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertTrue(draft_response["ok"])
         self.assertEqual(draft_response["case_readiness"], "curator_ready")
 
+    def test_cli_real_case_worksheet_writes_curation_markdown(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            draft_dir = Path(tmpdir) / "draft"
+            draft_dir.mkdir()
+            (draft_dir / "draft_summary.json").write_text(
+                json.dumps(
+                    {
+                        "ticker": "EXMPL",
+                        "event_date": "2025-01-02",
+                        "replay_lock": "2025-01-02T10:00:00-05:00",
+                        "accepted_sources": 1,
+                        "rejected_sources": 0,
+                        "blocked_future_sources": 1,
+                        "market_bars_available": True,
+                        "filings_available": True,
+                        "news_available": True,
+                        "case_readiness": "curator_ready",
+                        "missing_requirements": [],
+                    }
+                )
+            )
+            (draft_dir / "real_case_config.json").write_text(
+                json.dumps(
+                    {
+                        "manual_sources": [
+                            {
+                                "source_id": "SRC-ALLOWED",
+                                "availability_status": "allowed",
+                                "title": "Allowed source",
+                                "url": "https://example.com/allowed",
+                                "published_at": "2025-01-02T14:00:00Z",
+                                "claim_extracted": "Allowed evidence includes a pipe | character.",
+                            },
+                            {
+                                "source_id": "SRC-FUTURE",
+                                "availability_status": "blocked_future",
+                                "title": "Future source",
+                                "url": "https://example.com/future",
+                                "published_at": "2025-01-07T14:00:00Z",
+                                "claim_extracted": "Future validation evidence.",
+                            },
+                        ]
+                    }
+                )
+            )
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-case-worksheet",
+                    "--draft-dir",
+                    str(draft_dir),
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            response = json.loads(result.stdout)
+            worksheet = (draft_dir / "curation_worksheet.md").read_text()
+
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertTrue(response["ok"])
+        self.assertIn("# EXMPL Real-Case Replay Curation Worksheet", worksheet)
+        self.assertIn("SRC-ALLOWED", worksheet)
+        self.assertIn("SRC-FUTURE", worksheet)
+        self.assertIn("pipe \\| character", worksheet)
+        self.assertIn("No winning narrative has been asserted", worksheet)
+
     def test_cli_real_data_env_check_reports_names_without_values(self):
         env = {
             "PYTHONPATH": str(ROOT / "src"),
