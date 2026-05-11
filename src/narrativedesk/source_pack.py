@@ -429,6 +429,8 @@ def _quality_next_action(checks: dict[str, dict[str, Any]]) -> str:
         return "Rebuild or inspect the replay bundle until bundle verification passes."
     if checks["source_pack_ready"]["ok"] is False:
         return "Fix source-pack readiness errors before judging demo quality."
+    if checks["market_snapshot"]["ok"] is False:
+        return "Add a market snapshot so the abnormal move is measurable."
     if checks["narrative_count"]["ok"] is False:
         return "Curate 3-5 competing narratives for this real event."
     if checks["replay_time_sources"]["ok"] is False:
@@ -441,8 +443,6 @@ def _quality_next_action(checks: dict[str, dict[str, Any]]) -> str:
         return "Give every narrative at least one replay-safe supporting source."
     if checks["validation_future_sources"]["ok"] is False:
         return "Keep future validation evidence separate from replay-time ranking inputs."
-    if checks["market_snapshot"]["ok"] is False:
-        return "Add a market snapshot so the abnormal move is measurable."
     if checks["real_curated_provenance"]["ok"] is False:
         return "Use real-curated provenance mode before treating this as a real replay candidate."
     if checks["case_identity"]["ok"] is False:

@@ -258,6 +258,17 @@ class SourcePackTests(unittest.TestCase):
         self.assertFalse(result['checks']['replay_time_sources']['ok'])
         self.assertIn('Curate 3-5 competing narratives', result['next_action'])
 
+    def test_real_case_quality_prioritizes_missing_market_snapshot(self):
+        payload = _ingest_pack()
+        del payload['market_snapshot']
+
+        result = assess_real_case_quality(payload)
+
+        self.assertFalse(result['ok'])
+        self.assertFalse(result['checks']['market_snapshot']['ok'])
+        self.assertFalse(result['checks']['narrative_count']['ok'])
+        self.assertIn('market snapshot', result['next_action'])
+
     def test_missing_fields_fail(self):
         payload = {"case_metadata": {}, "sources": [{}]}
         errors = validate_source_pack(payload)
