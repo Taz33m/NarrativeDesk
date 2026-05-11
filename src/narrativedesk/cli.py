@@ -30,6 +30,7 @@ from narrativedesk.real_provenance import (
     fetch_real_data,
     normalize_real_data_fetch,
     rehearse_real_case,
+    write_curated_narratives_template,
     write_real_case_worksheet,
 )
 from narrativedesk.replay_bundle import verify_replay_bundle
@@ -288,8 +289,14 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Skip writing the scratch curation worksheet.",
     )
+    real_rehearsal.add_argument(
+        "--no-curation-template",
+        action="store_true",
+        help="Skip writing the scratch curated_narratives.template.json file.",
+    )
     real_rehearsal.add_argument("--allowed-limit", type=int, default=12, help="Maximum replay-eligible sources to render.")
     real_rehearsal.add_argument("--blocked-limit", type=int, default=10, help="Maximum blocked future sources to render.")
+    real_rehearsal.add_argument("--template-narrative-count", type=int, default=5, help="Number of narrative template slots to write.")
 
     real_apply_narratives = sub.add_parser(
         "real-case-apply-narratives",
@@ -305,6 +312,19 @@ def build_parser() -> argparse.ArgumentParser:
         "--out",
         help="Output config path. Defaults to <draft-dir>/real_case_config.curated.json.",
     )
+
+    real_narrative_template = sub.add_parser(
+        "real-case-curation-template",
+        help="Write a scratch curated_narratives.template.json file from a real-case draft.",
+    )
+    real_narrative_template.add_argument("--draft-dir", required=True, help="Directory containing real_case_config.json.")
+    real_narrative_template.add_argument(
+        "--out",
+        help="Optional template output path. Defaults to <draft-dir>/curated_narratives.template.json.",
+    )
+    real_narrative_template.add_argument("--narrative-count", type=int, default=5, help="Number of narrative slots to write.")
+    real_narrative_template.add_argument("--allowed-limit", type=int, default=20, help="Maximum allowed sources to include.")
+    real_narrative_template.add_argument("--blocked-limit", type=int, default=20, help="Maximum blocked future sources to include.")
 
     ingest = sub.add_parser("source-pack-ingest", help="Convert a source pack into a replay fixture.")
     ingest.add_argument("path", help="Path to source pack JSON.")
@@ -745,8 +765,10 @@ def run_real_case_rehearse(args: argparse.Namespace) -> int:
             news_query=args.news_query,
             news_domains=args.news_domains,
             worksheet=not args.no_worksheet,
+            curation_template=not args.no_curation_template,
             allowed_limit=args.allowed_limit,
             blocked_limit=args.blocked_limit,
+            template_narrative_count=args.template_narrative_count,
         )
     except (OSError, json.JSONDecodeError, RealProvenanceError) as exc:
         print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
@@ -761,6 +783,22 @@ def run_real_case_apply_narratives(args: argparse.Namespace) -> int:
             args.draft_dir,
             args.narratives,
             out=args.out,
+        )
+    except (OSError, json.JSONDecodeError, RealProvenanceError) as exc:
+        print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
+        return 1
+    print(json.dumps(response, indent=2, sort_keys=True))
+    return 0
+
+
+def run_real_case_curation_template(args: argparse.Namespace) -> int:
+    try:
+        response = write_curated_narratives_template(
+            args.draft_dir,
+            out=args.out,
+            narrative_count=args.narrative_count,
+            allowed_limit=args.allowed_limit,
+            blocked_limit=args.blocked_limit,
         )
     except (OSError, json.JSONDecodeError, RealProvenanceError) as exc:
         print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
@@ -985,6 +1023,8 @@ def main() -> int:
         return run_real_case_rehearse(args)
     if args.command == "real-case-apply-narratives":
         return run_real_case_apply_narratives(args)
+    if args.command == "real-case-curation-template":
+        return run_real_case_curation_template(args)
     if args.command == "source-pack-ingest":
         return run_source_pack_ingest(args)
     if args.command == "validation-validate":

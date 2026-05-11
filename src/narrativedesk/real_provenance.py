@@ -562,6 +562,66 @@ def write_real_case_worksheet(
     }
 
 
+def write_curated_narratives_template(
+    draft_dir: str | Path,
+    *,
+    out: str | Path | None = None,
+    narrative_count: int = 5,
+    allowed_limit: int = 20,
+    blocked_limit: int = 20,
+) -> dict[str, Any]:
+    draft_path = Path(draft_dir)
+    config = json.loads((draft_path / "real_case_config.json").read_text())
+    summary_path = draft_path / "draft_summary.json"
+    summary = json.loads(summary_path.read_text()) if summary_path.exists() else {}
+    sources = config.get("manual_sources", [])
+    if not isinstance(sources, list):
+        raise RealProvenanceError("real_case_config.json manual_sources must be a list")
+
+    allowed = [source for source in sources if source.get("availability_status") == "allowed"]
+    blocked = [source for source in sources if source.get("availability_status") == "blocked_future"]
+    allowed.sort(key=lambda source: str(source.get("published_at") or ""), reverse=True)
+    blocked.sort(key=lambda source: str(source.get("published_at") or ""))
+
+    metadata = config.get("case_metadata", {}) if isinstance(config.get("case_metadata"), dict) else {}
+    normalized_ticker = str(metadata.get("ticker") or summary.get("ticker") or "REAL").upper()
+    slot_count = max(1, min(int(narrative_count), 8))
+    payload = {
+        "_note": (
+            "Scratch curation template. Replace all TBD values with human-curated claims before "
+            "running real-case-apply-narratives. Do not treat this file as a real financial claim."
+        ),
+        "case": {
+            "case_id": metadata.get("case_id"),
+            "ticker": normalized_ticker,
+            "company_name": metadata.get("company_name"),
+            "event_date": summary.get("event_date"),
+            "replay_lock": summary.get("replay_lock") or metadata.get("event_timestamp"),
+            "case_readiness": summary.get("case_readiness"),
+        },
+        "source_pool": {
+            "allowed": [_curation_source_preview(source) for source in allowed[: max(0, allowed_limit)]],
+            "blocked_future": [_curation_source_preview(source) for source in blocked[: max(0, blocked_limit)]],
+        },
+        "narratives": [
+            _curation_narrative_slot(normalized_ticker, idx)
+            for idx in range(1, slot_count + 1)
+        ],
+    }
+
+    out_path = Path(out) if out else draft_path / "curated_narratives.template.json"
+    _write_json(out_path, payload)
+    return {
+        "ok": True,
+        "out": str(out_path),
+        "narrative_slot_count": slot_count,
+        "allowed_source_count": len(allowed),
+        "blocked_future_source_count": len(blocked),
+        "rendered_allowed_source_count": min(len(allowed), max(0, allowed_limit)),
+        "rendered_blocked_future_source_count": min(len(blocked), max(0, blocked_limit)),
+    }
+
+
 def rehearse_real_case(
     *,
     ticker: str,
@@ -588,8 +648,10 @@ def rehearse_real_case(
     news_domains: str | None = None,
     sec_throttle_seconds: float = 0.12,
     worksheet: bool = True,
+    curation_template: bool = True,
     allowed_limit: int = 12,
     blocked_limit: int = 10,
+    template_narrative_count: int = 5,
 ) -> dict[str, Any]:
     """Run the deterministic live-fetch -> normalize -> draft rehearsal path."""
     root = Path(out_root)
@@ -653,6 +715,12 @@ def rehearse_real_case(
             allowed_limit=allowed_limit,
             blocked_limit=blocked_limit,
         )
+    template_response = None
+    if curation_template:
+        template_response = write_curated_narratives_template(
+            draft_path,
+            narrative_count=template_narrative_count,
+        )
 
     response.update(
         {
@@ -667,6 +735,7 @@ def rehearse_real_case(
             "narratives_todo_out": draft["narratives_todo_out"],
             "validation_fixture_out": draft["validation_fixture_out"],
             "worksheet_out": worksheet_response["out"] if worksheet_response else None,
+            "curation_template_out": template_response["out"] if template_response else None,
             "accepted_sources": draft["accepted_sources"],
             "blocked_future_sources": draft["blocked_future_sources"],
             "rejected_sources": draft["rejected_sources"],
@@ -878,6 +947,49 @@ def _markdown_cell(value: Any, *, limit: int = 320) -> str:
     return text
 
 
+def _curation_source_preview(source: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "source_id": source.get("source_id"),
+        "availability_status": source.get("availability_status"),
+        "source_type": source.get("source_type"),
+        "publisher": source.get("publisher"),
+        "title": source.get("title"),
+        "published_at": source.get("published_at"),
+        "url": source.get("url"),
+        "excerpt": _truncate_text(
+            str(source.get("claim_extracted") or source.get("document_text") or ""),
+            max_chars=420,
+        ),
+    }
+
+
+def _curation_narrative_slot(ticker: str, idx: int) -> dict[str, Any]:
+    return {
+        "narrative_id": f"NARR-{ticker}-{idx:03d}",
+        "title": "TBD",
+        "narrative": "TBD",
+        "mechanism": "TBD",
+        "directional_implication": "mixed",
+        "time_horizon": "20 trading days",
+        "expected_observables": ["TBD"],
+        "supporting_source_ids": [],
+        "contradicting_source_ids": [],
+        "future_supporting_source_ids": [],
+        "future_contradicting_source_ids": [],
+        "scoring_inputs": {
+            "evidence_strength": 0.5,
+            "mechanism_specificity": 0.5,
+            "source_independence": 0.5,
+            "cross_sectional_fit": 0.5,
+            "contradiction_resistance": 0.5,
+            "timestamp_advantage": 0.5,
+            "forward_observable_quality": 0.5,
+            "crowding_risk": 0.3,
+            "unsupported_claim_penalty": 0.05,
+        },
+    }
+
+
 def _curated_narratives_from_payload(payload: Any) -> list[Any]:
     if isinstance(payload, list):
         return payload
@@ -893,11 +1005,16 @@ def _validate_curated_narrative_shape(narrative: dict[str, Any], idx: int, error
         return
     if not str(narrative.get("narrative_id") or "").strip():
         errors.append(f"narratives[{idx}].narrative_id is required")
+    for field in ["title", "narrative", "mechanism", "time_horizon"]:
+        if _is_placeholder(narrative.get(field)):
+            errors.append(f"narratives[{idx}].{field} must replace the TBD placeholder")
     if narrative.get("directional_implication") not in ALLOWED_DIRECTIONS:
         errors.append(f"narratives[{idx}].directional_implication invalid")
     observables = narrative.get("expected_observables")
     if not isinstance(observables, list) or any(not isinstance(item, str) or not item.strip() for item in observables):
         errors.append(f"narratives[{idx}].expected_observables must contain non-empty strings")
+    elif any(_is_placeholder(item) for item in observables):
+        errors.append(f"narratives[{idx}].expected_observables must replace TBD placeholders")
     scoring = narrative.get("scoring_inputs")
     if not isinstance(scoring, dict):
         errors.append(f"narratives[{idx}].scoring_inputs must be an object")
@@ -921,6 +1038,10 @@ def _string_list(value: Any, label: str, errors: list[str]) -> list[str]:
 
 def _score01(value: Any) -> bool:
     return isinstance(value, int | float) and not isinstance(value, bool) and 0 <= value <= 1
+
+
+def _is_placeholder(value: Any) -> bool:
+    return str(value or "").strip().upper() == "TBD"
 
 
 def _candidate_from_finnhub_news(
