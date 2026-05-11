@@ -129,15 +129,19 @@ PYTHONPATH=src python3 -m narrativedesk.cli bundle-verify .codex-work/real_case_
 Build a real-curated source pack from provider data:
 
 ```bash
-FINNHUB_API_KEY=... SEC_USER_AGENT="NarrativeDesk you@example.com" \
-PYTHONPATH=src python3 -m narrativedesk.cli real-pack-build .codex-work/real_case_config.json --out .codex-work/real_source_pack.json
+PYTHONPATH=src python3 -m narrativedesk.cli real-pack-build \
+  .codex-work/real_case_config.json \
+  --out .codex-work/real_source_pack.json \
+  --env-file .env.local
 ```
 
 Or build and bundle in one step:
 
 ```bash
-FINNHUB_API_KEY=... SEC_USER_AGENT="NarrativeDesk you@example.com" \
-PYTHONPATH=src python3 -m narrativedesk.cli real-pack-bundle .codex-work/real_case_config.json --out-dir .codex-work/real_case_bundle
+PYTHONPATH=src python3 -m narrativedesk.cli real-pack-bundle \
+  .codex-work/real_case_config.json \
+  --out-dir .codex-work/real_case_bundle \
+  --env-file .env.local
 ```
 
 Start from `examples/real_case_config_template.json`, fill in a real ticker, event timestamp, peers, and curated narratives, then keep the working config in `.codex-work/`.

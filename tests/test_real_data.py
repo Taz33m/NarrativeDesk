@@ -445,6 +445,85 @@ class RealDataTests(unittest.TestCase):
         self.assertEqual(result.returncode, 1)
         self.assertIn("FINNHUB_API_KEY is required", result.stdout)
 
+    def test_cli_real_pack_build_accepts_env_file_without_leaking_values(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_path = Path(tmpdir)
+            (tmp_path / "prices.csv").write_text(
+                "\n".join(
+                    [
+                        "date,ticker,open,close,volume",
+                        "2025-01-01,EXMPL,100,101,1000",
+                        "2025-01-02,EXMPL,100,94,2000",
+                    ]
+                )
+                + "\n"
+            )
+            env_file = tmp_path / ".env.local"
+            env_file.write_text(
+                "\n".join(
+                    [
+                        "FINNHUB_API_KEY=file-secret-token",
+                        "SEC_USER_AGENT=NarrativeDesk Tests test@example.com",
+                    ]
+                )
+                + "\n"
+            )
+            config = {
+                "case_metadata": {
+                    "case_id": "EVT-CSV-EXMPL-2025-01-02",
+                    "ticker": "EXMPL",
+                    "company_name": "Example Co",
+                    "event_timestamp": "2025-01-02T17:30:00-05:00",
+                },
+                "market_data": {
+                    "provider": "csv",
+                    "path": "prices.csv",
+                },
+                "manual_sources": [
+                    {
+                        "source_id": "MANUAL-001",
+                        "source_type": "curated_source",
+                        "publisher": "Curator",
+                        "title": "Replay setup note",
+                        "url": "https://example.com/replay-note",
+                        "published_at": "2025-01-02T13:00:00Z",
+                        "claim_extracted": "The replay case uses frozen historical price rows.",
+                    }
+                ],
+            }
+            config_path = tmp_path / "real_case_config.json"
+            out_path = tmp_path / "source_pack.json"
+            config_path.write_text(json.dumps(config))
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-pack-build",
+                    str(config_path),
+                    "--out",
+                    str(out_path),
+                    "--env-file",
+                    str(env_file),
+                    "--retrieved-at",
+                    "2026-05-10T00:00:00Z",
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            response = json.loads(result.stdout)
+            source_pack_exists = out_path.exists()
+
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertTrue(response["ok"])
+        self.assertTrue(source_pack_exists)
+        self.assertNotIn("file-secret-token", result.stdout)
+        self.assertNotIn("test@example.com", result.stdout)
+
     def test_cli_real_pack_bundle_builds_local_replay_bundle(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             tmp_path = Path(tmpdir)

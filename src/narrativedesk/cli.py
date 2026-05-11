@@ -82,6 +82,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="Environment variable containing the SEC EDGAR User-Agent header.",
     )
     real_pack.add_argument(
+        "--env-file",
+        help="Optional dotenv-style file with provider credentials. Environment variables override file values.",
+    )
+    real_pack.add_argument(
         "--retrieved-at",
         help="Optional ISO timestamp to stamp retrieved_at deterministically.",
     )
@@ -106,6 +110,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--sec-user-agent-env",
         default="SEC_USER_AGENT",
         help="Environment variable containing the SEC EDGAR User-Agent header.",
+    )
+    real_bundle.add_argument(
+        "--env-file",
+        help="Optional dotenv-style file with provider credentials. Environment variables override file values.",
     )
     real_bundle.add_argument(
         "--retrieved-at",
@@ -411,14 +419,15 @@ def run_real_pack_build(args: argparse.Namespace) -> int:
     config_path = Path(args.config)
     config = load_real_case_config(config_path)
     try:
+        env_file_values = _load_env_file(args.env_file) if args.env_file else {}
         payload = build_real_source_pack(
             config,
-            finnhub_token=os.environ.get(args.finnhub_token_env),
-            sec_user_agent=os.environ.get(args.sec_user_agent_env),
+            finnhub_token=_env_value(args.finnhub_token_env, env_file_values),
+            sec_user_agent=_env_value(args.sec_user_agent_env, env_file_values),
             retrieved_at=args.retrieved_at,
             base_path=config_path.parent,
         )
-    except RealDataError as exc:
+    except (OSError, RealDataError) as exc:
         print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2))
         return 1
 
@@ -448,14 +457,15 @@ def run_real_pack_bundle(args: argparse.Namespace) -> int:
     config_path = Path(args.config)
     config = load_real_case_config(config_path)
     try:
+        env_file_values = _load_env_file(args.env_file) if args.env_file else {}
         payload = build_real_source_pack(
             config,
-            finnhub_token=os.environ.get(args.finnhub_token_env),
-            sec_user_agent=os.environ.get(args.sec_user_agent_env),
+            finnhub_token=_env_value(args.finnhub_token_env, env_file_values),
+            sec_user_agent=_env_value(args.sec_user_agent_env, env_file_values),
             retrieved_at=args.retrieved_at,
             base_path=config_path.parent,
         )
-    except RealDataError as exc:
+    except (OSError, RealDataError) as exc:
         print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2))
         return 1
 
