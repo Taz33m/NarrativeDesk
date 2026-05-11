@@ -175,6 +175,8 @@ PYTHONPATH=src python3 -m narrativedesk.cli real-case-rehearse \
 
 Live-provider rehearsal requires `FINNHUB_API_KEY` and `SEC_USER_AGENT`; `NEWS_API_KEY` is optional when using `--providers newsapi`. Outputs remain scratch until a human adds competing narratives, `real-pack-build --require-narratives` passes, and the final bundle verifies.
 
+If you have a frozen, timestamped market CSV from another trusted local source, pass it during draft repair with `real-case-draft --market-bars path/to/market_bars.csv`; the file is copied into the scratch draft and still goes through the normal readiness and bundle checks.
+
 The rehearsal command also writes `curated_narratives.template.json`. After curation, apply a separate narrative JSON file without hand-editing source link arrays:
 
 ```bash
