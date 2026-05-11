@@ -772,15 +772,13 @@ def run_real_data_env_check(args: argparse.Namespace) -> int:
         sec_user_agent_env=args.sec_user_agent_env,
         news_api_key_env=args.news_api_key_env,
     )
-    missing_env = [name for name in deduped_required_env if not _env_value(name, env_file_values)]
-    present_env = [name for name in deduped_required_env if _env_value(name, env_file_values)]
+    env_state = _env_presence(deduped_required_env, env_file_values)
     response = {
-        "ok": not missing_env,
+        "ok": not env_state["missing_env"] and not env_state["empty_env"],
         "env_file": args.env_file,
         "providers": providers,
         "required_env": deduped_required_env,
-        "present_env": present_env,
-        "missing_env": missing_env,
+        **env_state,
     }
     print(json.dumps(response, indent=2, sort_keys=True))
     return 0 if response["ok"] else 1
@@ -876,8 +874,8 @@ def _real_case_preflight(
         sec_user_agent_env=sec_user_agent_env,
         news_api_key_env=news_api_key_env,
     )
-    present_env = [name for name in required_env if _env_value(name, env_file_values)]
-    missing_env = [name for name in required_env if not _env_value(name, env_file_values)]
+    env_state = _env_presence(required_env, env_file_values)
+    unavailable_env = [*env_state["missing_env"], *env_state["empty_env"]]
     default_fetch, default_draft, default_bundle = _default_real_case_paths(
         ticker=ticker,
         event_date=event_date,
@@ -906,18 +904,17 @@ def _real_case_preflight(
         "env": {
             "env_file": env_file,
             "required_env": required_env,
-            "present_env": present_env,
-            "missing_env": missing_env,
+            **env_state,
         },
         "paths": paths,
         "artifacts": artifacts,
     }
 
-    if missing_env:
+    if unavailable_env:
         response.update(
             {
                 "status": "missing_env",
-                "next_action": f"Populate {', '.join(missing_env)} locally, then rerun real-case-rehearse.",
+                "next_action": f"Populate {', '.join(unavailable_env)} locally, then rerun real-case-rehearse.",
             }
         )
         return response
@@ -970,6 +967,24 @@ def _env_value(name: str, env_file_values: dict[str, str]) -> str | None:
     if value:
         return value
     return env_file_values.get(name) or None
+
+
+def _env_presence(names: list[str], env_file_values: dict[str, str]) -> dict[str, list[str]]:
+    present_env: list[str] = []
+    empty_env: list[str] = []
+    missing_env: list[str] = []
+    for name in names:
+        if _env_value(name, env_file_values):
+            present_env.append(name)
+        elif name in os.environ or name in env_file_values:
+            empty_env.append(name)
+        else:
+            missing_env.append(name)
+    return {
+        "present_env": present_env,
+        "empty_env": empty_env,
+        "missing_env": missing_env,
+    }
 
 
 def _load_env_file(path: str | Path) -> dict[str, str]:
