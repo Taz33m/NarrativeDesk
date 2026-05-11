@@ -69,6 +69,8 @@ def run_rehearsal(args: argparse.Namespace) -> dict[str, Any]:
     stages["preflight"] = preflight
     preflight_status = str(preflight["json"].get("status", ""))
     if args.preflight_only:
+        if preflight_status == "bundle_verified":
+            return _run_quality(args, stages, redaction_values)
         return _final(
             preflight["returncode"] == 0,
             preflight_status or "preflight_failed",
@@ -336,7 +338,25 @@ def _run_quality(args: argparse.Namespace, stages: dict[str, Any], redaction_val
     stages["quality"] = quality
     if quality["returncode"] != 0:
         return _final(False, "quality_failed", stages, quality["json"].get("next_action"))
-    return _final(True, "quality_ready", stages, quality["json"].get("next_action"))
+
+    demo_quality = _run_cli(
+        ["real-case-quality", "--bundle-dir", args.bundle_dir, "--require-demo-ready"],
+        redaction_values=redaction_values,
+    )
+    stages["demo_quality"] = demo_quality
+    if demo_quality["returncode"] == 0:
+        response = _final(True, "demo_ready", stages, demo_quality["json"].get("next_action"))
+        response["demo_ready"] = True
+        return response
+
+    response = _final(
+        True,
+        "quality_ready",
+        stages,
+        demo_quality["json"].get("next_action") or quality["json"].get("next_action"),
+    )
+    response["demo_ready"] = False
+    return response
 
 
 def _select_narratives_path(args: argparse.Namespace) -> Path | None:
