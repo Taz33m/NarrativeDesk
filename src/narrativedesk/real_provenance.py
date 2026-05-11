@@ -5,6 +5,7 @@ import html
 import json
 import re
 import time
+from copy import deepcopy
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -12,7 +13,12 @@ from typing import Any
 
 from narrativedesk.models import parse_datetime
 from narrativedesk.real_data import JsonFetcher, UrllibJsonFetcher
-from narrativedesk.source_pack import source_content_hash
+from narrativedesk.source_pack import (
+    ALLOWED_DIRECTIONS,
+    REQUIRED_NARRATIVE_FIELDS,
+    REQUIRED_SCORING_FIELDS,
+    source_content_hash,
+)
 
 
 class RealProvenanceError(ValueError):
@@ -23,6 +29,12 @@ CANDIDATE_SOURCE_TYPES = {"filing", "news", "transcript", "estimate", "market_da
 CANDIDATE_REPLAY_STATUSES = {"eligible", "blocked_future", "rejected"}
 SECRET_PARAM_NAMES = {"token", "apikey", "apiKey", "api_key", "authorization", "x-api-key"}
 DEFAULT_PROVIDERS = ("finnhub", "sec")
+CURATION_LINK_FIELDS = {
+    "supporting_source_ids": ("supported_narrative_ids", "allowed"),
+    "contradicting_source_ids": ("contradicted_narrative_ids", "allowed"),
+    "future_supporting_source_ids": ("supported_narrative_ids", "blocked_future"),
+    "future_contradicting_source_ids": ("contradicted_narrative_ids", "blocked_future"),
+}
 
 
 @dataclass(frozen=True)
@@ -669,6 +681,109 @@ def rehearse_real_case(
     return response
 
 
+def apply_curated_narratives(
+    draft_dir: str | Path,
+    narratives_path: str | Path,
+    *,
+    out: str | Path | None = None,
+) -> dict[str, Any]:
+    draft_path = Path(draft_dir)
+    config_path = draft_path / "real_case_config.json"
+    config = json.loads(config_path.read_text())
+    payload = json.loads(Path(narratives_path).read_text())
+    raw_narratives = _curated_narratives_from_payload(payload)
+    if not raw_narratives:
+        raise RealProvenanceError("Curated narratives payload must include a non-empty narratives list")
+
+    updated = deepcopy(config)
+    sources = updated.get("manual_sources")
+    if not isinstance(sources, list) or not sources:
+        raise RealProvenanceError("real_case_config.json must include manual_sources before narratives can be applied")
+    source_by_id = {
+        str(source.get("source_id")): source
+        for source in sources
+        if isinstance(source, dict) and source.get("source_id")
+    }
+
+    errors: list[str] = []
+    curated_narratives: list[dict[str, Any]] = []
+    seen_narrative_ids: set[str] = set()
+    allowed_link_count = 0
+    future_link_count = 0
+    for idx, raw_narrative in enumerate(raw_narratives):
+        if not isinstance(raw_narrative, dict):
+            errors.append(f"narratives[{idx}] must be an object")
+            continue
+        narrative = {
+            key: value
+            for key, value in raw_narrative.items()
+            if key not in CURATION_LINK_FIELDS
+        }
+        _validate_curated_narrative_shape(narrative, idx, errors)
+        narrative_id = str(raw_narrative.get("narrative_id") or "")
+        if narrative_id:
+            if narrative_id in seen_narrative_ids:
+                errors.append(f"narratives[{idx}].narrative_id duplicates {narrative_id}")
+            seen_narrative_ids.add(narrative_id)
+        linked_source_count = 0
+        for field, (target_field, required_status) in CURATION_LINK_FIELDS.items():
+            source_ids = _string_list(raw_narrative.get(field, []), f"narratives[{idx}].{field}", errors)
+            for source_id in source_ids:
+                source = source_by_id.get(source_id)
+                if not source:
+                    errors.append(f"narratives[{idx}].{field} references unknown source ID: {source_id}")
+                    continue
+                status = source.get("availability_status")
+                if status != required_status:
+                    errors.append(
+                        f"narratives[{idx}].{field} references {source_id}, "
+                        f"which is {status}; expected {required_status}"
+                    )
+                    continue
+                target_values = source.setdefault(target_field, [])
+                if not isinstance(target_values, list):
+                    errors.append(f"source {source_id}.{target_field} must be a list")
+                    continue
+                if narrative_id and narrative_id not in target_values:
+                    target_values.append(narrative_id)
+                linked_source_count += 1
+                if required_status == "allowed":
+                    allowed_link_count += 1
+                else:
+                    future_link_count += 1
+        if linked_source_count == 0:
+            errors.append(f"narratives[{idx}] must link at least one source ID")
+        curated_narratives.append(narrative)
+
+    for idx, source in enumerate(sources):
+        if not isinstance(source, dict):
+            continue
+        supported = {str(item) for item in source.get("supported_narrative_ids", [])}
+        contradicted = {str(item) for item in source.get("contradicted_narrative_ids", [])}
+        overlap = sorted(supported & contradicted)
+        if overlap:
+            errors.append(
+                f"manual_sources[{idx}] cannot support and contradict the same narrative IDs: {', '.join(overlap)}"
+            )
+
+    if errors:
+        raise RealProvenanceError("; ".join(errors))
+
+    updated["narratives"] = curated_narratives
+    out_path = Path(out) if out else draft_path / "real_case_config.curated.json"
+    _write_json(out_path, updated)
+    return {
+        "ok": True,
+        "out": str(out_path),
+        "source_config": str(config_path),
+        "narratives_in": str(narratives_path),
+        "narrative_count": len(curated_narratives),
+        "allowed_source_link_count": allowed_link_count,
+        "future_source_link_count": future_link_count,
+        "manual_source_count": len(sources),
+    }
+
+
 def _worksheet_lines(
     *,
     summary: dict[str, Any],
@@ -724,9 +839,10 @@ def _worksheet_lines(
                 "- Title: TBD",
                 "- Thesis: TBD",
                 "- Mechanism: TBD",
-                "- Replay-safe supporting source IDs: TBD",
-                "- Contradicting source IDs: TBD",
-                "- Future validation source IDs: TBD",
+                "- Replay-safe supporting source IDs (`supporting_source_ids`): TBD",
+                "- Replay-safe contradicting source IDs (`contradicting_source_ids`): TBD",
+                "- Future supporting source IDs (`future_supporting_source_ids`): TBD",
+                "- Future contradicting source IDs (`future_contradicting_source_ids`): TBD",
                 "",
             ]
         )
@@ -760,6 +876,51 @@ def _markdown_cell(value: Any, *, limit: int = 320) -> str:
     if len(text) > limit:
         return text[: limit - 3].rstrip() + "..."
     return text
+
+
+def _curated_narratives_from_payload(payload: Any) -> list[Any]:
+    if isinstance(payload, list):
+        return payload
+    if isinstance(payload, dict) and isinstance(payload.get("narratives"), list):
+        return payload["narratives"]
+    raise RealProvenanceError("Curated narratives payload must be a list or an object with narratives")
+
+
+def _validate_curated_narrative_shape(narrative: dict[str, Any], idx: int, errors: list[str]) -> None:
+    missing = sorted(REQUIRED_NARRATIVE_FIELDS - set(narrative.keys()))
+    if missing:
+        errors.append(f"narratives[{idx}] missing required fields: {', '.join(missing)}")
+        return
+    if not str(narrative.get("narrative_id") or "").strip():
+        errors.append(f"narratives[{idx}].narrative_id is required")
+    if narrative.get("directional_implication") not in ALLOWED_DIRECTIONS:
+        errors.append(f"narratives[{idx}].directional_implication invalid")
+    observables = narrative.get("expected_observables")
+    if not isinstance(observables, list) or any(not isinstance(item, str) or not item.strip() for item in observables):
+        errors.append(f"narratives[{idx}].expected_observables must contain non-empty strings")
+    scoring = narrative.get("scoring_inputs")
+    if not isinstance(scoring, dict):
+        errors.append(f"narratives[{idx}].scoring_inputs must be an object")
+        return
+    missing_scores = sorted(REQUIRED_SCORING_FIELDS - set(scoring.keys()))
+    if missing_scores:
+        errors.append(f"narratives[{idx}].scoring_inputs missing required fields: {', '.join(missing_scores)}")
+    for score_key in sorted(REQUIRED_SCORING_FIELDS & set(scoring.keys())):
+        if not _score01(scoring[score_key]):
+            errors.append(f"narratives[{idx}].scoring_inputs.{score_key} must be a number from 0 to 1")
+
+
+def _string_list(value: Any, label: str, errors: list[str]) -> list[str]:
+    if value is None or value == "":
+        return []
+    if not isinstance(value, list):
+        errors.append(f"{label} must be a list")
+        return []
+    return [str(item) for item in value if str(item).strip()]
+
+
+def _score01(value: Any) -> bool:
+    return isinstance(value, int | float) and not isinstance(value, bool) and 0 <= value <= 1
 
 
 def _candidate_from_finnhub_news(
