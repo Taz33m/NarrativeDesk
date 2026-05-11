@@ -417,7 +417,6 @@ function App() {
               ledger={ledger}
             />
             <ValidationPanel validation={validation} />
-            {evaluation ? <EvaluationPanel evaluation={evaluation} /> : null}
           </div>
         </>
       ) : null}
