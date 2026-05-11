@@ -150,6 +150,10 @@ def build_parser() -> argparse.ArgumentParser:
         default="NEWS_API_KEY",
         help="Environment variable containing the NewsAPI token.",
     )
+    real_fetch.add_argument(
+        "--env-file",
+        help="Optional dotenv-style file with provider credentials. Environment variables override file values.",
+    )
     real_fetch.add_argument("--forms", default="8-K,10-Q,10-K", help="Comma-separated SEC forms to fetch.")
     real_fetch.add_argument("--sec-count", type=int, default=5, help="Maximum SEC filings to inspect.")
     real_fetch.add_argument("--cik", help="Optional SEC CIK override.")
@@ -184,6 +188,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--news-api-key-env",
         default="NEWS_API_KEY",
         help="Environment variable containing the NewsAPI token.",
+    )
+    real_env.add_argument(
+        "--env-file",
+        help="Optional dotenv-style file with provider credentials. Environment variables override file values.",
     )
 
     real_normalize = sub.add_parser(
@@ -485,6 +493,7 @@ def run_real_data_fetch(args: argparse.Namespace) -> int:
         f"{args.ticker.upper()}-{args.date_from}-{args.date_to}"
     )
     try:
+        env_file_values = _load_env_file(args.env_file) if args.env_file else {}
         manifest = fetch_real_data(
             ticker=args.ticker,
             company_name=args.company_name,
@@ -492,9 +501,9 @@ def run_real_data_fetch(args: argparse.Namespace) -> int:
             date_to=args.date_to,
             providers=args.providers,
             out_dir=out_dir,
-            finnhub_token=os.environ.get(args.finnhub_token_env),
-            sec_user_agent=os.environ.get(args.sec_user_agent_env),
-            news_api_key=os.environ.get(args.news_api_key_env),
+            finnhub_token=_env_value(args.finnhub_token_env, env_file_values),
+            sec_user_agent=_env_value(args.sec_user_agent_env, env_file_values),
+            news_api_key=_env_value(args.news_api_key_env, env_file_values),
             forms=_split_csv_arg(args.forms),
             sec_count=args.sec_count,
             cik=args.cik,
@@ -502,7 +511,7 @@ def run_real_data_fetch(args: argparse.Namespace) -> int:
             news_query=args.news_query,
             news_domains=args.news_domains,
         )
-    except RealProvenanceError as exc:
+    except (OSError, RealProvenanceError) as exc:
         print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
         return 1
     response = {
@@ -517,6 +526,11 @@ def run_real_data_fetch(args: argparse.Namespace) -> int:
 
 
 def run_real_data_env_check(args: argparse.Namespace) -> int:
+    try:
+        env_file_values = _load_env_file(args.env_file) if args.env_file else {}
+    except OSError as exc:
+        print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
+        return 1
     required_env: list[str] = []
     providers = [provider.lower() for provider in _split_csv_arg(args.providers)]
     if "finnhub" in providers:
@@ -527,10 +541,11 @@ def run_real_data_env_check(args: argparse.Namespace) -> int:
         required_env.append(args.news_api_key_env)
 
     deduped_required_env = list(dict.fromkeys(required_env))
-    missing_env = [name for name in deduped_required_env if not os.environ.get(name)]
-    present_env = [name for name in deduped_required_env if os.environ.get(name)]
+    missing_env = [name for name in deduped_required_env if not _env_value(name, env_file_values)]
+    present_env = [name for name in deduped_required_env if _env_value(name, env_file_values)]
     response = {
         "ok": not missing_env,
+        "env_file": args.env_file,
         "providers": providers,
         "required_env": deduped_required_env,
         "present_env": present_env,
@@ -538,6 +553,30 @@ def run_real_data_env_check(args: argparse.Namespace) -> int:
     }
     print(json.dumps(response, indent=2, sort_keys=True))
     return 0 if response["ok"] else 1
+
+
+def _env_value(name: str, env_file_values: dict[str, str]) -> str | None:
+    value = os.environ.get(name)
+    if value:
+        return value
+    return env_file_values.get(name) or None
+
+
+def _load_env_file(path: str | Path) -> dict[str, str]:
+    values: dict[str, str] = {}
+    for line in Path(path).read_text().splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or "=" not in stripped:
+            continue
+        key, value = stripped.split("=", 1)
+        key = key.strip()
+        if key.startswith("export "):
+            key = key.removeprefix("export ").strip()
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+            value = value[1:-1]
+        values[key] = value
+    return values
 
 
 def run_real_data_normalize(args: argparse.Namespace) -> int:
