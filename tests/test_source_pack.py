@@ -402,6 +402,34 @@ class SourcePackTests(unittest.TestCase):
         self.assertIn('abnormal_return is not computable', result['checks']['demo_market_context']['errors'])
         self.assertIn('peer market bars', result['next_action'])
 
+    def test_real_case_quality_demo_gate_rejects_stale_pre_evidence_market_bar(self):
+        payload = _demo_ready_pack()
+        payload['market_snapshot']['event_bar']['timestamp'] = '2025-01-02T07:59:00-05:00'
+        for peer in payload['market_snapshot']['peer_bars']:
+            peer['timestamp'] = '2025-01-02T07:59:00-05:00'
+        payload['market_snapshot']['sector_bar']['as_of'] = '2025-01-02T07:59:00-05:00'
+
+        result = assess_real_case_quality(
+            payload,
+            require_demo_ready=True,
+            validation_fixture=_validated_fixture(),
+        )
+
+        self.assertFalse(result['ok'])
+        self.assertFalse(result['checks']['demo_market_context']['ok'])
+        self.assertEqual(
+            result['checks']['demo_market_context']['latest_linked_evidence_at'],
+            '2025-01-02T08:10:00-05:00',
+        )
+        self.assertFalse(result['checks']['demo_market_context']['post_evidence_bar_present'])
+        self.assertTrue(
+            any(
+                'stale relative to latest linked replay-time evidence' in error
+                for error in result['checks']['demo_market_context']['errors']
+            )
+        )
+        self.assertIn('intraday or replay-lock market bars', result['next_action'])
+
     def test_real_case_quality_flags_rehearsal_that_needs_more_curation(self):
         result = assess_real_case_quality(_ingest_pack())
 

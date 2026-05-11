@@ -45,6 +45,8 @@ class ReportTests(unittest.TestCase):
         self.assertIn("Future Validation Fixture", report)
         self.assertIn("Validation data is shown separately", report)
         self.assertIn("Future validation source IDs: SRC-009", report)
+        self.assertIn("Validation Outcome", report)
+        self.assertNotIn("Synthetic Outcome", report)
         self.assertIn("| T+20 | validated |", report)
         self.assertIn(
             "| T+20 | validated | Analysts reduce forward revenue or subscriber estimates within 30 days. | SRC-009 |",
@@ -70,6 +72,15 @@ class ReportTests(unittest.TestCase):
         self.assertIn("real-curated replay bundle", report)
         self.assertIn("public use requires curator review", report)
         self.assertNotIn("generated from a synthetic fixture", report)
+
+    def test_missing_volume_ratio_does_not_render_unit_suffix(self):
+        event, narratives, audit, _validation = run_replay(EVENT_FIXTURE)
+        event_without_volume = replace(event, volume_ratio=None)
+
+        report = generate_markdown_report(event_without_volume, narratives, audit)
+
+        self.assertIn("- Volume ratio: n/a", report)
+        self.assertNotIn("n/ax", report)
 
 
 if __name__ == "__main__":

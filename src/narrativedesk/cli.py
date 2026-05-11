@@ -1438,9 +1438,19 @@ def _real_case_status(
         for source in allowed
         if isinstance(source, dict) and str(source.get("source_type", "")).strip()
     }
-    current_market_bars_available = bool(config.get("market_data")) or "market_data" in allowed_source_types
+    current_market_bars_check = _real_case_status_current_market_bars_check(
+        draft_dir,
+        config,
+        summary,
+    )
+    current_market_bars_available = bool(current_market_bars_check.get("ok")) or "market_data" in allowed_source_types
     current_filings_available = bool({"filing", "sec_filing"} & allowed_source_types)
     current_news_available = bool({"news", "news_article"} & allowed_source_types)
+    current_summary = {
+        **summary,
+        "market_bars_available": current_market_bars_available,
+        "market_bars_check": current_market_bars_check,
+    }
     response.update(
         {
             "status": "needs_sources",
@@ -1454,12 +1464,15 @@ def _real_case_status(
                 "blocked_future_sources": len(blocked),
                 "rejected_sources": summary.get("rejected_sources"),
                 "market_bars_available": current_market_bars_available,
-                "market_bars_check": summary.get("market_bars_check"),
+                "market_bars_check": current_market_bars_check,
+                "market_context": _real_case_status_market_context(
+                    current_market_bars_check
+                ),
                 "filings_available": current_filings_available,
                 "news_available": current_news_available,
                 "missing_requirements": summary.get("missing_requirements", []),
             },
-            "next_action": _real_case_status_next_action(summary),
+            "next_action": _real_case_status_next_action(current_summary),
         }
     )
     if summary.get("case_readiness") != "curator_ready":
@@ -1609,12 +1622,117 @@ def _real_case_status_compact_quality_gate(result: dict[str, Any]) -> dict[str, 
             for name, check in checks.items()
             if not isinstance(check, dict) or not bool(check.get("ok"))
         )
-    return {
+    response = {
         "ok": bool(result.get("ok")),
         "status": result.get("status"),
         "failed_checks": failed_checks,
         "metrics": result.get("metrics", {}),
         "next_action": result.get("next_action"),
+    }
+    if isinstance(checks, dict) and isinstance(checks.get("demo_market_context"), dict):
+        response["market_context"] = _compact_demo_market_context(checks["demo_market_context"])
+    return response
+
+
+def _real_case_status_current_market_bars_check(
+    draft_dir: Path,
+    config: dict[str, Any],
+    summary: dict[str, Any],
+) -> dict[str, Any]:
+    fallback = summary.get("market_bars_check")
+    market_data = config.get("market_data") if isinstance(config, dict) else None
+    if not isinstance(market_data, dict):
+        return fallback if isinstance(fallback, dict) else {}
+
+    meta = config.get("case_metadata") if isinstance(config.get("case_metadata"), dict) else {}
+    ticker = meta.get("ticker") or summary.get("ticker")
+    replay_lock = meta.get("event_timestamp") or summary.get("replay_lock")
+    market_path_value = market_data.get("path")
+    if not ticker or not replay_lock or not market_path_value:
+        return fallback if isinstance(fallback, dict) else {}
+
+    market_path = Path(str(market_path_value))
+    if not market_path.is_absolute():
+        market_path = draft_dir / market_path
+    try:
+        return inspect_market_bars(
+            market_path,
+            ticker=str(ticker),
+            replay_lock=str(replay_lock),
+            peers=market_data.get("peers"),
+            sector_symbol=market_data.get("sector_symbol"),
+        )
+    except (OSError, TypeError, ValueError, RealProvenanceError) as exc:
+        return {
+            "ok": False,
+            "path": str(market_path),
+            "ticker": str(ticker),
+            "errors": [str(exc)],
+        }
+
+
+def _real_case_status_market_context(market_bars_check: Any) -> dict[str, Any]:
+    if not isinstance(market_bars_check, dict):
+        return {
+            "ok": False,
+            "target_bar_present": False,
+            "peer_bars_present": False,
+            "peer_bar_count": 0,
+            "peer_median_measurable": False,
+            "abnormal_return_measurable": False,
+            "daily_return": None,
+            "peer_median_return": None,
+            "abnormal_return": None,
+            "errors": ["market_bars_check is unavailable"],
+        }
+    metrics = market_bars_check.get("market_metrics")
+    if not isinstance(metrics, dict):
+        metrics = {}
+    errors = market_bars_check.get("errors", [])
+    if not isinstance(errors, list):
+        errors = []
+    return {
+        "ok": bool(market_bars_check.get("ok"))
+        and bool(market_bars_check.get("target_bar_present"))
+        and bool(market_bars_check.get("peer_bars_present"))
+        and bool(market_bars_check.get("peer_median_measurable"))
+        and bool(market_bars_check.get("abnormal_return_measurable")),
+        "target_bar_present": bool(market_bars_check.get("target_bar_present")),
+        "peer_bars_present": bool(market_bars_check.get("peer_bars_present")),
+        "peer_bar_count": int(market_bars_check.get("peer_bar_count") or 0),
+        "peer_median_measurable": bool(market_bars_check.get("peer_median_measurable")),
+        "abnormal_return_measurable": bool(market_bars_check.get("abnormal_return_measurable")),
+        "daily_return": metrics.get("daily_return"),
+        "peer_median_return": metrics.get("peer_median_return"),
+        "abnormal_return": metrics.get("abnormal_return"),
+        "event_bar_as_of": (market_bars_check.get("selected_row") or {}).get("as_of")
+        if isinstance(market_bars_check.get("selected_row"), dict)
+        else None,
+        "errors": [str(error) for error in errors],
+    }
+
+
+def _compact_demo_market_context(check: dict[str, Any]) -> dict[str, Any]:
+    metrics = check.get("metrics")
+    if not isinstance(metrics, dict):
+        metrics = {}
+    errors = check.get("errors", [])
+    if not isinstance(errors, list):
+        errors = []
+    return {
+        "ok": bool(check.get("ok")),
+        "target_bar_present": bool(check.get("event_bar_present")),
+        "peer_bars_present": int(check.get("peer_bar_count") or 0) > 0,
+        "peer_bar_count": int(check.get("peer_bar_count") or 0),
+        "peer_median_measurable": metrics.get("peer_median_return") is not None,
+        "abnormal_return_measurable": metrics.get("abnormal_return") is not None,
+        "daily_return": metrics.get("daily_return"),
+        "peer_median_return": metrics.get("peer_median_return"),
+        "abnormal_return": metrics.get("abnormal_return"),
+        "event_bar_as_of": check.get("event_bar_as_of"),
+        "latest_linked_evidence_at": check.get("latest_linked_evidence_at"),
+        "post_evidence_bar_present": check.get("post_evidence_bar_present"),
+        "errors": [str(error) for error in errors],
     }
 
 
