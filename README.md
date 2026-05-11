@@ -173,6 +173,15 @@ PYTHONPATH=src python3 -m narrativedesk.cli real-case-apply-narratives \
 
 Each curated narrative can include `supporting_source_ids`, `contradicting_source_ids`, `future_supporting_source_ids`, and `future_contradicting_source_ids`; these helper fields are used to link sources and are omitted from the written config. Replace all `TBD` values and add source links before applying the template.
 
+To apply curation, build a source pack, write a replay bundle, and verify it in one scratch step:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli real-case-curated-bundle \
+  --draft-dir .codex-work/real-cases/aapl-2024-q2-rehearsal \
+  --narratives .codex-work/real-cases/aapl-2024-q2-rehearsal/curated_narratives.template.json \
+  --out-dir .codex-work/real-cases/aapl-2024-q2-bundle
+```
+
 Inspect local prior-art repos for timestamped manual-source candidates:
 
 ```bash

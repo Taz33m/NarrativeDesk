@@ -563,6 +563,113 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertIn("NARR-REAL-001", source_by_id[allowed_ids[1]]["contradicted_narrative_ids"])
         self.assertIn("NARR-REAL-001", source_by_id[future_ids[0]]["supported_narrative_ids"])
 
+    def test_cli_real_case_curated_bundle_applies_curation_and_verifies_bundle(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            rehearsal = rehearse_real_case(
+                ticker="EXMPL",
+                company_name="Example Co",
+                event_type="earnings/guidance",
+                event_date="2025-01-02",
+                replay_lock="2025-01-02T10:00:00-05:00",
+                date_from="2025-01-01",
+                date_to="2025-01-07",
+                out_root=root,
+                providers=["finnhub", "sec"],
+                finnhub_token="secret-token",
+                sec_user_agent="NarrativeDesk Tests test@example.com",
+                fetcher=FakeProvenanceFetcher(),
+                retrieved_at="2026-05-11T00:00:00Z",
+                forms=["8-K"],
+                sec_count=1,
+                include_sec_document_text=True,
+                sec_throttle_seconds=0,
+            )
+            draft_dir = Path(rehearsal["draft_dir"])
+            draft_config = json.loads((draft_dir / "real_case_config.json").read_text())
+            allowed_ids = [
+                source["source_id"]
+                for source in draft_config["manual_sources"]
+                if source["availability_status"] == "allowed"
+            ]
+            future_ids = [
+                source["source_id"]
+                for source in draft_config["manual_sources"]
+                if source["availability_status"] == "blocked_future"
+            ]
+            narratives_path = draft_dir / "curated_narratives.json"
+            narratives_path.write_text(
+                json.dumps(
+                    {
+                        "narratives": [
+                            {
+                                "narrative_id": "NARR-REAL-001",
+                                "title": "Forward demand slowdown",
+                                "narrative": "The move reflects concern that forward demand is slowing.",
+                                "mechanism": "Lower expected demand reduces forward revenue estimates.",
+                                "directional_implication": "bearish",
+                                "time_horizon": "20 trading days",
+                                "expected_observables": ["Forward estimates fall after the replay window."],
+                                "supporting_source_ids": [allowed_ids[0]],
+                                "contradicting_source_ids": [allowed_ids[1]],
+                                "future_supporting_source_ids": [future_ids[0]],
+                                "scoring_inputs": {
+                                    "evidence_strength": 0.75,
+                                    "mechanism_specificity": 0.8,
+                                    "source_independence": 0.65,
+                                    "cross_sectional_fit": 0.7,
+                                    "contradiction_resistance": 0.6,
+                                    "timestamp_advantage": 0.8,
+                                    "forward_observable_quality": 0.78,
+                                    "crowding_risk": 0.25,
+                                    "unsupported_claim_penalty": 0.03,
+                                },
+                            }
+                        ]
+                    }
+                )
+            )
+            bundle_dir = root / "bundle"
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-case-curated-bundle",
+                    "--draft-dir",
+                    str(draft_dir),
+                    "--narratives",
+                    str(narratives_path),
+                    "--out-dir",
+                    str(bundle_dir),
+                    "--retrieved-at",
+                    "2026-05-11T00:00:00Z",
+                    "--label",
+                    "EXMPL curated rehearsal",
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            response = json.loads(result.stdout)
+            verification = json.loads((bundle_dir / "bundle_verify.json").read_text())
+            source_pack = json.loads((bundle_dir / "source_pack.json").read_text())
+            report_exists = (bundle_dir / "report.md").exists()
+            manifest_exists = (bundle_dir / "manifest.json").exists()
+            curated_config_exists = Path(response["curated_config_out"]).exists()
+
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertTrue(response["ok"])
+        self.assertTrue(response["bundle_verify"]["ok"])
+        self.assertTrue(verification["ok"])
+        self.assertEqual(source_pack["narratives"][0]["narrative_id"], "NARR-REAL-001")
+        self.assertTrue(report_exists)
+        self.assertTrue(manifest_exists)
+        self.assertTrue(curated_config_exists)
+
     def test_provider_error_is_manifested_and_normalization_continues(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             out_dir = Path(tmpdir) / "fetch"
