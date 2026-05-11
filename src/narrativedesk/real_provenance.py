@@ -1103,6 +1103,9 @@ def _sec_filing_excerpt(document_text: str, *, fallback: str) -> str:
         return _truncate_text(fallback)
     patterns = (
         "Item 2.02",
+        "Segment Operating Performance",
+        "Products and Services Performance",
+        "Results of Operations This Item",
         "Results of Operations",
         "Net sales",
         "CONDENSED CONSOLIDATED STATEMENTS",
@@ -1112,11 +1115,11 @@ def _sec_filing_excerpt(document_text: str, *, fallback: str) -> str:
         "dividend",
     )
     lower = cleaned.lower()
-    positions = [lower.find(pattern.lower()) for pattern in patterns]
-    positions = [position for position in positions if position >= 0]
-    if not positions:
-        return _truncate_text(cleaned)
-    return _truncate_text(cleaned[min(positions):])
+    for pattern in patterns:
+        position = lower.find(pattern.lower())
+        if position >= 0:
+            return _truncate_text(cleaned[position:])
+    return _truncate_text(cleaned)
 
 
 def _relative_path(path: Path, base: Path) -> str:

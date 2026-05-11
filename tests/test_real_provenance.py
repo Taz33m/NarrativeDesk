@@ -155,6 +155,22 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertIn("Net sales", excerpt)
         self.assertNotIn("UNITED STATES SECURITIES AND EXCHANGE COMMISSION", excerpt)
 
+    def test_sec_filing_excerpt_prefers_actual_results_section_over_table_of_contents(self):
+        raw = """
+        <html><body>
+          <p>Results of Operations 13 Item 3. Quantitative and Qualitative Disclosures About Market Risk 18</p>
+          <p>More table of contents rows.</p>
+          <p>Results of Operations This Item contains management discussion and analysis.</p>
+          <p>Segment Operating Performance net sales were discussed here.</p>
+        </body></html>
+        """
+
+        excerpt = _sec_filing_excerpt(raw, fallback="Apple filed a 10-Q.")
+
+        self.assertTrue(excerpt.startswith("Segment Operating Performance"))
+        self.assertIn("Segment Operating Performance", excerpt)
+        self.assertNotIn("Quantitative and Qualitative Disclosures", excerpt)
+
     def test_fetch_real_data_writes_manifest_and_redacts_secrets(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             out_dir = Path(tmpdir) / "fetch"
