@@ -513,6 +513,49 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(response["missing_env"], ["SEC_USER_AGENT", "NEWS_API_KEY"])
         self.assertNotIn("secret-token", result.stdout)
 
+    def test_cli_real_data_env_check_reads_env_file_without_sourcing_shell(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env_file = Path(tmpdir) / ".env.local"
+            env_file.write_text(
+                "\n".join(
+                    [
+                        "FINNHUB_API_KEY=file-secret-token",
+                        "SEC_USER_AGENT=AppleAnalyst (contact@example.com)",
+                        "export NEWS_API_KEY='news-secret-token'",
+                    ]
+                )
+                + "\n"
+            )
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-data-env-check",
+                    "--providers",
+                    "finnhub,sec,newsapi",
+                    "--env-file",
+                    str(env_file),
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            response = json.loads(result.stdout)
+
+        self.assertEqual(result.returncode, 0)
+        self.assertTrue(response["ok"])
+        self.assertEqual(
+            response["present_env"],
+            ["FINNHUB_API_KEY", "SEC_USER_AGENT", "NEWS_API_KEY"],
+        )
+        self.assertEqual(response["missing_env"], [])
+        self.assertNotIn("file-secret-token", result.stdout)
+        self.assertNotIn("contact@example.com", result.stdout)
+        self.assertNotIn("news-secret-token", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()
