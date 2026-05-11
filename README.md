@@ -165,6 +165,8 @@ PYTHONPATH=src python3 -m narrativedesk.cli real-case-draft \
   --replay-lock 2024-05-03T10:00:00-04:00 \
   --normalized-dir .codex-work/live-fetches/aapl-2024-q2/normalized \
   --out-dir .codex-work/real-cases/aapl-2024-q2-rehearsal
+PYTHONPATH=src python3 -m narrativedesk.cli real-case-worksheet \
+  --draft-dir .codex-work/real-cases/aapl-2024-q2-rehearsal
 ```
 
 Live-provider rehearsal requires `FINNHUB_API_KEY` and `SEC_USER_AGENT`; `NEWS_API_KEY` is optional when using `--providers newsapi`. Outputs remain scratch until a human adds competing narratives, `real-pack-build --require-narratives` passes, and the final bundle verifies.

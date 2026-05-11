@@ -28,6 +28,7 @@ from narrativedesk.real_provenance import (
     draft_real_case,
     fetch_real_data,
     normalize_real_data_fetch,
+    write_real_case_worksheet,
 )
 from narrativedesk.replay_bundle import verify_replay_bundle
 from narrativedesk.source_pack import (
@@ -222,6 +223,15 @@ def build_parser() -> argparse.ArgumentParser:
     real_draft.add_argument("--normalized-dir", required=True, help="Directory containing normalized outputs.")
     real_draft.add_argument("--out-dir", required=True, help="Output directory for the real-case draft.")
     real_draft.add_argument("--case-id", help="Optional case ID override.")
+
+    real_worksheet = sub.add_parser(
+        "real-case-worksheet",
+        help="Write a scratch curation worksheet from a real-case draft directory.",
+    )
+    real_worksheet.add_argument("--draft-dir", required=True, help="Directory containing real_case_config.json and draft_summary.json.")
+    real_worksheet.add_argument("--out", help="Optional worksheet output path. Defaults to <draft-dir>/curation_worksheet.md.")
+    real_worksheet.add_argument("--allowed-limit", type=int, default=12, help="Maximum replay-eligible sources to render.")
+    real_worksheet.add_argument("--blocked-limit", type=int, default=10, help="Maximum blocked future sources to render.")
 
     ingest = sub.add_parser("source-pack-ingest", help="Convert a source pack into a replay fixture.")
     ingest.add_argument("path", help="Path to source pack JSON.")
@@ -622,6 +632,21 @@ def run_real_case_draft(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_real_case_worksheet(args: argparse.Namespace) -> int:
+    try:
+        response = write_real_case_worksheet(
+            args.draft_dir,
+            out=args.out,
+            allowed_limit=args.allowed_limit,
+            blocked_limit=args.blocked_limit,
+        )
+    except (OSError, json.JSONDecodeError, RealProvenanceError) as exc:
+        print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
+        return 1
+    print(json.dumps(response, indent=2, sort_keys=True))
+    return 0
+
+
 def run_source_pack_ingest(args: argparse.Namespace) -> int:
     payload = load_source_pack(args.path)
     errors = validate_source_pack(payload, require_narratives=True)
@@ -832,6 +857,8 @@ def main() -> int:
         return run_real_data_normalize(args)
     if args.command == "real-case-draft":
         return run_real_case_draft(args)
+    if args.command == "real-case-worksheet":
+        return run_real_case_worksheet(args)
     if args.command == "source-pack-ingest":
         return run_source_pack_ingest(args)
     if args.command == "validation-validate":
