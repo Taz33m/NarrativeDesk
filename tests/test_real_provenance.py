@@ -9,6 +9,8 @@ from pathlib import Path
 from narrativedesk.real_data import build_real_source_pack, validate_real_case_config
 from narrativedesk.real_provenance import (
     RealProvenanceError,
+    _normalize_text,
+    _sec_filing_excerpt,
     draft_real_case,
     fetch_real_data,
     normalize_real_data_fetch,
@@ -115,6 +117,44 @@ def _epoch(value):
 
 
 class RealProvenanceTests(unittest.TestCase):
+    def test_normalize_text_drops_inline_xbrl_hidden_blocks(self):
+        raw = """
+        <html><body>
+          <ix:header>
+            <ix:hidden><ix:nonNumeric>hidden xbrl noise</ix:nonNumeric></ix:hidden>
+            <ix:resources><xbrli:context>context noise</xbrli:context></ix:resources>
+          </ix:header>
+          <p>Apple reported second quarter results.</p>
+        </body></html>
+        """
+
+        text = _normalize_text(raw)
+
+        self.assertIn("Apple reported second quarter results.", text)
+        self.assertNotIn("hidden xbrl noise", text)
+        self.assertNotIn("context noise", text)
+
+    def test_normalize_text_unescapes_html_entities(self):
+        text = _normalize_text("<p>Apple&#39;s services&nbsp;revenue</p>")
+
+        self.assertEqual(text, "Apple's services revenue")
+
+    def test_sec_filing_excerpt_focuses_on_financial_or_event_sections(self):
+        raw = """
+        <html><body>
+          <p>UNITED STATES SECURITIES AND EXCHANGE COMMISSION cover page boilerplate.</p>
+          <p>Registrant address and phone number.</p>
+          <p>Item 2.02 Results of Operations and Financial Condition.</p>
+          <p>Net sales were discussed in the earnings release exhibit.</p>
+        </body></html>
+        """
+
+        excerpt = _sec_filing_excerpt(raw, fallback="Apple filed an 8-K.")
+
+        self.assertIn("Item 2.02", excerpt)
+        self.assertIn("Net sales", excerpt)
+        self.assertNotIn("UNITED STATES SECURITIES AND EXCHANGE COMMISSION", excerpt)
+
     def test_fetch_real_data_writes_manifest_and_redacts_secrets(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             out_dir = Path(tmpdir) / "fetch"

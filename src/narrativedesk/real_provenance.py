@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import html
 import json
 import re
 import time
@@ -565,7 +566,7 @@ def _candidate_from_sec_filing(
     company_name = str(filing.get("company_name") or filing.get("ticker") or "Company")
     title = f"{company_name} {filing.get('form', 'filing')} filed {filing.get('filing_date', '')}".strip()
     claim = f"{company_name} filed {filing.get('form', 'filing')} on {filing.get('filing_date', 'unknown date')}."
-    excerpt = _truncate_text(document_text or claim)
+    excerpt = _sec_filing_excerpt(document_text, fallback=claim)
     return _candidate(
         source_id=_next_candidate_id(counters, "SEC"),
         provider="sec",
@@ -1076,7 +1077,14 @@ def _redact_secret_text(value: str | None) -> str | None:
 def _normalize_text(value: str) -> str:
     text = re.sub(r"(?is)<script[^>]*>.*?</script>", " ", value)
     text = re.sub(r"(?is)<style[^>]*>.*?</style>", " ", text)
+    text = re.sub(r"(?is)<ix:header[^>]*>.*?</ix:header>", " ", text)
+    text = re.sub(r"(?is)<ix:hidden[^>]*>.*?</ix:hidden>", " ", text)
+    text = re.sub(r"(?is)<ix:resources[^>]*>.*?</ix:resources>", " ", text)
+    text = re.sub(r"(?is)<ix:references[^>]*>.*?</ix:references>", " ", text)
+    text = re.sub(r"(?is)<xbrli:context[^>]*>.*?</xbrli:context>", " ", text)
+    text = re.sub(r"(?is)<xbrli:unit[^>]*>.*?</xbrli:unit>", " ", text)
     text = re.sub(r"(?is)<[^>]+>", " ", text)
+    text = html.unescape(text)
     return re.sub(r"\s+", " ", text).strip()
 
 
@@ -1087,6 +1095,28 @@ def _truncate_text(value: str, *, max_chars: int = 1000) -> str:
 
 def _join_text(*parts: str) -> str:
     return _truncate_text(" ".join(part for part in parts if part and part.strip()))
+
+
+def _sec_filing_excerpt(document_text: str, *, fallback: str) -> str:
+    cleaned = _normalize_text(document_text or "")
+    if not cleaned:
+        return _truncate_text(fallback)
+    patterns = (
+        "Item 2.02",
+        "Results of Operations",
+        "Net sales",
+        "CONDENSED CONSOLIDATED STATEMENTS",
+        "iPhone",
+        "Services",
+        "share repurchase",
+        "dividend",
+    )
+    lower = cleaned.lower()
+    positions = [lower.find(pattern.lower()) for pattern in patterns]
+    positions = [position for position in positions if position >= 0]
+    if not positions:
+        return _truncate_text(cleaned)
+    return _truncate_text(cleaned[min(positions):])
 
 
 def _relative_path(path: Path, base: Path) -> str:
