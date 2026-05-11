@@ -1,10 +1,13 @@
 import json
+import importlib.util
 import subprocess
 import sys
 import tempfile
 import unittest
 from datetime import datetime, timezone
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from narrativedesk.real_data import build_real_source_pack, validate_real_case_config
 from narrativedesk.real_provenance import (
@@ -21,6 +24,17 @@ from narrativedesk.real_provenance import (
 from narrativedesk.source_pack import validate_source_pack
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def _load_aapl_rehearsal_runner():
+    spec = importlib.util.spec_from_file_location(
+        "run_aapl_rehearsal",
+        ROOT / "scripts" / "run_aapl_rehearsal.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+    return module
 
 
 class FakeProvenanceFetcher:
@@ -955,7 +969,7 @@ class RealProvenanceTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 1)
         self.assertFalse(response["ok"])
-        self.assertEqual(response["status"], "preflight_failed")
+        self.assertEqual(response["status"], "missing_env")
         self.assertEqual(response["stages"]["preflight"]["json"]["status"], "missing_env")
         self.assertEqual(
             response["stages"]["preflight"]["json"]["env"]["missing_env"],
@@ -963,6 +977,66 @@ class RealProvenanceTests(unittest.TestCase):
         )
         self.assertFalse((root / "fetch").exists())
         self.assertFalse((root / "draft").exists())
+
+    def test_aapl_rehearsal_runner_resumes_from_curated_draft_to_bundle(self):
+        runner = _load_aapl_rehearsal_runner()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            draft_dir = root / "draft"
+            draft_dir.mkdir()
+            (draft_dir / "curated_narratives.json").write_text("{}\n")
+            args = SimpleNamespace(
+                ticker="EXMPL",
+                company_name="Example Co",
+                event_type="earnings/guidance",
+                event_date="2025-01-02",
+                replay_lock="2025-01-02T10:00:00-05:00",
+                date_from="2025-01-01",
+                date_to="2025-01-07",
+                providers="finnhub,sec",
+                env_file=str(root / ".env.local"),
+                fetch_dir=str(root / "fetch"),
+                draft_dir=str(draft_dir),
+                bundle_dir=str(root / "bundle"),
+                narratives=None,
+                sec_count=5,
+                forms="8-K,10-Q,10-K",
+                no_sec_document_text=False,
+                preflight_only=False,
+                build_bundle=False,
+            )
+            calls = []
+
+            def fake_run_cli(command):
+                calls.append(command)
+                if command[0] == "real-case-preflight":
+                    return {
+                        "returncode": 1,
+                        "json": {
+                            "ok": False,
+                            "status": "missing_bundle",
+                            "next_action": "Run real-case-curated-bundle with this bundle directory.",
+                        },
+                    }
+                if command[0] == "real-case-curated-bundle":
+                    return {"returncode": 0, "json": {"ok": True}}
+                if command[0] == "real-case-quality":
+                    return {
+                        "returncode": 0,
+                        "json": {
+                            "ok": True,
+                            "next_action": "Review the report and decide whether this private case is demo-worthy.",
+                        },
+                    }
+                raise AssertionError(f"Unexpected command: {command}")
+
+            with patch.object(runner, "_run_cli", side_effect=fake_run_cli):
+                response = runner.run_rehearsal(args)
+
+        self.assertTrue(response["ok"])
+        self.assertEqual(response["status"], "quality_ready")
+        self.assertEqual([call[0] for call in calls], ["real-case-preflight", "real-case-curated-bundle", "real-case-quality"])
+        self.assertNotIn("real-case-rehearse", [call[0] for call in calls])
 
     def test_cli_real_case_worksheet_writes_curation_markdown(self):
         with tempfile.TemporaryDirectory() as tmpdir:

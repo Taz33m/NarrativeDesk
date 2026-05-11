@@ -54,29 +54,22 @@ def main(argv: list[str] | None = None) -> int:
 
 def run_rehearsal(args: argparse.Namespace) -> dict[str, Any]:
     stages: dict[str, Any] = {}
-    preflight = _run_cli(
-        [
-            "real-case-preflight",
-            "--ticker",
-            args.ticker,
-            "--event-date",
-            args.event_date,
-            "--providers",
-            args.providers,
-            *(_env_file_args(args.env_file)),
-            "--fetch-dir",
-            args.fetch_dir,
-            "--draft-dir",
-            args.draft_dir,
-            "--bundle-dir",
-            args.bundle_dir,
-        ]
-    )
+    preflight = _run_preflight(args)
     stages["preflight"] = preflight
+    preflight_status = str(preflight["json"].get("status", ""))
+    if args.preflight_only:
+        return _final(
+            preflight["returncode"] == 0,
+            preflight_status or "preflight_failed",
+            stages,
+            preflight["json"].get("next_action"),
+        )
+    if preflight_status == "bundle_verified":
+        return _run_quality(args, stages)
+    if preflight_status in {"missing_bundle", "bundle_failed", "ready_to_bundle"}:
+        return _run_bundle_and_quality(args, stages)
     if preflight["returncode"] != 0:
         return _final(False, "preflight_failed", stages, preflight["json"].get("next_action"))
-    if args.preflight_only:
-        return _final(True, str(preflight["json"].get("status", "preflight_ok")), stages, preflight["json"].get("next_action"))
 
     rehearse_args = [
         "real-case-rehearse",
@@ -113,6 +106,32 @@ def run_rehearsal(args: argparse.Namespace) -> dict[str, Any]:
     if rehearse["returncode"] != 0:
         return _final(False, "rehearsal_failed", stages, "Inspect the rehearsal stage errors; no real claims were committed.")
 
+    return _run_status_then_bundle(args, stages)
+
+
+def _run_preflight(args: argparse.Namespace) -> dict[str, Any]:
+    preflight_args = [
+        "real-case-preflight",
+        "--ticker",
+        args.ticker,
+        "--event-date",
+        args.event_date,
+        "--providers",
+        args.providers,
+        *(_env_file_args(args.env_file)),
+        "--fetch-dir",
+        args.fetch_dir,
+        "--draft-dir",
+        args.draft_dir,
+        "--bundle-dir",
+        args.bundle_dir,
+    ]
+    if args.narratives:
+        preflight_args.extend(["--narratives", args.narratives])
+    return _run_cli(preflight_args)
+
+
+def _run_status_then_bundle(args: argparse.Namespace, stages: dict[str, Any]) -> dict[str, Any]:
     narratives_path = _select_narratives_path(args)
     status_args = ["real-case-status", "--draft-dir", args.draft_dir]
     if narratives_path is not None:
@@ -120,6 +139,24 @@ def run_rehearsal(args: argparse.Namespace) -> dict[str, Any]:
     status = _run_cli(status_args)
     stages["status"] = status
 
+    if narratives_path is None:
+        return _final(
+            False,
+            "needs_curation",
+            stages,
+            "Curate 3-5 narratives in curated_narratives.json, then rerun this script.",
+        )
+
+    return _run_bundle_and_quality(args, stages, narratives_path=narratives_path)
+
+
+def _run_bundle_and_quality(
+    args: argparse.Namespace,
+    stages: dict[str, Any],
+    *,
+    narratives_path: Path | None = None,
+) -> dict[str, Any]:
+    narratives_path = narratives_path or _select_narratives_path(args)
     if narratives_path is None:
         return _final(
             False,
@@ -154,6 +191,10 @@ def run_rehearsal(args: argparse.Namespace) -> dict[str, Any]:
     if bundle["returncode"] != 0:
         return _final(False, "bundle_failed", stages, "Fix curated narratives and source links, then rebuild the bundle.")
 
+    return _run_quality(args, stages)
+
+
+def _run_quality(args: argparse.Namespace, stages: dict[str, Any]) -> dict[str, Any]:
     quality = _run_cli(["real-case-quality", "--bundle-dir", args.bundle_dir])
     stages["quality"] = quality
     if quality["returncode"] != 0:
