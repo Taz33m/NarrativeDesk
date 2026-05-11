@@ -36,6 +36,7 @@ from narrativedesk.real_provenance import (
 )
 from narrativedesk.replay_bundle import verify_replay_bundle
 from narrativedesk.source_pack import (
+    assess_real_case_quality,
     assess_source_pack_readiness,
     build_fixture_from_source_pack,
     build_validation_fixture_template_from_source_pack,
@@ -61,6 +62,29 @@ def build_parser() -> argparse.ArgumentParser:
 
     pack_readiness = sub.add_parser("source-pack-readiness", help="Assess whether a source pack is ready to ingest.")
     pack_readiness.add_argument("path", help="Path to source pack JSON.")
+
+    real_quality = sub.add_parser(
+        "real-case-quality",
+        help="Assess whether a real-curated source pack or bundle clears the replay-case quality gate.",
+    )
+    real_quality_input = real_quality.add_mutually_exclusive_group(required=True)
+    real_quality_input.add_argument("--source-pack", help="Path to source pack JSON.")
+    real_quality_input.add_argument("--bundle-dir", help="Path to a generated replay bundle directory.")
+    real_quality.add_argument("--min-narratives", type=int, default=3, help="Minimum competing narratives.")
+    real_quality.add_argument("--max-narratives", type=int, default=5, help="Maximum focused competing narratives.")
+    real_quality.add_argument("--min-allowed-sources", type=int, default=5, help="Minimum replay-time sources.")
+    real_quality.add_argument(
+        "--min-blocked-future-sources",
+        type=int,
+        default=1,
+        help="Minimum future sources quarantined for validation.",
+    )
+    real_quality.add_argument(
+        "--min-contradictions",
+        type=int,
+        default=1,
+        help="Minimum replay-time contradiction links.",
+    )
 
     pack_bundle = sub.add_parser("source-pack-bundle", help="Create a self-contained replay bundle from a ready source pack.")
     pack_bundle.add_argument("path", help="Path to source pack JSON.")
@@ -460,6 +484,38 @@ def run_source_pack_preview(args: argparse.Namespace) -> int:
 def run_source_pack_readiness(args: argparse.Namespace) -> int:
     payload = load_source_pack(args.path)
     result = assess_source_pack_readiness(payload)
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0 if result["ok"] else 1
+
+
+def run_real_case_quality(args: argparse.Namespace) -> int:
+    try:
+        bundle_verification = None
+        validation_fixture = None
+        if args.bundle_dir:
+            bundle_dir = Path(args.bundle_dir)
+            payload = load_source_pack(bundle_dir / "source_pack.json")
+            bundle_verification = verify_replay_bundle(bundle_dir)
+            validation_path = bundle_dir / "validation_fixture.json"
+            if validation_path.exists():
+                validation_fixture = json.loads(validation_path.read_text())
+        else:
+            payload = load_source_pack(args.source_pack)
+
+        result = assess_real_case_quality(
+            payload,
+            min_narratives=args.min_narratives,
+            max_narratives=args.max_narratives,
+            min_allowed_sources=args.min_allowed_sources,
+            min_blocked_future_sources=args.min_blocked_future_sources,
+            min_contradictions=args.min_contradictions,
+            bundle_verification=bundle_verification,
+            validation_fixture=validation_fixture,
+        )
+    except (OSError, json.JSONDecodeError) as exc:
+        print(json.dumps({"ok": False, "status": "invalid_input", "errors": [str(exc)]}, indent=2, sort_keys=True))
+        return 1
+
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["ok"] else 1
 
@@ -1463,6 +1519,8 @@ def main() -> int:
         return run_source_pack_preview(args)
     if args.command == "source-pack-readiness":
         return run_source_pack_readiness(args)
+    if args.command == "real-case-quality":
+        return run_real_case_quality(args)
     if args.command == "source-pack-bundle":
         return run_source_pack_bundle(args)
     if args.command == "bundle-verify":

@@ -267,6 +267,189 @@ def assess_source_pack_readiness(payload: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
+def assess_real_case_quality(
+    payload: dict[str, Any],
+    *,
+    min_narratives: int = 3,
+    max_narratives: int = 5,
+    min_allowed_sources: int = 5,
+    min_blocked_future_sources: int = 1,
+    min_contradictions: int = 1,
+    bundle_verification: dict[str, Any] | None = None,
+    validation_fixture: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Assess whether a real-curated case clears the product proof threshold."""
+    readiness = assess_source_pack_readiness(payload)
+    meta = payload.get("case_metadata", {}) if isinstance(payload, dict) else {}
+    if not isinstance(meta, dict):
+        meta = {}
+
+    sources = _source_items(payload)
+    allowed_sources = [source for source in sources if source.get("availability_status") == "allowed"]
+    blocked_future_sources = [
+        source for source in sources if source.get("availability_status") == "blocked_future"
+    ]
+    narratives = [item for item in payload.get("narratives", []) if isinstance(item, dict)]
+    allowed_source_ids = {str(source.get("source_id")) for source in allowed_sources}
+    allowed_supported_ids = {
+        str(source.get("source_id"))
+        for source in allowed_sources
+        if source.get("supported_narrative_ids")
+    }
+    allowed_contradiction_ids = {
+        str(source.get("source_id"))
+        for source in allowed_sources
+        if source.get("contradicted_narrative_ids")
+    }
+    supported_by_narrative: dict[str, list[str]] = {}
+    for narrative in narratives:
+        narrative_id = str(narrative.get("narrative_id", "unknown"))
+        supported_by_narrative[narrative_id] = [
+            str(source.get("source_id"))
+            for source in allowed_sources
+            if narrative_id in source.get("supported_narrative_ids", [])
+        ]
+    narratives_without_allowed_support = sorted(
+        narrative_id for narrative_id, source_ids in supported_by_narrative.items() if not source_ids
+    )
+
+    validation_future_source_ids = _validation_future_source_ids(validation_fixture)
+    validation_future_source_count = len(validation_future_source_ids)
+    if validation_fixture is None:
+        validation_future_source_count = len(blocked_future_sources)
+        validation_future_source_ids = [str(source.get("source_id")) for source in blocked_future_sources]
+
+    checks: dict[str, dict[str, Any]] = {
+        "source_pack_ready": {
+            "ok": bool(readiness.get("ok")),
+            "status": readiness.get("status"),
+            "errors": _readiness_errors_for_quality(readiness),
+        },
+        "real_curated_provenance": {
+            "ok": meta.get("data_provenance_mode") == "real-curated",
+            "actual": meta.get("data_provenance_mode"),
+        },
+        "case_identity": {
+            "ok": all(meta.get(field) for field in ["case_id", "ticker", "event_timestamp"]),
+            "case_id": meta.get("case_id"),
+            "ticker": meta.get("ticker"),
+            "event_timestamp": meta.get("event_timestamp"),
+        },
+        "market_snapshot": {
+            "ok": bool(payload.get("market_snapshot")),
+            "present": bool(payload.get("market_snapshot")),
+        },
+        "narrative_count": {
+            "ok": min_narratives <= len(narratives) <= max_narratives,
+            "actual": len(narratives),
+            "minimum": min_narratives,
+            "maximum": max_narratives,
+        },
+        "replay_time_sources": {
+            "ok": len(allowed_sources) >= min_allowed_sources,
+            "actual": len(allowed_sources),
+            "minimum": min_allowed_sources,
+            "source_ids": sorted(allowed_source_ids),
+        },
+        "blocked_future_sources": {
+            "ok": len(blocked_future_sources) >= min_blocked_future_sources,
+            "actual": len(blocked_future_sources),
+            "minimum": min_blocked_future_sources,
+            "source_ids": sorted(str(source.get("source_id")) for source in blocked_future_sources),
+        },
+        "contradiction_links": {
+            "ok": len(allowed_contradiction_ids) >= min_contradictions,
+            "actual": len(allowed_contradiction_ids),
+            "minimum": min_contradictions,
+            "source_ids": sorted(allowed_contradiction_ids),
+        },
+        "narrative_allowed_support": {
+            "ok": not narratives_without_allowed_support and bool(narratives),
+            "narratives_without_allowed_support": narratives_without_allowed_support,
+            "supported_by_narrative": supported_by_narrative,
+        },
+        "validation_future_sources": {
+            "ok": validation_future_source_count >= min_blocked_future_sources,
+            "actual": validation_future_source_count,
+            "minimum": min_blocked_future_sources,
+            "source_ids": sorted(validation_future_source_ids),
+        },
+    }
+    if bundle_verification is not None:
+        checks["bundle_verified"] = {
+            "ok": bool(bundle_verification.get("ok")),
+            "artifact_count": bundle_verification.get("artifact_count", 0),
+            "errors": bundle_verification.get("errors", []),
+        }
+
+    ok = all(check["ok"] for check in checks.values())
+    metrics = {
+        "narrative_count": len(narratives),
+        "allowed_source_count": len(allowed_sources),
+        "blocked_future_source_count": len(blocked_future_sources),
+        "allowed_support_source_count": len(allowed_supported_ids),
+        "allowed_contradiction_source_count": len(allowed_contradiction_ids),
+        "validation_future_source_count": validation_future_source_count,
+    }
+    return {
+        "ok": ok,
+        "status": "quality_ready" if ok else "needs_curation",
+        "case_id": meta.get("case_id"),
+        "ticker": meta.get("ticker"),
+        "checks": checks,
+        "metrics": metrics,
+        "readiness": readiness,
+        "next_action": _quality_next_action(checks),
+    }
+
+
+def _readiness_errors_for_quality(readiness: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    checks = readiness.get("checks", {})
+    if not isinstance(checks, dict):
+        return ["source-pack readiness checks are unavailable"]
+    for name, check in checks.items():
+        if isinstance(check, dict) and not check.get("ok"):
+            for error in check.get("errors", []):
+                errors.append(f"{name}: {error}")
+    return errors
+
+
+def _validation_future_source_ids(validation_fixture: dict[str, Any] | None) -> list[str]:
+    if not isinstance(validation_fixture, dict):
+        return []
+    explicit_ids = validation_fixture.get("future_source_ids", [])
+    if isinstance(explicit_ids, list):
+        return [str(item) for item in explicit_ids]
+    return []
+
+
+def _quality_next_action(checks: dict[str, dict[str, Any]]) -> str:
+    if checks.get("bundle_verified", {}).get("ok") is False:
+        return "Rebuild or inspect the replay bundle until bundle verification passes."
+    if checks["source_pack_ready"]["ok"] is False:
+        return "Fix source-pack readiness errors before judging demo quality."
+    if checks["narrative_count"]["ok"] is False:
+        return "Curate 3-5 competing narratives for this real event."
+    if checks["replay_time_sources"]["ok"] is False:
+        return "Add more timestamped replay-time sources with stable provenance."
+    if checks["blocked_future_sources"]["ok"] is False:
+        return "Add at least one post-lock source as blocked future validation evidence."
+    if checks["contradiction_links"]["ok"] is False:
+        return "Link at least one replay-time contradiction to a curated narrative."
+    if checks["narrative_allowed_support"]["ok"] is False:
+        return "Give every narrative at least one replay-safe supporting source."
+    if checks["validation_future_sources"]["ok"] is False:
+        return "Keep future validation evidence separate from replay-time ranking inputs."
+    if checks["market_snapshot"]["ok"] is False:
+        return "Add a market snapshot so the abnormal move is measurable."
+    if checks["real_curated_provenance"]["ok"] is False:
+        return "Use real-curated provenance mode before treating this as a real replay candidate."
+    if checks["case_identity"]["ok"] is False:
+        return "Add case ID, ticker, and replay timestamp metadata."
+    return "Review the report and decide whether this private case is demo-worthy."
+
+
 def _readiness_replay_check(payload: dict[str, Any], meta: dict[str, Any]) -> dict[str, Any]:
     errors = []
     event_timestamp = _safe_parse_datetime(meta.get("event_timestamp"))

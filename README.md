@@ -196,6 +196,13 @@ PYTHONPATH=src python3 -m narrativedesk.cli real-case-status \
   --bundle-dir .codex-work/real-cases/aapl-2024-q2-bundle
 ```
 
+Before promoting a private real bundle, run the quality gate. It checks for a real-curated pack, 3-5 competing narratives, enough replay-time sources, blocked future evidence, contradiction links, and bundle integrity:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli real-case-quality \
+  --bundle-dir .codex-work/real-cases/aapl-2024-q2-bundle
+```
+
 Inspect local prior-art repos for timestamped manual-source candidates:
 
 ```bash
