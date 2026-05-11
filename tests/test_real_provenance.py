@@ -246,6 +246,56 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertTrue(any(source["availability_status"] == "blocked_future" for source in config["manual_sources"]))
         self.assertEqual(config["market_data"]["provider"], "local_csv")
 
+    def test_draft_real_case_omits_empty_market_data_from_config(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            normalized = root / "normalized"
+            normalized.mkdir()
+            (normalized / "market_bars.csv").write_text("date,ticker,open,close,volume\n")
+            (normalized / "source_candidates.json").write_text(
+                json.dumps(
+                    {
+                        "candidates": [
+                            {
+                                "source_id": "SEC-001",
+                                "provider": "sec",
+                                "publisher": "SEC EDGAR",
+                                "title": "Example Co 8-K filed 2025-01-02",
+                                "url": "https://www.sec.gov/example",
+                                "published_at": "2025-01-02T13:00:00Z",
+                                "retrieved_at": "2026-05-11T00:00:00Z",
+                                "source_type": "filing",
+                                "excerpt": "Example Co filed an 8-K.",
+                                "raw_artifact_path": "raw/sec/submissions.json",
+                                "content_hash": "sha256:14cdba325e2bc0b7cbb92a74aba5a268f8734599d27646cc556d0fe58182f5cd",
+                                "replay_status": "eligible",
+                                "rejection_reason": None,
+                            }
+                        ]
+                    }
+                )
+            )
+            (normalized / "rejected_candidates.json").write_text(
+                json.dumps({"rejected_candidates": []})
+            )
+
+            draft_dir = root / "draft"
+            response = draft_real_case(
+                ticker="EXMPL",
+                company_name="Example Co",
+                event_type="earnings/guidance",
+                event_date="2025-01-02",
+                replay_lock="2025-01-02T10:00:00-05:00",
+                normalized_dir=normalized,
+                out_dir=draft_dir,
+            )
+            config = json.loads((draft_dir / "real_case_config.json").read_text())
+
+        self.assertTrue(response["ok"])
+        self.assertEqual(response["case_readiness"], "needs_sources")
+        self.assertFalse(response["market_bars_available"])
+        self.assertNotIn("market_data", config)
+
     def test_provider_error_is_manifested_and_normalization_continues(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             out_dir = Path(tmpdir) / "fetch"
