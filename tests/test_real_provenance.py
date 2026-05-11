@@ -1073,6 +1073,81 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual([call[0] for call in calls], ["real-case-preflight", "real-case-curated-bundle", "real-case-quality"])
         self.assertNotIn("real-case-rehearse", [call[0] for call in calls])
 
+    def test_aapl_rehearsal_runner_resumes_from_frozen_fetch_without_env(self):
+        runner = _load_aapl_rehearsal_runner()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            draft_dir = root / "draft"
+            draft_dir.mkdir()
+            calls = []
+
+            def fake_run_cli(command, **_kwargs):
+                calls.append(command)
+                if command[0] == "real-case-preflight":
+                    return {
+                        "returncode": 0,
+                        "command": command,
+                        "json": {"ok": True, "status": "ready_to_normalize"},
+                    }
+                if command[0] == "real-data-normalize":
+                    return {
+                        "returncode": 0,
+                        "command": command,
+                        "json": {"ok": True, "out_dir": str(root / "fetch" / "normalized")},
+                    }
+                if command[0] == "real-case-draft":
+                    return {"returncode": 0, "command": command, "json": {"ok": True}}
+                if command[0] == "real-case-worksheet":
+                    return {"returncode": 0, "command": command, "json": {"ok": True}}
+                if command[0] == "real-case-curation-template":
+                    (draft_dir / "curated_narratives.template.json").write_text("{}\n")
+                    return {"returncode": 0, "command": command, "json": {"ok": True}}
+                if command[0] == "real-case-status":
+                    return {
+                        "returncode": 0,
+                        "command": command,
+                        "json": {"ok": True, "status": "ready_to_bundle"},
+                    }
+                raise AssertionError(f"Unexpected command: {command}")
+
+            args = SimpleNamespace(
+                ticker="AAPL",
+                company_name="Apple Inc.",
+                event_type="earnings/guidance",
+                event_date="2024-05-02",
+                replay_lock="2024-05-03T10:00:00-04:00",
+                date_from="2024-05-01",
+                date_to="2024-05-20",
+                providers="finnhub,sec",
+                env_file=str(root / ".env.local"),
+                fetch_dir=str(root / "fetch"),
+                draft_dir=str(draft_dir),
+                bundle_dir=str(root / "bundle"),
+                narratives=None,
+                sec_count=5,
+                forms="8-K,10-Q,10-K",
+                no_sec_document_text=False,
+                preflight_only=False,
+                build_bundle=False,
+            )
+            with patch.object(runner, "_run_cli", side_effect=fake_run_cli):
+                response = runner.run_rehearsal(args)
+
+        self.assertFalse(response["ok"])
+        self.assertEqual(response["status"], "needs_curation")
+        self.assertEqual(
+            [call[0] for call in calls],
+            [
+                "real-case-preflight",
+                "real-data-normalize",
+                "real-case-draft",
+                "real-case-worksheet",
+                "real-case-curation-template",
+                "real-case-status",
+            ],
+        )
+        self.assertNotIn("real-case-rehearse", [call[0] for call in calls])
+
     def test_aapl_rehearsal_runner_redacts_sensitive_child_output(self):
         runner = _load_aapl_rehearsal_runner()
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -1222,6 +1297,83 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(response["env"]["empty_env"], [])
         self.assertIn("aapl-2024-05-02-rehearsal", response["paths"]["draft_dir"])
         self.assertNotIn("secret-token", result.stdout)
+
+    def test_cli_real_case_preflight_resumes_frozen_fetch_without_env_values(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            env_file = root / ".env.local"
+            fetch_dir = root / "fetch"
+            draft_dir = root / "draft"
+            bundle_dir = root / "bundle"
+            fetch_dir.mkdir()
+            env_file.write_text("FINNHUB_API_KEY=\nSEC_USER_AGENT=\n")
+            (fetch_dir / "fetch_manifest.json").write_text("{}\n")
+            first = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-case-preflight",
+                    "--ticker",
+                    "AAPL",
+                    "--event-date",
+                    "2024-05-02",
+                    "--providers",
+                    "finnhub,sec",
+                    "--env-file",
+                    str(env_file),
+                    "--fetch-dir",
+                    str(fetch_dir),
+                    "--draft-dir",
+                    str(draft_dir),
+                    "--bundle-dir",
+                    str(bundle_dir),
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            normalized = fetch_dir / "normalized"
+            normalized.mkdir()
+            (normalized / "source_candidates.json").write_text("{}\n")
+            second = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-case-preflight",
+                    "--ticker",
+                    "AAPL",
+                    "--event-date",
+                    "2024-05-02",
+                    "--providers",
+                    "finnhub,sec",
+                    "--env-file",
+                    str(env_file),
+                    "--fetch-dir",
+                    str(fetch_dir),
+                    "--draft-dir",
+                    str(draft_dir),
+                    "--bundle-dir",
+                    str(bundle_dir),
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            first_response = json.loads(first.stdout)
+            second_response = json.loads(second.stdout)
+
+        self.assertEqual(first.returncode, 0, first.stderr + first.stdout)
+        self.assertEqual(first_response["status"], "ready_to_normalize")
+        self.assertEqual(first_response["env"]["empty_env"], ["FINNHUB_API_KEY", "SEC_USER_AGENT"])
+        self.assertEqual(second.returncode, 0, second.stderr + second.stdout)
+        self.assertEqual(second_response["status"], "ready_to_draft")
+        self.assertEqual(second_response["env"]["empty_env"], ["FINNHUB_API_KEY", "SEC_USER_AGENT"])
 
     def test_cli_real_data_env_check_reports_names_without_values(self):
         env = {
