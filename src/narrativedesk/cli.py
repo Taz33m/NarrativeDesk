@@ -23,6 +23,12 @@ from narrativedesk.real_data import (
     preview_real_case_config,
     validate_real_case_config,
 )
+from narrativedesk.real_provenance import (
+    RealProvenanceError,
+    draft_real_case,
+    fetch_real_data,
+    normalize_real_data_fetch,
+)
 from narrativedesk.replay_bundle import verify_replay_bundle
 from narrativedesk.source_pack import (
     assess_source_pack_readiness,
@@ -114,6 +120,67 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Also require local CSV/transcript paths referenced by the config to exist.",
     )
+
+    real_fetch = sub.add_parser(
+        "real-data-fetch",
+        help="Fetch live provider data into frozen .codex-work raw artifacts.",
+    )
+    real_fetch.add_argument("--ticker", required=True, help="Ticker symbol to fetch.")
+    real_fetch.add_argument("--company-name", default="", help="Company name for provider queries.")
+    real_fetch.add_argument("--from", dest="date_from", required=True, help="Oldest provider date, YYYY-MM-DD.")
+    real_fetch.add_argument("--to", dest="date_to", required=True, help="Newest provider date, YYYY-MM-DD.")
+    real_fetch.add_argument(
+        "--providers",
+        default="finnhub,sec",
+        help="Comma-separated provider list: finnhub,sec,newsapi.",
+    )
+    real_fetch.add_argument("--out-dir", help="Output directory. Defaults to .codex-work/live-fetches/<ticker>-<from>-<to>.")
+    real_fetch.add_argument(
+        "--finnhub-token-env",
+        default="FINNHUB_API_KEY",
+        help="Environment variable containing the Finnhub API token.",
+    )
+    real_fetch.add_argument(
+        "--sec-user-agent-env",
+        default="SEC_USER_AGENT",
+        help="Environment variable containing the SEC EDGAR User-Agent header.",
+    )
+    real_fetch.add_argument(
+        "--news-api-key-env",
+        default="NEWS_API_KEY",
+        help="Environment variable containing the NewsAPI token.",
+    )
+    real_fetch.add_argument("--forms", default="8-K,10-Q,10-K", help="Comma-separated SEC forms to fetch.")
+    real_fetch.add_argument("--sec-count", type=int, default=5, help="Maximum SEC filings to inspect.")
+    real_fetch.add_argument("--cik", help="Optional SEC CIK override.")
+    real_fetch.add_argument(
+        "--include-sec-document-text",
+        action="store_true",
+        help="Also fetch primary SEC filing document text for selected filings.",
+    )
+    real_fetch.add_argument("--news-query", help="Optional NewsAPI query override.")
+    real_fetch.add_argument("--news-domains", help="Optional comma-separated NewsAPI domain filter.")
+
+    real_normalize = sub.add_parser(
+        "real-data-normalize",
+        help="Normalize a frozen live-fetch directory into source candidates.",
+    )
+    real_normalize.add_argument("fetch_dir", help="Directory containing fetch_manifest.json.")
+    real_normalize.add_argument("--replay-lock", required=True, help="Replay lock timestamp with timezone.")
+    real_normalize.add_argument("--out-dir", help="Optional normalized output directory.")
+
+    real_draft = sub.add_parser(
+        "real-case-draft",
+        help="Draft a curator-ready real_case_config from normalized candidates.",
+    )
+    real_draft.add_argument("--ticker", required=True, help="Ticker symbol.")
+    real_draft.add_argument("--company-name", required=True, help="Company name.")
+    real_draft.add_argument("--event-type", required=True, help="Event type label.")
+    real_draft.add_argument("--event-date", required=True, help="Event date, YYYY-MM-DD.")
+    real_draft.add_argument("--replay-lock", required=True, help="Replay lock timestamp with timezone.")
+    real_draft.add_argument("--normalized-dir", required=True, help="Directory containing normalized outputs.")
+    real_draft.add_argument("--out-dir", required=True, help="Output directory for the real-case draft.")
+    real_draft.add_argument("--case-id", help="Optional case ID override.")
 
     ingest = sub.add_parser("source-pack-ingest", help="Convert a source pack into a replay fixture.")
     ingest.add_argument("path", help="Path to source pack JSON.")
@@ -388,6 +455,75 @@ def run_real_pack_check(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_real_data_fetch(args: argparse.Namespace) -> int:
+    out_dir = Path(args.out_dir) if args.out_dir else Path(".codex-work") / "live-fetches" / (
+        f"{args.ticker.upper()}-{args.date_from}-{args.date_to}"
+    )
+    try:
+        manifest = fetch_real_data(
+            ticker=args.ticker,
+            company_name=args.company_name,
+            date_from=args.date_from,
+            date_to=args.date_to,
+            providers=args.providers,
+            out_dir=out_dir,
+            finnhub_token=os.environ.get(args.finnhub_token_env),
+            sec_user_agent=os.environ.get(args.sec_user_agent_env),
+            news_api_key=os.environ.get(args.news_api_key_env),
+            forms=_split_csv_arg(args.forms),
+            sec_count=args.sec_count,
+            cik=args.cik,
+            include_sec_document_text=args.include_sec_document_text,
+            news_query=args.news_query,
+            news_domains=args.news_domains,
+        )
+    except RealProvenanceError as exc:
+        print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
+        return 1
+    response = {
+        "ok": manifest["ok"],
+        "out_dir": str(out_dir),
+        "manifest_out": str(out_dir / "fetch_manifest.json"),
+        "artifact_count": len(manifest.get("artifacts", [])),
+        "errors": manifest.get("errors", []),
+    }
+    print(json.dumps(response, indent=2, sort_keys=True))
+    return 0 if manifest["ok"] else 1
+
+
+def run_real_data_normalize(args: argparse.Namespace) -> int:
+    try:
+        summary = normalize_real_data_fetch(
+            args.fetch_dir,
+            replay_lock=args.replay_lock,
+            out_dir=args.out_dir,
+        )
+    except (OSError, json.JSONDecodeError, RealProvenanceError) as exc:
+        print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
+        return 1
+    print(json.dumps(summary, indent=2, sort_keys=True))
+    return 0
+
+
+def run_real_case_draft(args: argparse.Namespace) -> int:
+    try:
+        response = draft_real_case(
+            ticker=args.ticker,
+            company_name=args.company_name,
+            event_type=args.event_type,
+            event_date=args.event_date,
+            replay_lock=args.replay_lock,
+            normalized_dir=args.normalized_dir,
+            out_dir=args.out_dir,
+            case_id=args.case_id,
+        )
+    except (OSError, json.JSONDecodeError, RealProvenanceError) as exc:
+        print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
+        return 1
+    print(json.dumps(response, indent=2, sort_keys=True))
+    return 0
+
+
 def run_source_pack_ingest(args: argparse.Namespace) -> int:
     payload = load_source_pack(args.path)
     errors = validate_source_pack(payload, require_narratives=True)
@@ -562,13 +698,19 @@ def run_case_index_validate(args: argparse.Namespace) -> int:
     return 0 if result["ok"] else 1
 
 
+def _split_csv_arg(value: str | None) -> list[str]:
+    if not value:
+        return []
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
 
     if args.command in {None, "replay"}:
         if args.command is None:
-            parser.error("Please provide a subcommand: replay, source-pack-preview, source-pack-readiness, source-pack-bundle, bundle-verify, real-pack-build, real-pack-bundle, real-pack-check, source-pack-ingest, validation-validate, evaluate-cases, case-index-register, or case-index-validate")
+            parser.error("Please provide a subcommand. Run with --help to list available commands.")
         return run_replay_command(args)
     if args.command == "source-pack-preview":
         return run_source_pack_preview(args)
@@ -584,6 +726,12 @@ def main() -> int:
         return run_real_pack_bundle(args)
     if args.command == "real-pack-check":
         return run_real_pack_check(args)
+    if args.command == "real-data-fetch":
+        return run_real_data_fetch(args)
+    if args.command == "real-data-normalize":
+        return run_real_data_normalize(args)
+    if args.command == "real-case-draft":
+        return run_real_case_draft(args)
     if args.command == "source-pack-ingest":
         return run_source_pack_ingest(args)
     if args.command == "validation-validate":

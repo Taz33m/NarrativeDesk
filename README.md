@@ -142,6 +142,28 @@ PYTHONPATH=src python3 -m narrativedesk.cli real-pack-bundle .codex-work/real_ca
 
 Start from `examples/real_case_config_template.json`, fill in a real ticker, event timestamp, peers, and curated narratives, then keep the working config in `.codex-work/`.
 
+To rehearse live-provider ingestion without committing real claims, fetch raw provider data into scratch space, normalize it into strict source candidates, then draft a curator-ready config:
+
+```bash
+source .env.local
+PYTHONPATH=src python3 -m narrativedesk.cli real-data-fetch \
+  --ticker AAPL --company-name "Apple Inc." \
+  --from 2024-05-01 --to 2024-05-20 \
+  --providers finnhub,sec --include-sec-document-text \
+  --out-dir .codex-work/live-fetches/aapl-2024-q2
+PYTHONPATH=src python3 -m narrativedesk.cli real-data-normalize \
+  .codex-work/live-fetches/aapl-2024-q2 \
+  --replay-lock 2024-05-03T10:00:00-04:00
+PYTHONPATH=src python3 -m narrativedesk.cli real-case-draft \
+  --ticker AAPL --company-name "Apple Inc." \
+  --event-type earnings --event-date 2024-05-02 \
+  --replay-lock 2024-05-03T10:00:00-04:00 \
+  --normalized-dir .codex-work/live-fetches/aapl-2024-q2/normalized \
+  --out-dir .codex-work/real-cases/aapl-2024-q2-rehearsal
+```
+
+Live-provider rehearsal requires `FINNHUB_API_KEY` and `SEC_USER_AGENT`; `NEWS_API_KEY` is optional when using `--providers newsapi`. Outputs remain scratch until a human adds competing narratives, `real-pack-build --require-narratives` passes, and the final bundle verifies.
+
 Inspect local prior-art repos for timestamped manual-source candidates:
 
 ```bash
