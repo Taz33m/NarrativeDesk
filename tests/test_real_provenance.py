@@ -209,6 +209,7 @@ class RealProvenanceTests(unittest.TestCase):
                 retrieved_at=datetime(2026, 5, 11, tzinfo=timezone.utc),
                 forms=["8-K"],
                 sec_count=1,
+                market_symbols=["PEER", "SECTOR"],
                 include_sec_document_text=True,
                 sec_throttle_seconds=0,
             )
@@ -218,6 +219,12 @@ class RealProvenanceTests(unittest.TestCase):
             manifest_text = manifest_path.read_text()
 
         self.assertTrue(manifest["ok"])
+        candle_symbols = [
+            call["params"]["symbol"]
+            for call in fetcher.calls
+            if call["url"].endswith("/stock/candle")
+        ]
+        self.assertEqual(candle_symbols, ["EXMPL", "PEER", "SECTOR"])
         self.assertEqual(saved_manifest["artifacts"][0]["params"]["token"], "[REDACTED]")
         self.assertNotIn("secret-token", manifest_text)
         self.assertNotIn("test@example.com", manifest_text)
@@ -318,6 +325,7 @@ class RealProvenanceTests(unittest.TestCase):
                 retrieved_at="2026-05-11T00:00:00Z",
                 forms=["8-K"],
                 sec_count=1,
+                market_symbols=["PEER", "SECTOR"],
                 include_sec_document_text=True,
                 sec_throttle_seconds=0,
             )
@@ -336,7 +344,10 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(summary["eligible_candidates"], 3)
         self.assertEqual(summary["blocked_future_candidates"], 1)
         self.assertEqual(summary["rejected_candidates"], 1)
+        self.assertEqual(summary["market_bar_rows"], 3)
         self.assertIn("2025-01-01,EXMPL,100.0,101.0,1000", market_bars)
+        self.assertIn("2025-01-01,PEER,100.0,101.0,1000", market_bars)
+        self.assertIn("2025-01-01,SECTOR,100.0,101.0,1000", market_bars)
         self.assertNotIn("2025-01-02,EXMPL,100.0,94.0,2000", market_bars)
         self.assertTrue(any(item["provider"] == "newsapi" for item in candidates))
         self.assertTrue(any(item["source_type"] == "filing" for item in candidates))
@@ -392,7 +403,8 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertEqual(validate_source_pack(source_pack), [])
         self.assertEqual(summary["case_readiness"], "curator_ready")
-        self.assertEqual(summary["accepted_sources"], 2)
+        self.assertEqual(summary["accepted_sources"], 3)
+        self.assertEqual(summary["market_context_source_count"], 1)
         self.assertEqual(summary["blocked_future_sources"], 1)
         self.assertEqual(summary["rejected_sources"], 1)
         self.assertTrue(summary["market_bars_check"]["ok"])
@@ -490,6 +502,8 @@ class RealProvenanceTests(unittest.TestCase):
                     [
                         "date,ticker,open,close,volume",
                         "2025-01-02T10:00:00-05:00,EXMPL,100.0,94.0,2000",
+                        "2025-01-02T10:00:00-05:00,PEER,100.0,98.0,800",
+                        "2025-01-02T10:00:00-05:00,SECTOR,100.0,99.0,900",
                     ]
                 )
                 + "\n"
@@ -505,6 +519,8 @@ class RealProvenanceTests(unittest.TestCase):
                 normalized_dir=normalized,
                 out_dir=draft_dir,
                 market_bars_path=market_bars,
+                market_peers=["PEER"],
+                sector_symbol="SECTOR",
             )
             config = json.loads((draft_dir / "real_case_config.json").read_text())
             copied_bars = (draft_dir / "market_bars.csv").read_text()
@@ -512,9 +528,40 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertTrue(response["ok"])
         self.assertEqual(response["case_readiness"], "curator_ready")
         self.assertTrue(response["market_bars_available"])
+        self.assertEqual(response["market_bars_check"]["required_tickers"], ["EXMPL", "PEER", "SECTOR"])
         self.assertEqual(response["missing_requirements"], [])
         self.assertEqual(config["market_data"]["path"], "market_bars.csv")
+        self.assertEqual(config["market_data"]["peers"], ["PEER"])
+        self.assertEqual(config["market_data"]["sector_symbol"], "SECTOR")
         self.assertIn("2025-01-02T10:00:00-05:00,EXMPL,100.0,94.0,2000", copied_bars)
+
+    def test_inspect_market_bars_requires_peer_context_when_requested(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            market_bars = Path(tmpdir) / "market_bars.csv"
+            market_bars.write_text(
+                "\n".join(
+                    [
+                        "date,ticker,open,close,volume",
+                        "2025-01-02T10:00:00-05:00,EXMPL,100.0,94.0,2000",
+                        "2025-01-02T10:00:00-05:00,PEER,100.0,98.0,800",
+                    ]
+                )
+                + "\n"
+            )
+
+            response = inspect_market_bars(
+                market_bars,
+                ticker="EXMPL",
+                replay_lock="2025-01-02T10:00:00-05:00",
+                peers=["PEER"],
+                sector_symbol="SECTOR",
+            )
+
+        self.assertFalse(response["ok"])
+        self.assertEqual(response["selected_rows"]["EXMPL"]["close"], 94.0)
+        self.assertEqual(response["selected_rows"]["PEER"]["close"], 98.0)
+        self.assertEqual(response["missing_required_tickers"], ["SECTOR"])
+        self.assertIn("No rows found for ticker SECTOR.", response["errors"])
 
     def test_rehearse_real_case_accepts_explicit_frozen_market_bars(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -776,7 +823,7 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertTrue(response["ok"])
         self.assertEqual(response["stage"], "complete")
         self.assertEqual(response["case_readiness"], "curator_ready")
-        self.assertEqual(response["accepted_sources"], 2)
+        self.assertEqual(response["accepted_sources"], 3)
         self.assertEqual(response["blocked_future_sources"], 1)
         self.assertTrue(source_candidates_exists)
         self.assertTrue(rejected_candidates_exists)

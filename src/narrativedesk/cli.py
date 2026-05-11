@@ -46,7 +46,11 @@ from narrativedesk.source_pack import (
     sanitize_source_pack_payload,
     validate_source_pack,
 )
-from narrativedesk.validation_fixture import preview_validation_fixture, validate_validation_fixture
+from narrativedesk.validation_fixture import (
+    load_validation_fixture_payload,
+    preview_validation_fixture,
+    validate_validation_fixture,
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -100,6 +104,10 @@ def build_parser() -> argparse.ArgumentParser:
     pack_bundle.add_argument("path", help="Path to source pack JSON.")
     pack_bundle.add_argument("--out-dir", required=True, help="Directory for the generated replay bundle.")
     pack_bundle.add_argument("--label", help="Human-readable case label for the local case index.")
+    pack_bundle.add_argument(
+        "--validation-fixture",
+        help="Optional curator-filled future validation fixture to include instead of a generated pending scaffold.",
+    )
 
     bundle_verify = sub.add_parser("bundle-verify", help="Verify replay bundle hashes and replay integrity.")
     bundle_verify.add_argument("bundle_dir", help="Path to a generated replay bundle directory.")
@@ -159,6 +167,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional ISO timestamp to stamp retrieved_at deterministically.",
     )
     real_bundle.add_argument("--label", help="Human-readable case label for the local case index.")
+    real_bundle.add_argument(
+        "--validation-fixture",
+        help="Optional curator-filled future validation fixture to include instead of a generated pending scaffold.",
+    )
 
     real_check = sub.add_parser("real-pack-check", help="Validate a real-data case config without provider fetches.")
     real_check.add_argument("config", help="Path to real-data case config JSON.")
@@ -204,6 +216,10 @@ def build_parser() -> argparse.ArgumentParser:
     real_fetch.add_argument("--forms", default="8-K,10-Q,10-K", help="Comma-separated SEC forms to fetch.")
     real_fetch.add_argument("--sec-count", type=int, default=5, help="Maximum SEC filings to inspect.")
     real_fetch.add_argument("--cik", help="Optional SEC CIK override.")
+    real_fetch.add_argument(
+        "--market-symbols",
+        help="Optional comma-separated extra symbols to freeze daily Finnhub candles for peer/sector context.",
+    )
     real_fetch.add_argument(
         "--include-sec-document-text",
         action="store_true",
@@ -301,6 +317,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--market-bars",
         help="Optional frozen market_bars.csv override to copy into the draft before readiness checks.",
     )
+    real_draft.add_argument("--market-peers", help="Optional comma-separated peer symbols required in market_bars.csv.")
+    real_draft.add_argument("--sector-symbol", help="Optional sector or ETF symbol required in market_bars.csv.")
 
     market_bars_check = sub.add_parser(
         "real-market-bars-check",
@@ -309,6 +327,8 @@ def build_parser() -> argparse.ArgumentParser:
     market_bars_check.add_argument("path", help="Path to market_bars.csv.")
     market_bars_check.add_argument("--ticker", required=True, help="Ticker symbol to require.")
     market_bars_check.add_argument("--replay-lock", required=True, help="Replay lock timestamp with timezone.")
+    market_bars_check.add_argument("--peers", help="Optional comma-separated peer symbols to require.")
+    market_bars_check.add_argument("--sector-symbol", help="Optional sector or ETF symbol to require.")
 
     real_worksheet = sub.add_parser(
         "real-case-worksheet",
@@ -364,6 +384,8 @@ def build_parser() -> argparse.ArgumentParser:
     real_rehearsal.add_argument("--forms", default="8-K,10-Q,10-K", help="Comma-separated SEC forms to fetch.")
     real_rehearsal.add_argument("--sec-count", type=int, default=5, help="Maximum SEC filings to inspect.")
     real_rehearsal.add_argument("--cik", help="Optional SEC CIK override.")
+    real_rehearsal.add_argument("--market-peers", help="Optional comma-separated peer symbols to freeze and require.")
+    real_rehearsal.add_argument("--sector-symbol", help="Optional sector or ETF symbol to freeze and require.")
     real_rehearsal.add_argument(
         "--include-sec-document-text",
         action="store_true",
@@ -429,6 +451,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional ISO timestamp to stamp generated provider-derived source-pack records.",
     )
     real_curated_bundle.add_argument("--label", help="Human-readable case label for the local case index.")
+    real_curated_bundle.add_argument(
+        "--validation-fixture",
+        help="Optional curator-filled future validation fixture to include instead of a generated pending scaffold.",
+    )
 
     real_status = sub.add_parser(
         "real-case-status",
@@ -566,7 +592,12 @@ def run_source_pack_bundle(args: argparse.Namespace) -> int:
     if error_response:
         print(json.dumps(error_response, indent=2, sort_keys=True))
         return 1
-    response, status = _bundle_source_pack_payload(payload, Path(args.out_dir), label=args.label)
+    response, status = _bundle_source_pack_payload(
+        payload,
+        Path(args.out_dir),
+        label=args.label,
+        validation_fixture_path=Path(args.validation_fixture) if args.validation_fixture else None,
+    )
     print(json.dumps(response, indent=2, sort_keys=True))
     return status
 
@@ -583,6 +614,7 @@ def _bundle_source_pack_payload(
     *,
     label: str | None,
     persist_source_pack_on_failure: bool = False,
+    validation_fixture_path: Path | None = None,
 ) -> tuple[dict[str, object], int]:
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -614,7 +646,23 @@ def _bundle_source_pack_payload(
 
     _write_json(source_pack_path, sanitized_payload)
     fixture = build_fixture_from_source_pack(sanitized_payload)
-    validation_fixture = build_validation_fixture_template_from_source_pack(sanitized_payload)
+    try:
+        validation_fixture, validation_fixture_source = _bundle_validation_fixture(
+            sanitized_payload,
+            fixture,
+            validation_fixture_path,
+        )
+    except ValueError as exc:
+        return (
+            {
+                "ok": False,
+                "status": "validation_fixture_invalid",
+                "source_pack_out": str(source_pack_path),
+                "readiness_out": str(readiness_path),
+                "errors": [str(exc)],
+            },
+            1,
+        )
     _write_json(event_path, fixture)
     _write_json(validation_path, validation_fixture)
 
@@ -679,9 +727,81 @@ def _bundle_source_pack_payload(
             "case_index_out": str(case_index_path),
             "manifest_out": str(manifest_path),
             "blocked_future_source_count": len(audit.blocked_source_ids),
+            "validation_fixture_source": validation_fixture_source,
         },
         0,
     )
+
+
+def _bundle_validation_fixture(
+    source_pack: dict[str, object],
+    event_fixture: dict[str, object],
+    validation_fixture_path: Path | None,
+) -> tuple[dict[str, object], str]:
+    if validation_fixture_path is None:
+        return build_validation_fixture_template_from_source_pack(source_pack), "generated_template"
+
+    try:
+        validation_fixture = load_validation_fixture_payload(validation_fixture_path)
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        raise ValueError(f"validation fixture override is invalid: {exc}") from exc
+
+    event = event_fixture.get("event", {})
+    expected_event_id = event.get("case_id") if isinstance(event, dict) else None
+    if validation_fixture.get("event_id") != expected_event_id:
+        raise ValueError(
+            "validation fixture override event_id must match bundled event "
+            f"{expected_event_id!r}"
+        )
+
+    source_by_id = {
+        str(source["source_id"]): source
+        for source in source_pack.get("sources", [])
+        if isinstance(source, dict) and source.get("source_id")
+    }
+    blocked_future_ids = {
+        source_id
+        for source_id, source in source_by_id.items()
+        if source.get("availability_status") == "blocked_future"
+    }
+    validation_future_ids = {
+        str(source_id)
+        for source_id in validation_fixture.get("future_source_ids", [])
+        if isinstance(source_id, str)
+    }
+    unknown_source_ids = sorted(validation_future_ids - set(source_by_id))
+    if unknown_source_ids:
+        raise ValueError(
+            "validation fixture override future_source_ids are not in source pack: "
+            + ", ".join(unknown_source_ids)
+        )
+    replay_time_source_ids = sorted(validation_future_ids - blocked_future_ids)
+    if replay_time_source_ids:
+        raise ValueError(
+            "validation fixture override future_source_ids must reference blocked_future sources: "
+            + ", ".join(replay_time_source_ids)
+        )
+
+    narrative_ids = {
+        str(narrative["narrative_id"])
+        for narrative in source_pack.get("narratives", [])
+        if isinstance(narrative, dict) and narrative.get("narrative_id")
+    }
+    unknown_narrative_ids = sorted(
+        {
+            str(row.get("narrative_id"))
+            for row in validation_fixture.get("rows", [])
+            if isinstance(row, dict) and row.get("narrative_id")
+        }
+        - narrative_ids
+    )
+    if unknown_narrative_ids:
+        raise ValueError(
+            "validation fixture override rows reference unknown narrative IDs: "
+            + ", ".join(unknown_narrative_ids)
+        )
+
+    return validation_fixture, str(validation_fixture_path)
 
 
 def run_real_pack_build(args: argparse.Namespace) -> int:
@@ -743,6 +863,7 @@ def run_real_pack_bundle(args: argparse.Namespace) -> int:
         Path(args.out_dir),
         label=args.label,
         persist_source_pack_on_failure=True,
+        validation_fixture_path=Path(args.validation_fixture) if args.validation_fixture else None,
     )
     print(json.dumps(response, indent=2, sort_keys=True))
     return status
@@ -786,6 +907,7 @@ def run_real_data_fetch(args: argparse.Namespace) -> int:
             forms=_split_csv_arg(args.forms),
             sec_count=args.sec_count,
             cik=args.cik,
+            market_symbols=_split_csv_arg(args.market_symbols),
             include_sec_document_text=args.include_sec_document_text,
             news_query=args.news_query,
             news_domains=args.news_domains,
@@ -1089,6 +1211,8 @@ def run_real_case_draft(args: argparse.Namespace) -> int:
             out_dir=args.out_dir,
             case_id=args.case_id,
             market_bars_path=args.market_bars,
+            market_peers=_split_csv_arg(args.market_peers),
+            sector_symbol=args.sector_symbol,
         )
     except (OSError, json.JSONDecodeError, RealProvenanceError) as exc:
         print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
@@ -1102,6 +1226,8 @@ def run_real_market_bars_check(args: argparse.Namespace) -> int:
         args.path,
         ticker=args.ticker,
         replay_lock=args.replay_lock,
+        peers=_split_csv_arg(args.peers),
+        sector_symbol=args.sector_symbol,
     )
     print(json.dumps(response, indent=2, sort_keys=True))
     return 0 if response["ok"] else 1
@@ -1143,6 +1269,8 @@ def run_real_case_rehearse(args: argparse.Namespace) -> int:
             forms=_split_csv_arg(args.forms),
             sec_count=args.sec_count,
             cik=args.cik,
+            market_peers=_split_csv_arg(args.market_peers),
+            sector_symbol=args.sector_symbol,
             include_sec_document_text=args.include_sec_document_text,
             news_query=args.news_query,
             news_domains=args.news_domains,
@@ -1210,6 +1338,7 @@ def run_real_case_curated_bundle(args: argparse.Namespace) -> int:
         out_dir,
         label=args.label,
         persist_source_pack_on_failure=True,
+        validation_fixture_path=Path(args.validation_fixture) if args.validation_fixture else None,
     )
     if status == 0:
         verify = verify_replay_bundle(out_dir)
