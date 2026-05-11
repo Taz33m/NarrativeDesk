@@ -222,6 +222,14 @@ PYTHONPATH=src python3 -m narrativedesk.cli real-case-quality \
   --bundle-dir .codex-work/real-cases/aapl-2024-q2-bundle
 ```
 
+That gate is for private ingestion quality. Before treating a real case as demo/public-ready, use the stricter gate; it additionally requires peer-market context for abnormal returns, directly linked replay-time evidence, more than one source type/publisher, and at least one held-out validation outcome:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli real-case-quality \
+  --bundle-dir .codex-work/real-cases/aapl-2024-q2-bundle \
+  --require-demo-ready
+```
+
 Inspect local prior-art repos for timestamped manual-source candidates:
 
 ```bash

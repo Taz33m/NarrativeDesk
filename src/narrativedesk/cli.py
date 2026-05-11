@@ -87,6 +87,14 @@ def build_parser() -> argparse.ArgumentParser:
         default=1,
         help="Minimum replay-time contradiction links.",
     )
+    real_quality.add_argument(
+        "--require-demo-ready",
+        action="store_true",
+        help=(
+            "Apply the stricter public-demo gate: peer-market context, linked evidence depth, "
+            "source diversity, and at least one held-out validation outcome."
+        ),
+    )
 
     pack_bundle = sub.add_parser("source-pack-bundle", help="Create a self-contained replay bundle from a ready source pack.")
     pack_bundle.add_argument("path", help="Path to source pack JSON.")
@@ -541,6 +549,7 @@ def run_real_case_quality(args: argparse.Namespace) -> int:
             min_allowed_sources=args.min_allowed_sources,
             min_blocked_future_sources=args.min_blocked_future_sources,
             min_contradictions=args.min_contradictions,
+            require_demo_ready=args.require_demo_ready,
             bundle_verification=bundle_verification,
             validation_fixture=validation_fixture,
         )

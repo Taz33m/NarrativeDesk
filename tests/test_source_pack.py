@@ -36,11 +36,22 @@ def _score_inputs():
     }
 
 
-def _source(source_id, claim, published_at, status, supported=None, contradicted=None):
+def _source(
+    source_id,
+    claim,
+    published_at,
+    status,
+    supported=None,
+    contradicted=None,
+    *,
+    publisher="Example Publisher",
+    source_type="company_release",
+    cluster_id="cluster-1",
+):
     return {
         "source_id": source_id,
-        "source_type": "company_release",
-        "publisher": "Example Publisher",
+        "source_type": source_type,
+        "publisher": publisher,
         "title": f"{source_id} title",
         "url": f"https://example.com/source-pack/{source_id.lower()}",
         "published_at": published_at,
@@ -48,7 +59,7 @@ def _source(source_id, claim, published_at, status, supported=None, contradicted
         "content_hash": source_content_hash(claim),
         "availability_status": status,
         "originality_score": 0.7,
-        "independence_cluster_id": "cluster-1",
+        "independence_cluster_id": cluster_id,
         "claim_extracted": claim,
         "supported_narrative_ids": supported or [],
         "contradicted_narrative_ids": contradicted or [],
@@ -178,6 +189,40 @@ def _quality_ready_pack():
     return payload
 
 
+def _demo_ready_pack():
+    payload = _quality_ready_pack()
+    source_overrides = {
+        "PK-SRC-001": {"publisher": "Packaged Example IR", "source_type": "company_release"},
+        "PK-SRC-002": {"publisher": "Event Transcript Co", "source_type": "transcript"},
+        "PK-SRC-003": {"publisher": "SEC EDGAR", "source_type": "filing"},
+        "PK-SRC-004": {"publisher": "Research Wire", "source_type": "news"},
+        "PK-SRC-005": {"publisher": "Exchange Data", "source_type": "market_data"},
+    }
+    for source in payload["sources"]:
+        if source["source_id"] in source_overrides:
+            source.update(source_overrides[source["source_id"]])
+    return payload
+
+
+def _validated_fixture():
+    return {
+        "event_id": "EVT-PACK-2025-01-02",
+        "status": "complete",
+        "future_source_ids": ["PK-SRC-009"],
+        "future_source_count": 1,
+        "rows": [
+            {
+                "window": "T+20",
+                "label": "validated",
+                "narrative_id": "PK-NARR-001",
+                "expected_observable": "Analysts reduce expansion estimates within 30 days",
+                "future_source_ids": ["PK-SRC-009"],
+                "what_happened": "Future validation source confirmed the selected narrative.",
+            }
+        ],
+    }
+
+
 class SourcePackTests(unittest.TestCase):
     def test_template_validates(self):
         payload = load_source_pack(ROOT / 'examples' / 'source_pack_template.json')
@@ -245,10 +290,56 @@ class SourcePackTests(unittest.TestCase):
 
         self.assertTrue(result['ok'])
         self.assertEqual(result['status'], 'quality_ready')
+        self.assertEqual(result['gate'], 'quality')
         self.assertEqual(result['metrics']['narrative_count'], 3)
         self.assertEqual(result['metrics']['allowed_source_count'], 5)
         self.assertEqual(result['metrics']['blocked_future_source_count'], 1)
         self.assertTrue(result['checks']['contradiction_links']['ok'])
+
+    def test_real_case_quality_accepts_demo_ready_pack(self):
+        result = assess_real_case_quality(
+            _demo_ready_pack(),
+            require_demo_ready=True,
+            validation_fixture=_validated_fixture(),
+        )
+
+        self.assertTrue(result['ok'])
+        self.assertEqual(result['status'], 'demo_ready')
+        self.assertEqual(result['gate'], 'demo')
+        self.assertTrue(result['checks']['demo_market_context']['ok'])
+        self.assertTrue(result['checks']['linked_replay_time_sources']['ok'])
+        self.assertEqual(result['metrics']['linked_allowed_source_count'], 5)
+        self.assertGreaterEqual(result['metrics']['linked_source_type_count'], 2)
+        self.assertGreaterEqual(result['metrics']['linked_publisher_count'], 2)
+        self.assertEqual(result['metrics']['validation_outcome_count'], 1)
+
+    def test_real_case_quality_demo_gate_flags_private_rehearsal_gaps(self):
+        result = assess_real_case_quality(_quality_ready_pack(), require_demo_ready=True)
+
+        self.assertFalse(result['ok'])
+        self.assertEqual(result['status'], 'needs_curation')
+        self.assertTrue(result['checks']['demo_market_context']['ok'])
+        self.assertTrue(result['checks']['linked_replay_time_sources']['ok'])
+        self.assertFalse(result['checks']['source_type_diversity']['ok'])
+        self.assertFalse(result['checks']['publisher_diversity']['ok'])
+        self.assertFalse(result['checks']['validation_outcomes']['ok'])
+        self.assertIn('independently sourced replay-time evidence', result['next_action'])
+
+    def test_real_case_quality_demo_gate_requires_abnormal_move_context(self):
+        payload = _demo_ready_pack()
+        payload['market_snapshot']['peer_bars'] = []
+
+        result = assess_real_case_quality(
+            payload,
+            require_demo_ready=True,
+            validation_fixture=_validated_fixture(),
+        )
+
+        self.assertFalse(result['ok'])
+        self.assertEqual(result['status'], 'needs_curation')
+        self.assertFalse(result['checks']['demo_market_context']['ok'])
+        self.assertIn('abnormal_return is not computable', result['checks']['demo_market_context']['errors'])
+        self.assertIn('peer market bars', result['next_action'])
 
     def test_real_case_quality_flags_rehearsal_that_needs_more_curation(self):
         result = assess_real_case_quality(_ingest_pack())
@@ -626,6 +717,34 @@ class SourcePackTests(unittest.TestCase):
         response = json.loads(result.stdout)
         self.assertTrue(response['ok'])
         self.assertEqual(response['status'], 'quality_ready')
+
+    def test_cli_real_case_quality_demo_gate_is_stricter_than_quality_gate(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            source_pack_path = Path(tmpdir) / 'quality_pack.json'
+            source_pack_path.write_text(json.dumps(_quality_ready_pack(), indent=2))
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    '-m',
+                    'narrativedesk.cli',
+                    'real-case-quality',
+                    '--source-pack',
+                    str(source_pack_path),
+                    '--require-demo-ready',
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+                cwd=ROOT,
+            )
+
+        self.assertEqual(result.returncode, 1, result.stderr + result.stdout)
+        response = json.loads(result.stdout)
+        self.assertFalse(response['ok'])
+        self.assertEqual(response['gate'], 'demo')
+        self.assertEqual(response['status'], 'needs_curation')
+        self.assertFalse(response['checks']['source_type_diversity']['ok'])
+        self.assertFalse(response['checks']['validation_outcomes']['ok'])
 
     def test_cli_real_case_quality_checks_bundle_verification(self):
         with tempfile.TemporaryDirectory() as tmpdir:
