@@ -725,6 +725,62 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertIn("Provide replay-eligible market bars", response["next_action"])
         self.assertIn("No replay-eligible rows found", response["next_action"])
 
+    def test_cli_real_case_status_uses_current_sources_after_curation_edits(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            draft_dir = Path(tmpdir) / "draft"
+            draft_dir.mkdir()
+            (draft_dir / "real_case_config.json").write_text(
+                json.dumps(
+                    {
+                        "case_metadata": {"case_id": "EVT-EXMPL", "ticker": "EXMPL"},
+                        "market_data": {"path": "market_bars.csv"},
+                        "manual_sources": [
+                            {"availability_status": "allowed", "source_type": "filing"},
+                            {"availability_status": "allowed", "source_type": "news"},
+                            {"availability_status": "blocked_future", "source_type": "filing"},
+                        ],
+                    }
+                )
+            )
+            (draft_dir / "draft_summary.json").write_text(
+                json.dumps(
+                    {
+                        "case_readiness": "curator_ready",
+                        "accepted_sources": 1,
+                        "blocked_future_sources": 0,
+                        "rejected_sources": 0,
+                        "market_bars_available": False,
+                        "filings_available": False,
+                        "news_available": False,
+                        "missing_requirements": [],
+                    }
+                )
+            )
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-case-status",
+                    "--draft-dir",
+                    str(draft_dir),
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            response = json.loads(result.stdout)
+
+        self.assertEqual(result.returncode, 1, result.stderr + result.stdout)
+        self.assertEqual(response["draft"]["accepted_sources"], 2)
+        self.assertEqual(response["draft"]["blocked_future_sources"], 1)
+        self.assertTrue(response["draft"]["market_bars_available"])
+        self.assertTrue(response["draft"]["filings_available"])
+        self.assertTrue(response["draft"]["news_available"])
+
     def test_inspect_market_bars_rejects_same_day_daily_row_before_close(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             market_bars = Path(tmpdir) / "market_bars.csv"
