@@ -372,6 +372,7 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertFalse(response["market_bars_available"])
         self.assertFalse(response["market_bars_check"]["ok"])
         self.assertTrue(any("No rows found for ticker EXMPL" in error for error in response["market_bars_check"]["errors"]))
+        self.assertIn("No rows found for ticker EXMPL", response["recommended_next_action"])
         self.assertNotIn("market_data", config)
 
     def test_draft_real_case_accepts_explicit_frozen_market_bars(self):
@@ -496,7 +497,64 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertTrue(
             any("No replay-eligible rows found" in error for error in response["market_bars_check"]["errors"])
         )
+        self.assertIn("No replay-eligible rows found", response["recommended_next_action"])
         self.assertNotIn("market_data", config)
+
+    def test_cli_real_case_status_uses_market_bar_diagnostics_for_stale_summary(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            draft_dir = Path(tmpdir) / "draft"
+            draft_dir.mkdir()
+            (draft_dir / "real_case_config.json").write_text(
+                json.dumps(
+                    {
+                        "case_metadata": {"case_id": "EVT-EXMPL", "ticker": "EXMPL"},
+                        "manual_sources": [{"availability_status": "allowed"}],
+                    }
+                )
+            )
+            (draft_dir / "draft_summary.json").write_text(
+                json.dumps(
+                    {
+                        "case_readiness": "needs_sources",
+                        "accepted_sources": 1,
+                        "blocked_future_sources": 0,
+                        "rejected_sources": 0,
+                        "market_bars_available": False,
+                        "market_bars_check": {
+                            "ok": False,
+                            "errors": ["No replay-eligible rows found for EXMPL at or before the replay lock."],
+                        },
+                        "missing_requirements": [
+                            "Frozen market_bars.csv with at least one replay-eligible ticker row"
+                        ],
+                        "recommended_next_action": (
+                            "Fetch or curate additional timestamped sources before narrative curation."
+                        ),
+                    }
+                )
+            )
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-case-status",
+                    "--draft-dir",
+                    str(draft_dir),
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            response = json.loads(result.stdout)
+
+        self.assertEqual(result.returncode, 1, result.stderr + result.stdout)
+        self.assertEqual(response["status"], "needs_sources")
+        self.assertIn("Provide replay-eligible market bars", response["next_action"])
+        self.assertIn("No replay-eligible rows found", response["next_action"])
 
     def test_inspect_market_bars_rejects_same_day_daily_row_before_close(self):
         with tempfile.TemporaryDirectory() as tmpdir:
