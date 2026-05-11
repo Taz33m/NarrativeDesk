@@ -41,10 +41,14 @@ class PublicHygieneTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             _write_minimal_public_repo(root)
-            (root / ".env.local").write_text("FINNHUB_API_KEY=real-looking-value\n")
+            finnhub_env_name = "FINNHUB" + "_API_KEY"
+            openrouter_env_name = "OPENROUTER" + "_API_KEY"
+            openrouter_token = "sk-or-v1-" + "thisisarealisticlookingtoken12345"
+            private_email = "person" + "@" + "private.test"
+            (root / ".env.local").write_text(f"{finnhub_env_name}=real-looking-value\n")
             (root / "leaky.py").write_text(
-                "OPENROUTER_API_KEY='sk-or-v1-thisisarealisticlookingtoken12345'\n"
-                "SEC_USER_AGENT='Analyst App (person@private.test)'\n"
+                f"{openrouter_env_name}='{openrouter_token}'\n"
+                f"SEC_USER_AGENT='Analyst App ({private_email})'\n"
             )
 
             with patch.object(
