@@ -147,6 +147,92 @@ class PriorArtInspectionTests(unittest.TestCase):
         self.assertEqual(inspection.manual_sources_payload["skipped_record_count"], 1)
         self.assertEqual(inspection.map_payload["missing_field_counts"]["timezone_timestamp"], 1)
 
+    def test_market_observation_csv_is_summarized_not_treated_as_claim_sources(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            workspace = Path(tmpdir)
+            mktmind = workspace / "mktmind-qtm"
+            data_dir = mktmind / "data"
+            data_dir.mkdir(parents=True)
+            with (data_dir / "marketmind_qml_dataset.csv").open("w", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=["date", "ticker", "close", "volume", "ret_1d"])
+                writer.writeheader()
+                writer.writerow(
+                    {
+                        "date": "2024-05-02",
+                        "ticker": "XLK",
+                        "close": "97.29266357421875",
+                        "volume": "13340000",
+                        "ret_1d": "0.01441363986805344",
+                    }
+                )
+
+            inspection = inspect_prior_art_repos(
+                {"mktmind-qtm": mktmind},
+                output_dir=workspace / "out",
+            )
+
+        mktmind_targets = next(
+            repo for repo in inspection.map_payload["repos"] if repo["repo"] == "mktmind-qtm"
+        )["targets"]
+        dataset_target = next(target for target in mktmind_targets if target["path"] == "data/marketmind_qml_dataset.csv")
+
+        self.assertEqual(inspection.manual_sources_payload["manual_source_count"], 0)
+        self.assertEqual(inspection.manual_sources_payload["skipped_record_count"], 0)
+        self.assertEqual(dataset_target["candidate_record_count"], 0)
+        self.assertEqual(dataset_target["skipped_record_count"], 0)
+        self.assertEqual(dataset_target["market_data_row_count"], 1)
+        self.assertEqual(dataset_target["market_data_summaries"][0]["tickers"], ["XLK"])
+        self.assertIn("not converted", dataset_target["market_data_summaries"][0]["conversion_rule"])
+
+    def test_metric_summary_csv_is_summarized_not_treated_as_claim_sources(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            workspace = Path(tmpdir)
+            mktmind = workspace / "mktmind-qtm"
+            results_dir = mktmind / "results"
+            results_dir.mkdir(parents=True)
+            with (results_dir / "metrics_summary.csv").open("w", newline="") as handle:
+                writer = csv.DictWriter(
+                    handle,
+                    fieldnames=["model", "split_id", "cutoff_date", "balanced_accuracy", "f1"],
+                )
+                writer.writeheader()
+                writer.writerow(
+                    {
+                        "model": "logistic_regression",
+                        "split_id": "split_00",
+                        "cutoff_date": "2024-05-02",
+                        "balanced_accuracy": "0.51",
+                        "f1": "0.42",
+                    }
+                )
+                writer.writerow(
+                    {
+                        "model": "quantum_kernel_svm",
+                        "split_id": "split_01",
+                        "cutoff_date": "2024-05-03",
+                        "balanced_accuracy": "0.59",
+                        "f1": "0.50",
+                    }
+                )
+
+            inspection = inspect_prior_art_repos(
+                {"mktmind-qtm": mktmind},
+                output_dir=workspace / "out",
+            )
+
+        mktmind_targets = next(
+            repo for repo in inspection.map_payload["repos"] if repo["repo"] == "mktmind-qtm"
+        )["targets"]
+        metrics_target = next(target for target in mktmind_targets if target["path"] == "results/metrics_summary.csv")
+
+        self.assertEqual(inspection.manual_sources_payload["manual_source_count"], 0)
+        self.assertEqual(inspection.manual_sources_payload["skipped_record_count"], 0)
+        self.assertEqual(metrics_target["candidate_record_count"], 0)
+        self.assertEqual(metrics_target["skipped_record_count"], 0)
+        self.assertEqual(metrics_target["metric_row_count"], 2)
+        self.assertEqual(metrics_target["metric_summaries"][0]["models"], ["logistic_regression", "quantum_kernel_svm"])
+        self.assertEqual(metrics_target["metric_summaries"][0]["best_balanced_accuracy"], 0.59)
+
     def test_script_writes_only_scratch_outputs(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             workspace = Path(tmpdir)

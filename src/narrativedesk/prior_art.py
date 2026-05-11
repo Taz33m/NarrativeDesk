@@ -192,9 +192,21 @@ def _inspect_target(
     manual_sources: list[dict[str, Any]] = []
     candidate_count = 0
     skipped_count = 0
+    market_summaries: list[dict[str, Any]] = []
+    metric_summaries: list[dict[str, Any]] = []
     missing_field_counts = _empty_missing_counts()
     skipped_examples: list[dict[str, Any]] = []
     for path in existing:
+        market_summary = _market_observation_summary(path)
+        if market_summary:
+            market_summary["path"] = _relative_path(root, path)
+            market_summaries.append(market_summary)
+            continue
+        metric_summary = _benchmark_metrics_summary(path)
+        if metric_summary:
+            metric_summary["path"] = _relative_path(root, path)
+            metric_summaries.append(metric_summary)
+            continue
         records = _candidate_records(path)
         candidate_count += len(records)
         for idx, record in enumerate(records):
@@ -220,6 +232,10 @@ def _inspect_target(
             "candidate_record_count": candidate_count,
             "manual_source_count": len(manual_sources),
             "skipped_record_count": skipped_count,
+            "market_data_row_count": sum(int(item["row_count"]) for item in market_summaries),
+            "market_data_summaries": market_summaries,
+            "metric_row_count": sum(int(item["row_count"]) for item in metric_summaries),
+            "metric_summaries": metric_summaries,
             "missing_field_counts": missing_field_counts,
             "skipped_record_examples": skipped_examples,
         },
@@ -243,6 +259,84 @@ def _candidate_records(path: Path) -> list[dict[str, Any]]:
         except csv.Error:
             return []
     return []
+
+
+def _market_observation_summary(path: Path) -> dict[str, Any] | None:
+    if path.suffix.lower() != ".csv":
+        return None
+    try:
+        with path.open(newline="") as handle:
+            reader = csv.DictReader(handle)
+            fields = {str(field or "").strip().lower() for field in reader.fieldnames or []}
+            market_fields = {"date", "ticker", "close"}
+            source_claim_fields = set(TIMESTAMP_FIELDS) | set(URL_FIELDS) | set(PUBLISHER_FIELDS) | set(CLAIM_FIELDS)
+            if not market_fields.issubset(fields) or fields.intersection(source_claim_fields - {"source"}):
+                return None
+            row_count = 0
+            tickers: set[str] = set()
+            dates: list[str] = []
+            for row in reader:
+                row_count += 1
+                ticker = str(row.get("ticker", "")).strip().upper()
+                date = str(row.get("date", "")).strip()
+                if ticker:
+                    tickers.add(ticker)
+                if date:
+                    dates.append(date)
+    except csv.Error:
+        return None
+
+    return {
+        "kind": "market_observations",
+        "row_count": row_count,
+        "tickers": sorted(tickers),
+        "date_from": min(dates) if dates else None,
+        "date_to": max(dates) if dates else None,
+        "conversion_rule": "Market observation rows are not converted into narrative source claims.",
+    }
+
+
+def _benchmark_metrics_summary(path: Path) -> dict[str, Any] | None:
+    if path.suffix.lower() != ".csv":
+        return None
+    try:
+        with path.open(newline="") as handle:
+            reader = csv.DictReader(handle)
+            fields = {str(field or "").strip().lower() for field in reader.fieldnames or []}
+            metric_fields = {"model", "split_id", "balanced_accuracy"}
+            source_claim_fields = set(TIMESTAMP_FIELDS) | set(URL_FIELDS) | set(PUBLISHER_FIELDS) | set(CLAIM_FIELDS)
+            if not metric_fields.issubset(fields) or fields.intersection(source_claim_fields - {"source"}):
+                return None
+            row_count = 0
+            models: set[str] = set()
+            cutoff_dates: list[str] = []
+            best_balanced_accuracy: float | None = None
+            for row in reader:
+                row_count += 1
+                model = str(row.get("model", "")).strip()
+                cutoff_date = str(row.get("cutoff_date", "")).strip()
+                if model:
+                    models.add(model)
+                if cutoff_date:
+                    cutoff_dates.append(cutoff_date)
+                try:
+                    accuracy = float(str(row.get("balanced_accuracy", "")).strip())
+                except ValueError:
+                    continue
+                if best_balanced_accuracy is None or accuracy > best_balanced_accuracy:
+                    best_balanced_accuracy = accuracy
+    except csv.Error:
+        return None
+
+    return {
+        "kind": "benchmark_metrics",
+        "row_count": row_count,
+        "models": sorted(models),
+        "cutoff_date_from": min(cutoff_dates) if cutoff_dates else None,
+        "cutoff_date_to": max(cutoff_dates) if cutoff_dates else None,
+        "best_balanced_accuracy": best_balanced_accuracy,
+        "conversion_rule": "Benchmark metric rows are not converted into narrative source claims.",
+    }
 
 
 def _mktmind_row_in_scope(
