@@ -48,6 +48,13 @@ class PriorArtInspection:
     manual_sources_payload: dict[str, Any]
 
 
+@dataclass(frozen=True)
+class PriorArtMarketBars:
+    manifest: dict[str, Any]
+    market_bars_path: Path
+    manifest_path: Path
+
+
 def inspect_prior_art_repos(
     repo_roots: dict[str, str | Path],
     *,
@@ -96,6 +103,68 @@ def inspect_prior_art_repos(
     _write_json(out_dir / "prior-art-map.json", map_payload)
     _write_json(out_dir / "prior-art-manual-sources.json", manual_sources_payload)
     return PriorArtInspection(map_payload=map_payload, manual_sources_payload=manual_sources_payload)
+
+
+def extract_mktmind_market_bars(
+    csv_path: str | Path,
+    *,
+    output_dir: str | Path = ".codex-work/prior-art-market-bars",
+    tickers: list[str] | None = None,
+    date_from: str | None = None,
+    date_to: str | None = None,
+) -> PriorArtMarketBars:
+    source_path = Path(csv_path)
+    if not source_path.exists():
+        raise FileNotFoundError(f"mktmind dataset not found: {source_path}")
+
+    out_dir = Path(output_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    bars_path = out_dir / "market_bars.csv"
+    manifest_path = out_dir / "market_bars_manifest.json"
+
+    ticker_filter = {ticker.upper() for ticker in tickers} if tickers else None
+    rows: list[dict[str, str]] = []
+    input_row_count = 0
+    filtered_row_count = 0
+    invalid_row_count = 0
+    with source_path.open(newline="") as handle:
+        reader = csv.DictReader(handle)
+        for raw in reader:
+            input_row_count += 1
+            if not _mktmind_row_in_scope(raw, ticker_filter=ticker_filter, date_from=date_from, date_to=date_to):
+                filtered_row_count += 1
+                continue
+            parsed = _mktmind_market_bar(raw)
+            if parsed is None:
+                invalid_row_count += 1
+                continue
+            rows.append(parsed)
+
+    rows = sorted(rows, key=lambda row: (row["date"], row["ticker"]))
+    with bars_path.open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=["date", "ticker", "open", "close", "volume"])
+        writer.writeheader()
+        writer.writerows(rows)
+
+    manifest = {
+        "schema_version": 1,
+        "source": "mktmind-qtm/data/marketmind_qml_dataset.csv",
+        "source_path": str(source_path),
+        "market_bars_path": str(bars_path),
+        "input_row_count": input_row_count,
+        "row_count": len(rows),
+        "filtered_row_count": filtered_row_count,
+        "invalid_row_count": invalid_row_count,
+        "tickers": sorted({row["ticker"] for row in rows}),
+        "date_from": date_from,
+        "date_to": date_to,
+        "derivation": (
+            "open is derived as previous close from close / (1 + ret_1d); "
+            "rows are frozen local prior-art market observations, not narrative evidence."
+        ),
+    }
+    _write_json(manifest_path, manifest)
+    return PriorArtMarketBars(manifest=manifest, market_bars_path=bars_path, manifest_path=manifest_path)
 
 
 def _inspect_target(
@@ -174,6 +243,49 @@ def _candidate_records(path: Path) -> list[dict[str, Any]]:
         except csv.Error:
             return []
     return []
+
+
+def _mktmind_row_in_scope(
+    row: dict[str, Any],
+    *,
+    ticker_filter: set[str] | None,
+    date_from: str | None,
+    date_to: str | None,
+) -> bool:
+    date = str(row.get("date", "")).strip()
+    ticker = str(row.get("ticker", "")).strip().upper()
+    if not date or not ticker:
+        return True
+    if ticker_filter is not None and ticker not in ticker_filter:
+        return False
+    if date_from and date < date_from:
+        return False
+    if date_to and date > date_to:
+        return False
+    return True
+
+
+def _mktmind_market_bar(row: dict[str, Any]) -> dict[str, str] | None:
+    try:
+        date = str(row.get("date", "")).strip()
+        ticker = str(row.get("ticker", "")).strip().upper()
+        if not date or not ticker:
+            return None
+        close = float(str(row.get("close", "")).strip())
+        ret_1d = float(str(row.get("ret_1d", "")).strip())
+        volume = float(str(row.get("volume", "")).strip())
+        if ret_1d <= -1:
+            return None
+        open_price = close / (1 + ret_1d)
+    except (TypeError, ValueError, ZeroDivisionError):
+        return None
+    return {
+        "date": date,
+        "ticker": ticker,
+        "open": f"{open_price:.6f}",
+        "close": f"{close:.6f}",
+        "volume": f"{volume:.0f}",
+    }
 
 
 def _walk_dict_records(payload: Any) -> list[dict[str, Any]]:

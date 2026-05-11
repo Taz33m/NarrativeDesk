@@ -218,6 +218,12 @@ Inspect local prior-art repos for timestamped manual-source candidates:
 PYTHONPATH=src python3 scripts/inspect_prior_art.py --repo-root citadail=/path/to/citadail --repo-root mktmind-qtm=/path/to/mktmind-qtm --repo-root applecapital=/path/to/applecapital
 ```
 
+Extract scratch sector market bars from the local MarketMind prior-art dataset:
+
+```bash
+PYTHONPATH=src python3 scripts/extract_prior_art_market_bars.py --tickers XLK --from 2024-05-01 --to 2024-05-07
+```
+
 Check a real-curated config before fetching provider data:
 
 ```bash
