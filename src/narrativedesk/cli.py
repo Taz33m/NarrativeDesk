@@ -1433,6 +1433,14 @@ def _real_case_status(
         for source in sources
         if isinstance(source, dict) and source.get("availability_status") == "blocked_future"
     ]
+    allowed_source_types = {
+        str(source.get("source_type", "")).strip()
+        for source in allowed
+        if isinstance(source, dict) and str(source.get("source_type", "")).strip()
+    }
+    current_market_bars_available = bool(config.get("market_data")) or "market_data" in allowed_source_types
+    current_filings_available = bool({"filing", "sec_filing"} & allowed_source_types)
+    current_news_available = bool({"news", "news_article"} & allowed_source_types)
     response.update(
         {
             "status": "needs_sources",
@@ -1442,13 +1450,13 @@ def _real_case_status(
                 "case_id": (config.get("case_metadata") or {}).get("case_id") if isinstance(config, dict) else None,
                 "ticker": (config.get("case_metadata") or {}).get("ticker") if isinstance(config, dict) else None,
                 "case_readiness": summary.get("case_readiness"),
-                "accepted_sources": summary.get("accepted_sources", len(allowed)),
-                "blocked_future_sources": summary.get("blocked_future_sources", len(blocked)),
+                "accepted_sources": len(allowed),
+                "blocked_future_sources": len(blocked),
                 "rejected_sources": summary.get("rejected_sources"),
-                "market_bars_available": summary.get("market_bars_available"),
+                "market_bars_available": current_market_bars_available,
                 "market_bars_check": summary.get("market_bars_check"),
-                "filings_available": summary.get("filings_available"),
-                "news_available": summary.get("news_available"),
+                "filings_available": current_filings_available,
+                "news_available": current_news_available,
                 "missing_requirements": summary.get("missing_requirements", []),
             },
             "next_action": _real_case_status_next_action(summary),
