@@ -16,6 +16,7 @@ from narrativedesk.real_provenance import (
     fetch_real_data,
     normalize_real_data_fetch,
     rehearse_real_case,
+    write_curated_narratives_template,
 )
 from narrativedesk.source_pack import validate_source_pack
 
@@ -381,6 +382,7 @@ class RealProvenanceTests(unittest.TestCase):
             config = json.loads(Path(response["real_case_config_out"]).read_text())
             summary = json.loads(Path(response["draft_summary_out"]).read_text())
             worksheet = Path(response["worksheet_out"]).read_text()
+            curation_template = json.loads(Path(response["curation_template_out"]).read_text())
             source_candidates_exists = Path(response["source_candidates_out"]).exists()
             rejected_candidates_exists = Path(response["rejected_candidates_out"]).exists()
 
@@ -395,6 +397,82 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(config["case_metadata"]["ticker"], "EXMPL")
         self.assertEqual(summary["recommended_next_action"], "Add 3-5 human-curated competing narratives.")
         self.assertIn("No winning narrative has been asserted", worksheet)
+        self.assertEqual(len(curation_template["narratives"]), 5)
+        self.assertEqual(curation_template["source_pool"]["allowed"][0]["availability_status"], "allowed")
+        self.assertIn("supporting_source_ids", curation_template["narratives"][0])
+
+    def test_write_curated_narratives_template_exposes_source_pools_and_slots(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            rehearsal = rehearse_real_case(
+                ticker="EXMPL",
+                company_name="Example Co",
+                event_type="earnings/guidance",
+                event_date="2025-01-02",
+                replay_lock="2025-01-02T10:00:00-05:00",
+                date_from="2025-01-01",
+                date_to="2025-01-07",
+                out_root=root,
+                providers=["finnhub", "sec"],
+                finnhub_token="secret-token",
+                sec_user_agent="NarrativeDesk Tests test@example.com",
+                fetcher=FakeProvenanceFetcher(),
+                retrieved_at="2026-05-11T00:00:00Z",
+                forms=["8-K"],
+                sec_count=1,
+                include_sec_document_text=True,
+                sec_throttle_seconds=0,
+                curation_template=False,
+            )
+            draft_dir = Path(rehearsal["draft_dir"])
+
+            response = write_curated_narratives_template(
+                draft_dir,
+                narrative_count=3,
+                allowed_limit=1,
+                blocked_limit=1,
+            )
+            payload = json.loads(Path(response["out"]).read_text())
+
+        self.assertTrue(response["ok"])
+        self.assertEqual(response["narrative_slot_count"], 3)
+        self.assertEqual(response["rendered_allowed_source_count"], 1)
+        self.assertEqual(response["rendered_blocked_future_source_count"], 1)
+        self.assertIn("Do not treat this file as a real financial claim", payload["_note"])
+        self.assertEqual(len(payload["narratives"]), 3)
+        self.assertEqual(payload["narratives"][0]["narrative_id"], "NARR-EXMPL-001")
+        self.assertEqual(payload["narratives"][0]["supporting_source_ids"], [])
+        self.assertEqual(len(payload["source_pool"]["allowed"]), 1)
+        self.assertEqual(len(payload["source_pool"]["blocked_future"]), 1)
+
+    def test_apply_curated_narratives_rejects_unedited_template_placeholders(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            rehearsal = rehearse_real_case(
+                ticker="EXMPL",
+                company_name="Example Co",
+                event_type="earnings/guidance",
+                event_date="2025-01-02",
+                replay_lock="2025-01-02T10:00:00-05:00",
+                date_from="2025-01-01",
+                date_to="2025-01-07",
+                out_root=root,
+                providers=["finnhub", "sec"],
+                finnhub_token="secret-token",
+                sec_user_agent="NarrativeDesk Tests test@example.com",
+                fetcher=FakeProvenanceFetcher(),
+                retrieved_at="2026-05-11T00:00:00Z",
+                forms=["8-K"],
+                sec_count=1,
+                include_sec_document_text=True,
+                sec_throttle_seconds=0,
+            )
+
+            with self.assertRaisesRegex(RealProvenanceError, "TBD placeholder"):
+                apply_curated_narratives(
+                    rehearsal["draft_dir"],
+                    rehearsal["curation_template_out"],
+                )
 
     def test_apply_curated_narratives_links_sources_and_writes_curated_config(self):
         with tempfile.TemporaryDirectory() as tmpdir:
