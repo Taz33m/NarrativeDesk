@@ -887,7 +887,7 @@ h1 {
 }
 
 .bracket-round,
-.bracket-winner {
+.bracket-rank-one {
   display: grid;
   gap: 12px;
   align-content: start;
@@ -907,7 +907,7 @@ h1 {
 }
 
 .bracket-match button,
-.bracket-winner button {
+.bracket-rank-one button {
   width: 100%;
   border: 1px solid var(--line);
   background: rgba(8, 12, 10, 0.72);
@@ -925,21 +925,21 @@ h1 {
   margin-top: 8px;
 }
 
-.bracket-match button.is-winner,
-.bracket-winner button {
+.bracket-match button.is-rank-one,
+.bracket-rank-one button {
   border-color: var(--accent);
   color: var(--ink);
   background: rgba(200, 240, 109, 0.08);
 }
 
-.bracket-winner button {
+.bracket-rank-one button {
   grid-template-columns: 1fr;
   align-content: start;
   min-height: 170px;
 }
 
 .bracket-match p,
-.bracket-winner p {
+.bracket-rank-one p {
   margin-top: 10px;
   color: var(--muted);
   line-height: 1.45;

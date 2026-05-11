@@ -23,7 +23,7 @@
     "data_provenance_mode": "synthetic",
     "event_date": "2025-08-07",
     "event_id": "EVT-ORION-2025-08-07",
-    "event_summary": "Synthetic demo event: a liquid streaming company sells off after earnings. The fixture is designed to exercise replay filtering, narrative ranking, and validation separation.",
+    "event_summary": "Synthetic demo event: a liquid streaming company sells off after earnings. The fixture is designed to exercise replay filtering, narrative verification, and validation separation.",
     "event_timestamp": "2025-08-07T10:00:00-04:00",
     "event_type": "earnings/guidance",
     "peer_median_return": -0.012,

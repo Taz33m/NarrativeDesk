@@ -119,7 +119,7 @@ function validationHeadline(evaluation: EvaluationSummary | null, validation: Va
   const validatedWindow = validation?.rows.find((row) => row.label === 'validated');
   if (!evaluation) return 'Validation pending';
   if (evaluation.top_ranked_validated) {
-    return `${validatedWindow?.window ?? 'Future'} later supported top replay narrative`;
+    return `${validatedWindow?.window ?? 'Future'} later supported replay rank #1`;
   }
   if (evaluation.validated_rank) {
     return `${validatedWindow?.window ?? 'Future'} later supported rank #${evaluation.validated_rank}`;
@@ -170,24 +170,24 @@ function narrativeOutcomeLabel(narrative: Narrative, evaluation: EvaluationSumma
   return narrative.validation_status;
 }
 
-function losingReason(narrative: Narrative, winner: Narrative): string {
-  if (narrative.narrative_id === winner.narrative_id) return narrativeReason(winner);
+function auditGapReason(narrative: Narrative, rankOne: Narrative): string {
+  if (narrative.narrative_id === rankOne.narrative_id) return narrativeReason(rankOne);
   const reasons = [
     {
       label: 'weaker evidence',
-      delta: winner.scoring_inputs.evidence_strength - narrative.scoring_inputs.evidence_strength,
+      delta: rankOne.scoring_inputs.evidence_strength - narrative.scoring_inputs.evidence_strength,
     },
     {
       label: 'less specific mechanism',
-      delta: winner.scoring_inputs.mechanism_specificity - narrative.scoring_inputs.mechanism_specificity,
+      delta: rankOne.scoring_inputs.mechanism_specificity - narrative.scoring_inputs.mechanism_specificity,
     },
     {
       label: 'less timestamp advantage',
-      delta: winner.scoring_inputs.timestamp_advantage - narrative.scoring_inputs.timestamp_advantage,
+      delta: rankOne.scoring_inputs.timestamp_advantage - narrative.scoring_inputs.timestamp_advantage,
     },
     {
       label: 'more unsupported-claim risk',
-      delta: narrative.scoring_inputs.unsupported_claim_penalty - winner.scoring_inputs.unsupported_claim_penalty,
+      delta: narrative.scoring_inputs.unsupported_claim_penalty - rankOne.scoring_inputs.unsupported_claim_penalty,
     },
   ]
     .filter((item) => item.delta > 0.015)
@@ -329,9 +329,9 @@ function App() {
           />
           <div>
             <p className="eyebrow">NarrativeDesk Replay</p>
-            <h1>Replay-safe narrative ranking for abnormal market moves</h1>
+            <h1>Replay-safe market narrative verification</h1>
             <p className="dek">
-              Competing market narratives. Time-locked evidence. Later validation.
+              Generated narratives. Time-locked evidence. Contradictions. Later validation.
             </p>
             <p className="safety-note">
               Research and education only. Synthetic demo. Not investment advice.
@@ -499,7 +499,7 @@ function CaseContextBar({
       </div>
       <span>{humanize(ledger.event.event_type)} | {ledger.event.event_date}</span>
       <span>{pct(ledger.event.abnormal_return)} abnormal</span>
-      <span>Replay rank #1: {topNarrative.title}</span>
+      <span>Replay audit rank #1: {topNarrative.title}</span>
       <span className={`status-pill ${statusClass(validationTone(evaluation))}`}>
         {validationHeadline(evaluation, validation)}
       </span>
@@ -548,12 +548,12 @@ function CaseHero({
 
       <section className="hero-decision" data-testid="thesis-strip">
         <div>
-          <span className="strip-label">Top Replay Narrative</span>
+          <span className="strip-label">Narrative under audit</span>
           <strong>{topNarrative.title}</strong>
           <p>{compactNarrativeThesis(topNarrative)}</p>
         </div>
         <div>
-          <span className="strip-label">Why it ranked first</span>
+          <span className="strip-label">Verification score</span>
           <strong>Score {score(topNarrative.overall_narrative_score)}</strong>
           <p>
             Evidence {score(topNarrative.scoring_inputs.evidence_strength)} | Mechanism{' '}
@@ -613,12 +613,12 @@ function BaselineComparisonModule({
         <p>Ranked #{baselineNarrative?.rank ?? 'n/a'}</p>
       </div>
       <div>
-        <span className="strip-label">Replay-ranked winner</span>
+        <span className="strip-label">Replay audit rank #1</span>
         <strong>{topNarrative.title}</strong>
         <p>Ranked #{topNarrative.rank} at the lock.</p>
       </div>
       <p>
-        It weighted stronger allowed evidence, cleaner mechanism specificity, and lower unsupported-claim risk.
+        The audit weighted stronger allowed evidence, cleaner mechanism specificity, and lower unsupported-claim risk.
         <span className="future-validation-note"> Future validation is separate: {validationHeadline(evaluation, validation)}.</span>
       </p>
     </section>
@@ -731,12 +731,12 @@ function CaseLibrary({
     <section className="case-library" data-testid="case-library">
       <div className="case-library__header">
         <span className="eyebrow">Replay Case Library</span>
-        <p>Finds the explanation that survives time.</p>
+        <p>Tests whether explanations survive time.</p>
       </div>
       <div className="case-library__rows">
         {cases.cases.map((caseItem) => {
           const validationCase = validationByCase.get(caseItem.case_id);
-          const winner = caseItem.ledger.narratives.find((narrative) => narrative.rank === 1)
+          const rankOne = caseItem.ledger.narratives.find((narrative) => narrative.rank === 1)
             ?? caseItem.ledger.narratives[0];
           return (
             <button
@@ -751,7 +751,7 @@ function CaseLibrary({
               </span>
               <span>{humanize(caseItem.ledger.event.event_type)}</span>
               <span>{pct(caseItem.ledger.event.abnormal_return)} abnormal</span>
-              <span>{winner?.title ?? 'No winner'}</span>
+              <span>{rankOne?.title ?? 'No rank #1'}</span>
               <span className={`status-pill ${statusClass(validationTone(validationCase?.evaluation ?? null))}`}>
                 {validationHeadline(validationCase?.evaluation ?? null, validationCase?.validation ?? null)}
               </span>
@@ -826,8 +826,8 @@ function NarrativeTournamentList({
               </span>
               <span className="loss-reason">
                 {narrative.narrative_id === topNarrative.narrative_id
-                  ? 'Why it won: replay-safe score led the field'
-                  : `Why it lost: ${losingReason(narrative, topNarrative)}`}
+                  ? 'Audit note: replay-safe score led the field'
+                  : `Audit gap: ${auditGapReason(narrative, topNarrative)}`}
               </span>
             </span>
           </button>
@@ -849,12 +849,12 @@ function SelectedNarrativeCaseFile({
   const blocked = ledger.replay_audit.blocked_evidence.filter(
     (source) => source.narrative_id === narrative.narrative_id,
   );
-  const isWinner = narrative.narrative_id === topNarrative.narrative_id;
+  const isRankOne = narrative.narrative_id === topNarrative.narrative_id;
 
   return (
     <section className="panel case-file" data-testid="evidence-inspector">
       <PanelHeader
-        kicker={isWinner ? 'Selected Narrative | Winner' : 'Selected Narrative'}
+        kicker={isRankOne ? 'Selected Narrative | Rank #1 under audit' : 'Selected Narrative'}
         title={narrative.title}
       />
       <div className="case-file__thesis">
@@ -862,8 +862,8 @@ function SelectedNarrativeCaseFile({
         <p>{narrative.mechanism}</p>
       </div>
       <div className="case-file__why">
-        <h3>Why it beat baseline</h3>
-        <p>{isWinner ? narrativeReason(narrative) : 'Selected for inspection. The tournament winner remains above it after replay-safe scoring.'}</p>
+        <h3>Audit rationale</h3>
+        <p>{isRankOne ? narrativeReason(narrative) : 'Selected for inspection. The replay rank #1 narrative remains above it after replay-safe scoring.'}</p>
       </div>
       <ScoreStack narrative={narrative} />
       <section className="case-file__evidence-preview">
@@ -1072,19 +1072,19 @@ function TournamentBracket({
 
   return (
     <section className="panel bracket-panel" data-testid="tournament-bracket">
-      <PanelHeader kicker="NarrativeDesk Tournament" title="Head-to-head explanation bracket" />
+      <PanelHeader kicker="NarrativeDesk Verification Bracket" title="Head-to-head explanation audit" />
       <div className="bracket-grid">
         <div className="bracket-round">
           <span className="bracket-label">Semifinals</span>
-          <BracketMatch narratives={pairA} winner={pairA[0] ?? topNarrative} onSelect={onSelect} />
-          <BracketMatch narratives={pairB} winner={finalist} onSelect={onSelect} />
+          <BracketMatch narratives={pairA} rankOne={pairA[0] ?? topNarrative} onSelect={onSelect} />
+          <BracketMatch narratives={pairB} rankOne={finalist} onSelect={onSelect} />
         </div>
         <div className="bracket-round">
           <span className="bracket-label">Final</span>
-          <BracketMatch narratives={[pairA[0] ?? topNarrative, finalist]} winner={topNarrative} onSelect={onSelect} />
+          <BracketMatch narratives={[pairA[0] ?? topNarrative, finalist]} rankOne={topNarrative} onSelect={onSelect} />
         </div>
-        <div className="bracket-winner">
-          <span className="bracket-label">Winner</span>
+        <div className="bracket-rank-one">
+          <span className="bracket-label">Rank #1</span>
           <button type="button" onClick={() => onSelect(topNarrative.narrative_id)}>
             <strong>{topNarrative.title}</strong>
             <p>{narrativeReason(topNarrative)}</p>
@@ -1095,7 +1095,7 @@ function TournamentBracket({
         <span className="strip-label">Baseline comparison</span>
         <strong>{baselineNarrative?.title ?? 'No baseline selected'} vs {topNarrative.title}</strong>
         <p>
-          The tournament uses replay-safe scoring instead of surface consensus. Timestamp advantage, contradiction
+          The verification bracket uses replay-safe scoring instead of surface consensus. Timestamp advantage, contradiction
           resistance, and unsupported-claim penalties decide ties.
         </p>
       </div>
@@ -1105,18 +1105,18 @@ function TournamentBracket({
 
 function BracketMatch({
   narratives,
-  winner,
+  rankOne,
   onSelect,
 }: {
   narratives: Narrative[];
-  winner: Narrative;
+  rankOne: Narrative;
   onSelect: (narrativeId: string) => void;
 }) {
   return (
     <article className="bracket-match">
       {narratives.map((narrative) => (
         <button
-          className={narrative.narrative_id === winner.narrative_id ? 'is-winner' : ''}
+          className={narrative.narrative_id === rankOne.narrative_id ? 'is-rank-one' : ''}
           key={narrative.narrative_id}
           type="button"
           onClick={() => onSelect(narrative.narrative_id)}
@@ -1126,7 +1126,7 @@ function BracketMatch({
           <small>{score(narrative.overall_narrative_score)}</small>
         </button>
       ))}
-      <p>Reason: {narrativeReason(winner)}</p>
+      <p>Audit reason: {narrativeReason(rankOne)}</p>
     </article>
   );
 }
@@ -1195,7 +1195,7 @@ function ReportPanel({
   const reportSections = [
     'Event Summary',
     'Abnormal Move',
-    'Top Replay Narrative',
+    'Narrative Under Audit',
     'Evidence Supporting the Narrative',
     'Contradictions',
     'Replay Integrity',
@@ -1285,7 +1285,7 @@ function BenchmarkCorpusPanel({ aggregate }: { aggregate: BenchmarkAggregate }) 
   const primaryMetrics = [
     ['Cases', `${aggregate.evaluated_case_count}/${aggregate.case_count}`],
     ['Recall@3', pct(aggregate.narrative_recall_at_3_rate)],
-    ['Tournament hit', pct(aggregate.narrativedesk_tournament_validated_rate)],
+    ['Rank #1 hit', pct(aggregate.narrativedesk_tournament_validated_rate)],
     ['Headline hit', pct(aggregate.headline_baseline_validated_rate)],
   ];
   const ablationMetrics = [

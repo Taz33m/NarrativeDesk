@@ -1,4 +1,5 @@
 import unittest
+from dataclasses import replace
 from pathlib import Path
 
 from narrativedesk.pipeline import load_validation_fixture, run_replay
@@ -18,6 +19,7 @@ class ReportTests(unittest.TestCase):
         report = generate_markdown_report(event, narratives, audit, validation)
 
         self.assertIn("Research support output. Not investment advice.", report)
+        self.assertIn("synthetic fixture", report)
         self.assertIn("Blocked future sources: SRC-009", report)
         self.assertIn("Source Map", report)
         self.assertIn("| SRC-009 | blocked_future | analyst_revision | n/a | NARR-001 | support |", report)
@@ -30,7 +32,7 @@ class ReportTests(unittest.TestCase):
         self.assertIn("Blocked future sources are counted for auditability", report)
         self.assertIn("Average evidence quality: 0.80", report)
         self.assertIn("| unknown | 0 | 1 | n/a | n/a | n/a |", report)
-        self.assertIn("Narrative Tournament", report)
+        self.assertIn("Narrative Verification Ranking", report)
         self.assertIn("Evaluation Checks", report)
         self.assertIn("Narrative Recall@3: pass", report)
         self.assertIn("Average unsupported claim penalty: 0.06", report)
@@ -53,11 +55,21 @@ class ReportTests(unittest.TestCase):
         event, narratives, audit, _validation = run_replay(EVENT_FIXTURE)
         report = generate_markdown_report(event, narratives, audit)
 
-        self.assertIn("Narrative Tournament", report)
+        self.assertIn("Narrative Verification Ranking", report)
         self.assertIn("Citation QA: miss", report)
         self.assertNotIn("Evaluation Checks", report)
         self.assertNotIn("Model Comparison", report)
         self.assertNotIn("Future Validation Fixture", report)
+
+    def test_real_curated_report_uses_real_data_note(self):
+        event, narratives, audit, _validation = run_replay(EVENT_FIXTURE)
+        real_event = replace(event, data_provenance_mode="real-curated")
+
+        report = generate_markdown_report(real_event, narratives, audit)
+
+        self.assertIn("real-curated replay bundle", report)
+        self.assertIn("public use requires curator review", report)
+        self.assertNotIn("generated from a synthetic fixture", report)
 
 
 if __name__ == "__main__":

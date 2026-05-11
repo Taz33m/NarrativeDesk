@@ -11,7 +11,7 @@
     "volume_ratio": 2.4,
     "sector_etf_return": -0.008,
     "peer_median_return": -0.012,
-    "event_summary": "Synthetic demo event: a liquid streaming company sells off after earnings. The fixture is designed to exercise replay filtering, narrative ranking, and validation separation.",
+    "event_summary": "Synthetic demo event: a liquid streaming company sells off after earnings. The fixture is designed to exercise replay filtering, narrative verification, and validation separation.",
     "case_id": "EVT-ORION-2025-08-07",
     "data_provenance_mode": "synthetic"
   },
