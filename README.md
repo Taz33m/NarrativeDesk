@@ -182,6 +182,15 @@ PYTHONPATH=src python3 -m narrativedesk.cli real-case-curated-bundle \
   --out-dir .codex-work/real-cases/aapl-2024-q2-bundle
 ```
 
+Check draft, curation, and bundle state at any point:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli real-case-status \
+  --draft-dir .codex-work/real-cases/aapl-2024-q2-rehearsal \
+  --narratives .codex-work/real-cases/aapl-2024-q2-rehearsal/curated_narratives.template.json \
+  --bundle-dir .codex-work/real-cases/aapl-2024-q2-bundle
+```
+
 Inspect local prior-art repos for timestamped manual-source candidates:
 
 ```bash

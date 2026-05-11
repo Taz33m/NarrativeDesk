@@ -760,6 +760,39 @@ def apply_curated_narratives(
     config_path = draft_path / "real_case_config.json"
     config = json.loads(config_path.read_text())
     payload = json.loads(Path(narratives_path).read_text())
+    updated, summary = _curated_config_from_payload(config, payload)
+    out_path = Path(out) if out else draft_path / "real_case_config.curated.json"
+    _write_json(out_path, updated)
+    return {
+        "ok": True,
+        "out": str(out_path),
+        "source_config": str(config_path),
+        "narratives_in": str(narratives_path),
+        **summary,
+    }
+
+
+def validate_curated_narratives(
+    draft_dir: str | Path,
+    narratives_path: str | Path,
+) -> dict[str, Any]:
+    draft_path = Path(draft_dir)
+    config_path = draft_path / "real_case_config.json"
+    config = json.loads(config_path.read_text())
+    payload = json.loads(Path(narratives_path).read_text())
+    _updated, summary = _curated_config_from_payload(config, payload)
+    return {
+        "ok": True,
+        "source_config": str(config_path),
+        "narratives_in": str(narratives_path),
+        **summary,
+    }
+
+
+def _curated_config_from_payload(
+    config: dict[str, Any],
+    payload: Any,
+) -> tuple[dict[str, Any], dict[str, Any]]:
     raw_narratives = _curated_narratives_from_payload(payload)
     if not raw_narratives:
         raise RealProvenanceError("Curated narratives payload must include a non-empty narratives list")
@@ -839,18 +872,15 @@ def apply_curated_narratives(
         raise RealProvenanceError("; ".join(errors))
 
     updated["narratives"] = curated_narratives
-    out_path = Path(out) if out else draft_path / "real_case_config.curated.json"
-    _write_json(out_path, updated)
-    return {
-        "ok": True,
-        "out": str(out_path),
-        "source_config": str(config_path),
-        "narratives_in": str(narratives_path),
-        "narrative_count": len(curated_narratives),
-        "allowed_source_link_count": allowed_link_count,
-        "future_source_link_count": future_link_count,
-        "manual_source_count": len(sources),
-    }
+    return (
+        updated,
+        {
+            "narrative_count": len(curated_narratives),
+            "allowed_source_link_count": allowed_link_count,
+            "future_source_link_count": future_link_count,
+            "manual_source_count": len(sources),
+        },
+    )
 
 
 def _worksheet_lines(
