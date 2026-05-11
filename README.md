@@ -150,22 +150,14 @@ To rehearse live-provider ingestion without committing real claims, fetch raw pr
 
 ```bash
 PYTHONPATH=src python3 -m narrativedesk.cli real-data-env-check --providers finnhub,sec --env-file .env.local
-PYTHONPATH=src python3 -m narrativedesk.cli real-data-fetch \
-  --ticker AAPL --company-name "Apple Inc." \
-  --from 2024-05-01 --to 2024-05-20 \
-  --providers finnhub,sec --include-sec-document-text \
-  --env-file .env.local \
-  --out-dir .codex-work/live-fetches/aapl-2024-q2
-PYTHONPATH=src python3 -m narrativedesk.cli real-data-normalize \
-  .codex-work/live-fetches/aapl-2024-q2 \
-  --replay-lock 2024-05-03T10:00:00-04:00
-PYTHONPATH=src python3 -m narrativedesk.cli real-case-draft \
+PYTHONPATH=src python3 -m narrativedesk.cli real-case-rehearse \
   --ticker AAPL --company-name "Apple Inc." \
   --event-type earnings --event-date 2024-05-02 \
+  --from 2024-05-01 --to 2024-05-20 \
   --replay-lock 2024-05-03T10:00:00-04:00 \
-  --normalized-dir .codex-work/live-fetches/aapl-2024-q2/normalized \
-  --out-dir .codex-work/real-cases/aapl-2024-q2-rehearsal
-PYTHONPATH=src python3 -m narrativedesk.cli real-case-worksheet \
+  --providers finnhub,sec --include-sec-document-text \
+  --env-file .env.local \
+  --fetch-dir .codex-work/live-fetches/aapl-2024-q2 \
   --draft-dir .codex-work/real-cases/aapl-2024-q2-rehearsal
 ```
 

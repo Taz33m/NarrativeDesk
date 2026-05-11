@@ -550,6 +550,125 @@ def write_real_case_worksheet(
     }
 
 
+def rehearse_real_case(
+    *,
+    ticker: str,
+    company_name: str,
+    event_type: str,
+    event_date: str,
+    replay_lock: str | datetime,
+    date_from: str,
+    date_to: str,
+    out_root: str | Path = ".codex-work",
+    fetch_dir: str | Path | None = None,
+    draft_dir: str | Path | None = None,
+    providers: list[str] | tuple[str, ...] | str = DEFAULT_PROVIDERS,
+    finnhub_token: str | None = None,
+    sec_user_agent: str | None = None,
+    news_api_key: str | None = None,
+    fetcher: JsonFetcher | None = None,
+    retrieved_at: str | datetime | None = None,
+    forms: list[str] | None = None,
+    sec_count: int = 5,
+    cik: str | None = None,
+    include_sec_document_text: bool = False,
+    news_query: str | None = None,
+    news_domains: str | None = None,
+    sec_throttle_seconds: float = 0.12,
+    worksheet: bool = True,
+    allowed_limit: int = 12,
+    blocked_limit: int = 10,
+) -> dict[str, Any]:
+    """Run the deterministic live-fetch -> normalize -> draft rehearsal path."""
+    root = Path(out_root)
+    slug = _safe_filename(f"{ticker.lower()}-{event_date}")
+    fetch_path = Path(fetch_dir) if fetch_dir else root / "live-fetches" / slug
+    draft_path = Path(draft_dir) if draft_dir else root / "real-cases" / f"{slug}-rehearsal"
+    fetched = fetch_real_data(
+        ticker=ticker,
+        company_name=company_name,
+        date_from=date_from,
+        date_to=date_to,
+        providers=providers,
+        out_dir=fetch_path,
+        finnhub_token=finnhub_token,
+        sec_user_agent=sec_user_agent,
+        news_api_key=news_api_key,
+        fetcher=fetcher,
+        retrieved_at=retrieved_at,
+        forms=forms,
+        sec_count=sec_count,
+        cik=cik,
+        include_sec_document_text=include_sec_document_text,
+        news_query=news_query,
+        news_domains=news_domains,
+        sec_throttle_seconds=sec_throttle_seconds,
+    )
+    response: dict[str, Any] = {
+        "ok": bool(fetched.get("ok")),
+        "stage": "fetch",
+        "fetch_dir": str(fetch_path),
+        "manifest_out": str(fetch_path / "fetch_manifest.json"),
+        "artifact_count": len(fetched.get("artifacts", [])),
+        "errors": fetched.get("errors", []),
+    }
+    usable_artifacts = [
+        artifact
+        for artifact in fetched.get("artifacts", [])
+        if isinstance(artifact, dict) and artifact.get("status") == "ok"
+    ]
+    if not usable_artifacts:
+        return response
+
+    normalized = normalize_real_data_fetch(
+        fetch_path,
+        replay_lock=replay_lock,
+        generated_at=retrieved_at,
+    )
+    draft = draft_real_case(
+        ticker=ticker,
+        company_name=company_name,
+        event_type=event_type,
+        event_date=event_date,
+        replay_lock=replay_lock,
+        normalized_dir=normalized["out_dir"],
+        out_dir=draft_path,
+    )
+    worksheet_response = None
+    if worksheet:
+        worksheet_response = write_real_case_worksheet(
+            draft_path,
+            allowed_limit=allowed_limit,
+            blocked_limit=blocked_limit,
+        )
+
+    response.update(
+        {
+            "ok": bool(fetched.get("ok")) and bool(normalized.get("ok")) and bool(draft.get("ok")),
+            "stage": "complete" if fetched.get("ok") else "complete_with_fetch_errors",
+            "normalized_dir": normalized["out_dir"],
+            "source_candidates_out": normalized["source_candidates_out"],
+            "rejected_candidates_out": normalized["rejected_candidates_out"],
+            "draft_dir": str(draft_path),
+            "real_case_config_out": draft["real_case_config_out"],
+            "draft_summary_out": draft["draft_summary_out"],
+            "narratives_todo_out": draft["narratives_todo_out"],
+            "validation_fixture_out": draft["validation_fixture_out"],
+            "worksheet_out": worksheet_response["out"] if worksheet_response else None,
+            "accepted_sources": draft["accepted_sources"],
+            "blocked_future_sources": draft["blocked_future_sources"],
+            "rejected_sources": draft["rejected_sources"],
+            "market_bars_available": draft["market_bars_available"],
+            "filings_available": draft["filings_available"],
+            "news_available": draft["news_available"],
+            "case_readiness": draft["case_readiness"],
+            "missing_requirements": draft["missing_requirements"],
+            "recommended_next_action": draft["recommended_next_action"],
+        }
+    )
+    return response
+
+
 def _worksheet_lines(
     *,
     summary: dict[str, Any],

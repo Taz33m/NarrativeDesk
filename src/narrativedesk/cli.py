@@ -28,6 +28,7 @@ from narrativedesk.real_provenance import (
     draft_real_case,
     fetch_real_data,
     normalize_real_data_fetch,
+    rehearse_real_case,
     write_real_case_worksheet,
 )
 from narrativedesk.replay_bundle import verify_replay_bundle
@@ -232,6 +233,62 @@ def build_parser() -> argparse.ArgumentParser:
     real_worksheet.add_argument("--out", help="Optional worksheet output path. Defaults to <draft-dir>/curation_worksheet.md.")
     real_worksheet.add_argument("--allowed-limit", type=int, default=12, help="Maximum replay-eligible sources to render.")
     real_worksheet.add_argument("--blocked-limit", type=int, default=10, help="Maximum blocked future sources to render.")
+
+    real_rehearsal = sub.add_parser(
+        "real-case-rehearse",
+        help="Run live fetch, normalization, draft config, and scratch worksheet in one deterministic pass.",
+    )
+    real_rehearsal.add_argument("--ticker", required=True, help="Ticker symbol to rehearse.")
+    real_rehearsal.add_argument("--company-name", required=True, help="Company name for provider queries.")
+    real_rehearsal.add_argument("--event-type", required=True, help="Event type label.")
+    real_rehearsal.add_argument("--event-date", required=True, help="Event date, YYYY-MM-DD.")
+    real_rehearsal.add_argument("--replay-lock", required=True, help="Replay lock timestamp with timezone.")
+    real_rehearsal.add_argument("--from", dest="date_from", required=True, help="Oldest provider date, YYYY-MM-DD.")
+    real_rehearsal.add_argument("--to", dest="date_to", required=True, help="Newest provider date, YYYY-MM-DD.")
+    real_rehearsal.add_argument(
+        "--providers",
+        default="finnhub,sec",
+        help="Comma-separated provider list: finnhub,sec,newsapi.",
+    )
+    real_rehearsal.add_argument("--out-root", default=".codex-work", help="Scratch root for default output paths.")
+    real_rehearsal.add_argument("--fetch-dir", help="Output directory for frozen provider artifacts.")
+    real_rehearsal.add_argument("--draft-dir", help="Output directory for the curator-ready draft.")
+    real_rehearsal.add_argument(
+        "--finnhub-token-env",
+        default="FINNHUB_API_KEY",
+        help="Environment variable containing the Finnhub API token.",
+    )
+    real_rehearsal.add_argument(
+        "--sec-user-agent-env",
+        default="SEC_USER_AGENT",
+        help="Environment variable containing the SEC EDGAR User-Agent header.",
+    )
+    real_rehearsal.add_argument(
+        "--news-api-key-env",
+        default="NEWS_API_KEY",
+        help="Environment variable containing the NewsAPI token.",
+    )
+    real_rehearsal.add_argument(
+        "--env-file",
+        help="Optional dotenv-style file with provider credentials. Environment variables override file values.",
+    )
+    real_rehearsal.add_argument("--forms", default="8-K,10-Q,10-K", help="Comma-separated SEC forms to fetch.")
+    real_rehearsal.add_argument("--sec-count", type=int, default=5, help="Maximum SEC filings to inspect.")
+    real_rehearsal.add_argument("--cik", help="Optional SEC CIK override.")
+    real_rehearsal.add_argument(
+        "--include-sec-document-text",
+        action="store_true",
+        help="Also fetch primary SEC filing document text for selected filings.",
+    )
+    real_rehearsal.add_argument("--news-query", help="Optional NewsAPI query override.")
+    real_rehearsal.add_argument("--news-domains", help="Optional comma-separated NewsAPI domain filter.")
+    real_rehearsal.add_argument(
+        "--no-worksheet",
+        action="store_true",
+        help="Skip writing the scratch curation worksheet.",
+    )
+    real_rehearsal.add_argument("--allowed-limit", type=int, default=12, help="Maximum replay-eligible sources to render.")
+    real_rehearsal.add_argument("--blocked-limit", type=int, default=10, help="Maximum blocked future sources to render.")
 
     ingest = sub.add_parser("source-pack-ingest", help="Convert a source pack into a replay fixture.")
     ingest.add_argument("path", help="Path to source pack JSON.")
@@ -647,6 +704,41 @@ def run_real_case_worksheet(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_real_case_rehearse(args: argparse.Namespace) -> int:
+    try:
+        env_file_values = _load_env_file(args.env_file) if args.env_file else {}
+        response = rehearse_real_case(
+            ticker=args.ticker,
+            company_name=args.company_name,
+            event_type=args.event_type,
+            event_date=args.event_date,
+            replay_lock=args.replay_lock,
+            date_from=args.date_from,
+            date_to=args.date_to,
+            out_root=args.out_root,
+            fetch_dir=args.fetch_dir,
+            draft_dir=args.draft_dir,
+            providers=args.providers,
+            finnhub_token=_env_value(args.finnhub_token_env, env_file_values),
+            sec_user_agent=_env_value(args.sec_user_agent_env, env_file_values),
+            news_api_key=_env_value(args.news_api_key_env, env_file_values),
+            forms=_split_csv_arg(args.forms),
+            sec_count=args.sec_count,
+            cik=args.cik,
+            include_sec_document_text=args.include_sec_document_text,
+            news_query=args.news_query,
+            news_domains=args.news_domains,
+            worksheet=not args.no_worksheet,
+            allowed_limit=args.allowed_limit,
+            blocked_limit=args.blocked_limit,
+        )
+    except (OSError, json.JSONDecodeError, RealProvenanceError) as exc:
+        print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
+        return 1
+    print(json.dumps(response, indent=2, sort_keys=True))
+    return 0 if response["ok"] else 1
+
+
 def run_source_pack_ingest(args: argparse.Namespace) -> int:
     payload = load_source_pack(args.path)
     errors = validate_source_pack(payload, require_narratives=True)
@@ -859,6 +951,8 @@ def main() -> int:
         return run_real_case_draft(args)
     if args.command == "real-case-worksheet":
         return run_real_case_worksheet(args)
+    if args.command == "real-case-rehearse":
+        return run_real_case_rehearse(args)
     if args.command == "source-pack-ingest":
         return run_source_pack_ingest(args)
     if args.command == "validation-validate":
