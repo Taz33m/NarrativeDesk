@@ -316,6 +316,8 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(summary["accepted_sources"], 2)
         self.assertEqual(summary["blocked_future_sources"], 1)
         self.assertEqual(summary["rejected_sources"], 1)
+        self.assertTrue(summary["market_bars_check"]["ok"])
+        self.assertEqual(summary["market_bars_check"]["selected_row"]["ticker"], "EXMPL")
         self.assertEqual(config["narratives"], [])
         self.assertTrue(any(source["availability_status"] == "blocked_future" for source in config["manual_sources"]))
         self.assertEqual(config["market_data"]["provider"], "local_csv")
@@ -368,6 +370,8 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertTrue(response["ok"])
         self.assertEqual(response["case_readiness"], "needs_sources")
         self.assertFalse(response["market_bars_available"])
+        self.assertFalse(response["market_bars_check"]["ok"])
+        self.assertTrue(any("No rows found for ticker EXMPL" in error for error in response["market_bars_check"]["errors"]))
         self.assertNotIn("market_data", config)
 
     def test_draft_real_case_accepts_explicit_frozen_market_bars(self):
@@ -488,6 +492,10 @@ class RealProvenanceTests(unittest.TestCase):
 
         self.assertEqual(response["case_readiness"], "needs_sources")
         self.assertFalse(response["market_bars_available"])
+        self.assertEqual(response["market_bars_check"]["after_lock_row_count"], 1)
+        self.assertTrue(
+            any("No replay-eligible rows found" in error for error in response["market_bars_check"]["errors"])
+        )
         self.assertNotIn("market_data", config)
 
     def test_inspect_market_bars_rejects_same_day_daily_row_before_close(self):
@@ -937,6 +945,7 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertTrue(response["bundle_verify"]["ok"])
         self.assertEqual(status_before.returncode, 0, status_before.stderr + status_before.stdout)
         self.assertEqual(status_before_response["status"], "ready_to_bundle")
+        self.assertTrue(status_before_response["draft"]["market_bars_check"]["ok"])
         self.assertEqual(status_after.returncode, 0, status_after.stderr + status_after.stdout)
         self.assertEqual(status_after_response["status"], "bundle_verified")
         self.assertTrue(status_after_response["bundle"]["ok"])
