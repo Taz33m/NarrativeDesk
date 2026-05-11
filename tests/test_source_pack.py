@@ -862,6 +862,102 @@ class SourcePackTests(unittest.TestCase):
         self.assertEqual(len(narratives), 2)
         self.assertEqual(audit.blocked_source_ids, ['SRC-009'])
 
+    def test_cli_source_pack_bundle_accepts_curated_validation_fixture(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_path = Path(tmpdir)
+            out_dir = tmp_path / 'bundle'
+            payload = load_source_pack(ROOT / 'examples' / 'source_pack_template.json')
+            validation_fixture = build_validation_fixture_template_from_source_pack(payload)
+            validation_fixture['status'] = 'validated'
+            validation_fixture['rows'][0]['label'] = 'validated'
+            validation_fixture['rows'][0]['what_happened'] = (
+                'Held-out future source supported the observable after replay lock.'
+            )
+            validation_path = tmp_path / 'validation_outcomes.json'
+            validation_path.write_text(json.dumps(validation_fixture, indent=2, sort_keys=True) + '\n')
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    '-m',
+                    'narrativedesk.cli',
+                    'source-pack-bundle',
+                    str(ROOT / 'examples' / 'source_pack_template.json'),
+                    '--out-dir',
+                    str(out_dir),
+                    '--label',
+                    'EXMPL bundled example',
+                    '--validation-fixture',
+                    str(validation_path),
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+                cwd=ROOT,
+            )
+            response = json.loads(result.stdout)
+            bundled_validation = json.loads((out_dir / 'validation_fixture.json').read_text())
+            manifest = json.loads((out_dir / 'manifest.json').read_text())
+            verify_result = subprocess.run(
+                [
+                    sys.executable,
+                    '-m',
+                    'narrativedesk.cli',
+                    'bundle-verify',
+                    str(out_dir),
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+                cwd=ROOT,
+            )
+            verify_response = json.loads(verify_result.stdout)
+
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertTrue(response['ok'])
+        self.assertEqual(response['validation_fixture_source'], str(validation_path))
+        self.assertEqual(bundled_validation['status'], 'validated')
+        self.assertEqual(bundled_validation['rows'][0]['label'], 'validated')
+        self.assertEqual(manifest['replay_integrity']['validation_future_source_ids'], ['SRC-009'])
+        self.assertEqual(verify_result.returncode, 0, verify_result.stderr + verify_result.stdout)
+        self.assertTrue(verify_response['ok'])
+
+    def test_cli_source_pack_bundle_rejects_validation_fixture_with_replay_time_future_source(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_path = Path(tmpdir)
+            out_dir = tmp_path / 'bundle'
+            payload = load_source_pack(ROOT / 'examples' / 'source_pack_template.json')
+            validation_fixture = build_validation_fixture_template_from_source_pack(payload)
+            validation_fixture['future_source_ids'] = ['SRC-001']
+            validation_fixture['future_source_count'] = 1
+            validation_fixture['rows'][0]['future_source_ids'] = ['SRC-001']
+            validation_path = tmp_path / 'invalid_validation_outcomes.json'
+            validation_path.write_text(json.dumps(validation_fixture, indent=2, sort_keys=True) + '\n')
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    '-m',
+                    'narrativedesk.cli',
+                    'source-pack-bundle',
+                    str(ROOT / 'examples' / 'source_pack_template.json'),
+                    '--out-dir',
+                    str(out_dir),
+                    '--validation-fixture',
+                    str(validation_path),
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+                cwd=ROOT,
+            )
+            response = json.loads(result.stdout)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertFalse(response['ok'])
+        self.assertEqual(response['status'], 'validation_fixture_invalid')
+        self.assertIn('blocked_future sources', response['errors'][0])
+
     def test_cli_source_pack_preview_reports_missing_file_as_json(self):
         result = subprocess.run(
             [

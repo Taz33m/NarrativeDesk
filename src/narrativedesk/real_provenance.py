@@ -10,6 +10,7 @@ from copy import deepcopy
 from dataclasses import asdict, dataclass
 from datetime import date, datetime, timezone
 from pathlib import Path
+from statistics import median
 from typing import Any
 
 from narrativedesk.models import parse_datetime
@@ -110,6 +111,7 @@ def fetch_real_data(
     forms: list[str] | None = None,
     sec_count: int = 5,
     cik: str | None = None,
+    market_symbols: list[str] | tuple[str, ...] | str | None = None,
     include_sec_document_text: bool = False,
     news_query: str | None = None,
     news_domains: str | None = None,
@@ -140,24 +142,26 @@ def fetch_real_data(
         if not finnhub_token:
             _record_error(manifest, provider="finnhub", endpoint="auth", error="FINNHUB_API_KEY is required")
         else:
-            _fetch_json_artifact(
-                fetcher,
-                manifest,
-                out_path,
-                provider="finnhub",
-                endpoint="stock_candle",
-                rel_path=f"raw/finnhub/{normalized_ticker}_stock_candles_D.json",
-                url="https://finnhub.io/api/v1/stock/candle",
-                params={
-                    "symbol": normalized_ticker,
-                    "resolution": "D",
-                    "from": int(_date_bound(date_from, end_of_day=False).timestamp()),
-                    "to": int(_date_bound(date_to, end_of_day=True).timestamp()),
-                    "token": finnhub_token,
-                },
-                headers=None,
-                retrieved_at=now,
-            )
+            candle_symbols = _dedupe_symbols([normalized_ticker, *_symbol_list(market_symbols)])
+            for symbol in candle_symbols:
+                _fetch_json_artifact(
+                    fetcher,
+                    manifest,
+                    out_path,
+                    provider="finnhub",
+                    endpoint="stock_candle",
+                    rel_path=f"raw/finnhub/{symbol}_stock_candles_D.json",
+                    url="https://finnhub.io/api/v1/stock/candle",
+                    params={
+                        "symbol": symbol,
+                        "resolution": "D",
+                        "from": int(_date_bound(date_from, end_of_day=False).timestamp()),
+                        "to": int(_date_bound(date_to, end_of_day=True).timestamp()),
+                        "token": finnhub_token,
+                    },
+                    headers=None,
+                    retrieved_at=now,
+                )
             _fetch_json_artifact(
                 fetcher,
                 manifest,
@@ -434,6 +438,8 @@ def draft_real_case(
     out_dir: str | Path,
     case_id: str | None = None,
     market_bars_path: str | Path | None = None,
+    market_peers: list[str] | tuple[str, ...] | str | None = None,
+    sector_symbol: str | None = None,
 ) -> dict[str, Any]:
     normalized_path = Path(normalized_dir)
     output_dir = Path(out_dir)
@@ -453,7 +459,15 @@ def draft_real_case(
         output_dir=output_dir,
         market_bars_path=market_bars_path,
     )
-    market_bars_check = inspect_market_bars(market_bars, ticker=normalized_ticker, replay_lock=lock)
+    peer_symbols = _dedupe_symbols(_symbol_list(market_peers))
+    normalized_sector_symbol = _dedupe_symbols([sector_symbol])[0] if _dedupe_symbols([sector_symbol]) else ""
+    market_bars_check = inspect_market_bars(
+        market_bars,
+        ticker=normalized_ticker,
+        replay_lock=lock,
+        peers=peer_symbols,
+        sector_symbol=normalized_sector_symbol,
+    )
     market_bars_available = bool(market_bars_check["ok"])
     missing_requirements = []
     if eligible_count == 0:
@@ -461,6 +475,8 @@ def draft_real_case(
     if not market_bars_available:
         missing_requirements.append("Frozen market_bars.csv with at least one replay-eligible ticker row")
 
+    manual_sources = [candidate.to_manual_source() for candidate in usable_candidates]
+    market_context_sources: list[dict[str, Any]] = []
     config = {
         "case_metadata": {
             "case_id": case_id,
@@ -477,7 +493,7 @@ def draft_real_case(
             "event_type": event_type,
             "event_summary": "Curator-ready real-data replay draft. Add human-curated competing narratives before ingestion.",
         },
-        "manual_sources": [candidate.to_manual_source() for candidate in usable_candidates],
+        "manual_sources": manual_sources,
         "narratives": [],
     }
     if market_bars_available:
@@ -485,6 +501,17 @@ def draft_real_case(
             "provider": "local_csv",
             "path": _relative_path(market_bars, output_dir),
         }
+        if peer_symbols:
+            config["market_data"]["peers"] = peer_symbols
+        if normalized_sector_symbol:
+            config["market_data"]["sector_symbol"] = normalized_sector_symbol
+        market_context_sources = _market_context_manual_sources(
+            ticker=normalized_ticker,
+            market_bars_path=market_bars,
+            market_bars_check=market_bars_check,
+            replay_lock=lock,
+        )
+        config["manual_sources"].extend(market_context_sources)
 
     config_path = output_dir / "real_case_config.json"
     narratives_path = output_dir / "narratives.todo.json"
@@ -499,7 +526,10 @@ def draft_real_case(
             "case_id": case_id,
             "recommended_narrative_count": "3-5",
             "note": "Add human-curated competing narratives and link source IDs before running real-pack-build --require-narratives.",
-            "available_source_ids": [candidate.source_id for candidate in usable_candidates],
+            "available_source_ids": [
+                *[candidate.source_id for candidate in usable_candidates],
+                *[source["source_id"] for source in market_context_sources],
+            ],
         },
     )
     _write_json(
@@ -527,9 +557,10 @@ def draft_real_case(
         "ticker": normalized_ticker,
         "event_date": event_date,
         "replay_lock": _iso_timestamp(lock),
-        "accepted_sources": eligible_count,
+        "accepted_sources": eligible_count + len(market_context_sources),
         "rejected_sources": len(rejected),
         "blocked_future_sources": blocked_count,
+        "market_context_source_count": len(market_context_sources),
         "market_bars_available": market_bars_available,
         "market_bars_check": market_bars_check,
         "filings_available": filings_available,
@@ -544,6 +575,114 @@ def draft_real_case(
     _write_json(summary_path, summary)
     summary["draft_summary_out"] = str(summary_path)
     return {"ok": True, **summary}
+
+
+def _market_context_manual_sources(
+    *,
+    ticker: str,
+    market_bars_path: Path,
+    market_bars_check: dict[str, Any],
+    replay_lock: datetime,
+) -> list[dict[str, Any]]:
+    selected_rows = market_bars_check.get("selected_rows", {})
+    if not isinstance(selected_rows, dict):
+        return []
+    event_row = selected_rows.get(ticker)
+    if not isinstance(event_row, dict):
+        return []
+
+    sources = [
+        _market_manual_source(
+            source_id=f"MKT-{ticker}-001",
+            title=f"{ticker} frozen event market bar",
+            claim=_market_event_claim(ticker, event_row),
+            published_at=str(event_row.get("as_of") or _iso_timestamp(replay_lock)),
+            replay_lock=replay_lock,
+            market_bars_path=market_bars_path,
+        )
+    ]
+
+    benchmark_symbols = [
+        symbol for symbol in market_bars_check.get("required_tickers", []) if symbol != ticker
+    ]
+    benchmark_rows = [
+        selected_rows[symbol]
+        for symbol in benchmark_symbols
+        if isinstance(selected_rows.get(symbol), dict)
+    ]
+    if benchmark_rows:
+        sources.append(
+            _market_manual_source(
+                source_id="MKT-BENCH-001",
+                title="Frozen benchmark market bars",
+                claim=_market_benchmark_claim(benchmark_rows),
+                published_at=str(benchmark_rows[0].get("as_of") or _iso_timestamp(replay_lock)),
+                replay_lock=replay_lock,
+                market_bars_path=market_bars_path,
+            )
+        )
+    return sources
+
+
+def _market_manual_source(
+    *,
+    source_id: str,
+    title: str,
+    claim: str,
+    published_at: str,
+    replay_lock: datetime,
+    market_bars_path: Path,
+) -> dict[str, Any]:
+    return {
+        "source_id": source_id,
+        "source_type": "market_data",
+        "publisher": "Frozen market bars",
+        "title": title,
+        "url": f"local://{market_bars_path.name}#{source_id}",
+        "published_at": published_at,
+        "retrieved_at": _iso_timestamp(replay_lock),
+        "claim_extracted": claim,
+        "document_text": claim,
+        "availability_status": "allowed",
+        "supported_narrative_ids": [],
+        "contradicted_narrative_ids": [],
+        "originality_score": 0.8,
+        "support_strength": 0.55,
+        "evidence_quality": 0.8,
+        "independence": 0.85,
+        "incentive_conflict": 0.05,
+        "independence_cluster_id": "market-bars",
+    }
+
+
+def _market_event_claim(ticker: str, row: dict[str, Any]) -> str:
+    return (
+        f"{ticker} frozen market bar: opened at {float(row['open']):.6g}, "
+        f"closed at {float(row['close']):.6g}, and traded "
+        f"{_format_market_volume(row.get('volume'))} shares on {row.get('date')}."
+    )
+
+
+def _market_benchmark_claim(rows: list[dict[str, Any]]) -> str:
+    parts = []
+    returns = []
+    for row in rows:
+        open_price = float(row["open"])
+        close_price = float(row["close"])
+        daily_return = 0 if open_price == 0 else (close_price / open_price) - 1
+        returns.append(daily_return)
+        parts.append(f"{row.get('ticker')} {daily_return * 100:.2f}%")
+    median_return = median(returns) if returns else 0
+    return (
+        "Frozen benchmark market bars showed daily returns of "
+        f"{', '.join(parts)}; benchmark median return was {median_return * 100:.2f}%."
+    )
+
+
+def _format_market_volume(value: Any) -> str:
+    if value is None or value == "":
+        return "unknown"
+    return f"{float(value):.0f}"
 
 
 def _draft_recommended_next_action(
@@ -577,14 +716,22 @@ def inspect_market_bars(
     *,
     ticker: str,
     replay_lock: str | datetime,
+    peers: list[str] | tuple[str, ...] | str | None = None,
+    sector_symbol: str | None = None,
 ) -> dict[str, Any]:
     market_path = Path(path)
     normalized_ticker = ticker.upper()
     lock = _coerce_datetime(replay_lock)
+    peer_symbols = _dedupe_symbols(_symbol_list(peers))
+    normalized_sector_symbol = _dedupe_symbols([sector_symbol])[0] if _dedupe_symbols([sector_symbol]) else ""
+    required_tickers = _dedupe_symbols([normalized_ticker, *peer_symbols, normalized_sector_symbol])
     response: dict[str, Any] = {
         "ok": False,
         "path": str(market_path),
         "ticker": normalized_ticker,
+        "peer_tickers": peer_symbols,
+        "sector_symbol": normalized_sector_symbol or None,
+        "required_tickers": required_tickers,
         "replay_lock": _iso_timestamp(lock),
         "row_count": 0,
         "ticker_row_count": 0,
@@ -593,6 +740,8 @@ def inspect_market_bars(
         "invalid_row_count": 0,
         "available_tickers": [],
         "selected_row": None,
+        "selected_rows": {},
+        "missing_required_tickers": [],
         "errors": [],
     }
     if not market_path.exists():
@@ -600,7 +749,10 @@ def inspect_market_bars(
         return response
 
     available_tickers: set[str] = set()
-    eligible_rows: list[dict[str, Any]] = []
+    eligible_rows_by_ticker: dict[str, list[dict[str, Any]]] = {symbol: [] for symbol in required_tickers}
+    row_counts_by_ticker: dict[str, int] = {symbol: 0 for symbol in required_tickers}
+    after_lock_by_ticker: dict[str, int] = {symbol: 0 for symbol in required_tickers}
+    invalid_by_ticker: dict[str, int] = {symbol: 0 for symbol in required_tickers}
     try:
         with market_path.open(newline="") as handle:
             reader = csv.DictReader(handle)
@@ -615,33 +767,51 @@ def inspect_market_bars(
                 row_ticker = str(normalized_row.get("ticker", "")).strip().upper()
                 if row_ticker:
                     available_tickers.add(row_ticker)
-                if row_ticker != normalized_ticker:
+                if row_ticker not in row_counts_by_ticker:
                     continue
-                response["ticker_row_count"] += 1
+                row_counts_by_ticker[row_ticker] += 1
                 parsed = _market_bar_row_summary(normalized_row, lock)
                 if parsed is None:
-                    response["invalid_row_count"] += 1
+                    invalid_by_ticker[row_ticker] += 1
                     continue
                 if not parsed["eligible"]:
-                    response["after_lock_row_count"] += 1
+                    after_lock_by_ticker[row_ticker] += 1
                     continue
-                eligible_rows.append(parsed["row"])
+                eligible_rows_by_ticker[row_ticker].append(parsed["row"])
     except csv.Error as exc:
         response["errors"].append(f"market_bars.csv could not be read: {exc}")
         return response
 
     response["available_tickers"] = sorted(available_tickers)
-    response["eligible_row_count"] = len(eligible_rows)
-    if eligible_rows:
-        selected = sorted(eligible_rows, key=lambda row: row["as_of"])[-1]
-        response["selected_row"] = selected
-        response["ok"] = True
-        return response
+    response["ticker_row_count"] = row_counts_by_ticker.get(normalized_ticker, 0)
+    response["eligible_row_count"] = len(eligible_rows_by_ticker.get(normalized_ticker, []))
+    response["after_lock_row_count"] = after_lock_by_ticker.get(normalized_ticker, 0)
+    response["invalid_row_count"] = invalid_by_ticker.get(normalized_ticker, 0)
+    response["row_counts_by_ticker"] = row_counts_by_ticker
+    response["eligible_counts_by_ticker"] = {
+        symbol: len(rows) for symbol, rows in eligible_rows_by_ticker.items()
+    }
+    response["after_lock_counts_by_ticker"] = after_lock_by_ticker
+    response["invalid_counts_by_ticker"] = invalid_by_ticker
 
-    if response["ticker_row_count"] == 0:
-        response["errors"].append(f"No rows found for ticker {normalized_ticker}.")
-    else:
-        response["errors"].append(f"No replay-eligible rows found for {normalized_ticker} at or before the replay lock.")
+    selected_rows: dict[str, dict[str, Any]] = {}
+    missing_required_tickers = []
+    for symbol in required_tickers:
+        eligible_rows = eligible_rows_by_ticker.get(symbol, [])
+        if eligible_rows:
+            selected_rows[symbol] = sorted(eligible_rows, key=lambda row: row["as_of"])[-1]
+            continue
+        missing_required_tickers.append(symbol)
+        if row_counts_by_ticker.get(symbol, 0) == 0:
+            response["errors"].append(f"No rows found for ticker {symbol}.")
+        else:
+            response["errors"].append(f"No replay-eligible rows found for {symbol} at or before the replay lock.")
+
+    response["selected_rows"] = selected_rows
+    response["missing_required_tickers"] = missing_required_tickers
+    if normalized_ticker in selected_rows:
+        response["selected_row"] = selected_rows[normalized_ticker]
+    response["ok"] = not missing_required_tickers
     return response
 
 
@@ -767,6 +937,8 @@ def rehearse_real_case(
     news_query: str | None = None,
     news_domains: str | None = None,
     market_bars_path: str | Path | None = None,
+    market_peers: list[str] | tuple[str, ...] | str | None = None,
+    sector_symbol: str | None = None,
     sec_throttle_seconds: float = 0.12,
     worksheet: bool = True,
     curation_template: bool = True,
@@ -779,6 +951,8 @@ def rehearse_real_case(
     slug = _safe_filename(f"{ticker.lower()}-{event_date}")
     fetch_path = Path(fetch_dir) if fetch_dir else root / "live-fetches" / slug
     draft_path = Path(draft_dir) if draft_dir else root / "real-cases" / f"{slug}-rehearsal"
+    peer_symbols = _dedupe_symbols(_symbol_list(market_peers))
+    normalized_sector_symbol = _dedupe_symbols([sector_symbol])[0] if _dedupe_symbols([sector_symbol]) else ""
     fetched = fetch_real_data(
         ticker=ticker,
         company_name=company_name,
@@ -794,6 +968,7 @@ def rehearse_real_case(
         forms=forms,
         sec_count=sec_count,
         cik=cik,
+        market_symbols=[*peer_symbols, normalized_sector_symbol],
         include_sec_document_text=include_sec_document_text,
         news_query=news_query,
         news_domains=news_domains,
@@ -829,6 +1004,8 @@ def rehearse_real_case(
         normalized_dir=normalized["out_dir"],
         out_dir=draft_path,
         market_bars_path=market_bars_path,
+        market_peers=peer_symbols,
+        sector_symbol=normalized_sector_symbol,
     )
     worksheet_response = None
     if worksheet:
@@ -1745,7 +1922,10 @@ def _market_bar_row_summary(row: dict[str, Any], replay_lock: datetime) -> dict[
 
 def _market_row_sort_key(raw_date: str, replay_lock: datetime) -> str:
     if re.match(r"^\d{4}-\d{2}-\d{2}$", raw_date):
-        return f"{raw_date}T16:00:00"
+        close_time = datetime.fromisoformat(f"{raw_date}T16:00:00")
+        if replay_lock.tzinfo is not None:
+            close_time = close_time.replace(tzinfo=replay_lock.tzinfo)
+        return close_time.isoformat()
     try:
         timestamp = parse_datetime(raw_date)
     except ValueError:
@@ -1835,6 +2015,24 @@ def _parse_providers(providers: list[str] | tuple[str, ...] | str) -> list[str]:
             raise RealProvenanceError(f"Unsupported real-data provider: {normalized}")
         parsed.append(normalized)
     return parsed or list(DEFAULT_PROVIDERS)
+
+
+def _symbol_list(symbols: list[str] | tuple[str, ...] | str | None) -> list[str]:
+    if symbols is None:
+        return []
+    if isinstance(symbols, str):
+        raw = symbols.split(",")
+    else:
+        raw = list(symbols)
+    return [str(symbol or "").strip().upper() for symbol in raw if str(symbol or "").strip()]
+
+
+def _dedupe_symbols(symbols: list[str] | tuple[str, ...] | str | None) -> list[str]:
+    deduped = []
+    for symbol in _symbol_list(symbols):
+        if symbol not in deduped:
+            deduped.append(symbol)
+    return deduped
 
 
 def _date_bound(value: str, *, end_of_day: bool) -> datetime:

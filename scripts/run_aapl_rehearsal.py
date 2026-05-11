@@ -15,6 +15,9 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_FETCH_DIR = ".codex-work/live-fetches/aapl-2024-q2"
 DEFAULT_DRAFT_DIR = ".codex-work/real-cases/aapl-2024-q2-rehearsal"
 DEFAULT_BUNDLE_DIR = ".codex-work/real-cases/aapl-2024-q2-bundle"
+DEFAULT_VALIDATION_FIXTURE = "validation_outcomes.json"
+DEFAULT_MARKET_PEERS = "MSFT,GOOGL,AMZN,META"
+DEFAULT_SECTOR_SYMBOL = "XLK"
 SENSITIVE_ENV_NAMES = {
     "ALPHA_VANTAGE_API_KEY",
     "FINNHUB_API_KEY",
@@ -43,9 +46,18 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--bundle-dir", default=DEFAULT_BUNDLE_DIR)
     parser.add_argument("--market-bars", help="Optional frozen market_bars.csv to copy into the draft.")
     parser.add_argument("--narratives", help="Curated narratives JSON. Defaults to curated_narratives.json when present.")
+    parser.add_argument(
+        "--validation-fixture",
+        help=(
+            "Optional curator-filled validation fixture. Defaults to "
+            "validation_outcomes.json in the draft directory when present."
+        ),
+    )
     parser.add_argument("--sec-count", type=int, default=5)
     parser.add_argument("--forms", default="8-K,10-Q,10-K")
     parser.add_argument("--no-sec-document-text", action="store_true")
+    parser.add_argument("--market-peers", default=DEFAULT_MARKET_PEERS)
+    parser.add_argument("--sector-symbol", default=DEFAULT_SECTOR_SYMBOL)
     parser.add_argument("--preflight-only", action="store_true")
     parser.add_argument(
         "--build-bundle",
@@ -128,6 +140,10 @@ def run_rehearsal(args: argparse.Namespace) -> dict[str, Any]:
         rehearse_args.append("--include-sec-document-text")
     if args.market_bars:
         rehearse_args.extend(["--market-bars", args.market_bars])
+    if getattr(args, "market_peers", None):
+        rehearse_args.extend(["--market-peers", args.market_peers])
+    if getattr(args, "sector_symbol", None):
+        rehearse_args.extend(["--sector-symbol", args.sector_symbol])
     rehearse = _run_cli(rehearse_args, redaction_values=redaction_values)
     stages["rehearse"] = rehearse
     if rehearse["returncode"] != 0:
@@ -175,17 +191,19 @@ def _run_draft_status_then_bundle(
     normalized_dir: str | None = None,
 ) -> dict[str, Any]:
     if args.market_bars:
-        market_bars_check = _run_cli(
-            [
-                "real-market-bars-check",
-                args.market_bars,
-                "--ticker",
-                args.ticker,
-                "--replay-lock",
-                args.replay_lock,
-            ],
-            redaction_values=redaction_values,
-        )
+        check_args = [
+            "real-market-bars-check",
+            args.market_bars,
+            "--ticker",
+            args.ticker,
+            "--replay-lock",
+            args.replay_lock,
+        ]
+        if getattr(args, "market_peers", None):
+            check_args.extend(["--peers", args.market_peers])
+        if getattr(args, "sector_symbol", None):
+            check_args.extend(["--sector-symbol", args.sector_symbol])
+        market_bars_check = _run_cli(check_args, redaction_values=redaction_values)
         stages["market_bars_check"] = market_bars_check
         if market_bars_check["returncode"] != 0:
             errors = market_bars_check["json"].get("errors") or []
@@ -215,6 +233,10 @@ def _run_draft_status_then_bundle(
     ]
     if args.market_bars:
         draft_args.extend(["--market-bars", args.market_bars])
+    if getattr(args, "market_peers", None):
+        draft_args.extend(["--market-peers", args.market_peers])
+    if getattr(args, "sector_symbol", None):
+        draft_args.extend(["--sector-symbol", args.sector_symbol])
     draft = _run_cli(draft_args, redaction_values=redaction_values)
     stages["draft"] = draft
     if draft["returncode"] != 0:
@@ -312,18 +334,23 @@ def _run_bundle_and_quality(
             "Replace the curation template with curated_narratives.json, then rerun this script.",
         )
 
+    bundle_args = [
+        "real-case-curated-bundle",
+        "--draft-dir",
+        args.draft_dir,
+        "--narratives",
+        str(narratives_path),
+        "--out-dir",
+        args.bundle_dir,
+        "--label",
+        f"{args.ticker.upper()} private real-case rehearsal",
+    ]
+    validation_fixture = _select_validation_fixture_path(args)
+    if validation_fixture is not None:
+        bundle_args.extend(["--validation-fixture", str(validation_fixture)])
+
     bundle = _run_cli(
-        [
-            "real-case-curated-bundle",
-            "--draft-dir",
-            args.draft_dir,
-            "--narratives",
-            str(narratives_path),
-            "--out-dir",
-            args.bundle_dir,
-            "--label",
-            f"{args.ticker.upper()} private real-case rehearsal",
-        ],
+        bundle_args,
         redaction_values=redaction_values,
     )
     stages["bundle"] = bundle
@@ -371,6 +398,16 @@ def _select_narratives_path(args: argparse.Namespace) -> Path | None:
     return None
 
 
+def _select_validation_fixture_path(args: argparse.Namespace) -> Path | None:
+    explicit = getattr(args, "validation_fixture", None)
+    if explicit:
+        return Path(explicit)
+    candidate = Path(args.draft_dir) / DEFAULT_VALIDATION_FIXTURE
+    if candidate.exists():
+        return candidate
+    return None
+
+
 def _bundle_stale_after_curation(args: argparse.Namespace) -> bool:
     bundle_manifest = Path(args.bundle_dir) / "manifest.json"
     if not bundle_manifest.exists():
@@ -379,6 +416,9 @@ def _bundle_stale_after_curation(args: argparse.Namespace) -> bool:
     narratives_path = _select_narratives_path(args)
     if narratives_path is not None:
         input_paths.append(narratives_path)
+    validation_fixture_path = _select_validation_fixture_path(args)
+    if validation_fixture_path is not None:
+        input_paths.append(validation_fixture_path)
     existing_inputs = [path for path in input_paths if path.exists()]
     if not existing_inputs:
         return False

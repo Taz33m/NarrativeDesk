@@ -206,6 +206,8 @@ PYTHONPATH=src python3 -m narrativedesk.cli real-case-curated-bundle \
   --out-dir .codex-work/real-cases/aapl-2024-q2-bundle
 ```
 
+If a validation window has closed, pass a separate held-out fixture with `--validation-fixture`. It must match the case event ID and can reference only blocked-future source IDs.
+
 Check draft, curation, and bundle state at any point:
 
 ```bash
