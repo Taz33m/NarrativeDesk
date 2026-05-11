@@ -14,6 +14,7 @@ from narrativedesk.source_pack import (
     build_validation_fixture_template_from_source_pack,
     load_source_pack,
     preview_source_pack,
+    sanitize_source_record,
     source_content_hash,
     validate_source_pack,
 )
@@ -381,6 +382,31 @@ class SourcePackTests(unittest.TestCase):
         self.assertEqual(audit.blocked_source_ids, ['SRC-009'])
         self.assertEqual(len(narratives), 2)
 
+    def test_source_pack_rejects_unsupported_source_fields(self):
+        payload = _ingest_pack()
+        payload['sources'][0]['api_key'] = 'secret-value'
+        payload['sources'][1]['curator_note'] = 'private note'
+
+        errors = validate_source_pack(payload, require_narratives=True)
+
+        self.assertTrue(any('secret-like unsupported fields: api_key' in err for err in errors))
+        self.assertTrue(any('unsupported public fields: curator_note' in err for err in errors))
+
+    def test_source_record_sanitizer_drops_internal_fields(self):
+        payload = _ingest_pack()
+        source = payload['sources'][0]
+        source['document_text'] = 'Longer source document.'
+        source['content_hash'] = source_content_hash(source['document_text'])
+        source['provider'] = 'sec'
+        source['raw_artifact_path'] = '/tmp/private-source.json'
+
+        evidence = sanitize_source_record(source)
+
+        self.assertIn('document_text', evidence)
+        self.assertEqual(evidence['claim_extracted'], 'Management lowered near-term expansion guidance.')
+        self.assertNotIn('provider', evidence)
+        self.assertNotIn('raw_artifact_path', evidence)
+
     def test_ingest_builds_event_fixture_shape(self):
         fixture = build_fixture_from_source_pack(_ingest_pack())
 
@@ -716,6 +742,27 @@ class SourcePackTests(unittest.TestCase):
         self.assertEqual(event.ticker, 'EXMPL')
         self.assertEqual(len(narratives), 2)
         self.assertEqual(audit.blocked_source_ids, ['SRC-009'])
+
+    def test_cli_source_pack_preview_reports_missing_file_as_json(self):
+        result = subprocess.run(
+            [
+                sys.executable,
+                '-m',
+                'narrativedesk.cli',
+                'source-pack-preview',
+                str(ROOT / 'examples' / 'missing_source_pack.json'),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            cwd=ROOT,
+        )
+        response = json.loads(result.stdout)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertFalse(response['ok'])
+        self.assertEqual(response['status'], 'invalid_input')
+        self.assertEqual(result.stderr, '')
 
     def test_cli_source_pack_bundle_stops_when_readiness_fails(self):
         payload = _ingest_pack()

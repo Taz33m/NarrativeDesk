@@ -131,6 +131,14 @@ h1 {
   line-height: 1.35;
 }
 
+.safety-note {
+  margin-top: 7px;
+  color: var(--faint);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
 .research-note {
   border: 1px solid var(--line);
   background: rgba(8, 12, 10, 0.68);
@@ -252,6 +260,11 @@ h1 {
 
 .validation-headline--pending {
   color: var(--warn);
+}
+
+.future-validation-note {
+  color: var(--faint);
+  font-weight: 800;
 }
 
 .hero-integrity-row {

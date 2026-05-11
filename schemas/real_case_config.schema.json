@@ -3,6 +3,7 @@
   "$id": "https://narrativedesk.local/schemas/real_case_config.schema.json",
   "title": "NarrativeDesk Real Case Config",
   "type": "object",
+  "additionalProperties": false,
   "required": ["case_metadata"],
   "properties": {
     "case_metadata": { "$ref": "#/$defs/case_metadata" },
@@ -35,6 +36,7 @@
     },
     "case_metadata": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["case_id", "ticker", "company_name", "event_timestamp"],
       "properties": {
         "case_id": { "type": "string" },
@@ -51,6 +53,7 @@
     },
     "event": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "event_id": { "type": "string" },
         "event_date": { "type": "string" },
@@ -65,6 +68,7 @@
     },
     "market_data": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "provider": {
           "type": "string",
@@ -86,6 +90,7 @@
     },
     "news": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "provider": {
           "type": "string",
@@ -101,6 +106,7 @@
     },
     "sec_filings": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "forms": { "$ref": "#/$defs/string_array" },
         "count": {
@@ -117,6 +123,7 @@
     },
     "sec_facts": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["concepts"],
       "properties": {
         "concepts": {
@@ -133,6 +140,7 @@
     },
     "sec_fact_concept": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["tag"],
       "properties": {
         "taxonomy": { "type": "string" },
@@ -154,6 +162,7 @@
     },
     "transcript_collection": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["items"],
       "properties": {
         "items": {
@@ -174,6 +183,7 @@
     },
     "transcript_item": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["path", "published_at"],
       "properties": {
         "provider": {
@@ -195,6 +205,7 @@
     },
     "estimate_revisions": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "provider": {
           "type": "string",
@@ -214,6 +225,7 @@
     },
     "manual_source": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["claim_extracted", "published_at"],
       "properties": {
         "source_id": { "type": "string" },
@@ -241,11 +253,14 @@
         "evidence_quality": { "$ref": "#/$defs/score01" },
         "independence": { "$ref": "#/$defs/score01" },
         "incentive_conflict": { "$ref": "#/$defs/score01" },
-        "independence_cluster_id": { "type": "string" }
+        "independence_cluster_id": { "type": "string" },
+        "provider": { "type": "string" },
+        "raw_artifact_path": { "type": "string" }
       }
     },
     "narrative": {
       "type": "object",
+      "additionalProperties": false,
       "required": [
         "narrative_id",
         "title",
@@ -272,6 +287,7 @@
     },
     "scoring_inputs": {
       "type": "object",
+      "additionalProperties": false,
       "required": [
         "evidence_strength",
         "mechanism_specificity",

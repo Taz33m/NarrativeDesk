@@ -59,6 +59,10 @@ def validate_schema(instance: Any, schema: dict[str, Any], root: dict[str, Any],
             for key, value in instance.items():
                 if key not in properties:
                     validate_schema(value, additional, root, f"{path}.{key}")
+        elif additional is False:
+            extra_keys = sorted(set(instance) - set(properties))
+            if extra_keys:
+                raise AssertionError(f"{path} has additional properties: {', '.join(extra_keys)}")
 
     if isinstance(instance, list):
         if "minItems" in schema and len(instance) < schema["minItems"]:

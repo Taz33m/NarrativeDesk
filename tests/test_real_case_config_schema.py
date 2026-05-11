@@ -61,6 +61,28 @@ class RealCaseConfigSchemaTests(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, "claim_extracted is required"):
             validate_schema(config, schema, schema)
 
+    def test_schema_rejects_unknown_public_fields(self):
+        schema = _load_schema()
+        config = _load_template()
+        config["api_key"] = "private-token"
+
+        with self.assertRaisesRegex(AssertionError, "additional properties: api_key"):
+            validate_schema(config, schema, schema)
+
+    def test_schema_rejects_unknown_manual_source_fields(self):
+        schema = _load_schema()
+        config = _load_template()
+        config["manual_sources"] = [
+            {
+                "claim_extracted": "Management commentary focused on forward demand.",
+                "published_at": "2025-01-02T09:00:00-05:00",
+                "private_note": "do not publish",
+            }
+        ]
+
+        with self.assertRaisesRegex(AssertionError, "additional properties: private_note"):
+            validate_schema(config, schema, schema)
+
     def test_runtime_validation_reports_missing_local_files_when_requested(self):
         config = load_real_case_config(TEMPLATE_PATH)
         with tempfile.TemporaryDirectory() as tmpdir:

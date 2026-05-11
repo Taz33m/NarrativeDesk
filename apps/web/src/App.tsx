@@ -119,10 +119,10 @@ function validationHeadline(evaluation: EvaluationSummary | null, validation: Va
   const validatedWindow = validation?.rows.find((row) => row.label === 'validated');
   if (!evaluation) return 'Validation pending';
   if (evaluation.top_ranked_validated) {
-    return `${validatedWindow?.window ?? 'Future'} validated the winner`;
+    return `${validatedWindow?.window ?? 'Future'} later supported top replay narrative`;
   }
   if (evaluation.validated_rank) {
-    return `${validatedWindow?.window ?? 'Future'} validated rank #${evaluation.validated_rank}`;
+    return `${validatedWindow?.window ?? 'Future'} later supported rank #${evaluation.validated_rank}`;
   }
   return 'No validated narrative yet';
 }
@@ -333,6 +333,9 @@ function App() {
             <p className="dek">
               Competing market narratives. Time-locked evidence. Later validation.
             </p>
+            <p className="safety-note">
+              Research and education only. Synthetic demo. Not investment advice.
+            </p>
           </div>
         </div>
 
@@ -496,7 +499,7 @@ function CaseContextBar({
       </div>
       <span>{humanize(ledger.event.event_type)} | {ledger.event.event_date}</span>
       <span>{pct(ledger.event.abnormal_return)} abnormal</span>
-      <span>{topNarrative.title}</span>
+      <span>Replay rank #1: {topNarrative.title}</span>
       <span className={`status-pill ${statusClass(validationTone(evaluation))}`}>
         {validationHeadline(evaluation, validation)}
       </span>
@@ -545,12 +548,12 @@ function CaseHero({
 
       <section className="hero-decision" data-testid="thesis-strip">
         <div>
-          <span className="strip-label">Winning Narrative</span>
+          <span className="strip-label">Top Replay Narrative</span>
           <strong>{topNarrative.title}</strong>
           <p>{compactNarrativeThesis(topNarrative)}</p>
         </div>
         <div>
-          <span className="strip-label">Why it won</span>
+          <span className="strip-label">Why it ranked first</span>
           <strong>Score {score(topNarrative.overall_narrative_score)}</strong>
           <p>
             Evidence {score(topNarrative.scoring_inputs.evidence_strength)} | Mechanism{' '}
@@ -560,11 +563,14 @@ function CaseHero({
           </p>
         </div>
         <div>
-          <span className="strip-label">History check</span>
+          <span className="strip-label">Future validation</span>
           <strong className={`validation-headline validation-headline--${validationTone(evaluation)}`}>
             {validationLabel}
           </strong>
-          <p>{cleanValidationCopy(validationRow, topNarrative.title)}</p>
+          <p>
+            {cleanValidationCopy(validationRow, topNarrative.title)}
+            <span className="future-validation-note"> Held out from replay scoring.</span>
+          </p>
         </div>
       </section>
 
@@ -607,12 +613,13 @@ function BaselineComparisonModule({
         <p>Ranked #{baselineNarrative?.rank ?? 'n/a'}</p>
       </div>
       <div>
-        <span className="strip-label">NarrativeDesk winner</span>
+        <span className="strip-label">Replay-ranked winner</span>
         <strong>{topNarrative.title}</strong>
-        <p>Ranked #{topNarrative.rank} | {validationHeadline(evaluation, validation)}</p>
+        <p>Ranked #{topNarrative.rank} at the lock.</p>
       </div>
       <p>
         It weighted stronger allowed evidence, cleaner mechanism specificity, and lower unsupported-claim risk.
+        <span className="future-validation-note"> Future validation is separate: {validationHeadline(evaluation, validation)}.</span>
       </p>
     </section>
   );
@@ -1188,7 +1195,7 @@ function ReportPanel({
   const reportSections = [
     'Event Summary',
     'Abnormal Move',
-    'Winning Narrative',
+    'Top Replay Narrative',
     'Evidence Supporting the Narrative',
     'Contradictions',
     'Replay Integrity',

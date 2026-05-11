@@ -57,6 +57,22 @@ SOURCE_SCORE_FIELDS = (
     "independence",
     "incentive_conflict",
 )
+OPTIONAL_SOURCE_FIELDS = {
+    "claim",
+    "document_text",
+    "raw_text",
+    *SOURCE_SCORE_FIELDS,
+}
+PUBLIC_SOURCE_FIELDS = REQUIRED_SOURCE_FIELDS | OPTIONAL_SOURCE_FIELDS
+SENSITIVE_SOURCE_EXTRA_PATTERNS = (
+    "authorization",
+    "cookie",
+    "header",
+    "key",
+    "password",
+    "secret",
+    "token",
+)
 PLACEHOLDER_URLS = {"", "https://...", "http://..."}
 
 
@@ -112,6 +128,19 @@ def validate_source_pack(payload: dict[str, Any], *, require_narratives: bool = 
         if not isinstance(source, dict):
             errors.append(f"sources[{idx}] must be an object")
             continue
+
+        unknown_fields = sorted(set(source) - PUBLIC_SOURCE_FIELDS)
+        if unknown_fields:
+            errors.append(f"sources[{idx}] has unsupported public fields: {', '.join(unknown_fields)}")
+        sensitive_unknown = [
+            field
+            for field in unknown_fields
+            if any(pattern in field.lower() for pattern in SENSITIVE_SOURCE_EXTRA_PATTERNS)
+        ]
+        if sensitive_unknown:
+            errors.append(
+                f"sources[{idx}] has secret-like unsupported fields: {', '.join(sensitive_unknown)}"
+            )
 
         missing = sorted(REQUIRED_SOURCE_FIELDS - set(source.keys()))
         if missing:
@@ -189,6 +218,21 @@ def validate_source_pack(payload: dict[str, Any], *, require_narratives: bool = 
 
 def source_content_hash(claim_extracted: str) -> str:
     return f"sha256:{sha256(claim_extracted.encode('utf-8')).hexdigest()}"
+
+
+def sanitize_source_record(source: dict[str, Any]) -> dict[str, Any]:
+    return {key: source[key] for key in sorted(PUBLIC_SOURCE_FIELDS) if key in source}
+
+
+def sanitize_source_pack_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    sanitized = dict(payload)
+    sources = payload.get("sources", [])
+    if isinstance(sources, list):
+        sanitized["sources"] = [
+            sanitize_source_record(source) if isinstance(source, dict) else source
+            for source in sources
+        ]
+    return sanitized
 
 
 def _source_hash_text(source: dict[str, Any]) -> tuple[str, str]:
@@ -858,6 +902,6 @@ def _build_narratives(payload: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def _evidence_from_source(source: dict[str, Any]) -> dict[str, Any]:
-    evidence = dict(source)
+    evidence = sanitize_source_record(source)
     evidence["claim"] = source.get("claim") or source["claim_extracted"]
     return evidence

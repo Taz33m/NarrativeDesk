@@ -100,7 +100,7 @@ Generate demo artifacts:
 npm run web:data
 ```
 
-Preview and validate a real-curated source pack template:
+Preview and validate the synthetic source-pack example:
 
 ```bash
 PYTHONPATH=src python3 -m narrativedesk.cli source-pack-preview examples/source_pack_template.json
@@ -264,7 +264,7 @@ PYTHONPATH=src python3 -m narrativedesk.cli validation-validate .codex-work/vali
 Register those generated fixtures in a case index:
 
 ```bash
-PYTHONPATH=src python3 -m narrativedesk.cli case-index-register .codex-work/case_index_seed.json --event-fixture .codex-work/event_fixture.json --validation-fixture .codex-work/validation_fixture.json --label "EXMPL source-pack example" --out .codex-work/case_index.json
+PYTHONPATH=src python3 -m narrativedesk.cli case-index-register .codex-work/case_index_seed.json --event-fixture .codex-work/event_fixture.json --validation-fixture .codex-work/validation_fixture.json --label "EXMPL synthetic source-pack example" --out .codex-work/case_index.json
 ```
 
 Validate a case index before evaluating it:
@@ -294,6 +294,7 @@ make evaluate
 Run the API locally after installing API dependencies:
 
 ```bash
+python3 -m pip install -e '.[api]'
 PYTHONPATH=src uvicorn apps.api.main:app --reload --port 8000
 ```
 

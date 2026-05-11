@@ -21,10 +21,10 @@ evaluate:
 source-pack-smoke:
 	$(PYTHON_ENV) $(PYTHON) -m narrativedesk.cli source-pack-preview examples/source_pack_template.json
 	$(PYTHON_ENV) $(PYTHON) -m narrativedesk.cli source-pack-readiness examples/source_pack_template.json
-	$(PYTHON_ENV) $(PYTHON) -m narrativedesk.cli source-pack-bundle examples/source_pack_template.json --out-dir .codex-work/example_bundle --label "EXMPL source-pack example"
+	$(PYTHON_ENV) $(PYTHON) -m narrativedesk.cli source-pack-bundle examples/source_pack_template.json --out-dir .codex-work/example_bundle --label "EXMPL synthetic source-pack example"
 	$(PYTHON_ENV) $(PYTHON) -m narrativedesk.cli source-pack-ingest examples/source_pack_template.json --out .codex-work/example_event_fixture.json --validation-out .codex-work/example_validation_fixture.json
 	$(PYTHON_ENV) $(PYTHON) -m narrativedesk.cli validation-validate .codex-work/example_validation_fixture.json
-	$(PYTHON_ENV) $(PYTHON) -m narrativedesk.cli case-index-register .codex-work/example_case_index_seed.json --event-fixture .codex-work/example_event_fixture.json --validation-fixture .codex-work/example_validation_fixture.json --label "EXMPL source-pack example" --out .codex-work/example_case_index.json
+	$(PYTHON_ENV) $(PYTHON) -m narrativedesk.cli case-index-register .codex-work/example_case_index_seed.json --event-fixture .codex-work/example_event_fixture.json --validation-fixture .codex-work/example_validation_fixture.json --label "EXMPL synthetic source-pack example" --out .codex-work/example_case_index.json
 	$(PYTHON_ENV) $(PYTHON) -m narrativedesk.cli case-index-validate .codex-work/example_case_index.json
 
 real-pack-smoke:

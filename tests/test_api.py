@@ -1,26 +1,93 @@
 import unittest
+from urllib.parse import parse_qs, urlparse
 
 try:
-    from fastapi.testclient import TestClient
+    from fastapi.testclient import TestClient as FastApiTestClient
+except Exception:  # pragma: no cover - dependency may be absent in minimal envs
+    FastApiTestClient = None
 
-    from apps.api.main import app
-except Exception as exc:  # pragma: no cover - dependency may be absent in minimal envs
-    TestClient = None
-    app = None
-    IMPORT_ERROR = exc
-else:
-    IMPORT_ERROR = None
+from apps.api import service
 
 
-@unittest.skipIf(TestClient is None, f"FastAPI TestClient unavailable: {IMPORT_ERROR}")
+class DirectResponse:
+    def __init__(self, status_code, body):
+        self.status_code = status_code
+        self._body = body
+        self.text = body if isinstance(body, str) else ""
+
+    def json(self):
+        return self._body
+
+
+class DirectApiClient:
+    def get(self, path):
+        parsed = urlparse(path)
+        route = parsed.path
+        query = parse_qs(parsed.query)
+        try:
+            if route == "/health":
+                return DirectResponse(200, service.health())
+            if route == "/api/health":
+                return DirectResponse(200, service.health())
+            if route == "/api/events":
+                return DirectResponse(200, service.list_events())
+            if route == "/api/evaluations":
+                return DirectResponse(200, service.get_evaluations())
+            if route.startswith("/api/events/"):
+                parts = route.strip("/").split("/")
+                if len(parts) < 3:
+                    return DirectResponse(404, {"detail": f"Route not found: {path}"})
+                event_id = parts[2]
+                if len(parts) == 3:
+                    return DirectResponse(200, service.get_event(event_id))
+                if parts[3] == "ledger":
+                    return DirectResponse(200, service.get_ledger(event_id))
+                if parts[3] == "validation":
+                    return DirectResponse(200, service.get_validation(event_id))
+                if parts[3] == "report":
+                    include_validation = query.get("include_validation", ["false"])[0].lower() == "true"
+                    return DirectResponse(200, service.get_report(event_id, include_validation=include_validation))
+        except service.ApiError as exc:
+            return DirectResponse(exc.status_code, {"detail": exc.detail})
+        return DirectResponse(404, {"detail": f"Route not found: {path}"})
+
+    def post(self, path):
+        route = urlparse(path).path
+        try:
+            if route.startswith("/api/events/") and route.endswith("/run"):
+                event_id = route.strip("/").split("/")[2]
+                return DirectResponse(200, service.run_event(event_id))
+        except service.ApiError as exc:
+            return DirectResponse(exc.status_code, {"detail": exc.detail})
+        return DirectResponse(404, {"detail": f"Route not found: {path}"})
+
+
 class ApiTests(unittest.TestCase):
     def setUp(self):
-        self.client = TestClient(app)
+        if FastApiTestClient:
+            from apps.api.main import app
+
+            self.client = FastApiTestClient(app)
+        else:
+            self.client = DirectApiClient()
 
     def test_health(self):
         response = self.client.get("/health")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"status": "ok"})
+
+    def test_direct_client_exercises_service_without_fastapi(self):
+        client = DirectApiClient()
+
+        events_response = client.get("/api/events")
+        run_response = client.post("/api/events/EVT-ORION-2025-08-07/run")
+        missing_response = client.post("/api/events/MISSING/run")
+
+        self.assertEqual(events_response.status_code, 200)
+        self.assertEqual(events_response.json()["events"][0]["ticker"], "ORION")
+        self.assertEqual(run_response.status_code, 200)
+        self.assertEqual(run_response.json()["event"]["ticker"], "ORION")
+        self.assertEqual(missing_response.status_code, 404)
 
     def test_events_and_run_endpoint(self):
         events_response = self.client.get("/api/events")
