@@ -1265,8 +1265,7 @@ def _real_case_status(
                 "news_available": summary.get("news_available"),
                 "missing_requirements": summary.get("missing_requirements", []),
             },
-            "next_action": summary.get("recommended_next_action")
-            or "Fetch or curate additional timestamped sources before narrative curation.",
+            "next_action": _real_case_status_next_action(summary),
         }
     )
     if summary.get("case_readiness") != "curator_ready":
@@ -1354,6 +1353,26 @@ def _real_case_status(
                 }
             )
     return response
+
+
+def _real_case_status_next_action(summary: dict[str, Any]) -> str:
+    generic_next_action = "Fetch or curate additional timestamped sources before narrative curation."
+    recommended = summary.get("recommended_next_action")
+    if summary.get("case_readiness") == "curator_ready":
+        return str(recommended or "Run real-case-curation-template, then replace TBD values and source links.")
+
+    if summary.get("market_bars_available") is False and (
+        recommended is None or str(recommended) == generic_next_action
+    ):
+        market_bars_action = "Provide replay-eligible market bars before narrative curation"
+        market_bars_check = summary.get("market_bars_check")
+        errors = market_bars_check.get("errors", []) if isinstance(market_bars_check, dict) else []
+        error_text = "; ".join(str(error) for error in errors[:2] if error)
+        if error_text:
+            return f"{market_bars_action}: {error_text}"
+        return f"{market_bars_action}."
+
+    return str(recommended or generic_next_action)
 
 
 def _default_narratives_path(draft_dir: Path) -> Path | None:

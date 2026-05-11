@@ -506,6 +506,12 @@ def draft_real_case(
     filings_available = any(candidate.source_type == "filing" for candidate in usable_candidates)
     news_available = any(candidate.source_type == "news" for candidate in usable_candidates)
     case_readiness = "curator_ready" if not missing_requirements else "needs_sources"
+    recommended_next_action = _draft_recommended_next_action(
+        case_readiness=case_readiness,
+        eligible_count=eligible_count,
+        market_bars_available=market_bars_available,
+        market_bars_check=market_bars_check,
+    )
     summary = {
         "ticker": normalized_ticker,
         "event_date": event_date,
@@ -519,11 +525,7 @@ def draft_real_case(
         "news_available": news_available,
         "case_readiness": case_readiness,
         "missing_requirements": missing_requirements,
-        "recommended_next_action": (
-            "Add 3-5 human-curated competing narratives."
-            if case_readiness == "curator_ready"
-            else "Fetch or curate additional timestamped sources before narrative curation."
-        ),
+        "recommended_next_action": recommended_next_action,
         "real_case_config_out": str(config_path),
         "narratives_todo_out": str(narratives_path),
         "validation_fixture_out": str(validation_path),
@@ -531,6 +533,32 @@ def draft_real_case(
     _write_json(summary_path, summary)
     summary["draft_summary_out"] = str(summary_path)
     return {"ok": True, **summary}
+
+
+def _draft_recommended_next_action(
+    *,
+    case_readiness: str,
+    eligible_count: int,
+    market_bars_available: bool,
+    market_bars_check: dict[str, Any],
+) -> str:
+    if case_readiness == "curator_ready":
+        return "Add 3-5 human-curated competing narratives."
+
+    missing_actions: list[str] = []
+    if eligible_count == 0:
+        missing_actions.append("fetch or curate replay-time source candidates")
+    if not market_bars_available:
+        market_bars_action = "provide frozen market_bars.csv with at least one replay-eligible ticker row"
+        errors = market_bars_check.get("errors", []) if isinstance(market_bars_check, dict) else []
+        error_text = "; ".join(str(error) for error in errors[:2] if error)
+        if error_text:
+            market_bars_action = f"{market_bars_action} ({error_text})"
+        missing_actions.append(market_bars_action)
+
+    if missing_actions:
+        return f"Before narrative curation, {' and '.join(missing_actions)}."
+    return "Fetch or curate additional timestamped sources before narrative curation."
 
 
 def inspect_market_bars(
