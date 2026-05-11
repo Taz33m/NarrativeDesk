@@ -14,6 +14,7 @@ from narrativedesk.real_provenance import (
     draft_real_case,
     fetch_real_data,
     normalize_real_data_fetch,
+    rehearse_real_case,
 )
 from narrativedesk.source_pack import validate_source_pack
 
@@ -352,6 +353,48 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertFalse(response["market_bars_available"])
         self.assertNotIn("market_data", config)
 
+    def test_rehearse_real_case_runs_fetch_normalize_draft_and_worksheet(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            response = rehearse_real_case(
+                ticker="EXMPL",
+                company_name="Example Co",
+                event_type="earnings/guidance",
+                event_date="2025-01-02",
+                replay_lock="2025-01-02T10:00:00-05:00",
+                date_from="2025-01-01",
+                date_to="2025-01-07",
+                out_root=root,
+                providers=["finnhub", "sec"],
+                finnhub_token="secret-token",
+                sec_user_agent="NarrativeDesk Tests test@example.com",
+                fetcher=FakeProvenanceFetcher(),
+                retrieved_at="2026-05-11T00:00:00Z",
+                forms=["8-K"],
+                sec_count=1,
+                include_sec_document_text=True,
+                sec_throttle_seconds=0,
+            )
+
+            manifest = json.loads(Path(response["manifest_out"]).read_text())
+            config = json.loads(Path(response["real_case_config_out"]).read_text())
+            summary = json.loads(Path(response["draft_summary_out"]).read_text())
+            worksheet = Path(response["worksheet_out"]).read_text()
+            source_candidates_exists = Path(response["source_candidates_out"]).exists()
+            rejected_candidates_exists = Path(response["rejected_candidates_out"]).exists()
+
+        self.assertTrue(response["ok"])
+        self.assertEqual(response["stage"], "complete")
+        self.assertEqual(response["case_readiness"], "curator_ready")
+        self.assertEqual(response["accepted_sources"], 2)
+        self.assertEqual(response["blocked_future_sources"], 1)
+        self.assertTrue(source_candidates_exists)
+        self.assertTrue(rejected_candidates_exists)
+        self.assertEqual(manifest["artifacts"][0]["params"]["token"], "[REDACTED]")
+        self.assertEqual(config["case_metadata"]["ticker"], "EXMPL")
+        self.assertEqual(summary["recommended_next_action"], "Add 3-5 human-curated competing narratives.")
+        self.assertIn("No winning narrative has been asserted", worksheet)
+
     def test_provider_error_is_manifested_and_normalization_continues(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             out_dir = Path(tmpdir) / "fetch"
@@ -483,6 +526,51 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertTrue(normalize_response["ok"])
         self.assertTrue(draft_response["ok"])
         self.assertEqual(draft_response["case_readiness"], "curator_ready")
+
+    def test_cli_real_case_rehearse_reports_missing_env_without_network(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-case-rehearse",
+                    "--ticker",
+                    "EXMPL",
+                    "--company-name",
+                    "Example Co",
+                    "--event-type",
+                    "earnings/guidance",
+                    "--event-date",
+                    "2025-01-02",
+                    "--replay-lock",
+                    "2025-01-02T10:00:00-05:00",
+                    "--from",
+                    "2025-01-01",
+                    "--to",
+                    "2025-01-07",
+                    "--providers",
+                    "finnhub,sec",
+                    "--fetch-dir",
+                    str(root / "fetch"),
+                    "--draft-dir",
+                    str(root / "draft"),
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            response = json.loads(result.stdout)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertFalse(response["ok"])
+        self.assertEqual(response["stage"], "fetch")
+        self.assertIn("FINNHUB_API_KEY is required", json.dumps(response))
+        self.assertIn("SEC_USER_AGENT is required", json.dumps(response))
+        self.assertFalse((root / "draft").exists())
 
     def test_cli_real_case_worksheet_writes_curation_markdown(self):
         with tempfile.TemporaryDirectory() as tmpdir:
