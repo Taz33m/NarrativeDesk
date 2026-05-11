@@ -2,7 +2,7 @@
 
 NarrativeDesk is a research platform for verifying generated market narratives behind abnormal equity moves.
 
-It is not the AI that tells people what to think about a stock. It is the audit layer that asks whether a generated explanation was sourced correctly, timestamp-valid, non-leaky, contradiction-aware, and eventually validated or falsified.
+It is not the AI that tells people what to think about a stock. It is the audit layer that asks, given incomplete, noisy, time-bounded information, whether a generated explanation was sourced correctly, timestamp-valid, non-leaky, contradiction-aware, historically comparable, and eventually validated or falsified.
 
 ## What the app does
 
@@ -12,6 +12,7 @@ The browser workbench shows:
 
 - Event header with abnormal move, peer move, sector move, volume spike, and leakage lock timestamp.
 - Synthetic case-index summary with aggregate Recall@3 and baseline comparison rates.
+- Historical analogs showing how similar narrative structures validated or missed in other replay cases.
 - Narrative verification bracket with ranked competing explanations.
 - Evidence and contradiction inspector with source timestamps.
 - Replay audit showing allowed sources and blocked future sources.
@@ -33,8 +34,9 @@ The demo data is synthetic by design. Real-curated cases require timestamped sou
 5. Compare the verification bracket: forward demand slowdown ranks above margin compression.
 6. Open the evidence inspector: margin compression has headline support but a direct contradiction.
 7. Read expected observables: each narrative makes falsifiable future claims.
-8. Reveal validation: T+20 later supports replay rank #1 in the synthetic replay.
-9. Export the Markdown report or ledger JSON.
+8. Compare historical analogs: similar demand-slowdown narratives validated in other synthetic replay cases.
+9. Reveal validation: T+20 later supports replay rank #1 in the synthetic replay.
+10. Export the Markdown report or ledger JSON.
 
 ## Why anti-leakage matters
 
@@ -66,6 +68,7 @@ Implemented deterministically:
 - Replay-lock checks requiring market snapshot `timestamp` or `as_of` fields.
 - Replay timestamp filtering.
 - Narrative scoring, ranking, and audit checks.
+- Historical analog selection from replay-safe narrative text, mechanism, event type, direction, and held-out validation labels.
 - Evaluation checks for Narrative Recall@3, replay rank #1 validation, unsupported-claim penalty, and blocked future sources.
 - Deterministic headline-baseline versus NarrativeDesk verification comparison.
 - Deterministic ablation comparisons for evidence-only, no-contradiction-penalty, and quality-weighted selection.

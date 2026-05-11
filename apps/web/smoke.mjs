@@ -57,9 +57,13 @@ async function main() {
 
     assert.match(bodyText, /NarrativeDesk Replay/i);
     assert.match(bodyText, /Replay-safe market narrative verification/i);
-    assert.match(bodyText, /Generated narratives\. Time-locked evidence\. Contradictions\. Later validation\./i);
+    assert.match(bodyText, /Incomplete signals\. Time-locked evidence\. Historical validation\./i);
     assert.match(bodyText, /ORION/);
     assert.match(bodyText, /Case library/i);
+    assert.match(bodyText, /Historical analogs/i);
+    assert.match(bodyText, /How similar narratives validated/i);
+    assert.match(bodyText, /AURORA/);
+    assert.match(bodyText, /Similarity/i);
     assert.match(bodyText, /Narrative under audit/i);
     assert.match(bodyText, /Verification score/i);
     assert.match(bodyText, /Replay timeline/i);
@@ -98,6 +102,7 @@ async function main() {
     await page.getByRole('button', { name: /^Benchmark$/i }).click();
     const benchmarkText = await page.locator('body').innerText();
     assert.match(benchmarkText, /Benchmark corpus/i);
+    assert.match(benchmarkText, /Historical analogs/i);
     assert.match(benchmarkText, /Synthetic case-index summary/i);
     assert.match(benchmarkText, /Source reliability/i);
     assert.match(benchmarkText, /Provenance quality ledger/i);

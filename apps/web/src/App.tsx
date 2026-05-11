@@ -14,6 +14,19 @@ import type {
 
 type Mode = 'overview' | 'tournament' | 'evidence' | 'validation' | 'benchmark' | 'report';
 
+type HistoricalAnalog = {
+  caseId: string;
+  ticker: string;
+  companyName: string;
+  eventType: string;
+  narrative: Narrative;
+  similarity: number;
+  basis: string[];
+  validationLabel: string;
+  validationWindow: string;
+  validationCopy: string;
+};
+
 const scoreRows: Array<{ key: keyof Narrative['scoring_inputs']; label: string; penalty?: boolean }> = [
   { key: 'evidence_strength', label: 'Evidence strength' },
   { key: 'mechanism_specificity', label: 'Mechanism specificity' },
@@ -34,6 +47,35 @@ const modes: Array<{ id: Mode; label: string }> = [
   { id: 'benchmark', label: 'Benchmark' },
   { id: 'report', label: 'Report' },
 ];
+
+const analogStopWords = new Set([
+  'the',
+  'and',
+  'or',
+  'to',
+  'of',
+  'a',
+  'an',
+  'in',
+  'is',
+  'are',
+  'as',
+  'by',
+  'with',
+  'from',
+  'after',
+  'future',
+  'stock',
+  'move',
+  'moves',
+  'market',
+  'investors',
+  'company',
+  'event',
+  'narrative',
+  'replay',
+  'evidence',
+]);
 
 function pct(value: number | null | undefined): string {
   if (value === null || value === undefined) return 'n/a';
@@ -197,6 +239,109 @@ function auditGapReason(narrative: Narrative, rankOne: Narrative): string {
   return reasons.length ? reasons.join(' / ') : 'lower total replay-safe score';
 }
 
+function tokenizeAnalogText(value: string): Set<string> {
+  return new Set(
+    (value.toLowerCase().match(/[a-z0-9]+/g) ?? [])
+      .filter((token) => token.length > 2 && !analogStopWords.has(token)),
+  );
+}
+
+function overlapScore(left: Set<string>, right: Set<string>): number {
+  if (!left.size || !right.size) return 0;
+  const shared = [...left].filter((token) => right.has(token)).length;
+  const total = new Set([...left, ...right]).size;
+  return total ? shared / total : 0;
+}
+
+function narrativeFeatureText(narrative: Narrative): string {
+  return [
+    narrative.title,
+    narrative.narrative,
+    narrative.mechanism,
+    ...narrative.expected_observables,
+  ].join(' ');
+}
+
+function analogOutcome(
+  narrative: Narrative,
+  validationCase: ValidationCasesPayload['cases'][number] | undefined,
+): Pick<HistoricalAnalog, 'validationCopy' | 'validationLabel' | 'validationWindow'> {
+  const rows = validationCase?.validation.rows.filter((row) => row.narrative_id === narrative.narrative_id) ?? [];
+  const row = rows.find((item) => item.label === 'validated')
+    ?? rows.find((item) => item.label === 'partial')
+    ?? rows[0]
+    ?? null;
+  const isValidated = validationCase?.evaluation.validated_narrative_ids.includes(narrative.narrative_id) ?? false;
+  const missedRankOne = narrative.rank === 1 && validationCase?.evaluation.top_ranked_validated === false && !isValidated;
+
+  return {
+    validationLabel: isValidated ? 'validated' : missedRankOne ? 'miss' : row?.label ?? narrative.validation_status,
+    validationWindow: row?.window ?? 'n/a',
+    validationCopy: row
+      ? cleanValidationCopy(row, narrative.title)
+      : 'No future validation row is attached to this narrative yet.',
+  };
+}
+
+function buildHistoricalAnalogs({
+  baseLedger,
+  baseNarrative,
+  cases,
+  validationCases,
+  selectedCaseId,
+}: {
+  baseLedger: Ledger;
+  baseNarrative: Narrative;
+  cases: CasesPayload;
+  validationCases: ValidationCasesPayload | null;
+  selectedCaseId: string;
+}): HistoricalAnalog[] {
+  const baseTitleTokens = tokenizeAnalogText(baseNarrative.title);
+  const baseFeatureTokens = tokenizeAnalogText(narrativeFeatureText(baseNarrative));
+  const validationByCase = new Map(validationCases?.cases.map((item) => [item.case_id, item]));
+
+  return cases.cases
+    .filter((caseItem) => caseItem.case_id !== selectedCaseId)
+    .flatMap((caseItem) => caseItem.ledger.narratives.map((narrative) => {
+      const titleTokens = tokenizeAnalogText(narrative.title);
+      const featureTokens = tokenizeAnalogText(narrativeFeatureText(narrative));
+      const titleOverlap = overlapScore(baseTitleTokens, titleTokens);
+      const featureOverlap = overlapScore(baseFeatureTokens, featureTokens);
+      const sameEventType = caseItem.ledger.event.event_type === baseLedger.event.event_type;
+      const sameDirection = narrative.directional_implication === baseNarrative.directional_implication;
+      const similarity = (
+        titleOverlap * 0.38
+        + featureOverlap * 0.32
+        + (sameEventType ? 0.15 : 0)
+        + (sameDirection ? 0.15 : 0)
+      );
+      const sharedTitleTerms = [...baseTitleTokens].filter((token) => titleTokens.has(token)).slice(0, 3);
+      const basis = [
+        ...(sameEventType ? ['same event type'] : []),
+        ...(sameDirection ? [`same ${narrative.directional_implication} direction`] : []),
+        ...(sharedTitleTerms.length ? [`shared terms: ${sharedTitleTerms.join(', ')}`] : []),
+        ...(narrative.rank === 1 ? ['rank #1 at replay lock'] : [`rank #${narrative.rank} at replay lock`]),
+      ];
+      return {
+        caseId: caseItem.case_id,
+        ticker: caseItem.ledger.event.ticker,
+        companyName: caseItem.ledger.event.company_name,
+        eventType: caseItem.ledger.event.event_type,
+        narrative,
+        similarity,
+        basis,
+        ...analogOutcome(narrative, validationByCase.get(caseItem.case_id)),
+      };
+    }))
+    .filter((analog) => analog.similarity > 0)
+    .sort((left, right) => (
+      right.similarity - left.similarity
+      || left.narrative.rank - right.narrative.rank
+      || left.caseId.localeCompare(right.caseId)
+    ))
+    .slice(0, 4);
+}
+
 function uniqueEvidence(narrative: Narrative): EvidenceItem[] {
   const seen = new Set<string>();
   return [...narrative.supporting_evidence, ...narrative.contradicting_evidence].filter((item) => {
@@ -286,6 +431,17 @@ function App() {
     return ledger?.narratives.find((narrative) => narrative.rank === 1) ?? ledger?.narratives[0] ?? null;
   }, [ledger]);
 
+  const historicalAnalogs = useMemo(() => {
+    if (!cases || !ledger || !topNarrative) return [];
+    return buildHistoricalAnalogs({
+      baseLedger: ledger,
+      baseNarrative: topNarrative,
+      cases,
+      validationCases,
+      selectedCaseId,
+    });
+  }, [cases, ledger, selectedCaseId, topNarrative, validationCases]);
+
   const surfaceBaselineNarrative = useMemo(() => {
     return [...(ledger?.narratives ?? [])].sort((left, right) => (
       right.scoring_inputs.crowding_risk - left.scoring_inputs.crowding_risk
@@ -331,7 +487,7 @@ function App() {
             <p className="eyebrow">NarrativeDesk Replay</p>
             <h1>Replay-safe market narrative verification</h1>
             <p className="dek">
-              Generated narratives. Time-locked evidence. Contradictions. Later validation.
+              Incomplete signals. Time-locked evidence. Historical validation.
             </p>
             <p className="safety-note">
               Research and education only. Synthetic demo. Not investment advice.
@@ -367,6 +523,7 @@ function App() {
           baselineNarrative={surfaceBaselineNarrative}
           evaluation={evaluation}
           validation={validation}
+          historicalAnalogs={historicalAnalogs}
           onModeChange={setActiveMode}
         />
       ) : null}
@@ -429,6 +586,10 @@ function App() {
           <CaseContextBar ledger={ledger} topNarrative={topNarrative ?? selectedNarrative} evaluation={evaluation} validation={validation} />
           <div className="mode-grid mode-grid--benchmark">
             {validationCases?.aggregate ? <BenchmarkCorpusPanel aggregate={validationCases.aggregate} /> : null}
+            <HistoricalAnalogsPanel
+              analogs={historicalAnalogs}
+              baseNarrative={topNarrative ?? selectedNarrative}
+            />
             {evaluation ? <EvaluationPanel evaluation={evaluation} /> : null}
             <SourceReliabilityPanel ledger={ledger} />
             <SourceClusteringPanel ledger={ledger} />
@@ -457,6 +618,7 @@ function OverviewMode({
   baselineNarrative,
   evaluation,
   validation,
+  historicalAnalogs,
   onModeChange,
 }: {
   ledger: Ledger;
@@ -464,6 +626,7 @@ function OverviewMode({
   baselineNarrative: Narrative | null;
   evaluation: EvaluationSummary | null;
   validation: ValidationFixture | null;
+  historicalAnalogs: HistoricalAnalog[];
   onModeChange: (mode: Mode) => void;
 }) {
   return (
@@ -476,6 +639,7 @@ function OverviewMode({
         validation={validation}
         onModeChange={onModeChange}
       />
+      <HistoricalAnalogsPanel analogs={historicalAnalogs} baseNarrative={topNarrative} />
     </section>
   );
 }
@@ -758,6 +922,54 @@ function CaseLibrary({
             </button>
           );
         })}
+      </div>
+    </section>
+  );
+}
+
+function HistoricalAnalogsPanel({
+  analogs,
+  baseNarrative,
+}: {
+  analogs: HistoricalAnalog[];
+  baseNarrative: Narrative;
+}) {
+  const validatedCount = analogs.filter((analog) => analog.validationLabel === 'validated').length;
+  const missCount = analogs.filter((analog) => analog.validationLabel === 'miss' || analog.validationLabel === 'invalidated').length;
+
+  return (
+    <section className="panel historical-analogs" data-testid="historical-analogs">
+      <PanelHeader kicker="Historical analogs" title="How similar narratives validated" />
+      <p className="panel-note">
+        Deterministic analogs for {baseNarrative.title}. Similarity uses narrative text, mechanism, event type, and direction; future validation remains held out.
+      </p>
+      <div className="analog-summary">
+        <MetricTile label="Analogs" value={String(analogs.length)} />
+        <MetricTile label="Validated" value={String(validatedCount)} />
+        <MetricTile label="Misses" value={String(missCount)} />
+      </div>
+      <div className="analog-list">
+        {analogs.map((analog) => (
+          <article className="analog-row" key={`${analog.caseId}-${analog.narrative.narrative_id}`}>
+            <div className="analog-row__top">
+              <span>
+                <strong>{analog.ticker}</strong>
+                {analog.companyName}
+              </span>
+              <span className={`status-pill ${statusClass(analog.validationLabel)}`}>
+                {analog.validationWindow} | {analog.validationLabel}
+              </span>
+            </div>
+            <h3>{analog.narrative.title}</h3>
+            <p>{analog.validationCopy}</p>
+            <small>
+              Similarity {score(analog.similarity)} | {humanize(analog.eventType)} | {analog.basis.join(' | ')}
+            </small>
+          </article>
+        ))}
+        {!analogs.length ? (
+          <p className="empty-copy">No historical analogs are available in the loaded case corpus.</p>
+        ) : null}
       </div>
     </section>
   );
