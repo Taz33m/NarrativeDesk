@@ -1223,6 +1223,7 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertFalse(response["ok"])
         self.assertEqual(response["status"], "missing_env")
         self.assertEqual(response["stages"]["preflight"]["json"]["status"], "missing_env")
+        self.assertIn("create local entries", response["next_action"])
         self.assertEqual(
             response["stages"]["preflight"]["json"]["env"]["missing_env"],
             ["FINNHUB_API_KEY", "SEC_USER_AGENT"],
@@ -1263,6 +1264,7 @@ class RealProvenanceTests(unittest.TestCase):
         env_state = response["stages"]["preflight"]["json"]["env"]
         self.assertEqual(env_state["missing_env"], [])
         self.assertEqual(env_state["empty_env"], ["FINNHUB_API_KEY", "SEC_USER_AGENT"])
+        self.assertIn("fill non-empty local values", response["next_action"])
         self.assertNotIn("''", result.stdout)
 
     def test_aapl_rehearsal_runner_resumes_from_curated_draft_to_bundle(self):
@@ -1748,6 +1750,7 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(response["env"]["present_env"], ["FINNHUB_API_KEY"])
         self.assertEqual(response["env"]["missing_env"], ["SEC_USER_AGENT"])
         self.assertEqual(response["env"]["empty_env"], [])
+        self.assertIn("create local entries for SEC_USER_AGENT", response["next_action"])
         self.assertIn("aapl-2024-05-02-rehearsal", response["paths"]["draft_dir"])
         self.assertNotIn("secret-token", result.stdout)
 
@@ -1856,6 +1859,7 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(response["present_env"], ["FINNHUB_API_KEY"])
         self.assertEqual(response["missing_env"], ["SEC_USER_AGENT", "NEWS_API_KEY"])
         self.assertEqual(response["empty_env"], [])
+        self.assertIn("create local entries for SEC_USER_AGENT, NEWS_API_KEY", response["next_action"])
         self.assertNotIn("secret-token", result.stdout)
 
     def test_cli_real_data_env_check_reports_empty_env_file_entries(self):
@@ -1886,6 +1890,7 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(response["present_env"], [])
         self.assertEqual(response["missing_env"], [])
         self.assertEqual(response["empty_env"], ["FINNHUB_API_KEY", "SEC_USER_AGENT"])
+        self.assertIn("fill non-empty local values for FINNHUB_API_KEY, SEC_USER_AGENT", response["next_action"])
 
     def test_cli_real_data_env_check_reads_env_file_without_sourcing_shell(self):
         with tempfile.TemporaryDirectory() as tmpdir:

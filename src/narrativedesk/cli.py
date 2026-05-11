@@ -793,6 +793,8 @@ def run_real_data_env_check(args: argparse.Namespace) -> int:
         "required_env": deduped_required_env,
         **env_state,
     }
+    if not response["ok"]:
+        response["next_action"] = _provider_env_next_action(env_state)
     print(json.dumps(response, indent=2, sort_keys=True))
     return 0 if response["ok"] else 1
 
@@ -960,7 +962,7 @@ def _real_case_preflight(
         response.update(
             {
                 "status": "missing_env",
-                "next_action": f"Populate {', '.join(unavailable_env)} locally, then rerun real-case-rehearse.",
+                "next_action": _provider_env_next_action(env_state),
             }
         )
         return response
@@ -997,6 +999,19 @@ def _env_presence(names: list[str], env_file_values: dict[str, str]) -> dict[str
         "empty_env": empty_env,
         "missing_env": missing_env,
     }
+
+
+def _provider_env_next_action(env_state: dict[str, list[str]]) -> str:
+    actions: list[str] = []
+    missing_env = env_state.get("missing_env") or []
+    empty_env = env_state.get("empty_env") or []
+    if missing_env:
+        actions.append(f"create local entries for {', '.join(missing_env)}")
+    if empty_env:
+        actions.append(f"fill non-empty local values for {', '.join(empty_env)}")
+    if not actions:
+        return "Provider environment is ready; rerun the real-case rehearsal."
+    return f"Before live fetch, {' and '.join(actions)}. Keep provider secrets local and rerun real-case-rehearse."
 
 
 def _load_env_file(path: str | Path) -> dict[str, str]:
