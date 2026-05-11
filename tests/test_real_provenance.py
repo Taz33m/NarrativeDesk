@@ -928,6 +928,42 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertIn("SEC_USER_AGENT is required", json.dumps(response))
         self.assertFalse((root / "draft").exists())
 
+    def test_aapl_rehearsal_runner_preflight_reports_missing_env_without_network(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "scripts/run_aapl_rehearsal.py",
+                    "--preflight-only",
+                    "--env-file",
+                    str(root / ".env.local"),
+                    "--fetch-dir",
+                    str(root / "fetch"),
+                    "--draft-dir",
+                    str(root / "draft"),
+                    "--bundle-dir",
+                    str(root / "bundle"),
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            response = json.loads(result.stdout)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertFalse(response["ok"])
+        self.assertEqual(response["status"], "preflight_failed")
+        self.assertEqual(response["stages"]["preflight"]["json"]["status"], "missing_env")
+        self.assertEqual(
+            response["stages"]["preflight"]["json"]["env"]["missing_env"],
+            ["FINNHUB_API_KEY", "SEC_USER_AGENT"],
+        )
+        self.assertFalse((root / "fetch").exists())
+        self.assertFalse((root / "draft").exists())
+
     def test_cli_real_case_worksheet_writes_curation_markdown(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             draft_dir = Path(tmpdir) / "draft"

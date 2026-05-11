@@ -149,6 +149,13 @@ Start from `examples/real_case_config_template.json`, fill in a real ticker, eve
 To rehearse live-provider ingestion without committing real claims, fetch raw provider data into scratch space, normalize it into strict source candidates, then draft a curator-ready config:
 
 ```bash
+npm run real-case:aapl:preflight
+npm run real-case:aapl:rehearse
+```
+
+Those scripts wrap the explicit CLI sequence below:
+
+```bash
 PYTHONPATH=src python3 -m narrativedesk.cli real-data-env-check --providers finnhub,sec --env-file .env.local
 PYTHONPATH=src python3 -m narrativedesk.cli real-case-preflight \
   --ticker AAPL --event-date 2024-05-02 \
