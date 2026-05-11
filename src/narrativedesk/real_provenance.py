@@ -448,7 +448,8 @@ def draft_real_case(
         "manual_sources": [candidate.to_manual_source() for candidate in usable_candidates],
         "narratives": [],
     }
-    if market_bars.exists():
+    market_bars_available = _has_market_rows(market_bars)
+    if market_bars_available:
         config["market_data"] = {
             "provider": "local_csv",
             "path": _relative_path(market_bars, output_dir),
@@ -492,7 +493,7 @@ def draft_real_case(
         "accepted_sources": eligible_count,
         "rejected_sources": len(rejected),
         "blocked_future_sources": blocked_count,
-        "market_bars_available": _has_market_rows(market_bars),
+        "market_bars_available": market_bars_available,
         "filings_available": filings_available,
         "news_available": news_available,
         "case_readiness": case_readiness,
