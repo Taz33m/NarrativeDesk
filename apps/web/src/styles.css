@@ -1031,6 +1031,48 @@ h1 {
   max-height: 560px;
 }
 
+.bundle-integrity {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: minmax(240px, 0.75fr) minmax(0, 1.25fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.bundle-integrity h3 {
+  margin-top: 6px;
+  font-size: 1rem;
+}
+
+.bundle-integrity p {
+  color: var(--muted);
+  line-height: 1.45;
+  margin-top: 6px;
+}
+
+.bundle-integrity-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.bundle-integrity-grid span {
+  border-left: 1px solid var(--line-strong);
+  padding-left: 10px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.bundle-integrity-grid strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--ink);
+  font-family: "Aptos Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.82rem;
+}
+
 .event-panel,
 .panel,
 .thesis-strip {
@@ -1795,6 +1837,7 @@ pre {
   .timeline-columns,
   .bracket-grid,
   .report-grid,
+  .bundle-integrity,
   .case-context-bar {
     grid-template-columns: 1fr;
   }
@@ -1842,6 +1885,7 @@ pre {
   .score-stack-row,
   .stat-grid,
   .score-grid,
+  .bundle-integrity-grid,
   .evidence-grid,
   .evaluation-grid,
   .export-actions,

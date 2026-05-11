@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type {
   BenchmarkAggregate,
+  BundleIntegritySummary,
   CasesPayload,
   EvidenceItem,
   EvaluationSummary,
@@ -277,6 +278,10 @@ function App() {
     return validationCases?.cases.find((item) => item.case_id === selectedCaseId)?.evaluation ?? null;
   }, [validationCases, selectedCaseId]);
 
+  const bundleIntegrity = useMemo(() => {
+    return cases?.cases.find((item) => item.case_id === selectedCaseId)?.bundle_integrity ?? null;
+  }, [cases, selectedCaseId]);
+
   const topNarrative = useMemo(() => {
     return ledger?.narratives.find((narrative) => narrative.rank === 1) ?? ledger?.narratives[0] ?? null;
   }, [ledger]);
@@ -432,7 +437,12 @@ function App() {
       {activeMode === 'report' ? (
         <>
           <CaseContextBar ledger={ledger} topNarrative={topNarrative ?? selectedNarrative} evaluation={evaluation} validation={validation} />
-          <ReportPanel ledger={ledger} report={report} evaluation={evaluation} />
+          <ReportPanel
+            ledger={ledger}
+            report={report}
+            evaluation={evaluation}
+            bundleIntegrity={bundleIntegrity}
+          />
         </>
       ) : null}
     </main>
@@ -1165,10 +1175,12 @@ function ReportPanel({
   ledger,
   report,
   evaluation,
+  bundleIntegrity,
 }: {
   ledger: Ledger;
   report: string;
   evaluation: EvaluationSummary | null;
+  bundleIntegrity: BundleIntegritySummary | null;
 }) {
   const { caseId, ledgerHref, reportHref } = exportHrefs(ledger, report);
   const benchmarkHref = `data:application/json;charset=utf-8,${encodeURIComponent(
@@ -1201,6 +1213,7 @@ function ReportPanel({
           <pre>{report.slice(0, 1600)}...</pre>
         </section>
       </div>
+      <BundleIntegrityPanel ledger={ledger} integrity={bundleIntegrity} />
       <div className="export-actions">
         <a href={reportHref} download={`${caseId}-report.md`} data-testid="report-export">
           Export Memo
@@ -1211,6 +1224,52 @@ function ReportPanel({
         <a href={benchmarkHref} download={`${caseId}-benchmark.json`} data-testid="benchmark-export">
           Export Benchmark JSON
         </a>
+      </div>
+    </section>
+  );
+}
+
+function BundleIntegrityPanel({
+  ledger,
+  integrity,
+}: {
+  ledger: Ledger;
+  integrity: BundleIntegritySummary | null;
+}) {
+  const resolved = integrity ?? {
+    verified_by_bundle_verify: false,
+    artifact_hashes_ok: null,
+    replay_integrity_ok: ledger.citation_qa.replay_filter_pass && ledger.citation_qa.event_time_integrity_pass,
+    readiness_status: 'not_attached',
+    blocked_future_source_count: ledger.replay_audit.blocked_source_ids.length,
+    validation_future_source_count: 0,
+    note: 'No bundle integrity payload is attached to this case.',
+  };
+  const artifactLabel = resolved.artifact_hashes_ok === null
+    ? 'not attached'
+    : checkLabel(resolved.artifact_hashes_ok);
+  const rows = [
+    ['Artifact hashes', artifactLabel],
+    ['Replay integrity', checkLabel(resolved.replay_integrity_ok)],
+    ['Readiness', humanize(resolved.readiness_status)],
+    ['Blocked future', String(resolved.blocked_future_source_count)],
+    ['Validation future', String(resolved.validation_future_source_count)],
+  ];
+
+  return (
+    <section className="bundle-integrity" data-testid="bundle-integrity">
+      <div>
+        <span className="eyebrow">Bundle Integrity</span>
+        <h3>{resolved.verified_by_bundle_verify ? 'Verified replay bundle' : 'Demo fixture integrity'}</h3>
+        <p>{resolved.note}</p>
+      </div>
+      <div className="bundle-integrity-grid">
+        {rows.map(([label, value]) => (
+          <span key={label}>
+            {label}
+            <strong>{value}</strong>
+          </span>
+        ))}
       </div>
     </section>
   );

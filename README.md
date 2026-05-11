@@ -50,7 +50,7 @@ The repo keeps the deterministic research kernel separate from the product surfa
 - `apps/api/`: FastAPI service exposing event ID based endpoints around the kernel.
 - `apps/web/`: Vite React workbench that renders kernel-generated demo artifacts.
 - `data/fixtures/`: synthetic event and validation fixtures.
-- `schemas/`: Narrative Ledger, Source Pack, Validation Fixture, and Replay Bundle Manifest JSON schemas.
+- `schemas/`: Narrative Ledger, Source Pack, Real Case Config, Validation Fixture, and Replay Bundle Manifest JSON schemas.
 - `tests/`: unit and API tests.
 
 The browser demo reads generated JSON from `apps/web/public/demo/`. Generate those artifacts from the Python kernel with `make web-data`. Replay bundles stay separate from future validation and evaluation bundles.
@@ -141,6 +141,12 @@ PYTHONPATH=src python3 -m narrativedesk.cli real-pack-bundle .codex-work/real_ca
 ```
 
 Start from `examples/real_case_config_template.json`, fill in a real ticker, event timestamp, peers, and curated narratives, then keep the working config in `.codex-work/`.
+
+Inspect local prior-art repos for timestamped manual-source candidates:
+
+```bash
+PYTHONPATH=src python3 scripts/inspect_prior_art.py --repo-root citadail=/path/to/citadail --repo-root mktmind-qtm=/path/to/mktmind-qtm --repo-root applecapital=/path/to/applecapital
+```
 
 Check a real-curated config before fetching provider data:
 

@@ -112,6 +112,11 @@ async function main() {
 
     await page.getByRole('button', { name: /^Report$/i }).click();
     assert.match(await page.locator('[data-testid="report-preview"]').innerText(), /NarrativeDesk Event Report: ORION/);
+    const bundleIntegrityText = await page.locator('[data-testid="bundle-integrity"]').innerText();
+    assert.match(bundleIntegrityText, /Bundle Integrity/i);
+    assert.match(bundleIntegrityText, /Replay integrity[\s\S]*pass/i);
+    assert.match(bundleIntegrityText, /Artifact hashes[\s\S]*not attached/i);
+    assert.match(bundleIntegrityText, /Validation future[\s\S]*1/i);
 
     await page.locator('[data-testid="case-selector"]').selectOption('EVT-AURORA-2025-10-22');
     await page.getByRole('button', { name: /^Overview$/i }).click();

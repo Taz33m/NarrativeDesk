@@ -216,11 +216,22 @@ export interface ValidationFixture {
   rows: ValidationRow[];
 }
 
+export interface BundleIntegritySummary {
+  verified_by_bundle_verify: boolean;
+  artifact_hashes_ok: boolean | null;
+  replay_integrity_ok: boolean;
+  readiness_status: string;
+  blocked_future_source_count: number;
+  validation_future_source_count: number;
+  note: string;
+}
+
 export interface CaseBundle {
   case_id: string;
   label: string;
   ledger: Ledger;
   report: string;
+  bundle_integrity?: BundleIntegritySummary;
 }
 
 export interface CasesPayload {
