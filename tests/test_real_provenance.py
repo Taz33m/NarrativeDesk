@@ -17,6 +17,7 @@ from narrativedesk.real_provenance import (
     apply_curated_narratives,
     draft_real_case,
     fetch_real_data,
+    inspect_market_bars,
     normalize_real_data_fetch,
     rehearse_real_case,
     write_curated_narratives_template,
@@ -488,6 +489,70 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(response["case_readiness"], "needs_sources")
         self.assertFalse(response["market_bars_available"])
         self.assertNotIn("market_data", config)
+
+    def test_inspect_market_bars_rejects_same_day_daily_row_before_close(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            market_bars = Path(tmpdir) / "market_bars.csv"
+            market_bars.write_text(
+                "\n".join(
+                    [
+                        "date,ticker,open,close,volume",
+                        "2025-01-01,EXMPL,100.0,101.0,1000",
+                        "2025-01-02,EXMPL,101.0,94.0,2000",
+                    ]
+                )
+                + "\n"
+            )
+
+            response = inspect_market_bars(
+                market_bars,
+                ticker="EXMPL",
+                replay_lock="2025-01-02T10:00:00-05:00",
+            )
+
+        self.assertTrue(response["ok"])
+        self.assertEqual(response["row_count"], 2)
+        self.assertEqual(response["ticker_row_count"], 2)
+        self.assertEqual(response["eligible_row_count"], 1)
+        self.assertEqual(response["after_lock_row_count"], 1)
+        self.assertEqual(response["selected_row"]["date"], "2025-01-01")
+
+    def test_cli_real_market_bars_check_reports_missing_ticker(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            market_bars = Path(tmpdir) / "market_bars.csv"
+            market_bars.write_text(
+                "\n".join(
+                    [
+                        "date,ticker,open,close,volume",
+                        "2025-01-01,XLK,100.0,101.0,1000",
+                    ]
+                )
+                + "\n"
+            )
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-market-bars-check",
+                    str(market_bars),
+                    "--ticker",
+                    "AAPL",
+                    "--replay-lock",
+                    "2025-01-02T10:00:00-05:00",
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            response = json.loads(result.stdout)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertFalse(response["ok"])
+        self.assertEqual(response["available_tickers"], ["XLK"])
+        self.assertTrue(any("No rows found for ticker AAPL" in error for error in response["errors"]))
 
     def test_rehearse_real_case_runs_fetch_normalize_draft_and_worksheet(self):
         with tempfile.TemporaryDirectory() as tmpdir:

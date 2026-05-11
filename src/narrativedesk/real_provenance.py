@@ -531,6 +531,79 @@ def draft_real_case(
     return {"ok": True, **summary}
 
 
+def inspect_market_bars(
+    path: str | Path,
+    *,
+    ticker: str,
+    replay_lock: str | datetime,
+) -> dict[str, Any]:
+    market_path = Path(path)
+    normalized_ticker = ticker.upper()
+    lock = _coerce_datetime(replay_lock)
+    response: dict[str, Any] = {
+        "ok": False,
+        "path": str(market_path),
+        "ticker": normalized_ticker,
+        "replay_lock": _iso_timestamp(lock),
+        "row_count": 0,
+        "ticker_row_count": 0,
+        "eligible_row_count": 0,
+        "after_lock_row_count": 0,
+        "invalid_row_count": 0,
+        "available_tickers": [],
+        "selected_row": None,
+        "errors": [],
+    }
+    if not market_path.exists():
+        response["errors"].append(f"market_bars.csv does not exist: {market_path}")
+        return response
+
+    available_tickers: set[str] = set()
+    eligible_rows: list[dict[str, Any]] = []
+    try:
+        with market_path.open(newline="") as handle:
+            reader = csv.DictReader(handle)
+            required = {"date", "ticker", "open", "close"}
+            missing_columns = sorted(required - {str(field or "").strip().lower() for field in reader.fieldnames or []})
+            if missing_columns:
+                response["errors"].append(f"market_bars.csv missing columns: {', '.join(missing_columns)}")
+                return response
+            for row in reader:
+                normalized_row = {str(key or "").strip().lower(): value for key, value in row.items()}
+                response["row_count"] += 1
+                row_ticker = str(normalized_row.get("ticker", "")).strip().upper()
+                if row_ticker:
+                    available_tickers.add(row_ticker)
+                if row_ticker != normalized_ticker:
+                    continue
+                response["ticker_row_count"] += 1
+                parsed = _market_bar_row_summary(normalized_row, lock)
+                if parsed is None:
+                    response["invalid_row_count"] += 1
+                    continue
+                if not parsed["eligible"]:
+                    response["after_lock_row_count"] += 1
+                    continue
+                eligible_rows.append(parsed["row"])
+    except csv.Error as exc:
+        response["errors"].append(f"market_bars.csv could not be read: {exc}")
+        return response
+
+    response["available_tickers"] = sorted(available_tickers)
+    response["eligible_row_count"] = len(eligible_rows)
+    if eligible_rows:
+        selected = sorted(eligible_rows, key=lambda row: row["as_of"])[-1]
+        response["selected_row"] = selected
+        response["ok"] = True
+        return response
+
+    if response["ticker_row_count"] == 0:
+        response["errors"].append(f"No rows found for ticker {normalized_ticker}.")
+    else:
+        response["errors"].append(f"No replay-eligible rows found for {normalized_ticker} at or before the replay lock.")
+    return response
+
+
 def write_real_case_worksheet(
     draft_dir: str | Path,
     *,
@@ -1555,19 +1628,74 @@ def _has_market_rows(path: Path, *, ticker: str | None = None, replay_lock: date
     return False
 
 
+def _market_bar_row_summary(row: dict[str, Any], replay_lock: datetime) -> dict[str, Any] | None:
+    raw_date = str(row.get("date", "")).strip()
+    try:
+        open_price = float(row.get("open", ""))
+        close_price = float(row.get("close", ""))
+    except (TypeError, ValueError):
+        return None
+    eligible = _market_row_before_lock(row, replay_lock)
+    return {
+        "eligible": eligible,
+        "row": {
+            "date": raw_date,
+            "as_of": _market_row_sort_key(raw_date, replay_lock),
+            "ticker": str(row.get("ticker", "")).strip().upper(),
+            "open": open_price,
+            "close": close_price,
+            "volume": _optional_market_float(row.get("volume")),
+        },
+    }
+
+
+def _market_row_sort_key(raw_date: str, replay_lock: datetime) -> str:
+    if re.match(r"^\d{4}-\d{2}-\d{2}$", raw_date):
+        return f"{raw_date}T16:00:00"
+    try:
+        timestamp = parse_datetime(raw_date)
+    except ValueError:
+        return ""
+    if timestamp.tzinfo is None:
+        return timestamp.isoformat()
+    if replay_lock.tzinfo is None:
+        return timestamp.isoformat()
+    return timestamp.astimezone(replay_lock.tzinfo).isoformat()
+
+
+def _optional_market_float(value: Any) -> float | None:
+    if value in {None, ""}:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
 def _market_row_before_lock(row: dict[str, Any], replay_lock: datetime) -> bool:
     raw_date = str(row.get("date", "")).strip()
     if not raw_date:
         return False
     try:
         if re.match(r"^\d{4}-\d{2}-\d{2}$", raw_date):
-            return datetime.fromisoformat(raw_date).date() <= replay_lock.date()
+            row_date = datetime.fromisoformat(raw_date).date()
+            lock_date = replay_lock.date()
+            if row_date < lock_date:
+                return True
+            if row_date > lock_date:
+                return False
+            return _seconds_since_midnight(replay_lock) >= 16 * 60 * 60
         timestamp = parse_datetime(raw_date)
     except ValueError:
         return False
     if timestamp.tzinfo is None:
         return timestamp <= replay_lock.replace(tzinfo=None)
     return timestamp <= replay_lock.astimezone(timestamp.tzinfo)
+
+
+def _seconds_since_midnight(value: datetime) -> int:
+    local = value if value.tzinfo is None else value.astimezone(value.tzinfo)
+    return local.hour * 3600 + local.minute * 60 + local.second
 
 
 def _draft_market_bars_path(

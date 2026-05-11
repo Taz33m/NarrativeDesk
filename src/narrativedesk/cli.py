@@ -28,6 +28,7 @@ from narrativedesk.real_provenance import (
     apply_curated_narratives,
     draft_real_case,
     fetch_real_data,
+    inspect_market_bars,
     normalize_real_data_fetch,
     rehearse_real_case,
     validate_curated_narratives,
@@ -291,6 +292,14 @@ def build_parser() -> argparse.ArgumentParser:
         "--market-bars",
         help="Optional frozen market_bars.csv override to copy into the draft before readiness checks.",
     )
+
+    market_bars_check = sub.add_parser(
+        "real-market-bars-check",
+        help="Check whether a frozen market_bars.csv has replay-eligible ticker rows.",
+    )
+    market_bars_check.add_argument("path", help="Path to market_bars.csv.")
+    market_bars_check.add_argument("--ticker", required=True, help="Ticker symbol to require.")
+    market_bars_check.add_argument("--replay-lock", required=True, help="Replay lock timestamp with timezone.")
 
     real_worksheet = sub.add_parser(
         "real-case-worksheet",
@@ -1041,6 +1050,16 @@ def run_real_case_draft(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_real_market_bars_check(args: argparse.Namespace) -> int:
+    response = inspect_market_bars(
+        args.path,
+        ticker=args.ticker,
+        replay_lock=args.replay_lock,
+    )
+    print(json.dumps(response, indent=2, sort_keys=True))
+    return 0 if response["ok"] else 1
+
+
 def run_real_case_worksheet(args: argparse.Namespace) -> int:
     try:
         response = write_real_case_worksheet(
@@ -1560,6 +1579,8 @@ def main() -> int:
         return run_real_data_normalize(args)
     if args.command == "real-case-draft":
         return run_real_case_draft(args)
+    if args.command == "real-market-bars-check":
+        return run_real_market_bars_check(args)
     if args.command == "real-case-worksheet":
         return run_real_case_worksheet(args)
     if args.command == "real-case-rehearse":
