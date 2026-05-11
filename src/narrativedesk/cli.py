@@ -287,6 +287,10 @@ def build_parser() -> argparse.ArgumentParser:
     real_draft.add_argument("--normalized-dir", required=True, help="Directory containing normalized outputs.")
     real_draft.add_argument("--out-dir", required=True, help="Output directory for the real-case draft.")
     real_draft.add_argument("--case-id", help="Optional case ID override.")
+    real_draft.add_argument(
+        "--market-bars",
+        help="Optional frozen market_bars.csv override to copy into the draft before readiness checks.",
+    )
 
     real_worksheet = sub.add_parser(
         "real-case-worksheet",
@@ -1028,6 +1032,7 @@ def run_real_case_draft(args: argparse.Namespace) -> int:
             normalized_dir=args.normalized_dir,
             out_dir=args.out_dir,
             case_id=args.case_id,
+            market_bars_path=args.market_bars,
         )
     except (OSError, json.JSONDecodeError, RealProvenanceError) as exc:
         print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))

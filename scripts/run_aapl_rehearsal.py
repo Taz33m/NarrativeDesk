@@ -41,6 +41,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--fetch-dir", default=DEFAULT_FETCH_DIR)
     parser.add_argument("--draft-dir", default=DEFAULT_DRAFT_DIR)
     parser.add_argument("--bundle-dir", default=DEFAULT_BUNDLE_DIR)
+    parser.add_argument("--market-bars", help="Optional frozen market_bars.csv to copy into the draft.")
     parser.add_argument("--narratives", help="Curated narratives JSON. Defaults to curated_narratives.json when present.")
     parser.add_argument("--sec-count", type=int, default=5)
     parser.add_argument("--forms", default="8-K,10-Q,10-K")
@@ -81,6 +82,8 @@ def run_rehearsal(args: argparse.Namespace) -> dict[str, Any]:
     if preflight_status == "ready_to_normalize":
         return _run_normalize_draft_status_then_bundle(args, stages, redaction_values)
     if preflight_status == "ready_to_draft":
+        return _run_draft_status_then_bundle(args, stages, redaction_values)
+    if preflight_status == "needs_sources" and args.market_bars:
         return _run_draft_status_then_bundle(args, stages, redaction_values)
     if preflight_status in {"invalid_draft", "needs_sources", "needs_curation"}:
         return _final(False, preflight_status, stages, preflight["json"].get("next_action"))
@@ -153,26 +156,26 @@ def _run_draft_status_then_bundle(
     *,
     normalized_dir: str | None = None,
 ) -> dict[str, Any]:
-    draft = _run_cli(
-        [
-            "real-case-draft",
-            "--ticker",
-            args.ticker,
-            "--company-name",
-            args.company_name,
-            "--event-type",
-            args.event_type,
-            "--event-date",
-            args.event_date,
-            "--replay-lock",
-            args.replay_lock,
-            "--normalized-dir",
-            normalized_dir or str(Path(args.fetch_dir) / "normalized"),
-            "--out-dir",
-            args.draft_dir,
-        ],
-        redaction_values=redaction_values,
-    )
+    draft_args = [
+        "real-case-draft",
+        "--ticker",
+        args.ticker,
+        "--company-name",
+        args.company_name,
+        "--event-type",
+        args.event_type,
+        "--event-date",
+        args.event_date,
+        "--replay-lock",
+        args.replay_lock,
+        "--normalized-dir",
+        normalized_dir or str(Path(args.fetch_dir) / "normalized"),
+        "--out-dir",
+        args.draft_dir,
+    ]
+    if args.market_bars:
+        draft_args.extend(["--market-bars", args.market_bars])
+    draft = _run_cli(draft_args, redaction_values=redaction_values)
     stages["draft"] = draft
     if draft["returncode"] != 0:
         return _final(False, "draft_failed", stages, "Inspect normalized source candidates, then rerun drafting.")

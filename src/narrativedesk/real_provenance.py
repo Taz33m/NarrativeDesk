@@ -4,6 +4,7 @@ import csv
 import html
 import json
 import re
+import shutil
 import time
 from copy import deepcopy
 from dataclasses import asdict, dataclass
@@ -421,6 +422,7 @@ def draft_real_case(
     normalized_dir: str | Path,
     out_dir: str | Path,
     case_id: str | None = None,
+    market_bars_path: str | Path | None = None,
 ) -> dict[str, Any]:
     normalized_path = Path(normalized_dir)
     output_dir = Path(out_dir)
@@ -435,12 +437,17 @@ def draft_real_case(
     eligible_count = len([candidate for candidate in usable_candidates if candidate.replay_status == "eligible"])
     blocked_count = len([candidate for candidate in usable_candidates if candidate.replay_status == "blocked_future"])
 
-    market_bars = normalized_path / "market_bars.csv"
+    market_bars = _draft_market_bars_path(
+        normalized_path=normalized_path,
+        output_dir=output_dir,
+        market_bars_path=market_bars_path,
+    )
+    market_bars_available = _has_market_rows(market_bars, ticker=normalized_ticker, replay_lock=lock)
     missing_requirements = []
     if eligible_count == 0:
         missing_requirements.append("At least one replay-eligible source candidate")
-    if not _has_market_rows(market_bars):
-        missing_requirements.append("Frozen market_bars.csv with at least one data row")
+    if not market_bars_available:
+        missing_requirements.append("Frozen market_bars.csv with at least one replay-eligible ticker row")
 
     config = {
         "case_metadata": {
@@ -461,7 +468,6 @@ def draft_real_case(
         "manual_sources": [candidate.to_manual_source() for candidate in usable_candidates],
         "narratives": [],
     }
-    market_bars_available = _has_market_rows(market_bars)
     if market_bars_available:
         config["market_data"] = {
             "provider": "local_csv",
@@ -1531,11 +1537,55 @@ def _sec_document_artifacts(manifest: dict[str, Any]) -> dict[str, dict[str, Any
     return artifacts
 
 
-def _has_market_rows(path: Path) -> bool:
+def _has_market_rows(path: Path, *, ticker: str | None = None, replay_lock: datetime | None = None) -> bool:
     if not path.exists():
         return False
     with path.open(newline="") as handle:
-        return sum(1 for _row in csv.DictReader(handle)) > 0
+        for row in csv.DictReader(handle):
+            if ticker and str(row.get("ticker", "")).upper() != ticker.upper():
+                continue
+            if replay_lock is not None and not _market_row_before_lock(row, replay_lock):
+                continue
+            try:
+                float(row.get("open", ""))
+                float(row.get("close", ""))
+            except (TypeError, ValueError):
+                continue
+            return True
+    return False
+
+
+def _market_row_before_lock(row: dict[str, Any], replay_lock: datetime) -> bool:
+    raw_date = str(row.get("date", "")).strip()
+    if not raw_date:
+        return False
+    try:
+        if re.match(r"^\d{4}-\d{2}-\d{2}$", raw_date):
+            return datetime.fromisoformat(raw_date).date() <= replay_lock.date()
+        timestamp = parse_datetime(raw_date)
+    except ValueError:
+        return False
+    if timestamp.tzinfo is None:
+        return timestamp <= replay_lock.replace(tzinfo=None)
+    return timestamp <= replay_lock.astimezone(timestamp.tzinfo)
+
+
+def _draft_market_bars_path(
+    *,
+    normalized_path: Path,
+    output_dir: Path,
+    market_bars_path: str | Path | None,
+) -> Path:
+    if market_bars_path is None:
+        return normalized_path / "market_bars.csv"
+
+    source = Path(market_bars_path)
+    if not source.exists():
+        raise RealProvenanceError(f"market_bars_path does not exist: {source}")
+    destination = output_dir / "market_bars.csv"
+    if source.resolve() != destination.resolve():
+        shutil.copyfile(source, destination)
+    return destination
 
 
 def _resolve_cik_from_ticker_map(data: Any, ticker: str) -> str | None:

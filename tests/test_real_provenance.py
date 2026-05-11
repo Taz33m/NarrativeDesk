@@ -369,6 +369,126 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertFalse(response["market_bars_available"])
         self.assertNotIn("market_data", config)
 
+    def test_draft_real_case_accepts_explicit_frozen_market_bars(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            normalized = root / "normalized"
+            normalized.mkdir()
+            (normalized / "market_bars.csv").write_text("date,ticker,open,close,volume\n")
+            (normalized / "source_candidates.json").write_text(
+                json.dumps(
+                    {
+                        "candidates": [
+                            {
+                                "source_id": "SEC-001",
+                                "provider": "sec",
+                                "publisher": "SEC EDGAR",
+                                "title": "Example Co 8-K filed 2025-01-02",
+                                "url": "https://www.sec.gov/example",
+                                "published_at": "2025-01-02T13:00:00Z",
+                                "retrieved_at": "2026-05-11T00:00:00Z",
+                                "source_type": "filing",
+                                "excerpt": "Example Co filed an 8-K.",
+                                "raw_artifact_path": "raw/sec/submissions.json",
+                                "content_hash": "sha256:14cdba325e2bc0b7cbb92a74aba5a268f8734599d27646cc556d0fe58182f5cd",
+                                "replay_status": "eligible",
+                                "rejection_reason": None,
+                            }
+                        ]
+                    }
+                )
+            )
+            (normalized / "rejected_candidates.json").write_text(json.dumps({"rejected_candidates": []}))
+            market_bars = root / "curated_market_bars.csv"
+            market_bars.write_text(
+                "\n".join(
+                    [
+                        "date,ticker,open,close,volume",
+                        "2025-01-02T10:00:00-05:00,EXMPL,100.0,94.0,2000",
+                    ]
+                )
+                + "\n"
+            )
+
+            draft_dir = root / "draft"
+            response = draft_real_case(
+                ticker="EXMPL",
+                company_name="Example Co",
+                event_type="earnings/guidance",
+                event_date="2025-01-02",
+                replay_lock="2025-01-02T10:00:00-05:00",
+                normalized_dir=normalized,
+                out_dir=draft_dir,
+                market_bars_path=market_bars,
+            )
+            config = json.loads((draft_dir / "real_case_config.json").read_text())
+            copied_bars = (draft_dir / "market_bars.csv").read_text()
+
+        self.assertTrue(response["ok"])
+        self.assertEqual(response["case_readiness"], "curator_ready")
+        self.assertTrue(response["market_bars_available"])
+        self.assertEqual(response["missing_requirements"], [])
+        self.assertEqual(config["market_data"]["path"], "market_bars.csv")
+        self.assertIn("2025-01-02T10:00:00-05:00,EXMPL,100.0,94.0,2000", copied_bars)
+
+    def test_draft_real_case_rejects_future_market_bar_override_for_readiness(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            normalized = root / "normalized"
+            normalized.mkdir()
+            (normalized / "market_bars.csv").write_text("date,ticker,open,close,volume\n")
+            (normalized / "source_candidates.json").write_text(
+                json.dumps(
+                    {
+                        "candidates": [
+                            {
+                                "source_id": "SEC-001",
+                                "provider": "sec",
+                                "publisher": "SEC EDGAR",
+                                "title": "Example Co 8-K filed 2025-01-02",
+                                "url": "https://www.sec.gov/example",
+                                "published_at": "2025-01-02T13:00:00Z",
+                                "retrieved_at": "2026-05-11T00:00:00Z",
+                                "source_type": "filing",
+                                "excerpt": "Example Co filed an 8-K.",
+                                "raw_artifact_path": "raw/sec/submissions.json",
+                                "content_hash": "sha256:14cdba325e2bc0b7cbb92a74aba5a268f8734599d27646cc556d0fe58182f5cd",
+                                "replay_status": "eligible",
+                                "rejection_reason": None,
+                            }
+                        ]
+                    }
+                )
+            )
+            (normalized / "rejected_candidates.json").write_text(json.dumps({"rejected_candidates": []}))
+            market_bars = root / "future_market_bars.csv"
+            market_bars.write_text(
+                "\n".join(
+                    [
+                        "date,ticker,open,close,volume",
+                        "2025-01-03T10:00:00-05:00,EXMPL,100.0,94.0,2000",
+                    ]
+                )
+                + "\n"
+            )
+
+            draft_dir = root / "draft"
+            response = draft_real_case(
+                ticker="EXMPL",
+                company_name="Example Co",
+                event_type="earnings/guidance",
+                event_date="2025-01-02",
+                replay_lock="2025-01-02T10:00:00-05:00",
+                normalized_dir=normalized,
+                out_dir=draft_dir,
+                market_bars_path=market_bars,
+            )
+            config = json.loads((draft_dir / "real_case_config.json").read_text())
+
+        self.assertEqual(response["case_readiness"], "needs_sources")
+        self.assertFalse(response["market_bars_available"])
+        self.assertNotIn("market_data", config)
+
     def test_rehearse_real_case_runs_fetch_normalize_draft_and_worksheet(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
@@ -1039,6 +1159,7 @@ class RealProvenanceTests(unittest.TestCase):
                 no_sec_document_text=False,
                 preflight_only=False,
                 build_bundle=False,
+                market_bars=None,
             )
             calls = []
 
@@ -1129,6 +1250,7 @@ class RealProvenanceTests(unittest.TestCase):
                 no_sec_document_text=False,
                 preflight_only=False,
                 build_bundle=False,
+                market_bars=None,
             )
             with patch.object(runner, "_run_cli", side_effect=fake_run_cli):
                 response = runner.run_rehearsal(args)
@@ -1202,6 +1324,7 @@ class RealProvenanceTests(unittest.TestCase):
                 no_sec_document_text=False,
                 preflight_only=False,
                 build_bundle=False,
+                market_bars=None,
             )
             with patch.object(runner, "_run_cli", side_effect=fake_run_cli):
                 response = runner.run_rehearsal(args)
@@ -1219,6 +1342,71 @@ class RealProvenanceTests(unittest.TestCase):
             ],
         )
         self.assertNotIn("real-case-curated-bundle", [call[0] for call in calls])
+
+    def test_aapl_rehearsal_runner_repairs_needs_sources_with_market_bars(self):
+        runner = _load_aapl_rehearsal_runner()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            draft_dir = root / "draft"
+            draft_dir.mkdir()
+            calls = []
+
+            def fake_run_cli(command, **_kwargs):
+                calls.append(command)
+                if command[0] == "real-case-preflight":
+                    return {
+                        "returncode": 1,
+                        "command": command,
+                        "json": {
+                            "ok": False,
+                            "status": "needs_sources",
+                            "next_action": "Fetch or curate additional timestamped sources before narrative curation.",
+                        },
+                    }
+                if command[0] == "real-case-draft":
+                    return {"returncode": 0, "command": command, "json": {"ok": True}}
+                if command[0] == "real-case-worksheet":
+                    return {"returncode": 0, "command": command, "json": {"ok": True}}
+                if command[0] == "real-case-curation-template":
+                    (draft_dir / "curated_narratives.template.json").write_text("{}\n")
+                    return {"returncode": 0, "command": command, "json": {"ok": True}}
+                if command[0] == "real-case-status":
+                    return {
+                        "returncode": 0,
+                        "command": command,
+                        "json": {"ok": True, "status": "ready_to_bundle"},
+                    }
+                raise AssertionError(f"Unexpected command: {command}")
+
+            args = SimpleNamespace(
+                ticker="AAPL",
+                company_name="Apple Inc.",
+                event_type="earnings/guidance",
+                event_date="2024-05-02",
+                replay_lock="2024-05-03T10:00:00-04:00",
+                date_from="2024-05-01",
+                date_to="2024-05-20",
+                providers="finnhub,sec",
+                env_file=str(root / ".env.local"),
+                fetch_dir=str(root / "fetch"),
+                draft_dir=str(draft_dir),
+                bundle_dir=str(root / "bundle"),
+                narratives=None,
+                sec_count=5,
+                forms="8-K,10-Q,10-K",
+                no_sec_document_text=False,
+                preflight_only=False,
+                build_bundle=False,
+                market_bars=str(root / "market_bars.csv"),
+            )
+            with patch.object(runner, "_run_cli", side_effect=fake_run_cli):
+                response = runner.run_rehearsal(args)
+
+        self.assertFalse(response["ok"])
+        self.assertEqual(response["status"], "needs_curation")
+        draft_call = next(call for call in calls if call[0] == "real-case-draft")
+        self.assertIn("--market-bars", draft_call)
+        self.assertIn(str(root / "market_bars.csv"), draft_call)
 
     def test_aapl_rehearsal_runner_redacts_sensitive_child_output(self):
         runner = _load_aapl_rehearsal_runner()
