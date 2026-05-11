@@ -631,6 +631,21 @@ class RealProvenanceTests(unittest.TestCase):
             )
             bundle_dir = root / "bundle"
 
+            status_before = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-case-status",
+                    "--draft-dir",
+                    str(draft_dir),
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
             result = subprocess.run(
                 [
                     sys.executable,
@@ -654,7 +669,28 @@ class RealProvenanceTests(unittest.TestCase):
                 text=True,
                 check=False,
             )
+            status_after = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-case-status",
+                    "--draft-dir",
+                    str(draft_dir),
+                    "--narratives",
+                    str(narratives_path),
+                    "--bundle-dir",
+                    str(bundle_dir),
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            status_before_response = json.loads(status_before.stdout)
             response = json.loads(result.stdout)
+            status_after_response = json.loads(status_after.stdout)
             verification = json.loads((bundle_dir / "bundle_verify.json").read_text())
             source_pack = json.loads((bundle_dir / "source_pack.json").read_text())
             report_exists = (bundle_dir / "report.md").exists()
@@ -664,6 +700,11 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertTrue(response["ok"])
         self.assertTrue(response["bundle_verify"]["ok"])
+        self.assertEqual(status_before.returncode, 0, status_before.stderr + status_before.stdout)
+        self.assertEqual(status_before_response["status"], "ready_to_bundle")
+        self.assertEqual(status_after.returncode, 0, status_after.stderr + status_after.stdout)
+        self.assertEqual(status_after_response["status"], "bundle_verified")
+        self.assertTrue(status_after_response["bundle"]["ok"])
         self.assertTrue(verification["ok"])
         self.assertEqual(source_pack["narratives"][0]["narrative_id"], "NARR-REAL-001")
         self.assertTrue(report_exists)

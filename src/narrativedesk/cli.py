@@ -30,6 +30,7 @@ from narrativedesk.real_provenance import (
     fetch_real_data,
     normalize_real_data_fetch,
     rehearse_real_case,
+    validate_curated_narratives,
     write_curated_narratives_template,
     write_real_case_worksheet,
 )
@@ -342,6 +343,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional ISO timestamp to stamp generated provider-derived source-pack records.",
     )
     real_curated_bundle.add_argument("--label", help="Human-readable case label for the local case index.")
+
+    real_status = sub.add_parser(
+        "real-case-status",
+        help="Inspect a scratch real-case draft, curation file, and optional bundle verification state.",
+    )
+    real_status.add_argument("--draft-dir", required=True, help="Directory containing real_case_config.json.")
+    real_status.add_argument(
+        "--narratives",
+        help="Optional curated narratives JSON. Defaults to curated_narratives.json or curated_narratives.template.json when present.",
+    )
+    real_status.add_argument("--bundle-dir", help="Optional replay bundle directory to verify.")
 
     ingest = sub.add_parser("source-pack-ingest", help="Convert a source pack into a replay fixture.")
     ingest.add_argument("path", help="Path to source pack JSON.")
@@ -870,6 +882,183 @@ def run_real_case_curated_bundle(args: argparse.Namespace) -> int:
     return status
 
 
+def run_real_case_status(args: argparse.Namespace) -> int:
+    response = _real_case_status(
+        Path(args.draft_dir),
+        narratives_path=Path(args.narratives) if args.narratives else None,
+        bundle_dir=Path(args.bundle_dir) if args.bundle_dir else None,
+    )
+    print(json.dumps(response, indent=2, sort_keys=True))
+    return 0 if response["ok"] else 1
+
+
+def _real_case_status(
+    draft_dir: Path,
+    *,
+    narratives_path: Path | None,
+    bundle_dir: Path | None,
+) -> dict[str, Any]:
+    response: dict[str, Any] = {
+        "ok": False,
+        "status": "missing_draft",
+        "draft_dir": str(draft_dir),
+        "next_action": "Run real-case-rehearse to create a scratch draft.",
+    }
+    if not draft_dir.exists() or not draft_dir.is_dir():
+        return response
+
+    config_path = draft_dir / "real_case_config.json"
+    summary_path = draft_dir / "draft_summary.json"
+    if not config_path.exists():
+        response.update(
+            {
+                "status": "invalid_draft",
+                "errors": [f"real_case_config.json not found: {config_path}"],
+                "next_action": "Regenerate the draft with real-case-draft or real-case-rehearse.",
+            }
+        )
+        return response
+
+    try:
+        config = json.loads(config_path.read_text())
+        summary = json.loads(summary_path.read_text()) if summary_path.exists() else {}
+    except (OSError, json.JSONDecodeError) as exc:
+        response.update(
+            {
+                "status": "invalid_draft",
+                "errors": [str(exc)],
+                "next_action": "Regenerate the draft; one of its JSON artifacts is invalid.",
+            }
+        )
+        return response
+
+    sources = config.get("manual_sources", [])
+    if not isinstance(sources, list):
+        sources = []
+    allowed = [source for source in sources if isinstance(source, dict) and source.get("availability_status") == "allowed"]
+    blocked = [
+        source
+        for source in sources
+        if isinstance(source, dict) and source.get("availability_status") == "blocked_future"
+    ]
+    response.update(
+        {
+            "status": "needs_sources",
+            "draft": {
+                "config": str(config_path),
+                "summary": str(summary_path) if summary_path.exists() else None,
+                "case_id": (config.get("case_metadata") or {}).get("case_id") if isinstance(config, dict) else None,
+                "ticker": (config.get("case_metadata") or {}).get("ticker") if isinstance(config, dict) else None,
+                "case_readiness": summary.get("case_readiness"),
+                "accepted_sources": summary.get("accepted_sources", len(allowed)),
+                "blocked_future_sources": summary.get("blocked_future_sources", len(blocked)),
+                "rejected_sources": summary.get("rejected_sources"),
+                "market_bars_available": summary.get("market_bars_available"),
+                "filings_available": summary.get("filings_available"),
+                "news_available": summary.get("news_available"),
+                "missing_requirements": summary.get("missing_requirements", []),
+            },
+            "next_action": summary.get("recommended_next_action")
+            or "Fetch or curate additional timestamped sources before narrative curation.",
+        }
+    )
+    if summary.get("case_readiness") != "curator_ready":
+        return response
+
+    detected_narratives = narratives_path or _default_narratives_path(draft_dir)
+    if detected_narratives is None:
+        response.update(
+            {
+                "status": "needs_curation",
+                "next_action": "Run real-case-curation-template, then replace TBD values and source links.",
+            }
+        )
+        return response
+
+    response["curation"] = {"narratives": str(detected_narratives), "exists": detected_narratives.exists()}
+    if not detected_narratives.exists():
+        response.update(
+            {
+                "status": "needs_curation",
+                "next_action": f"Create or fix the curated narratives file: {detected_narratives}",
+            }
+        )
+        return response
+
+    try:
+        curation = validate_curated_narratives(draft_dir, detected_narratives)
+    except (OSError, json.JSONDecodeError, RealProvenanceError) as exc:
+        response.update(
+            {
+                "status": "needs_curation",
+                "curation": {
+                    "narratives": str(detected_narratives),
+                    "exists": True,
+                    "ok": False,
+                    "errors": [str(exc)],
+                },
+                "next_action": "Edit the curated narratives file until all placeholders and source-link errors are fixed.",
+            }
+        )
+        return response
+
+    response.update(
+        {
+            "ok": True,
+            "status": "ready_to_bundle",
+            "curation": curation,
+            "next_action": "Run real-case-curated-bundle to write and verify the replay bundle.",
+        }
+    )
+
+    if bundle_dir is not None:
+        if not bundle_dir.exists():
+            response.update(
+                {
+                    "ok": False,
+                    "status": "missing_bundle",
+                    "bundle": {"bundle_dir": str(bundle_dir), "exists": False},
+                    "next_action": "Run real-case-curated-bundle with this bundle directory.",
+                }
+            )
+            return response
+        verification = verify_replay_bundle(bundle_dir)
+        response["bundle"] = {
+            "bundle_dir": str(bundle_dir),
+            "exists": True,
+            "ok": verification.get("ok"),
+            "artifact_count": verification.get("artifact_count"),
+            "errors": verification.get("errors", []),
+        }
+        if verification.get("ok"):
+            response.update(
+                {
+                    "ok": True,
+                    "status": "bundle_verified",
+                    "next_action": "Review the bundle report and decide whether this private case is demo-worthy.",
+                }
+            )
+        else:
+            response.update(
+                {
+                    "ok": False,
+                    "status": "bundle_failed",
+                    "next_action": "Inspect bundle errors, then rebuild with real-case-curated-bundle.",
+                }
+            )
+    return response
+
+
+def _default_narratives_path(draft_dir: Path) -> Path | None:
+    curated_path = draft_dir / "curated_narratives.json"
+    if curated_path.exists():
+        return curated_path
+    template_path = draft_dir / "curated_narratives.template.json"
+    if template_path.exists():
+        return template_path
+    return None
+
+
 def run_source_pack_ingest(args: argparse.Namespace) -> int:
     payload = load_source_pack(args.path)
     errors = validate_source_pack(payload, require_narratives=True)
@@ -1090,6 +1279,8 @@ def main() -> int:
         return run_real_case_curation_template(args)
     if args.command == "real-case-curated-bundle":
         return run_real_case_curated_bundle(args)
+    if args.command == "real-case-status":
+        return run_real_case_status(args)
     if args.command == "source-pack-ingest":
         return run_source_pack_ingest(args)
     if args.command == "validation-validate":
