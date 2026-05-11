@@ -975,8 +975,43 @@ class RealProvenanceTests(unittest.TestCase):
             response["stages"]["preflight"]["json"]["env"]["missing_env"],
             ["FINNHUB_API_KEY", "SEC_USER_AGENT"],
         )
+        self.assertEqual(response["stages"]["preflight"]["json"]["env"]["empty_env"], [])
         self.assertFalse((root / "fetch").exists())
         self.assertFalse((root / "draft").exists())
+
+    def test_aapl_rehearsal_runner_preflight_reports_empty_env_entries(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            env_file = root / ".env.local"
+            env_file.write_text("FINNHUB_API_KEY=\nSEC_USER_AGENT=''\n")
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "scripts/run_aapl_rehearsal.py",
+                    "--preflight-only",
+                    "--env-file",
+                    str(env_file),
+                    "--fetch-dir",
+                    str(root / "fetch"),
+                    "--draft-dir",
+                    str(root / "draft"),
+                    "--bundle-dir",
+                    str(root / "bundle"),
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            response = json.loads(result.stdout)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertFalse(response["ok"])
+        env_state = response["stages"]["preflight"]["json"]["env"]
+        self.assertEqual(env_state["missing_env"], [])
+        self.assertEqual(env_state["empty_env"], ["FINNHUB_API_KEY", "SEC_USER_AGENT"])
+        self.assertNotIn("''", result.stdout)
 
     def test_aapl_rehearsal_runner_resumes_from_curated_draft_to_bundle(self):
         runner = _load_aapl_rehearsal_runner()
@@ -1184,6 +1219,7 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(response["status"], "missing_env")
         self.assertEqual(response["env"]["present_env"], ["FINNHUB_API_KEY"])
         self.assertEqual(response["env"]["missing_env"], ["SEC_USER_AGENT"])
+        self.assertEqual(response["env"]["empty_env"], [])
         self.assertIn("aapl-2024-05-02-rehearsal", response["paths"]["draft_dir"])
         self.assertNotIn("secret-token", result.stdout)
 
@@ -1214,7 +1250,37 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertFalse(response["ok"])
         self.assertEqual(response["present_env"], ["FINNHUB_API_KEY"])
         self.assertEqual(response["missing_env"], ["SEC_USER_AGENT", "NEWS_API_KEY"])
+        self.assertEqual(response["empty_env"], [])
         self.assertNotIn("secret-token", result.stdout)
+
+    def test_cli_real_data_env_check_reports_empty_env_file_entries(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env_file = Path(tmpdir) / ".env.local"
+            env_file.write_text("FINNHUB_API_KEY=\nSEC_USER_AGENT=''\n")
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-data-env-check",
+                    "--providers",
+                    "finnhub,sec",
+                    "--env-file",
+                    str(env_file),
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            response = json.loads(result.stdout)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertFalse(response["ok"])
+        self.assertEqual(response["present_env"], [])
+        self.assertEqual(response["missing_env"], [])
+        self.assertEqual(response["empty_env"], ["FINNHUB_API_KEY", "SEC_USER_AGENT"])
 
     def test_cli_real_data_env_check_reads_env_file_without_sourcing_shell(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -1255,6 +1321,7 @@ class RealProvenanceTests(unittest.TestCase):
             ["FINNHUB_API_KEY", "SEC_USER_AGENT", "NEWS_API_KEY"],
         )
         self.assertEqual(response["missing_env"], [])
+        self.assertEqual(response["empty_env"], [])
         self.assertNotIn("file-secret-token", result.stdout)
         self.assertNotIn("contact@example.com", result.stdout)
         self.assertNotIn("news-secret-token", result.stdout)
