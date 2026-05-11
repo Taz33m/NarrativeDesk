@@ -161,6 +161,31 @@ def build_parser() -> argparse.ArgumentParser:
     real_fetch.add_argument("--news-query", help="Optional NewsAPI query override.")
     real_fetch.add_argument("--news-domains", help="Optional comma-separated NewsAPI domain filter.")
 
+    real_env = sub.add_parser(
+        "real-data-env-check",
+        help="Check whether live-provider rehearsal environment variables are present without printing values.",
+    )
+    real_env.add_argument(
+        "--providers",
+        default="finnhub,sec",
+        help="Comma-separated provider list: finnhub,sec,newsapi.",
+    )
+    real_env.add_argument(
+        "--finnhub-token-env",
+        default="FINNHUB_API_KEY",
+        help="Environment variable containing the Finnhub API token.",
+    )
+    real_env.add_argument(
+        "--sec-user-agent-env",
+        default="SEC_USER_AGENT",
+        help="Environment variable containing the SEC EDGAR User-Agent header.",
+    )
+    real_env.add_argument(
+        "--news-api-key-env",
+        default="NEWS_API_KEY",
+        help="Environment variable containing the NewsAPI token.",
+    )
+
     real_normalize = sub.add_parser(
         "real-data-normalize",
         help="Normalize a frozen live-fetch directory into source candidates.",
@@ -491,6 +516,30 @@ def run_real_data_fetch(args: argparse.Namespace) -> int:
     return 0 if manifest["ok"] else 1
 
 
+def run_real_data_env_check(args: argparse.Namespace) -> int:
+    required_env: list[str] = []
+    providers = [provider.lower() for provider in _split_csv_arg(args.providers)]
+    if "finnhub" in providers:
+        required_env.append(args.finnhub_token_env)
+    if "sec" in providers:
+        required_env.append(args.sec_user_agent_env)
+    if "newsapi" in providers:
+        required_env.append(args.news_api_key_env)
+
+    deduped_required_env = list(dict.fromkeys(required_env))
+    missing_env = [name for name in deduped_required_env if not os.environ.get(name)]
+    present_env = [name for name in deduped_required_env if os.environ.get(name)]
+    response = {
+        "ok": not missing_env,
+        "providers": providers,
+        "required_env": deduped_required_env,
+        "present_env": present_env,
+        "missing_env": missing_env,
+    }
+    print(json.dumps(response, indent=2, sort_keys=True))
+    return 0 if response["ok"] else 1
+
+
 def run_real_data_normalize(args: argparse.Namespace) -> int:
     try:
         summary = normalize_real_data_fetch(
@@ -728,6 +777,8 @@ def main() -> int:
         return run_real_pack_check(args)
     if args.command == "real-data-fetch":
         return run_real_data_fetch(args)
+    if args.command == "real-data-env-check":
+        return run_real_data_env_check(args)
     if args.command == "real-data-normalize":
         return run_real_data_normalize(args)
     if args.command == "real-case-draft":
