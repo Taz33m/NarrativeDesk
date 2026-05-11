@@ -28,6 +28,7 @@ REQUIRED_SOURCE_FIELDS = {
 ALLOWED_AVAILABILITY_STATUSES = {"allowed", "blocked_future", "unavailable", "placeholder"}
 ALLOWED_DIRECTIONS = {"bullish", "bearish", "neutral", "mixed"}
 HASH_PATTERN = re.compile(r"^sha256:[0-9a-f]{64}$")
+DEMO_READY_VALIDATION_LABELS = {"validated", "invalidated"}
 SOURCE_HASH_TEXT_FIELDS = ("document_text", "raw_text", "claim_extracted")
 REQUIRED_NARRATIVE_FIELDS = {
     "narrative_id",
@@ -319,10 +320,15 @@ def assess_real_case_quality(
     min_allowed_sources: int = 5,
     min_blocked_future_sources: int = 1,
     min_contradictions: int = 1,
+    require_demo_ready: bool = False,
+    min_linked_allowed_sources: int = 5,
+    min_source_types: int = 2,
+    min_publishers: int = 2,
+    min_validation_outcomes: int = 1,
     bundle_verification: dict[str, Any] | None = None,
     validation_fixture: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Assess whether a real-curated case clears the product proof threshold."""
+    """Assess whether a real-curated case clears private or public proof thresholds."""
     readiness = assess_source_pack_readiness(payload)
     meta = payload.get("case_metadata", {}) if isinstance(payload, dict) else {}
     if not isinstance(meta, dict):
@@ -345,6 +351,14 @@ def assess_real_case_quality(
         for source in allowed_sources
         if source.get("contradicted_narrative_ids")
     }
+    linked_allowed_sources = [
+        source
+        for source in allowed_sources
+        if source.get("supported_narrative_ids") or source.get("contradicted_narrative_ids")
+    ]
+    linked_allowed_ids = {str(source.get("source_id")) for source in linked_allowed_sources}
+    linked_source_types = _distinct_nonempty(source.get("source_type") for source in linked_allowed_sources)
+    linked_publishers = _distinct_nonempty(source.get("publisher") for source in linked_allowed_sources)
     supported_by_narrative: dict[str, list[str]] = {}
     for narrative in narratives:
         narrative_id = str(narrative.get("narrative_id", "unknown"))
@@ -362,6 +376,8 @@ def assess_real_case_quality(
     if validation_fixture is None:
         validation_future_source_count = len(blocked_future_sources)
         validation_future_source_ids = [str(source.get("source_id")) for source in blocked_future_sources]
+    validation_outcome_rows = _validation_outcome_rows(validation_fixture)
+    demo_market_context = _demo_market_context_check(payload, meta)
 
     checks: dict[str, dict[str, Any]] = {
         "source_pack_ready": {
@@ -419,6 +435,37 @@ def assess_real_case_quality(
             "source_ids": sorted(validation_future_source_ids),
         },
     }
+    if require_demo_ready:
+        checks.update(
+            {
+                "demo_market_context": demo_market_context,
+                "linked_replay_time_sources": {
+                    "ok": len(linked_allowed_sources) >= min_linked_allowed_sources,
+                    "actual": len(linked_allowed_sources),
+                    "minimum": min_linked_allowed_sources,
+                    "source_ids": sorted(linked_allowed_ids),
+                },
+                "source_type_diversity": {
+                    "ok": len(linked_source_types) >= min_source_types,
+                    "actual": len(linked_source_types),
+                    "minimum": min_source_types,
+                    "source_types": linked_source_types,
+                },
+                "publisher_diversity": {
+                    "ok": len(linked_publishers) >= min_publishers,
+                    "actual": len(linked_publishers),
+                    "minimum": min_publishers,
+                    "publishers": linked_publishers,
+                },
+                "validation_outcomes": {
+                    "ok": len(validation_outcome_rows) >= min_validation_outcomes,
+                    "actual": len(validation_outcome_rows),
+                    "minimum": min_validation_outcomes,
+                    "accepted_labels": sorted(DEMO_READY_VALIDATION_LABELS),
+                    "rows": validation_outcome_rows,
+                },
+            }
+        )
     if bundle_verification is not None:
         checks["bundle_verified"] = {
             "ok": bool(bundle_verification.get("ok")),
@@ -427,17 +474,27 @@ def assess_real_case_quality(
         }
 
     ok = all(check["ok"] for check in checks.values())
+    status = "quality_ready"
+    if require_demo_ready:
+        status = "demo_ready"
+    if not ok:
+        status = "needs_curation"
     metrics = {
         "narrative_count": len(narratives),
         "allowed_source_count": len(allowed_sources),
         "blocked_future_source_count": len(blocked_future_sources),
         "allowed_support_source_count": len(allowed_supported_ids),
         "allowed_contradiction_source_count": len(allowed_contradiction_ids),
+        "linked_allowed_source_count": len(linked_allowed_sources),
+        "linked_source_type_count": len(linked_source_types),
+        "linked_publisher_count": len(linked_publishers),
         "validation_future_source_count": validation_future_source_count,
+        "validation_outcome_count": len(validation_outcome_rows),
     }
     return {
         "ok": ok,
-        "status": "quality_ready" if ok else "needs_curation",
+        "status": status,
+        "gate": "demo" if require_demo_ready else "quality",
         "case_id": meta.get("case_id"),
         "ticker": meta.get("ticker"),
         "checks": checks,
@@ -468,6 +525,81 @@ def _validation_future_source_ids(validation_fixture: dict[str, Any] | None) -> 
     return []
 
 
+def _validation_outcome_rows(validation_fixture: dict[str, Any] | None) -> list[dict[str, str]]:
+    if not isinstance(validation_fixture, dict):
+        return []
+    rows = validation_fixture.get("rows", [])
+    if not isinstance(rows, list):
+        return []
+    outcome_rows = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        label = str(row.get("label", ""))
+        if label not in DEMO_READY_VALIDATION_LABELS:
+            continue
+        outcome_rows.append(
+            {
+                "window": str(row.get("window", "")),
+                "label": label,
+                "narrative_id": str(row.get("narrative_id", "")),
+            }
+        )
+    return outcome_rows
+
+
+def _demo_market_context_check(payload: dict[str, Any], meta: dict[str, Any]) -> dict[str, Any]:
+    snapshot = payload.get("market_snapshot") if isinstance(payload, dict) else None
+    errors: list[str] = []
+    metrics: dict[str, float | None] = {}
+    if not isinstance(snapshot, dict):
+        return {
+            "ok": False,
+            "errors": ["market_snapshot is required"],
+            "event_bar_present": False,
+            "peer_bar_count": 0,
+            "metrics": metrics,
+        }
+
+    event_bar = snapshot.get("event_bar")
+    peer_bars = snapshot.get("peer_bars", [])
+    peer_bar_count = len(peer_bars) if isinstance(peer_bars, list) else 0
+    if not isinstance(event_bar, dict):
+        errors.append("event_bar is required")
+    if peer_bar_count == 0:
+        errors.append("peer_bars are required so abnormal return is measurable")
+    try:
+        metrics = compute_event_market_metrics(snapshot, replay_timestamp=meta.get("event_timestamp"))
+    except (KeyError, TypeError, ValueError) as exc:
+        errors.append(f"market metrics are not computable: {exc}")
+    else:
+        if metrics.get("daily_return") is None:
+            errors.append("daily_return is not computable")
+        if metrics.get("peer_median_return") is None:
+            errors.append("peer_median_return is not computable")
+        if metrics.get("abnormal_return") is None:
+            errors.append("abnormal_return is not computable")
+
+    return {
+        "ok": not errors,
+        "errors": errors,
+        "event_bar_present": isinstance(event_bar, dict),
+        "peer_bar_count": peer_bar_count,
+        "sector_bar_present": isinstance(snapshot.get("sector_bar"), dict),
+        "metrics": metrics,
+    }
+
+
+def _distinct_nonempty(values: Any) -> list[str]:
+    return sorted(
+        {
+            str(value).strip()
+            for value in values
+            if str(value or "").strip() and str(value).strip().lower() != "unknown"
+        }
+    )
+
+
 def _quality_next_action(checks: dict[str, dict[str, Any]]) -> str:
     if checks.get("bundle_verified", {}).get("ok") is False:
         return "Rebuild or inspect the replay bundle until bundle verification passes."
@@ -491,6 +623,16 @@ def _quality_next_action(checks: dict[str, dict[str, Any]]) -> str:
         return "Use real-curated provenance mode before treating this as a real replay candidate."
     if checks["case_identity"]["ok"] is False:
         return "Add case ID, ticker, and replay timestamp metadata."
+    if checks.get("demo_market_context", {}).get("ok") is False:
+        return "Add peer market bars so daily, peer median, and abnormal returns are measurable."
+    if checks.get("linked_replay_time_sources", {}).get("ok") is False:
+        return "Link more replay-time sources directly to narrative claims before public demo use."
+    if checks.get("source_type_diversity", {}).get("ok") is False:
+        return "Add independently sourced replay-time evidence beyond a single source type."
+    if checks.get("publisher_diversity", {}).get("ok") is False:
+        return "Add replay-time evidence from more than one publisher before public demo use."
+    if checks.get("validation_outcomes", {}).get("ok") is False:
+        return "Add at least one held-out validation outcome before treating this as public demo-ready."
     return "Review the report and decide whether this private case is demo-worthy."
 
 
