@@ -39,6 +39,7 @@ TIMESTAMP_FIELDS = ("published_at", "publishedAt", "timestamp", "datetime", "as_
 URL_FIELDS = ("url", "source_url", "sourceUrl", "href", "filing_url", "filingUrl")
 PUBLISHER_FIELDS = ("publisher", "source", "provider", "authority")
 CLAIM_FIELDS = ("claim_extracted", "claim", "summary", "headline", "title", "text")
+MISSING_FIELD_KEYS = ("timestamp", "url", "publisher", "claim", "timezone_timestamp")
 
 
 @dataclass(frozen=True)
@@ -58,6 +59,7 @@ def inspect_prior_art_repos(
     map_payload: dict[str, Any] = {
         "schema_version": 1,
         "target_repos": sorted(PRIOR_ART_TARGETS),
+        "missing_field_counts": _empty_missing_counts(),
         "repos": [],
     }
     manual_sources: list[dict[str, Any]] = []
@@ -75,6 +77,7 @@ def inspect_prior_art_repos(
             repo_entry["targets"].append(target_entry)
             manual_sources.extend(sources)
             skipped_record_count += skipped
+            _add_counts(map_payload["missing_field_counts"], target_entry["missing_field_counts"])
         map_payload["repos"].append(repo_entry)
 
     manual_sources_payload = {
@@ -108,6 +111,9 @@ def _inspect_target(
                 "matched_files": [],
                 "candidate_record_count": 0,
                 "manual_source_count": 0,
+                "skipped_record_count": 0,
+                "missing_field_counts": _empty_missing_counts(),
+                "skipped_record_examples": [],
             },
             [],
             0,
@@ -117,15 +123,26 @@ def _inspect_target(
     manual_sources: list[dict[str, Any]] = []
     candidate_count = 0
     skipped_count = 0
+    missing_field_counts = _empty_missing_counts()
+    skipped_examples: list[dict[str, Any]] = []
     for path in existing:
         records = _candidate_records(path)
         candidate_count += len(records)
         for idx, record in enumerate(records):
-            source = _manual_source_from_record(repo, root, path, record, idx)
-            if source is None:
+            prepared, missing_fields = _prepare_record(record)
+            if missing_fields:
                 skipped_count += 1
+                _add_missing_fields(missing_field_counts, missing_fields)
+                if len(skipped_examples) < 5:
+                    skipped_examples.append(
+                        {
+                            "path": _relative_path(root, path),
+                            "record_index": idx,
+                            "missing_fields": missing_fields,
+                        }
+                    )
             else:
-                manual_sources.append(source)
+                manual_sources.append(_manual_source_from_record(repo, root, path, prepared, idx))
     return (
         {
             "path": target,
@@ -133,6 +150,9 @@ def _inspect_target(
             "matched_files": [_relative_path(root, path) for path in existing],
             "candidate_record_count": candidate_count,
             "manual_source_count": len(manual_sources),
+            "skipped_record_count": skipped_count,
+            "missing_field_counts": missing_field_counts,
+            "skipped_record_examples": skipped_examples,
         },
         manual_sources,
         skipped_count,
@@ -173,30 +193,20 @@ def _manual_source_from_record(
     repo: str,
     root: Path,
     path: Path,
-    record: dict[str, Any],
+    record: dict[str, str],
     index: int,
-) -> dict[str, Any] | None:
-    timestamp = _first_value(record, TIMESTAMP_FIELDS)
-    url = _first_value(record, URL_FIELDS)
-    publisher = _first_value(record, PUBLISHER_FIELDS)
-    claim = _first_value(record, CLAIM_FIELDS)
-    if not timestamp or not url or not publisher or not claim:
-        return None
-    published_at = _normalize_timestamp(timestamp)
-    if not published_at:
-        return None
-
+) -> dict[str, Any]:
     relative_path = _relative_path(root, path)
-    source_id = _source_id(repo, relative_path, index, claim)
-    title = str(record.get("title") or record.get("headline") or claim)[:120]
-    claim_text = str(claim).strip()
+    source_id = _source_id(repo, relative_path, index, record["claim"])
+    title = str(record.get("title") or record.get("headline") or record["claim"])[:120]
+    claim_text = record["claim"].strip()
     return {
         "source_id": source_id,
         "source_type": "prior_art_manual_source",
-        "publisher": str(publisher).strip(),
+        "publisher": record["publisher"].strip(),
         "title": title,
-        "url": str(url).strip(),
-        "published_at": published_at,
+        "url": record["url"].strip(),
+        "published_at": record["published_at"],
         "claim_extracted": claim_text,
         "document_text": claim_text,
         "content_hash": source_content_hash(claim_text),
@@ -209,6 +219,36 @@ def _manual_source_from_record(
         "prior_art_repo": repo,
         "prior_art_path": relative_path,
     }
+
+
+def _prepare_record(record: dict[str, Any]) -> tuple[dict[str, str], list[str]]:
+    timestamp = _first_value(record, TIMESTAMP_FIELDS)
+    url = _first_value(record, URL_FIELDS)
+    publisher = _first_value(record, PUBLISHER_FIELDS)
+    claim = _first_value(record, CLAIM_FIELDS)
+    missing_fields: list[str] = []
+    published_at = None
+    if not timestamp:
+        missing_fields.append("timestamp")
+    else:
+        published_at = _normalize_timestamp(timestamp)
+        if not published_at:
+            missing_fields.append("timezone_timestamp")
+    if not url:
+        missing_fields.append("url")
+    if not publisher:
+        missing_fields.append("publisher")
+    if not claim:
+        missing_fields.append("claim")
+    if missing_fields:
+        return {}, missing_fields
+    return {
+        "published_at": str(published_at),
+        "url": str(url),
+        "publisher": str(publisher),
+        "claim": str(claim),
+        "title": str(record.get("title") or record.get("headline") or claim),
+    }, []
 
 
 def _normalize_timestamp(value: Any) -> str | None:
@@ -235,6 +275,20 @@ def _source_id(repo: str, relative_path: str, index: int, claim: Any) -> str:
     digest = sha256(f"{repo}|{relative_path}|{index}|{claim}".encode("utf-8")).hexdigest()[:10]
     prefix = "".join(part[0] for part in repo.replace("-", "_").split("_") if part).upper()[:4]
     return f"PRIOR-{prefix}-{digest}"
+
+
+def _empty_missing_counts() -> dict[str, int]:
+    return {key: 0 for key in MISSING_FIELD_KEYS}
+
+
+def _add_missing_fields(counts: dict[str, int], missing_fields: list[str]) -> None:
+    for field in missing_fields:
+        counts[field] = counts.get(field, 0) + 1
+
+
+def _add_counts(left: dict[str, int], right: dict[str, int]) -> None:
+    for key in MISSING_FIELD_KEYS:
+        left[key] = left.get(key, 0) + int(right.get(key, 0))
 
 
 def _relative_path(root: Path, path: Path) -> str:

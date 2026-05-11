@@ -34,6 +34,7 @@ def main() -> int:
                 "ok": True,
                 "out_dir": str(Path(args.out_dir)),
                 "manual_source_count": inspection.manual_sources_payload["manual_source_count"],
+                "missing_field_counts": inspection.map_payload["missing_field_counts"],
                 "skipped_record_count": inspection.manual_sources_payload["skipped_record_count"],
             },
             indent=2,

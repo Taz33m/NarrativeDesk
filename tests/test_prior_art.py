@@ -57,7 +57,11 @@ class PriorArtInspectionTests(unittest.TestCase):
         self.assertEqual(manual_sources[0]["prior_art_path"], "test-logs/AAPL_research.json")
         self.assertEqual(matched["candidate_record_count"], 2)
         self.assertEqual(matched["manual_source_count"], 1)
+        self.assertEqual(matched["skipped_record_count"], 1)
+        self.assertEqual(matched["missing_field_counts"]["url"], 1)
+        self.assertEqual(matched["skipped_record_examples"][0]["missing_fields"], ["url"])
         self.assertEqual(inspection.manual_sources_payload["skipped_record_count"], 1)
+        self.assertEqual(inspection.map_payload["missing_field_counts"]["url"], 1)
 
     def test_csv_records_require_timezone_aware_timestamp(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -88,6 +92,7 @@ class PriorArtInspectionTests(unittest.TestCase):
 
         self.assertEqual(inspection.manual_sources_payload["manual_source_count"], 1)
         self.assertEqual(inspection.manual_sources_payload["skipped_record_count"], 1)
+        self.assertEqual(inspection.map_payload["missing_field_counts"]["timezone_timestamp"], 1)
 
     def test_script_writes_only_scratch_outputs(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -131,6 +136,7 @@ class PriorArtInspectionTests(unittest.TestCase):
             self.assertEqual(len(list(out_dir.iterdir())), 2)
             response = json.loads(result.stdout)
             self.assertEqual(response["manual_source_count"], 1)
+            self.assertIn("missing_field_counts", response)
 
 
 if __name__ == "__main__":
