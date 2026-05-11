@@ -1260,6 +1260,7 @@ def _real_case_status(
                 "blocked_future_sources": summary.get("blocked_future_sources", len(blocked)),
                 "rejected_sources": summary.get("rejected_sources"),
                 "market_bars_available": summary.get("market_bars_available"),
+                "market_bars_check": summary.get("market_bars_check"),
                 "filings_available": summary.get("filings_available"),
                 "news_available": summary.get("news_available"),
                 "missing_requirements": summary.get("missing_requirements", []),

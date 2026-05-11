@@ -442,7 +442,8 @@ def draft_real_case(
         output_dir=output_dir,
         market_bars_path=market_bars_path,
     )
-    market_bars_available = _has_market_rows(market_bars, ticker=normalized_ticker, replay_lock=lock)
+    market_bars_check = inspect_market_bars(market_bars, ticker=normalized_ticker, replay_lock=lock)
+    market_bars_available = bool(market_bars_check["ok"])
     missing_requirements = []
     if eligible_count == 0:
         missing_requirements.append("At least one replay-eligible source candidate")
@@ -513,6 +514,7 @@ def draft_real_case(
         "rejected_sources": len(rejected),
         "blocked_future_sources": blocked_count,
         "market_bars_available": market_bars_available,
+        "market_bars_check": market_bars_check,
         "filings_available": filings_available,
         "news_available": news_available,
         "case_readiness": case_readiness,
@@ -1608,24 +1610,6 @@ def _sec_document_artifacts(manifest: dict[str, Any]) -> dict[str, dict[str, Any
         if artifact.get("provider") == "sec" and artifact.get("endpoint") == "filing_document" and artifact.get("status") == "ok":
             artifacts[str(artifact.get("accession"))] = artifact
     return artifacts
-
-
-def _has_market_rows(path: Path, *, ticker: str | None = None, replay_lock: datetime | None = None) -> bool:
-    if not path.exists():
-        return False
-    with path.open(newline="") as handle:
-        for row in csv.DictReader(handle):
-            if ticker and str(row.get("ticker", "")).upper() != ticker.upper():
-                continue
-            if replay_lock is not None and not _market_row_before_lock(row, replay_lock):
-                continue
-            try:
-                float(row.get("open", ""))
-                float(row.get("close", ""))
-            except (TypeError, ValueError):
-                continue
-            return True
-    return False
 
 
 def _market_bar_row_summary(row: dict[str, Any], replay_lock: datetime) -> dict[str, Any] | None:
