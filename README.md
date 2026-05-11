@@ -146,6 +146,7 @@ To rehearse live-provider ingestion without committing real claims, fetch raw pr
 
 ```bash
 source .env.local
+PYTHONPATH=src python3 -m narrativedesk.cli real-data-env-check --providers finnhub,sec
 PYTHONPATH=src python3 -m narrativedesk.cli real-data-fetch \
   --ticker AAPL --company-name "Apple Inc." \
   --from 2024-05-01 --to 2024-05-20 \

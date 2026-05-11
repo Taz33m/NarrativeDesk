@@ -484,6 +484,35 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertTrue(draft_response["ok"])
         self.assertEqual(draft_response["case_readiness"], "curator_ready")
 
+    def test_cli_real_data_env_check_reports_names_without_values(self):
+        env = {
+            "PYTHONPATH": str(ROOT / "src"),
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "FINNHUB_API_KEY": "secret-token",
+        }
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "narrativedesk.cli",
+                "real-data-env-check",
+                "--providers",
+                "finnhub,sec,newsapi",
+            ],
+            cwd=ROOT,
+            env=env,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        response = json.loads(result.stdout)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertFalse(response["ok"])
+        self.assertEqual(response["present_env"], ["FINNHUB_API_KEY"])
+        self.assertEqual(response["missing_env"], ["SEC_USER_AGENT", "NEWS_API_KEY"])
+        self.assertNotIn("secret-token", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()
