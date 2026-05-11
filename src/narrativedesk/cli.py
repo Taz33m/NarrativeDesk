@@ -95,8 +95,16 @@ def build_parser() -> argparse.ArgumentParser:
         "--require-demo-ready",
         action="store_true",
         help=(
-            "Apply the stricter public-demo gate: peer-market context, linked evidence depth, "
+            "Apply the stricter private-demo gate: peer-market context, linked evidence depth, "
             "source diversity, and at least one held-out validation outcome."
+        ),
+    )
+    real_quality.add_argument(
+        "--require-public-ready",
+        action="store_true",
+        help=(
+            "Apply the public-promotion gate in addition to --require-demo-ready: "
+            "requires non-SEC, non-market replay evidence and linked validation outcomes."
         ),
     )
 
@@ -576,6 +584,7 @@ def run_real_case_quality(args: argparse.Namespace) -> int:
             min_blocked_future_sources=args.min_blocked_future_sources,
             min_contradictions=args.min_contradictions,
             require_demo_ready=args.require_demo_ready,
+            require_public_ready=args.require_public_ready,
             bundle_verification=bundle_verification,
             validation_fixture=validation_fixture,
         )

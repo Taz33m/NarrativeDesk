@@ -1497,6 +1497,72 @@ class RealProvenanceTests(unittest.TestCase):
         )
         self.assertIn("--require-demo-ready", calls[-1])
 
+    def test_aapl_rehearsal_runner_reports_public_gate_after_demo_ready(self):
+        runner = _load_aapl_rehearsal_runner()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            calls = []
+
+            def fake_run_cli(command, **_kwargs):
+                calls.append(command)
+                if command[0] == "real-case-preflight":
+                    return {
+                        "returncode": 0,
+                        "json": {
+                            "ok": True,
+                            "status": "bundle_verified",
+                            "next_action": "Review the bundle report.",
+                        },
+                    }
+                if command[0] == "real-case-quality":
+                    if "--require-public-ready" in command:
+                        return {
+                            "returncode": 1,
+                            "json": {
+                                "ok": False,
+                                "next_action": "Add non-SEC replay-time evidence from multiple non-market sources before public demo use.",
+                            },
+                        }
+                    if "--require-demo-ready" in command:
+                        return {"returncode": 0, "json": {"ok": True, "next_action": "Review."}}
+                    return {"returncode": 0, "json": {"ok": True, "next_action": "Review."}}
+                raise AssertionError(f"Unexpected command: {command}")
+
+            args = SimpleNamespace(
+                ticker="AAPL",
+                company_name="Apple Inc.",
+                event_type="earnings/guidance",
+                event_date="2024-05-02",
+                replay_lock="2024-05-03T10:00:00-04:00",
+                date_from="2024-05-01",
+                date_to="2024-05-20",
+                providers="finnhub,sec",
+                env_file=str(root / ".env.local"),
+                fetch_dir=str(root / "fetch"),
+                draft_dir=str(root / "draft"),
+                bundle_dir=str(root / "bundle"),
+                narratives=None,
+                sec_count=5,
+                forms="8-K,10-Q,10-K",
+                no_sec_document_text=False,
+                preflight_only=True,
+                build_bundle=False,
+                market_bars=None,
+            )
+            with patch.object(runner, "_run_cli", side_effect=fake_run_cli):
+                response = runner.run_rehearsal(args)
+
+        self.assertTrue(response["ok"])
+        self.assertEqual(response["status"], "demo_ready")
+        self.assertTrue(response["demo_ready"])
+        self.assertFalse(response["public_demo_ready"])
+        self.assertIn("non-SEC replay-time evidence", response["next_action"])
+        self.assertEqual(
+            [call[0] for call in calls],
+            ["real-case-preflight", "real-case-quality", "real-case-quality", "real-case-quality"],
+        )
+        self.assertIn("--require-public-ready", calls[-1])
+
     def test_aapl_rehearsal_runner_passes_market_bars_to_initial_rehearse(self):
         runner = _load_aapl_rehearsal_runner()
         with tempfile.TemporaryDirectory() as tmpdir:

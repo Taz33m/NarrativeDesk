@@ -372,8 +372,19 @@ def _run_quality(args: argparse.Namespace, stages: dict[str, Any], redaction_val
     )
     stages["demo_quality"] = demo_quality
     if demo_quality["returncode"] == 0:
-        response = _final(True, "demo_ready", stages, demo_quality["json"].get("next_action"))
+        public_quality = _run_cli(
+            ["real-case-quality", "--bundle-dir", args.bundle_dir, "--require-public-ready"],
+            redaction_values=redaction_values,
+        )
+        stages["public_quality"] = public_quality
+        if public_quality["returncode"] == 0:
+            response = _final(True, "public_demo_ready", stages, public_quality["json"].get("next_action"))
+            response["demo_ready"] = True
+            response["public_demo_ready"] = True
+            return response
+        response = _final(True, "demo_ready", stages, public_quality["json"].get("next_action"))
         response["demo_ready"] = True
+        response["public_demo_ready"] = False
         return response
 
     response = _final(
@@ -383,6 +394,7 @@ def _run_quality(args: argparse.Namespace, stages: dict[str, Any], redaction_val
         demo_quality["json"].get("next_action") or quality["json"].get("next_action"),
     )
     response["demo_ready"] = False
+    response["public_demo_ready"] = False
     return response
 
 

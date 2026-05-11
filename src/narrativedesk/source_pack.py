@@ -325,10 +325,12 @@ def assess_real_case_quality(
     min_source_types: int = 2,
     min_publishers: int = 2,
     min_validation_outcomes: int = 1,
+    require_public_ready: bool = False,
     bundle_verification: dict[str, Any] | None = None,
     validation_fixture: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Assess whether a real-curated case clears private or public proof thresholds."""
+    require_demo_ready = require_demo_ready or require_public_ready
     readiness = assess_source_pack_readiness(payload)
     meta = payload.get("case_metadata", {}) if isinstance(payload, dict) else {}
     if not isinstance(meta, dict):
@@ -377,6 +379,8 @@ def assess_real_case_quality(
         validation_future_source_count = len(blocked_future_sources)
         validation_future_source_ids = [str(source.get("source_id")) for source in blocked_future_sources]
     validation_outcome_rows = _validation_outcome_rows(validation_fixture)
+    public_evidence = _public_replay_evidence_check(linked_allowed_sources)
+    public_validation = _public_validation_linkage_check(validation_outcome_rows)
     demo_market_context = _demo_market_context_check(payload, meta)
 
     checks: dict[str, dict[str, Any]] = {
@@ -466,6 +470,13 @@ def assess_real_case_quality(
                 },
             }
         )
+    if require_public_ready:
+        checks.update(
+            {
+                "public_replay_evidence": public_evidence,
+                "public_validation_evidence": public_validation,
+            }
+        )
     if bundle_verification is not None:
         checks["bundle_verified"] = {
             "ok": bool(bundle_verification.get("ok")),
@@ -477,6 +488,8 @@ def assess_real_case_quality(
     status = "quality_ready"
     if require_demo_ready:
         status = "demo_ready"
+    if require_public_ready:
+        status = "public_demo_ready"
     if not ok:
         status = "needs_curation"
     metrics = {
@@ -488,13 +501,18 @@ def assess_real_case_quality(
         "linked_allowed_source_count": len(linked_allowed_sources),
         "linked_source_type_count": len(linked_source_types),
         "linked_publisher_count": len(linked_publishers),
+        "public_replay_source_count": public_evidence["actual"],
+        "public_non_sec_replay_source_count": public_evidence["non_sec_actual"],
+        "public_replay_source_type_count": public_evidence["source_type_actual"],
+        "public_replay_publisher_count": public_evidence["publisher_actual"],
         "validation_future_source_count": validation_future_source_count,
         "validation_outcome_count": len(validation_outcome_rows),
+        "validation_outcome_with_source_count": public_validation["actual"],
     }
     return {
         "ok": ok,
         "status": status,
-        "gate": "demo" if require_demo_ready else "quality",
+        "gate": "public_demo" if require_public_ready else "demo" if require_demo_ready else "quality",
         "case_id": meta.get("case_id"),
         "ticker": meta.get("ticker"),
         "checks": checks,
@@ -525,7 +543,7 @@ def _validation_future_source_ids(validation_fixture: dict[str, Any] | None) -> 
     return []
 
 
-def _validation_outcome_rows(validation_fixture: dict[str, Any] | None) -> list[dict[str, str]]:
+def _validation_outcome_rows(validation_fixture: dict[str, Any] | None) -> list[dict[str, Any]]:
     if not isinstance(validation_fixture, dict):
         return []
     rows = validation_fixture.get("rows", [])
@@ -543,9 +561,74 @@ def _validation_outcome_rows(validation_fixture: dict[str, Any] | None) -> list[
                 "window": str(row.get("window", "")),
                 "label": label,
                 "narrative_id": str(row.get("narrative_id", "")),
+                "future_source_ids": [str(item) for item in row.get("future_source_ids", [])]
+                if isinstance(row.get("future_source_ids"), list)
+                else [],
             }
         )
     return outcome_rows
+
+
+def _public_replay_evidence_check(linked_allowed_sources: list[dict[str, Any]]) -> dict[str, Any]:
+    evidence_sources = [
+        source
+        for source in linked_allowed_sources
+        if str(source.get("source_type", "")).strip() != "market_data"
+        and str(source.get("publisher", "")).strip() != "Frozen market bars"
+    ]
+    non_sec_sources = [
+        source
+        for source in evidence_sources
+        if str(source.get("publisher", "")).strip() != "SEC EDGAR"
+    ]
+    source_types = _distinct_nonempty(source.get("source_type") for source in evidence_sources)
+    publishers = _distinct_nonempty(source.get("publisher") for source in evidence_sources)
+    source_ids = sorted(str(source.get("source_id")) for source in evidence_sources)
+    non_sec_source_ids = sorted(str(source.get("source_id")) for source in non_sec_sources)
+    min_sources = 2
+    min_non_sec_sources = 2
+    min_source_types = 2
+    min_publishers = 2
+    errors = []
+    if len(evidence_sources) < min_sources:
+        errors.append("not enough linked non-market replay-time evidence sources")
+    if len(non_sec_sources) < min_non_sec_sources:
+        errors.append("not enough linked non-SEC replay-time evidence sources")
+    if len(source_types) < min_source_types:
+        errors.append("not enough non-market replay-time source type diversity")
+    if len(publishers) < min_publishers:
+        errors.append("not enough non-market replay-time publisher diversity")
+    return {
+        "ok": not errors,
+        "actual": len(evidence_sources),
+        "minimum": min_sources,
+        "source_ids": source_ids,
+        "non_sec_actual": len(non_sec_sources),
+        "non_sec_minimum": min_non_sec_sources,
+        "non_sec_source_ids": non_sec_source_ids,
+        "source_type_actual": len(source_types),
+        "source_type_minimum": min_source_types,
+        "source_types": source_types,
+        "publisher_actual": len(publishers),
+        "publisher_minimum": min_publishers,
+        "publishers": publishers,
+        "errors": errors,
+    }
+
+
+def _public_validation_linkage_check(validation_outcome_rows: list[dict[str, Any]]) -> dict[str, Any]:
+    rows_with_sources = [
+        row
+        for row in validation_outcome_rows
+        if isinstance(row.get("future_source_ids"), list) and row.get("future_source_ids")
+    ]
+    return {
+        "ok": bool(rows_with_sources),
+        "actual": len(rows_with_sources),
+        "minimum": 1,
+        "rows": rows_with_sources,
+        "errors": [] if rows_with_sources else ["validation outcomes need linked held-out future sources"],
+    }
 
 
 def _demo_market_context_check(payload: dict[str, Any], meta: dict[str, Any]) -> dict[str, Any]:
@@ -633,6 +716,10 @@ def _quality_next_action(checks: dict[str, dict[str, Any]]) -> str:
         return "Add replay-time evidence from more than one publisher before public demo use."
     if checks.get("validation_outcomes", {}).get("ok") is False:
         return "Add at least one held-out validation outcome before treating this as public demo-ready."
+    if checks.get("public_replay_evidence", {}).get("ok") is False:
+        return "Add non-SEC replay-time evidence from multiple non-market sources before public demo use."
+    if checks.get("public_validation_evidence", {}).get("ok") is False:
+        return "Link held-out validation outcomes to blocked future source IDs before public demo use."
     return "Review the report and decide whether this private case is demo-worthy."
 
 
