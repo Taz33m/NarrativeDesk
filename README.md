@@ -6,19 +6,23 @@ It does not ask only whether a stock should be bought or sold. It asks which exp
 
 ## What the app does
 
-The v0 demo is a synthetic historical replay. A fictional streaming company, ORION, sells off after earnings. The surface-level explanation is margin disappointment, but NarrativeDesk ranks forward demand slowdown higher after scoring mechanism specificity, evidence strength, source independence, contradictions, crowding risk, and forward observables.
+The v0.2 demo is a synthetic multi-case historical replay infrastructure. ORION remains the default synthetic case, AURORA adds a provenance-ready guidance-miss replay, and LYRA adds a hard case where the later-validated narrative ranks #2 instead of #1. A fictional streaming company, ORION, sells off after earnings. The surface-level explanation is margin disappointment, but NarrativeDesk ranks forward demand slowdown higher after scoring mechanism specificity, evidence strength, source independence, contradictions, crowding risk, and forward observables.
 
 The browser workbench shows:
 
 - Event header with abnormal move, peer move, sector move, volume spike, and leakage lock timestamp.
+- Synthetic case-index summary with aggregate Recall@3 and baseline comparison rates.
 - Narrative Tournament with ranked competing explanations.
 - Evidence and contradiction inspector with source timestamps.
 - Replay audit showing allowed sources and blocked future sources.
+- Citation QA panel for replay filtering, support coverage, and provenance gaps.
+- Source reliability panel with quality, independence, originality, and blocked-source breakdowns.
+- Source clustering panel with deterministic originality clusters from replay-safe evidence.
 - Deterministic research trail for the current fixture.
 - Future validation panel kept separate from event-time replay evidence.
 - Export links for ledger JSON and report Markdown.
 
-The demo data is synthetic by design. Do not treat ORION as a real company or a real investment case.
+The demo data is synthetic by design. Real-curated cases require timestamped source packs with source provenance metadata and replay-lock validation. Do not treat ORION, AURORA, or LYRA as real companies or real investment cases.
 
 ## Demo loop
 
@@ -46,18 +50,30 @@ The repo keeps the deterministic research kernel separate from the product surfa
 - `apps/api/`: FastAPI service exposing event ID based endpoints around the kernel.
 - `apps/web/`: Vite React workbench that renders kernel-generated demo artifacts.
 - `data/fixtures/`: synthetic event and validation fixtures.
-- `schemas/`: Narrative Ledger JSON schema.
+- `schemas/`: Narrative Ledger, Source Pack, Validation Fixture, and Replay Bundle Manifest JSON schemas.
 - `tests/`: unit and API tests.
 
-The browser demo reads generated JSON from `apps/web/public/demo/`. Generate those artifacts from the Python kernel with `make web-data`.
+The browser demo reads generated JSON from `apps/web/public/demo/`. Generate those artifacts from the Python kernel with `make web-data`. Replay bundles stay separate from future validation and evaluation bundles.
+
+The generated example report lives at [`examples/sample_report.md`](examples/sample_report.md).
 
 ## Deterministic vs future AI/data work
 
 Implemented deterministically:
 
 - Typed Narrative Ledger object.
+- Event return, abnormal return, peer median return, sector return, and volume ratio from raw fixture bars.
+- Replay-lock checks requiring market snapshot `timestamp` or `as_of` fields.
 - Replay timestamp filtering.
 - Narrative scoring and ranking.
+- Evaluation checks for Narrative Recall@3, top-ranked validation, unsupported-claim penalty, and blocked future sources.
+- Deterministic headline-baseline versus NarrativeDesk tournament comparison.
+- Deterministic ablation comparisons for evidence-only, no-contradiction-penalty, and quality-weighted selection.
+- Citation QA checks for replay leakage, support coverage, provenance gaps, and low-quality evidence.
+- Source reliability summaries by publisher and source type.
+- Deterministic source clustering and derived originality scoring from replay-safe evidence.
+- Source-pack registration with fixture integrity and real-curated content-hash checks.
+- Real-data source-pack builder for Finnhub candles/news, frozen price CSVs, SEC EDGAR submissions/facts, local transcripts, and frozen estimate revisions.
 - Ledger JSON export.
 - Markdown report export.
 - Synthetic validation display.
@@ -65,11 +81,9 @@ Implemented deterministically:
 
 Future work:
 
-- Real SEC and transcript ingestion.
-- Real price, peer, and volume calculations.
-- Source clustering and originality scoring.
+- Provider adapters for transcript services, timestamped estimates, and analyst revisions.
 - Optional AI agents for hypothesis generation and contradiction generation.
-- Citation QA over real timestamped documents.
+- Citation QA over larger real timestamped document sets.
 - Multi-model arena and benchmark dataset.
 
 ## Run
@@ -86,10 +100,106 @@ Generate demo artifacts:
 npm run web:data
 ```
 
+Preview and validate a real-curated source pack template:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli source-pack-preview examples/source_pack_template.json
+```
+
+Assess whether a source pack is ready to ingest:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli source-pack-readiness .codex-work/real_source_pack.json
+```
+
+Create a self-contained replay bundle from a ready source pack:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli source-pack-bundle .codex-work/real_source_pack.json --out-dir .codex-work/real_case_bundle
+```
+
+Bundles include `manifest.json` with artifact hashes and replay-integrity metadata.
+
+Verify a replay bundle before sharing or registering it:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli bundle-verify .codex-work/real_case_bundle
+```
+
+Build a real-curated source pack from provider data:
+
+```bash
+FINNHUB_API_KEY=... SEC_USER_AGENT="NarrativeDesk you@example.com" \
+PYTHONPATH=src python3 -m narrativedesk.cli real-pack-build .codex-work/real_case_config.json --out .codex-work/real_source_pack.json
+```
+
+Or build and bundle in one step:
+
+```bash
+FINNHUB_API_KEY=... SEC_USER_AGENT="NarrativeDesk you@example.com" \
+PYTHONPATH=src python3 -m narrativedesk.cli real-pack-bundle .codex-work/real_case_config.json --out-dir .codex-work/real_case_bundle
+```
+
+Start from `examples/real_case_config_template.json`, fill in a real ticker, event timestamp, peers, and curated narratives, then keep the working config in `.codex-work/`.
+
+Check a real-curated config before fetching provider data:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli real-pack-check .codex-work/real_case_config.json --check-files
+```
+
+The real-data builder currently supports:
+
+- Finnhub `stock/candle` for replay-safe event, peer, and sector bars.
+- Local frozen CSV price files for replay-safe event, peer, and sector bars.
+- Finnhub `company-news` for timestamped company news sources.
+- SEC EDGAR `company_tickers`, submissions JSON, and optional filing document text.
+- SEC EDGAR XBRL `companyfacts` for reported fundamental facts.
+- Local transcript text files for source-backed earnings-call evidence.
+- Frozen CSV estimate revisions for replay-time and future validation evidence.
+
+Real-data configs are intentionally curator-led. Provide `case_metadata`, optional `market_data`, optional `news`, optional `sec_filings`, optional `sec_facts`, optional `transcripts`, optional `estimate_revisions`, optional `manual_sources`, and optional `narratives`. Run `real-pack-build` first, inspect the generated source pack, then add or curate narrative links before `source-pack-ingest`, which requires ingestion-ready narratives. For intraday replay locks, use intraday candles; daily bars and date-only CSV rows are rejected for pre-close locks unless explicitly marked as post-close safe.
+
+Convert a complete source pack into a replay fixture:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli source-pack-ingest examples/source_pack_template.json --out .codex-work/event_fixture.json --validation-out .codex-work/validation_fixture.json
+```
+
+Validate the generated validation scaffold before registering it:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli validation-validate .codex-work/validation_fixture.json
+```
+
+Register those generated fixtures in a case index:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli case-index-register .codex-work/case_index_seed.json --event-fixture .codex-work/event_fixture.json --validation-fixture .codex-work/validation_fixture.json --label "EXMPL source-pack example" --out .codex-work/case_index.json
+```
+
+Validate a case index before evaluating it:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli case-index-validate .codex-work/case_index.json
+```
+
+Run the no-network real-data workflow smoke:
+
+```bash
+npm run real-pack:smoke
+```
+
 Run the Python smoke export:
 
 ```bash
 make smoke
+```
+
+Run deterministic evaluation checks across the synthetic case index:
+
+```bash
+make evaluate
 ```
 
 Run the API locally after installing API dependencies:
@@ -136,6 +246,12 @@ Run the browser smoke test:
 npm run web:smoke
 ```
 
+Run the release verification path, including real browser QA:
+
+```bash
+npm run verify:release
+```
+
 If the environment cannot launch a browser, run the static artifact smoke:
 
 ```bash
@@ -146,17 +262,20 @@ npm run web:smoke:static
 
 - `GET /health`
 - `GET /api/events`
+- `GET /api/evaluations`
 - `GET /api/events/{event_id}`
 - `POST /api/events/{event_id}/run`
 - `GET /api/events/{event_id}/ledger`
 - `GET /api/events/{event_id}/report`
+- `GET /api/events/{event_id}/report?include_validation=true`
 - `GET /api/events/{event_id}/validation`
 
-Replay and ledger endpoints do not include future validation data.
+Replay, ledger, and default report endpoints do not include future validation data.
 
 ## Limitations
 
-- v0 uses one synthetic fixture, not real market data.
+- v0.2 defaults to synthetic fixtures; real-curated cases require timestamped source packs and explicit provenance metadata.
+- Real-data builder output is not automatically an investment thesis; a human still curates source-to-narrative links and uncertainty.
 - Scores are transparent heuristics, not learned truth labels.
 - Validation rows are synthetic and separate from event-time replay.
 - The browser demo is a single workbench, not a live terminal.
@@ -165,9 +284,9 @@ Replay and ledger endpoints do not include future validation data.
 ## Roadmap
 
 1. Add real historical event fixtures with timestamped citations.
-2. Add deterministic market data calculations for abnormal returns and peer context.
-3. Add source ingestion and document hashing.
-4. Add optional agent generation with citation QA and ablations.
+2. Add transcript, estimate-revision, and analyst-consensus adapters.
+3. Add optional agent generation grounded in structured source packs.
+4. Expand case evaluation to T+5, T+20, and T+60 validation windows.
 5. Build a 100-event benchmark for Validated Narrative Rank@3.
 
 ## Research positioning

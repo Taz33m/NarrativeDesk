@@ -1,0 +1,185 @@
+{
+  "case_metadata": {
+    "case_id": "EVT-EXAMPLE-2025-01-02",
+    "ticker": "EXMPL",
+    "company_name": "Example Co",
+    "event_timestamp": "2025-01-02T10:00:00-05:00",
+    "data_provenance_mode": "real-curated"
+  },
+  "event": {
+    "event_type": "earnings/guidance",
+    "event_summary": "Example source-pack scaffold for timestamped replay ingestion."
+  },
+  "market_snapshot": {
+    "event_bar": {
+      "symbol": "EXMPL",
+      "open": 100.0,
+      "close": 94.0,
+      "volume": 200,
+      "average_volume": 100,
+      "timestamp": "2025-01-02T10:00:00-05:00"
+    },
+    "peer_bars": [
+      {
+        "symbol": "PEER-A",
+        "open": 100.0,
+        "close": 98.0,
+        "timestamp": "2025-01-02T10:00:00-05:00"
+      },
+      {
+        "symbol": "PEER-B",
+        "open": 100.0,
+        "close": 99.0,
+        "timestamp": "2025-01-02T10:00:00-05:00"
+      },
+      {
+        "symbol": "PEER-C",
+        "open": 100.0,
+        "close": 97.0,
+        "timestamp": "2025-01-02T10:00:00-05:00"
+      }
+    ],
+    "sector_bar": {
+      "symbol": "SECTOR",
+      "open": 100.0,
+      "close": 99.5,
+      "as_of": "2025-01-02T10:00:00-05:00"
+    }
+  },
+  "sources": [
+    {
+      "source_id": "SRC-001",
+      "source_type": "company_release",
+      "publisher": "Example Publisher",
+      "title": "Example source 1",
+      "url": "https://example.com/source-pack-template/src-001",
+      "published_at": "2025-01-02T08:00:00-05:00",
+      "retrieved_at": "2026-05-01T00:00:00Z",
+      "content_hash": "sha256:2c6b83e65d6c097010211ce902f9572598968380358cc6ea0fbc43387fdad8aa",
+      "availability_status": "allowed",
+      "originality_score": 0.7,
+      "independence_cluster_id": "cluster-1",
+      "claim_extracted": "Management lowered near-term expansion guidance.",
+      "supported_narrative_ids": [
+        "NARR-EXAMPLE-001"
+      ],
+      "contradicted_narrative_ids": [],
+      "support_strength": 0.7,
+      "evidence_quality": 0.8,
+      "independence": 0.75,
+      "incentive_conflict": 0.1
+    },
+    {
+      "source_id": "SRC-002",
+      "source_type": "company_release",
+      "publisher": "Example Publisher",
+      "title": "Example source 2",
+      "url": "https://example.com/source-pack-template/src-002",
+      "published_at": "2025-01-02T08:00:00-05:00",
+      "retrieved_at": "2026-05-01T00:00:00Z",
+      "content_hash": "sha256:33a318a4467760abc73e095aaaa14410f44c535019cd142c9419eb95bddd90ae",
+      "availability_status": "allowed",
+      "originality_score": 0.7,
+      "independence_cluster_id": "cluster-1",
+      "claim_extracted": "Reported current-quarter revenue exceeded consensus.",
+      "supported_narrative_ids": [],
+      "contradicted_narrative_ids": [
+        "NARR-EXAMPLE-001"
+      ],
+      "support_strength": 0.7,
+      "evidence_quality": 0.8,
+      "independence": 0.75,
+      "incentive_conflict": 0.1
+    },
+    {
+      "source_id": "SRC-003",
+      "source_type": "company_release",
+      "publisher": "Example Publisher",
+      "title": "Example source 3",
+      "url": "https://example.com/source-pack-template/src-003",
+      "published_at": "2025-01-02T08:00:00-05:00",
+      "retrieved_at": "2026-05-01T00:00:00Z",
+      "content_hash": "sha256:c1d7ff90c42a08da0e1673eefdf3748493dc7bb6743bb51a67973ad07c28ce72",
+      "availability_status": "allowed",
+      "originality_score": 0.7,
+      "independence_cluster_id": "cluster-1",
+      "claim_extracted": "Full-year free cash flow guidance was maintained.",
+      "supported_narrative_ids": [
+        "NARR-EXAMPLE-002"
+      ],
+      "contradicted_narrative_ids": [],
+      "support_strength": 0.7,
+      "evidence_quality": 0.8,
+      "independence": 0.75,
+      "incentive_conflict": 0.1
+    },
+    {
+      "source_id": "SRC-009",
+      "source_type": "analyst_revision",
+      "publisher": "Example Publisher",
+      "title": "Example future source",
+      "url": "https://example.com/source-pack-template/src-009",
+      "published_at": "2025-01-09T08:00:00-05:00",
+      "retrieved_at": "2026-05-01T00:00:00Z",
+      "content_hash": "sha256:8a6264e7afa1382116d852f3a054a0c7f1250db27e8c0dd0cf1390c11fc87fed",
+      "availability_status": "blocked_future",
+      "originality_score": 0.7,
+      "independence_cluster_id": "cluster-2",
+      "claim_extracted": "Future analyst revisions later reduced expansion estimates.",
+      "supported_narrative_ids": [
+        "NARR-EXAMPLE-001"
+      ],
+      "contradicted_narrative_ids": [],
+      "support_strength": 0.7,
+      "evidence_quality": 0.8,
+      "independence": 0.75,
+      "incentive_conflict": 0.1
+    }
+  ],
+  "narratives": [
+    {
+      "narrative_id": "NARR-EXAMPLE-001",
+      "title": "Forward expansion slowdown",
+      "narrative": "The move reflects concern that forward expansion is slowing.",
+      "mechanism": "Lower expansion assumptions would reduce forward revenue estimates.",
+      "directional_implication": "bearish",
+      "time_horizon": "20 trading days",
+      "expected_observables": [
+        "Analysts reduce expansion estimates within 30 days"
+      ],
+      "scoring_inputs": {
+        "evidence_strength": 0.7,
+        "mechanism_specificity": 0.7,
+        "source_independence": 0.7,
+        "cross_sectional_fit": 0.6,
+        "contradiction_resistance": 0.6,
+        "timestamp_advantage": 0.8,
+        "forward_observable_quality": 0.7,
+        "crowding_risk": 0.3,
+        "unsupported_claim_penalty": 0.05
+      }
+    },
+    {
+      "narrative_id": "NARR-EXAMPLE-002",
+      "title": "Overreaction to conservative guide",
+      "narrative": "The market may be overreacting to conservative guidance.",
+      "mechanism": "If guidance is conservative, estimates could stabilize.",
+      "directional_implication": "bullish",
+      "time_horizon": "20 trading days",
+      "expected_observables": [
+        "Revenue estimates stabilize after the first revision wave"
+      ],
+      "scoring_inputs": {
+        "evidence_strength": 0.55,
+        "mechanism_specificity": 0.7,
+        "source_independence": 0.7,
+        "cross_sectional_fit": 0.6,
+        "contradiction_resistance": 0.6,
+        "timestamp_advantage": 0.8,
+        "forward_observable_quality": 0.7,
+        "crowding_risk": 0.3,
+        "unsupported_claim_penalty": 0.05
+      }
+    }
+  ]
+}

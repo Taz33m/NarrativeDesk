@@ -45,6 +45,8 @@ class Event:
     sector_etf_return: float | None = None
     peer_median_return: float | None = None
     event_summary: str = ""
+    data_provenance_mode: str = "synthetic"
+    case_id: str | None = None
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Event:
@@ -61,6 +63,8 @@ class Event:
             sector_etf_return=data.get("sector_etf_return"),
             peer_median_return=data.get("peer_median_return"),
             event_summary=data.get("event_summary", ""),
+            data_provenance_mode=data.get("data_provenance_mode", "synthetic"),
+            case_id=data.get("case_id", data["event_id"]),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -76,8 +80,17 @@ class EvidenceItem:
     published_at: datetime
     source_type: str
     relation: EvidenceRelation
+    title: str = ""
+    retrieved_at: datetime | None = None
     publisher: str = ""
     url: str = ""
+    content_hash: str = ""
+    availability_status: str = "allowed"
+    originality_score: float = 0.5
+    independence_cluster_id: str = ""
+    claim_extracted: str = ""
+    supported_narrative_ids: list[str] = field(default_factory=list)
+    contradicted_narrative_ids: list[str] = field(default_factory=list)
     support_strength: float = 0.5
     evidence_quality: float = 0.5
     independence: float = 0.5
@@ -88,11 +101,20 @@ class EvidenceItem:
         return cls(
             source_id=data["source_id"],
             claim=data["claim"],
+            title=data.get("title", ""),
             published_at=parse_datetime(data["published_at"]),
+            retrieved_at=parse_datetime(data["retrieved_at"]) if data.get("retrieved_at") else None,
             source_type=data.get("source_type", "unknown"),
             relation=relation or data.get("relation", "support"),
             publisher=data.get("publisher", ""),
             url=data.get("url", ""),
+            content_hash=data.get("content_hash") or data.get("text_hash", ""),
+            availability_status=data.get("availability_status", "allowed"),
+            originality_score=clamp01(float(data.get("originality_score", 0.5))),
+            independence_cluster_id=data.get("independence_cluster_id", ""),
+            claim_extracted=data.get("claim_extracted", data.get("claim", "")),
+            supported_narrative_ids=list(data.get("supported_narrative_ids", [])),
+            contradicted_narrative_ids=list(data.get("contradicted_narrative_ids", [])),
             support_strength=clamp01(float(data.get("support_strength", 0.5))),
             evidence_quality=clamp01(float(data.get("evidence_quality", 0.5))),
             independence=clamp01(float(data.get("independence", 0.5))),
@@ -102,6 +124,7 @@ class EvidenceItem:
     def to_dict(self) -> dict[str, Any]:
         data = asdict(self)
         data["published_at"] = serialize_datetime(self.published_at)
+        data["retrieved_at"] = serialize_datetime(self.retrieved_at) if self.retrieved_at else None
         return data
 
 

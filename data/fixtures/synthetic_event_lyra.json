@@ -1,0 +1,389 @@
+{
+  "event": {
+    "event_id": "EVT-LYRA-2025-11-13",
+    "ticker": "LYRA",
+    "company_name": "Lyra Security Systems",
+    "event_date": "2025-11-13",
+    "event_timestamp": "2025-11-13T10:00:00-05:00",
+    "event_type": "earnings/guidance",
+    "daily_return": -0.082,
+    "abnormal_return": -0.065,
+    "volume_ratio": 2.25,
+    "sector_etf_return": -0.009,
+    "peer_median_return": -0.017,
+    "event_summary": "Synthetic hard-case fixture: a cybersecurity platform sells off after earnings. The replay intentionally ranks one plausible narrative above the later-validated consensus narrative.",
+    "case_id": "EVT-LYRA-2025-11-13",
+    "data_provenance_mode": "synthetic"
+  },
+  "market_snapshot": {
+    "event_bar": {
+      "symbol": "LYRA",
+      "open": 100.0,
+      "close": 91.8,
+      "volume": 18000000,
+      "average_volume": 8000000,
+      "timestamp": "2025-11-13T10:00:00-05:00"
+    },
+    "sector_bar": {
+      "symbol": "SYN-CYBERSECURITY",
+      "open": 100.0,
+      "close": 99.1,
+      "as_of": "2025-11-13T10:00:00-05:00"
+    },
+    "peer_bars": [
+      {
+        "symbol": "SYN-CYBER-A",
+        "open": 100.0,
+        "close": 97.6,
+        "timestamp": "2025-11-13T10:00:00-05:00"
+      },
+      {
+        "symbol": "SYN-CYBER-B",
+        "open": 100.0,
+        "close": 98.3,
+        "timestamp": "2025-11-13T10:00:00-05:00"
+      },
+      {
+        "symbol": "SYN-CYBER-C",
+        "open": 100.0,
+        "close": 99.2,
+        "timestamp": "2025-11-13T10:00:00-05:00"
+      }
+    ]
+  },
+  "narratives": [
+    {
+      "narrative_id": "LYR-NARR-001",
+      "event_id": "EVT-LYRA-2025-11-13",
+      "ticker": "LYRA",
+      "timestamp_created": "2025-11-13T10:00:00-05:00",
+      "title": "AI module adoption slowdown",
+      "narrative": "The selloff is driven by concern that adoption of Lyra's newer AI security module is slowing after an initially strong launch.",
+      "mechanism": "If the AI add-on attaches to fewer renewals, investors would reduce product-cycle revenue expectations and compress the growth multiple.",
+      "directional_implication": "bearish",
+      "time_horizon": "20 trading days",
+      "expected_observables": [
+        "Management discusses slower AI module attach rates in follow-up commentary",
+        "Analysts reduce add-on revenue assumptions within 30 days",
+        "Pipeline commentary shifts from expansion demand to product packaging"
+      ],
+      "supporting_evidence": [
+        {
+          "source_id": "LYR-SRC-001",
+          "source_type": "earnings_transcript",
+          "publisher": "Lyra Security Systems",
+          "published_at": "2025-11-13T09:10:00-05:00",
+          "claim": "Management said the AI security module remained early in rollout and that attach-rate data was still limited.",
+          "support_strength": 0.82,
+          "evidence_quality": 0.88,
+          "independence": 0.84,
+          "incentive_conflict": 0.24,
+          "title": "Synthetic transcript excerpt",
+          "url": "https://example.com/synthetic/lyra/src-001",
+          "retrieved_at": "2025-11-13T10:00:00-05:00",
+          "content_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+          "availability_status": "allowed",
+          "originality_score": 0.66,
+          "independence_cluster_id": "lyra-company",
+          "claim_extracted": "Management said the AI security module remained early in rollout and that attach-rate data was still limited.",
+          "supported_narrative_ids": [
+            "LYR-NARR-001"
+          ],
+          "contradicted_narrative_ids": []
+        },
+        {
+          "source_id": "LYR-SRC-002",
+          "source_type": "earnings_release",
+          "publisher": "Lyra Security Systems",
+          "published_at": "2025-11-13T07:02:00-05:00",
+          "claim": "The company highlighted AI module pilots but did not quantify contribution to current-quarter revenue.",
+          "support_strength": 0.74,
+          "evidence_quality": 0.84,
+          "independence": 0.86,
+          "incentive_conflict": 0.24,
+          "title": "Synthetic earnings release",
+          "url": "https://example.com/synthetic/lyra/src-002",
+          "retrieved_at": "2025-11-13T10:00:00-05:00",
+          "content_hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+          "availability_status": "allowed",
+          "originality_score": 0.66,
+          "independence_cluster_id": "lyra-company",
+          "claim_extracted": "The company highlighted AI module pilots but did not quantify contribution to current-quarter revenue.",
+          "supported_narrative_ids": [
+            "LYR-NARR-001"
+          ],
+          "contradicted_narrative_ids": []
+        }
+      ],
+      "contradicting_evidence": [],
+      "scoring_inputs": {
+        "evidence_strength": 0.88,
+        "mechanism_specificity": 0.9,
+        "source_independence": 0.82,
+        "cross_sectional_fit": 0.78,
+        "contradiction_resistance": 0.75,
+        "timestamp_advantage": 0.86,
+        "forward_observable_quality": 0.88,
+        "crowding_risk": 0.25,
+        "unsupported_claim_penalty": 0.03
+      },
+      "validation_status": "pending"
+    },
+    {
+      "narrative_id": "LYR-NARR-002",
+      "event_id": "EVT-LYRA-2025-11-13",
+      "ticker": "LYRA",
+      "timestamp_created": "2025-11-13T10:00:00-05:00",
+      "title": "Renewal discounting pressure",
+      "narrative": "The selloff reflects concern that Lyra is preserving renewal volume by discounting enterprise contracts more aggressively.",
+      "mechanism": "Higher renewal discounts would pressure billings quality and future gross retention, even if reported revenue remains resilient.",
+      "directional_implication": "bearish",
+      "time_horizon": "20 trading days",
+      "expected_observables": [
+        "Analysts cut net retention or billings quality assumptions within 30 days",
+        "Follow-up commentary focuses on enterprise renewal concessions",
+        "The stock underperforms cybersecurity peers over the next 20 trading days"
+      ],
+      "supporting_evidence": [
+        {
+          "source_id": "LYR-SRC-004",
+          "source_type": "financial_media",
+          "publisher": "Synthetic Market News",
+          "published_at": "2025-11-13T08:15:00-05:00",
+          "claim": "Early market coverage framed the selloff around discounting and renewal quality rather than product adoption.",
+          "support_strength": 0.7,
+          "evidence_quality": 0.68,
+          "independence": 0.58,
+          "incentive_conflict": 0.28,
+          "title": "Synthetic market note",
+          "url": "https://example.com/synthetic/lyra/src-004",
+          "retrieved_at": "2025-11-13T10:00:00-05:00",
+          "content_hash": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+          "availability_status": "allowed",
+          "originality_score": 0.68,
+          "independence_cluster_id": "lyra-media",
+          "claim_extracted": "Early market coverage framed the selloff around discounting and renewal quality rather than product adoption.",
+          "supported_narrative_ids": [
+            "LYR-NARR-002"
+          ],
+          "contradicted_narrative_ids": []
+        },
+        {
+          "source_id": "LYR-SRC-005",
+          "source_type": "earnings_transcript",
+          "publisher": "Lyra Security Systems",
+          "published_at": "2025-11-13T09:10:00-05:00",
+          "claim": "Executives acknowledged longer renewal negotiations with large enterprise customers.",
+          "support_strength": 0.76,
+          "evidence_quality": 0.82,
+          "independence": 0.72,
+          "incentive_conflict": 0.24,
+          "title": "Synthetic transcript excerpt",
+          "url": "https://example.com/synthetic/lyra/src-005",
+          "retrieved_at": "2025-11-13T10:00:00-05:00",
+          "content_hash": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+          "availability_status": "allowed",
+          "originality_score": 0.68,
+          "independence_cluster_id": "lyra-company",
+          "claim_extracted": "Executives acknowledged longer renewal negotiations with large enterprise customers.",
+          "supported_narrative_ids": [
+            "LYR-NARR-002"
+          ],
+          "contradicted_narrative_ids": []
+        },
+        {
+          "source_id": "LYR-SRC-009",
+          "source_type": "analyst_revision",
+          "publisher": "Synthetic Broker Model",
+          "published_at": "2025-11-20T08:00:00-05:00",
+          "claim": "Future validation fixture: several analysts later reduced net retention and billings quality assumptions.",
+          "support_strength": 0.9,
+          "evidence_quality": 0.84,
+          "independence": 0.72,
+          "incentive_conflict": 0.34,
+          "title": "Synthetic future analyst revision",
+          "url": "https://example.com/synthetic/lyra/src-009",
+          "retrieved_at": "2025-11-13T10:00:00-05:00",
+          "content_hash": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+          "availability_status": "allowed",
+          "originality_score": 0.68,
+          "independence_cluster_id": "lyra-broker",
+          "claim_extracted": "Future validation fixture: several analysts later reduced net retention and billings quality assumptions.",
+          "supported_narrative_ids": [
+            "LYR-NARR-002"
+          ],
+          "contradicted_narrative_ids": []
+        }
+      ],
+      "contradicting_evidence": [
+        {
+          "source_id": "LYR-SRC-006",
+          "source_type": "earnings_release",
+          "publisher": "Lyra Security Systems",
+          "published_at": "2025-11-13T07:02:00-05:00",
+          "claim": "Reported current-quarter revenue exceeded consensus expectations.",
+          "support_strength": 0.46,
+          "evidence_quality": 0.8,
+          "independence": 0.86,
+          "incentive_conflict": 0.24,
+          "title": "Synthetic earnings release",
+          "url": "https://example.com/synthetic/lyra/src-006",
+          "retrieved_at": "2025-11-13T10:00:00-05:00",
+          "content_hash": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+          "availability_status": "allowed",
+          "originality_score": 0.68,
+          "independence_cluster_id": "lyra-company",
+          "claim_extracted": "Reported current-quarter revenue exceeded consensus expectations.",
+          "supported_narrative_ids": [],
+          "contradicted_narrative_ids": [
+            "LYR-NARR-002"
+          ]
+        }
+      ],
+      "scoring_inputs": {
+        "evidence_strength": 0.78,
+        "mechanism_specificity": 0.78,
+        "source_independence": 0.68,
+        "cross_sectional_fit": 0.74,
+        "contradiction_resistance": 0.66,
+        "timestamp_advantage": 0.84,
+        "forward_observable_quality": 0.86,
+        "crowding_risk": 0.86,
+        "unsupported_claim_penalty": 0.04
+      },
+      "validation_status": "pending"
+    },
+    {
+      "narrative_id": "LYR-NARR-003",
+      "event_id": "EVT-LYRA-2025-11-13",
+      "ticker": "LYRA",
+      "timestamp_created": "2025-11-13T10:00:00-05:00",
+      "title": "Sector budget freeze",
+      "narrative": "The move reflects a broader pullback in cybersecurity software spending rather than a Lyra-specific issue.",
+      "mechanism": "If security budgets are tightening across the sector, peer-correlated weakness would explain much of the event move.",
+      "directional_implication": "mixed",
+      "time_horizon": "5 trading days",
+      "expected_observables": [
+        "Cybersecurity peers trade down by similar amounts",
+        "Company-specific estimate revisions are limited",
+        "Sector commentary emphasizes budget tightening rather than Lyra execution"
+      ],
+      "supporting_evidence": [
+        {
+          "source_id": "LYR-SRC-007",
+          "source_type": "market_data",
+          "publisher": "Synthetic Price Feed",
+          "published_at": "2025-11-13T09:55:00-05:00",
+          "claim": "The synthetic cybersecurity peer basket was negative during the event window.",
+          "support_strength": 0.56,
+          "evidence_quality": 0.86,
+          "independence": 0.9,
+          "incentive_conflict": 0.05,
+          "title": "Synthetic price feed",
+          "url": "https://example.com/synthetic/lyra/src-007",
+          "retrieved_at": "2025-11-13T10:00:00-05:00",
+          "content_hash": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+          "availability_status": "allowed",
+          "originality_score": 0.68,
+          "independence_cluster_id": "lyra-market-data",
+          "claim_extracted": "The synthetic cybersecurity peer basket was negative during the event window.",
+          "supported_narrative_ids": [
+            "LYR-NARR-003"
+          ],
+          "contradicted_narrative_ids": []
+        }
+      ],
+      "contradicting_evidence": [
+        {
+          "source_id": "LYR-SRC-008",
+          "source_type": "market_data",
+          "publisher": "Synthetic Price Feed",
+          "published_at": "2025-11-13T09:55:00-05:00",
+          "claim": "Lyra underperformed its synthetic cybersecurity peer median by roughly seven percentage points.",
+          "support_strength": 0.76,
+          "evidence_quality": 0.88,
+          "independence": 0.9,
+          "incentive_conflict": 0.05,
+          "title": "Synthetic price feed",
+          "url": "https://example.com/synthetic/lyra/src-008",
+          "retrieved_at": "2025-11-13T10:00:00-05:00",
+          "content_hash": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+          "availability_status": "allowed",
+          "originality_score": 0.68,
+          "independence_cluster_id": "lyra-market-data",
+          "claim_extracted": "Lyra underperformed its synthetic cybersecurity peer median by roughly seven percentage points.",
+          "supported_narrative_ids": [],
+          "contradicted_narrative_ids": [
+            "LYR-NARR-003"
+          ]
+        }
+      ],
+      "scoring_inputs": {
+        "evidence_strength": 0.48,
+        "mechanism_specificity": 0.64,
+        "source_independence": 0.7,
+        "cross_sectional_fit": 0.22,
+        "contradiction_resistance": 0.3,
+        "timestamp_advantage": 0.82,
+        "forward_observable_quality": 0.54,
+        "crowding_risk": 0.28,
+        "unsupported_claim_penalty": 0.04
+      },
+      "validation_status": "pending"
+    },
+    {
+      "narrative_id": "LYR-NARR-004",
+      "event_id": "EVT-LYRA-2025-11-13",
+      "ticker": "LYRA",
+      "timestamp_created": "2025-11-13T10:00:00-05:00",
+      "title": "Overreaction to billing transition",
+      "narrative": "The market may be overreacting to a temporary billing-model transition that does not impair long-term demand.",
+      "mechanism": "If contract-duration and invoicing changes are temporary, the initial selloff could reverse as billings comparability improves.",
+      "directional_implication": "bullish",
+      "time_horizon": "20 trading days",
+      "expected_observables": [
+        "Management clarifies billing duration mix in follow-up commentary",
+        "Revenue estimates stabilize after the first wave of revisions",
+        "The stock recovers relative to peers after billing concerns fade"
+      ],
+      "supporting_evidence": [
+        {
+          "source_id": "LYR-SRC-003",
+          "source_type": "earnings_release",
+          "publisher": "Lyra Security Systems",
+          "published_at": "2025-11-13T07:02:00-05:00",
+          "claim": "Full-year free cash flow guidance was maintained despite a billing-duration transition.",
+          "support_strength": 0.64,
+          "evidence_quality": 0.78,
+          "independence": 0.86,
+          "incentive_conflict": 0.24,
+          "title": "Synthetic earnings release",
+          "url": "https://example.com/synthetic/lyra/src-003",
+          "retrieved_at": "2025-11-13T10:00:00-05:00",
+          "content_hash": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "availability_status": "allowed",
+          "originality_score": 0.68,
+          "independence_cluster_id": "lyra-company",
+          "claim_extracted": "Full-year free cash flow guidance was maintained despite a billing-duration transition.",
+          "supported_narrative_ids": [
+            "LYR-NARR-004"
+          ],
+          "contradicted_narrative_ids": []
+        }
+      ],
+      "contradicting_evidence": [],
+      "scoring_inputs": {
+        "evidence_strength": 0.54,
+        "mechanism_specificity": 0.68,
+        "source_independence": 0.66,
+        "cross_sectional_fit": 0.5,
+        "contradiction_resistance": 0.5,
+        "timestamp_advantage": 0.78,
+        "forward_observable_quality": 0.76,
+        "crowding_risk": 0.2,
+        "unsupported_claim_penalty": 0.07
+      },
+      "validation_status": "pending"
+    }
+  ]
+}

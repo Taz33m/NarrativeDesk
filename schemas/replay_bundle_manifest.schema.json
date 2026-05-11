@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://narrativedesk.local/schemas/replay_bundle_manifest.schema.json",
+  "title": "NarrativeDesk Replay Bundle Manifest",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "bundle_type",
+    "case_id",
+    "event_id",
+    "ticker",
+    "data_provenance_mode",
+    "replay_timestamp",
+    "readiness_status",
+    "replay_integrity",
+    "artifacts"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "enum": [1]
+    },
+    "bundle_type": {
+      "type": "string",
+      "enum": ["narrativedesk_replay_bundle"]
+    },
+    "case_id": { "type": "string" },
+    "event_id": { "type": "string" },
+    "ticker": { "type": "string" },
+    "data_provenance_mode": {
+      "type": "string",
+      "enum": ["synthetic", "real-curated"]
+    },
+    "replay_timestamp": { "type": "string", "format": "date-time" },
+    "readiness_status": {
+      "type": "string",
+      "enum": ["ready_to_ingest", "needs_attention"]
+    },
+    "replay_integrity": { "$ref": "#/$defs/replay_integrity" },
+    "artifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/artifact" },
+      "minItems": 1
+    }
+  },
+  "$defs": {
+    "string_array": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "replay_integrity": {
+      "type": "object",
+      "required": [
+        "blocked_future_source_count",
+        "blocked_future_source_ids",
+        "validation_future_source_count",
+        "validation_future_source_ids",
+        "future_validation_separate"
+      ],
+      "properties": {
+        "blocked_future_source_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blocked_future_source_ids": { "$ref": "#/$defs/string_array" },
+        "validation_future_source_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "validation_future_source_ids": { "$ref": "#/$defs/string_array" },
+        "future_validation_separate": { "type": "boolean" }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["path", "sha256", "bytes"],
+      "properties": {
+        "path": { "type": "string" },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

@@ -26,6 +26,71 @@ Synthetic demo event: a liquid streaming company sells off after earnings. The f
 - Blocked future sources: SRC-009
 - Removed from `NARR-001`: SRC-009
 
+## Source Map
+
+| Source | Status | Type | Publisher | Narratives | Relations |
+| --- | --- | --- | --- | --- | --- |
+| SRC-001 | allowed | earnings_release | Orion Streaming Holdings | NARR-001 | support |
+| SRC-002 | allowed | earnings_transcript | Orion Streaming Holdings | NARR-001, NARR-004 | contradict, support |
+| SRC-003 | allowed | earnings_release | Orion Streaming Holdings | NARR-001 | contradict |
+| SRC-004 | allowed | financial_media | Synthetic Market News | NARR-002 | support |
+| SRC-005 | allowed | earnings_release | Orion Streaming Holdings | NARR-002 | contradict |
+| SRC-006 | allowed | market_data | Synthetic Price Feed | NARR-003 | support |
+| SRC-007 | allowed | market_data | Synthetic Price Feed | NARR-003 | contradict |
+| SRC-008 | allowed | earnings_release | Orion Streaming Holdings | NARR-004 | support |
+| SRC-009 | blocked_future | analyst_revision | n/a | NARR-001 | support |
+
+## Citation QA
+
+- Replay filter: pass
+- Support coverage: pass
+- Event-time integrity: pass
+- Citation QA: miss
+- Provenance-ready allowed sources: miss
+- Returned blocked sources: 0
+- Narratives with support: 4/4
+- Missing URLs: 8
+- Missing content hashes: 8
+- Low-quality evidence sources: 1
+
+## Source Reliability
+
+Blocked future sources are counted for auditability but excluded from scoring and ranking.
+- Allowed sources: 8
+- Blocked future sources: 1
+- Average evidence quality: 0.80
+- Average independence: 0.82
+- Average originality score: 0.50
+- Low-quality evidence sources: 1
+- Blocked source IDs: SRC-009
+
+| Publisher | Allowed | Blocked Future | Evidence Quality | Independence | Originality |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Orion Streaming Holdings | 5 | 0 | 0.84 | 0.88 | 0.50 |
+| Synthetic Market News | 1 | 0 | 0.45 | 0.38 | 0.50 |
+| Synthetic Price Feed | 2 | 0 | 0.86 | 0.90 | 0.50 |
+| unknown | 0 | 1 | n/a | n/a | n/a |
+
+## Source Clustering
+
+Clusters use replay-safe allowed evidence only. Future-dated source text stays quarantined.
+- Allowed sources clustered: 8
+- Blocked future sources excluded: 1
+- Cluster count: 8
+- Duplicate clusters: 0
+- Average derived originality: 1.00
+
+| Cluster | Basis | Sources | Publishers | Derived Originality | Representative Claim |
+| --- | --- | --- | --- | ---: | --- |
+| claim-0f01554a436c | claim_text_fingerprint | SRC-003 | Orion Streaming Holdings | 1.00 | Current-quarter revenue still exceeded consensus expectations. |
+| claim-182dc277689d | claim_text_fingerprint | SRC-002 | Orion Streaming Holdings | 1.00 | Multiple analyst questions focused on churn, customer acquisition costs, and net additions. |
+| claim-280d3ca6e07b | claim_text_fingerprint | SRC-005 | Orion Streaming Holdings | 1.00 | Gross margin improved year over year despite higher content spend. |
+| claim-38006d17fd5a | claim_text_fingerprint | SRC-008 | Orion Streaming Holdings | 1.00 | Full-year free cash flow guidance was maintained despite lower near-term net additions. |
+| claim-580edf61be2d | claim_text_fingerprint | SRC-001 | Orion Streaming Holdings | 1.00 | The company lowered next-quarter net addition guidance relative to prior management commentary. |
+| claim-6bdb98326c41 | claim_text_fingerprint | SRC-007 | Synthetic Price Feed | 1.00 | Orion underperformed its peer median by roughly ten percentage points during the event window. |
+| claim-772595a6ed95 | claim_text_fingerprint | SRC-006 | Synthetic Price Feed | 1.00 | The sector ETF was negative on the event morning. |
+| claim-8a13cc3153f0 | claim_text_fingerprint | SRC-004 | Synthetic Market News | 1.00 | Early headlines framed the selloff around margin disappointment and rising content spend. |
+
 ## Narrative Tournament
 
 | Rank | Narrative | Direction | Score | Horizon |
@@ -159,14 +224,3 @@ Score components:
 - forward_observable_quality: 0.10
 - crowding_risk: 0.05
 - unsupported_claim_penalty: 0.05
-
-## Future Validation Fixture
-
-Validation data is shown separately from event-time evidence so it cannot leak into generation.
-- Note: Future validation is stored separately from event-time replay evidence and must not be visible to generation or ranking steps.
-
-| Window | Label | Expected Observable | Synthetic Outcome |
-| --- | --- | --- | --- |
-| T+5 | partial | The stock underperforms a peer basket after the event. | Synthetic replay: ORION continued to underperform the peer basket, but estimate revisions were not yet broad enough for a full validation label. |
-| T+20 | validated | Analysts reduce forward revenue or subscriber estimates within 30 days. | Synthetic replay: forward demand slowdown became the validated narrative as estimate cuts and follow-up commentary centered on net additions and churn. |
-| T+60 | pending | Future company commentary focuses on acquisition efficiency or churn. | Synthetic replay: left pending to show that not every validation window should be force-labeled. |

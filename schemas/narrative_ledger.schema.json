@@ -4,74 +4,401 @@
   "title": "NarrativeDesk Narrative Ledger",
   "type": "object",
   "required": [
-    "narrative_id",
-    "event_id",
-    "ticker",
-    "timestamp_created",
-    "title",
-    "narrative",
-    "mechanism",
-    "directional_implication",
-    "time_horizon",
-    "supporting_evidence",
-    "contradicting_evidence",
-    "expected_observables",
-    "overall_narrative_score",
-    "validation_status"
+    "event",
+    "replay_audit",
+    "citation_qa",
+    "source_reliability",
+    "source_clustering",
+    "narratives"
   ],
   "properties": {
-    "narrative_id": { "type": "string" },
-    "event_id": { "type": "string" },
-    "ticker": { "type": "string" },
-    "timestamp_created": { "type": "string", "format": "date-time" },
-    "title": { "type": "string" },
-    "narrative": { "type": "string" },
-    "mechanism": { "type": "string" },
-    "directional_implication": {
-      "type": "string",
-      "enum": ["bullish", "bearish", "neutral", "mixed"]
-    },
-    "time_horizon": { "type": "string" },
-    "supporting_evidence": {
+    "event": { "$ref": "#/$defs/event" },
+    "replay_audit": { "$ref": "#/$defs/replay_audit" },
+    "citation_qa": { "$ref": "#/$defs/citation_qa" },
+    "source_reliability": { "$ref": "#/$defs/source_reliability" },
+    "source_clustering": { "$ref": "#/$defs/source_clustering" },
+    "narratives": {
       "type": "array",
-      "items": { "$ref": "#/$defs/evidence_item" }
+      "items": { "$ref": "#/$defs/narrative" },
+      "minItems": 1
     },
-    "contradicting_evidence": {
-      "type": "array",
-      "items": { "$ref": "#/$defs/evidence_item" }
-    },
-    "expected_observables": {
-      "type": "array",
-      "items": { "type": "string" }
-    },
-    "scores": {
+    "links": {
       "type": "object",
-      "additionalProperties": { "type": "number" }
-    },
-    "overall_narrative_score": {
+      "additionalProperties": { "type": "string" }
+    }
+  },
+  "$defs": {
+    "score01": {
       "type": "number",
       "minimum": 0,
       "maximum": 1
     },
-    "rank": { "type": ["integer", "null"] },
-    "validation_status": { "type": "string" }
-  },
-  "$defs": {
+    "nullable_score01": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "nullable_number": {
+      "type": ["number", "null"]
+    },
+    "non_negative_integer": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "string_array": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "event": {
+      "type": "object",
+      "required": [
+        "event_id",
+        "ticker",
+        "company_name",
+        "event_date",
+        "event_timestamp",
+        "event_type",
+        "daily_return",
+        "abnormal_return",
+        "volume_ratio",
+        "sector_etf_return",
+        "peer_median_return",
+        "event_summary",
+        "data_provenance_mode",
+        "case_id"
+      ],
+      "properties": {
+        "event_id": { "type": "string" },
+        "ticker": { "type": "string" },
+        "company_name": { "type": "string" },
+        "event_date": { "type": "string" },
+        "event_timestamp": { "type": "string", "format": "date-time" },
+        "event_type": { "type": "string" },
+        "daily_return": { "$ref": "#/$defs/nullable_number" },
+        "abnormal_return": { "$ref": "#/$defs/nullable_number" },
+        "volume_ratio": { "$ref": "#/$defs/nullable_number" },
+        "sector_etf_return": { "$ref": "#/$defs/nullable_number" },
+        "peer_median_return": { "$ref": "#/$defs/nullable_number" },
+        "event_summary": { "type": "string" },
+        "data_provenance_mode": {
+          "type": "string",
+          "enum": ["synthetic", "real-curated"]
+        },
+        "case_id": { "type": "string" }
+      }
+    },
+    "replay_audit": {
+      "type": "object",
+      "required": [
+        "replay_timestamp",
+        "allowed_source_ids",
+        "blocked_source_ids",
+        "removed_evidence_by_narrative",
+        "blocked_evidence"
+      ],
+      "properties": {
+        "replay_timestamp": { "type": "string", "format": "date-time" },
+        "allowed_source_ids": { "$ref": "#/$defs/string_array" },
+        "blocked_source_ids": { "$ref": "#/$defs/string_array" },
+        "removed_evidence_by_narrative": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/string_array" }
+        },
+        "blocked_evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/blocked_evidence" }
+        }
+      }
+    },
+    "blocked_evidence": {
+      "type": "object",
+      "required": [
+        "source_id",
+        "narrative_id",
+        "published_at",
+        "source_type",
+        "relation",
+        "availability_status",
+        "replay_status",
+        "blocked_reason"
+      ],
+      "not": {
+        "anyOf": [
+          { "required": ["claim"] },
+          { "required": ["title"] },
+          { "required": ["url"] },
+          { "required": ["content_hash"] },
+          { "required": ["publisher"] },
+          { "required": ["evidence_quality"] }
+        ]
+      },
+      "properties": {
+        "source_id": { "type": "string" },
+        "narrative_id": { "type": "string" },
+        "published_at": { "type": "string", "format": "date-time" },
+        "source_type": { "type": "string" },
+        "relation": { "type": "string", "enum": ["support", "contradict"] },
+        "availability_status": { "type": "string", "enum": ["blocked_future"] },
+        "replay_status": { "type": "string", "enum": ["blocked_future"] },
+        "blocked_reason": { "type": "string" }
+      }
+    },
+    "citation_qa": {
+      "type": "object",
+      "required": [
+        "allowed_source_count",
+        "blocked_future_source_count",
+        "returned_blocked_source_count",
+        "narrative_count",
+        "narratives_with_support_count",
+        "missing_url_count",
+        "missing_content_hash_count",
+        "missing_publisher_count",
+        "low_quality_evidence_count",
+        "replay_filter_pass",
+        "support_coverage_pass",
+        "event_time_integrity_pass",
+        "provenance_ready",
+        "citation_qa_pass"
+      ],
+      "properties": {
+        "allowed_source_count": { "$ref": "#/$defs/non_negative_integer" },
+        "blocked_future_source_count": { "$ref": "#/$defs/non_negative_integer" },
+        "returned_blocked_source_count": { "$ref": "#/$defs/non_negative_integer" },
+        "narrative_count": { "$ref": "#/$defs/non_negative_integer" },
+        "narratives_with_support_count": { "$ref": "#/$defs/non_negative_integer" },
+        "missing_url_count": { "$ref": "#/$defs/non_negative_integer" },
+        "missing_content_hash_count": { "$ref": "#/$defs/non_negative_integer" },
+        "missing_publisher_count": { "$ref": "#/$defs/non_negative_integer" },
+        "low_quality_evidence_count": { "$ref": "#/$defs/non_negative_integer" },
+        "replay_filter_pass": { "type": "boolean" },
+        "support_coverage_pass": { "type": "boolean" },
+        "event_time_integrity_pass": { "type": "boolean" },
+        "provenance_ready": { "type": "boolean" },
+        "citation_qa_pass": { "type": "boolean" }
+      }
+    },
+    "source_reliability": {
+      "type": "object",
+      "required": ["overall", "by_publisher", "by_source_type"],
+      "properties": {
+        "overall": { "$ref": "#/$defs/source_reliability_bucket" },
+        "by_publisher": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/source_reliability_bucket" }
+        },
+        "by_source_type": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/source_reliability_bucket" }
+        }
+      }
+    },
+    "source_reliability_bucket": {
+      "type": "object",
+      "required": [
+        "group",
+        "key",
+        "allowed_source_count",
+        "blocked_future_count",
+        "average_evidence_quality",
+        "average_independence",
+        "average_originality_score",
+        "low_quality_source_count",
+        "source_ids",
+        "blocked_future_source_ids"
+      ],
+      "properties": {
+        "group": { "type": "string", "enum": ["overall", "publisher", "source_type"] },
+        "key": { "type": "string" },
+        "allowed_source_count": { "$ref": "#/$defs/non_negative_integer" },
+        "blocked_future_count": { "$ref": "#/$defs/non_negative_integer" },
+        "average_evidence_quality": { "$ref": "#/$defs/nullable_score01" },
+        "average_independence": { "$ref": "#/$defs/nullable_score01" },
+        "average_originality_score": { "$ref": "#/$defs/nullable_score01" },
+        "low_quality_source_count": { "$ref": "#/$defs/non_negative_integer" },
+        "source_ids": { "$ref": "#/$defs/string_array" },
+        "blocked_future_source_ids": { "$ref": "#/$defs/string_array" }
+      }
+    },
+    "source_clustering": {
+      "type": "object",
+      "required": [
+        "allowed_source_count",
+        "blocked_future_source_count",
+        "cluster_count",
+        "duplicate_cluster_count",
+        "average_cluster_size",
+        "average_derived_originality_score",
+        "blocked_future_source_ids",
+        "clusters"
+      ],
+      "properties": {
+        "allowed_source_count": { "$ref": "#/$defs/non_negative_integer" },
+        "blocked_future_source_count": { "$ref": "#/$defs/non_negative_integer" },
+        "cluster_count": { "$ref": "#/$defs/non_negative_integer" },
+        "duplicate_cluster_count": { "$ref": "#/$defs/non_negative_integer" },
+        "average_cluster_size": { "$ref": "#/$defs/nullable_number" },
+        "average_derived_originality_score": { "$ref": "#/$defs/nullable_score01" },
+        "blocked_future_source_ids": { "$ref": "#/$defs/string_array" },
+        "clusters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/source_cluster" }
+        }
+      }
+    },
+    "source_cluster": {
+      "type": "object",
+      "required": [
+        "cluster_id",
+        "cluster_basis",
+        "source_count",
+        "source_ids",
+        "narrative_ids",
+        "publishers",
+        "source_types",
+        "relation_counts",
+        "average_fixture_originality_score",
+        "derived_originality_score",
+        "representative_claim"
+      ],
+      "properties": {
+        "cluster_id": { "type": "string" },
+        "cluster_basis": {
+          "type": "string",
+          "enum": ["independence_cluster_id", "claim_text_fingerprint"]
+        },
+        "source_count": { "$ref": "#/$defs/non_negative_integer" },
+        "source_ids": { "$ref": "#/$defs/string_array" },
+        "narrative_ids": { "$ref": "#/$defs/string_array" },
+        "publishers": { "$ref": "#/$defs/string_array" },
+        "source_types": { "$ref": "#/$defs/string_array" },
+        "relation_counts": {
+          "type": "object",
+          "properties": {
+            "support": { "$ref": "#/$defs/non_negative_integer" },
+            "contradict": { "$ref": "#/$defs/non_negative_integer" }
+          }
+        },
+        "average_fixture_originality_score": { "$ref": "#/$defs/nullable_score01" },
+        "derived_originality_score": { "$ref": "#/$defs/score01" },
+        "representative_claim": { "type": "string" }
+      }
+    },
+    "narrative": {
+      "type": "object",
+      "required": [
+        "narrative_id",
+        "event_id",
+        "ticker",
+        "timestamp_created",
+        "title",
+        "narrative",
+        "mechanism",
+        "directional_implication",
+        "time_horizon",
+        "supporting_evidence",
+        "contradicting_evidence",
+        "expected_observables",
+        "scoring_inputs",
+        "scores",
+        "overall_narrative_score",
+        "rank",
+        "confidence",
+        "validation_status"
+      ],
+      "properties": {
+        "narrative_id": { "type": "string" },
+        "event_id": { "type": "string" },
+        "ticker": { "type": "string" },
+        "timestamp_created": { "type": "string", "format": "date-time" },
+        "title": { "type": "string" },
+        "narrative": { "type": "string" },
+        "mechanism": { "type": "string" },
+        "directional_implication": {
+          "type": "string",
+          "enum": ["bullish", "bearish", "neutral", "mixed"]
+        },
+        "time_horizon": { "type": "string" },
+        "supporting_evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_item" }
+        },
+        "contradicting_evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_item" }
+        },
+        "expected_observables": { "$ref": "#/$defs/string_array" },
+        "scoring_inputs": { "$ref": "#/$defs/scoring_inputs" },
+        "scores": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        },
+        "overall_narrative_score": { "$ref": "#/$defs/score01" },
+        "rank": { "type": ["integer", "null"], "minimum": 1 },
+        "confidence": { "$ref": "#/$defs/nullable_score01" },
+        "validation_status": { "type": "string" }
+      }
+    },
     "evidence_item": {
       "type": "object",
-      "required": ["source_id", "claim", "published_at", "source_type", "relation"],
+      "required": [
+        "source_id",
+        "claim",
+        "published_at",
+        "source_type",
+        "relation",
+        "support_strength",
+        "evidence_quality",
+        "independence",
+        "originality_score",
+        "incentive_conflict"
+      ],
       "properties": {
         "source_id": { "type": "string" },
         "claim": { "type": "string" },
+        "title": { "type": "string" },
         "published_at": { "type": "string", "format": "date-time" },
+        "retrieved_at": { "type": ["string", "null"], "format": "date-time" },
         "source_type": { "type": "string" },
         "publisher": { "type": "string" },
         "url": { "type": "string" },
+        "content_hash": { "type": "string" },
+        "availability_status": { "type": "string" },
+        "originality_score": { "$ref": "#/$defs/score01" },
+        "independence_cluster_id": { "type": "string" },
+        "claim_extracted": { "type": "string" },
+        "supported_narrative_ids": { "$ref": "#/$defs/string_array" },
+        "contradicted_narrative_ids": { "$ref": "#/$defs/string_array" },
         "relation": { "type": "string", "enum": ["support", "contradict"] },
-        "support_strength": { "type": "number", "minimum": 0, "maximum": 1 },
-        "evidence_quality": { "type": "number", "minimum": 0, "maximum": 1 },
-        "independence": { "type": "number", "minimum": 0, "maximum": 1 },
-        "incentive_conflict": { "type": "number", "minimum": 0, "maximum": 1 }
+        "support_strength": { "$ref": "#/$defs/score01" },
+        "evidence_quality": { "$ref": "#/$defs/score01" },
+        "independence": { "$ref": "#/$defs/score01" },
+        "incentive_conflict": { "$ref": "#/$defs/score01" }
+      }
+    },
+    "scoring_inputs": {
+      "type": "object",
+      "required": [
+        "evidence_strength",
+        "mechanism_specificity",
+        "source_independence",
+        "cross_sectional_fit",
+        "contradiction_resistance",
+        "timestamp_advantage",
+        "forward_observable_quality",
+        "crowding_risk",
+        "unsupported_claim_penalty"
+      ],
+      "properties": {
+        "evidence_strength": { "$ref": "#/$defs/score01" },
+        "mechanism_specificity": { "$ref": "#/$defs/score01" },
+        "source_independence": { "$ref": "#/$defs/score01" },
+        "cross_sectional_fit": { "$ref": "#/$defs/score01" },
+        "contradiction_resistance": { "$ref": "#/$defs/score01" },
+        "timestamp_advantage": { "$ref": "#/$defs/score01" },
+        "forward_observable_quality": { "$ref": "#/$defs/score01" },
+        "crowding_risk": { "$ref": "#/$defs/score01" },
+        "unsupported_claim_penalty": { "$ref": "#/$defs/score01" }
       }
     }
   }

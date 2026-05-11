@@ -1,0 +1,23 @@
+{
+  "default_case_id": "EVT-ORION-2025-08-07",
+  "cases": [
+    {
+      "case_id": "EVT-ORION-2025-08-07",
+      "label": "ORION synthetic earnings",
+      "event_fixture": "data/fixtures/synthetic_event.json",
+      "validation_fixture": "data/fixtures/synthetic_validation.json"
+    },
+    {
+      "case_id": "EVT-AURORA-2025-10-22",
+      "label": "AURORA synthetic guidance miss",
+      "event_fixture": "data/fixtures/synthetic_event_aurora.json",
+      "validation_fixture": "data/fixtures/synthetic_validation_aurora.json"
+    },
+    {
+      "case_id": "EVT-LYRA-2025-11-13",
+      "label": "LYRA synthetic hard case",
+      "event_fixture": "data/fixtures/synthetic_event_lyra.json",
+      "validation_fixture": "data/fixtures/synthetic_validation_lyra.json"
+    }
+  ]
+}
