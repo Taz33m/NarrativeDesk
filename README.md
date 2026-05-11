@@ -1,18 +1,19 @@
 # NarrativeDesk
 
-NarrativeDesk is a research platform for evaluating competing market narratives behind abnormal equity moves.
+NarrativeDesk is a research platform for verifying generated market narratives behind abnormal equity moves.
 
-It does not ask only whether a stock should be bought or sold. It asks which explanations are circulating, which are evidence-backed, which are crowded or contradicted, and which later prove validated or wrong.
+It is not the AI that tells people what to think about a stock. It is the audit layer that asks, given incomplete, noisy, time-bounded information, whether a generated explanation was sourced correctly, timestamp-valid, non-leaky, contradiction-aware, historically comparable, and eventually validated or falsified.
 
 ## What the app does
 
-The v0.2 demo is a synthetic multi-case historical replay infrastructure. ORION remains the default synthetic case, AURORA adds a provenance-ready guidance-miss replay, and LYRA adds a hard case where the later-validated narrative ranks #2 instead of #1. A fictional streaming company, ORION, sells off after earnings. The surface-level explanation is margin disappointment, but NarrativeDesk ranks forward demand slowdown higher after scoring mechanism specificity, evidence strength, source independence, contradictions, crowding risk, and forward observables.
+The v0.2 demo is a synthetic multi-case historical replay and verification infrastructure. ORION remains the default synthetic case, AURORA adds a provenance-ready guidance-miss replay, and LYRA adds a hard case where the later-validated narrative ranks #2 instead of #1. A fictional streaming company, ORION, sells off after earnings. The surface-level explanation is margin disappointment, but NarrativeDesk audits forward demand slowdown as the replay rank #1 after scoring mechanism specificity, evidence strength, source independence, contradictions, crowding risk, and forward observables.
 
 The browser workbench shows:
 
 - Event header with abnormal move, peer move, sector move, volume spike, and leakage lock timestamp.
 - Synthetic case-index summary with aggregate Recall@3 and baseline comparison rates.
-- Narrative Tournament with ranked competing explanations.
+- Historical analogs showing how similar narrative structures validated or missed in other replay cases.
+- Narrative verification bracket with ranked competing explanations.
 - Evidence and contradiction inspector with source timestamps.
 - Replay audit showing allowed sources and blocked future sources.
 - Citation QA panel for replay filtering, support coverage, and provenance gaps.
@@ -30,11 +31,12 @@ The demo data is synthetic by design. Real-curated cases require timestamped sou
 2. Read the event strip: the stock is down 11.4 percent, with a -10.2 percent abnormal move.
 3. Check the replay lock: the event-time system is locked at `2025-08-07T10:00:00-04:00`.
 4. Inspect the audit: future source `SRC-009` is quarantined and removed from `NARR-001`.
-5. Compare the tournament: forward demand slowdown ranks above margin compression.
+5. Compare the verification bracket: forward demand slowdown ranks above margin compression.
 6. Open the evidence inspector: margin compression has headline support but a direct contradiction.
 7. Read expected observables: each narrative makes falsifiable future claims.
-8. Reveal validation: T+20 later validates the top-ranked narrative in the synthetic replay.
-9. Export the Markdown report or ledger JSON.
+8. Compare historical analogs: similar demand-slowdown narratives validated in other synthetic replay cases.
+9. Reveal validation: T+20 later supports replay rank #1 in the synthetic replay.
+10. Export the Markdown report or ledger JSON.
 
 ## Why anti-leakage matters
 
@@ -65,9 +67,10 @@ Implemented deterministically:
 - Event return, abnormal return, peer median return, sector return, and volume ratio from raw fixture bars.
 - Replay-lock checks requiring market snapshot `timestamp` or `as_of` fields.
 - Replay timestamp filtering.
-- Narrative scoring and ranking.
-- Evaluation checks for Narrative Recall@3, top-ranked validation, unsupported-claim penalty, and blocked future sources.
-- Deterministic headline-baseline versus NarrativeDesk tournament comparison.
+- Narrative scoring, ranking, and audit checks.
+- Historical analog selection from replay-safe narrative text, mechanism, event type, direction, and held-out validation labels.
+- Evaluation checks for Narrative Recall@3, replay rank #1 validation, unsupported-claim penalty, and blocked future sources.
+- Deterministic headline-baseline versus NarrativeDesk verification comparison.
 - Deterministic ablation comparisons for evidence-only, no-contradiction-penalty, and quality-weighted selection.
 - Citation QA checks for replay leakage, support coverage, provenance gaps, and low-quality evidence.
 - Source reliability summaries by publisher and source type.
@@ -82,7 +85,7 @@ Implemented deterministically:
 Future work:
 
 - Provider adapters for transcript services, timestamped estimates, and analyst revisions.
-- Optional AI agents for hypothesis generation and contradiction generation.
+- Optional AI agents for source-grounded hypothesis generation and contradiction generation; model output is never evidence by itself.
 - Citation QA over larger real timestamped document sets.
 - Multi-model arena and benchmark dataset.
 
@@ -375,13 +378,13 @@ Replay, ledger, and default report endpoints do not include future validation da
 
 1. Add real historical event fixtures with timestamped citations.
 2. Add transcript, estimate-revision, and analyst-consensus adapters.
-3. Add optional agent generation grounded in structured source packs.
+3. Add optional agent generation grounded in structured source packs, with every generated claim tied back to source IDs.
 4. Expand case evaluation to T+5, T+20, and T+60 validation windows.
 5. Build a 100-event benchmark for Validated Narrative Rank@3.
 
 ## Research positioning
 
-NarrativeDesk is meant to test the layer before P&L: whether a system identifies the right market thesis, supports it with evidence, ranks it against alternatives, and tracks whether the market later validates it.
+NarrativeDesk is meant to test the layer before P&L: whether a generated market thesis is source-backed, replay-safe, contradicted, ranked against alternatives, and later validated or falsified.
 
 ## Disclaimer
 

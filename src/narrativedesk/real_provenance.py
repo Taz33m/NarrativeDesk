@@ -8,7 +8,7 @@ import shutil
 import time
 from copy import deepcopy
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -239,6 +239,8 @@ def fetch_real_data(
                         cik=padded_cik,
                         forms=forms or ["8-K", "10-Q", "10-K"],
                         count=sec_count,
+                        date_from=date_from,
+                        date_to=date_to,
                     ):
                         accession = _safe_filename(filing["accession"].replace("-", ""))
                         document = filing["document"]
@@ -764,6 +766,7 @@ def rehearse_real_case(
     include_sec_document_text: bool = False,
     news_query: str | None = None,
     news_domains: str | None = None,
+    market_bars_path: str | Path | None = None,
     sec_throttle_seconds: float = 0.12,
     worksheet: bool = True,
     curation_template: bool = True,
@@ -825,6 +828,7 @@ def rehearse_real_case(
         replay_lock=replay_lock,
         normalized_dir=normalized["out_dir"],
         out_dir=draft_path,
+        market_bars_path=market_bars_path,
     )
     worksheet_response = None
     if worksheet:
@@ -990,6 +994,7 @@ def _curated_config_from_payload(
         raise RealProvenanceError("; ".join(errors))
 
     updated["narratives"] = curated_narratives
+    _mark_config_as_curated(updated, narrative_count=len(curated_narratives))
     return (
         updated,
         {
@@ -999,6 +1004,19 @@ def _curated_config_from_payload(
             "manual_source_count": len(sources),
         },
     )
+
+
+def _mark_config_as_curated(config: dict[str, Any], *, narrative_count: int) -> None:
+    summary = (
+        f"Private real-data replay rehearsal with {narrative_count} "
+        "human-curated competing narratives. Review citations and validation before public use."
+    )
+    case_metadata = config.get("case_metadata")
+    if isinstance(case_metadata, dict):
+        case_metadata["event_summary"] = summary
+    event = config.get("event")
+    if isinstance(event, dict):
+        event["event_summary"] = summary
 
 
 def _worksheet_lines(
@@ -1012,7 +1030,7 @@ def _worksheet_lines(
     lines = [
         f"# {summary.get('ticker', 'Unknown')} Real-Case Replay Curation Worksheet",
         "",
-        "Scratch artifact. Do not commit. No winning narrative has been asserted.",
+        "Scratch artifact. Do not commit. No verified narrative outcome has been asserted.",
         "",
         "## Case",
         "",
@@ -1526,7 +1544,11 @@ def _select_recent_sec_filings(
     cik: str,
     forms: list[str],
     count: int,
+    date_from: str | None = None,
+    date_to: str | None = None,
 ) -> list[dict[str, Any]]:
+    if count <= 0:
+        return []
     recent = data.get("filings", {}).get("recent", {}) if isinstance(data, dict) else {}
     normalized_forms = {form.upper() for form in forms}
     filings = []
@@ -1555,9 +1577,60 @@ def _select_recent_sec_filings(
                 "url": f"https://www.sec.gov/Archives/edgar/data/{padded_cik.lstrip('0')}/{compact}/{document}",
             }
         )
-        if len(filings) >= count:
+        if not date_from and not date_to and len(filings) >= count:
             break
-    return filings
+    if date_from or date_to:
+        filings = _rank_sec_filings_for_event_window(filings, date_from=date_from, date_to=date_to)
+    return filings[:count]
+
+
+def _rank_sec_filings_for_event_window(
+    filings: list[dict[str, Any]],
+    *,
+    date_from: str | None,
+    date_to: str | None,
+) -> list[dict[str, Any]]:
+    start = _parse_optional_iso_date(date_from)
+    end = _parse_optional_iso_date(date_to)
+    if not start and not end:
+        return filings
+    start = start or date.min
+    end = end or date.max
+
+    in_window: list[dict[str, Any]] = []
+    before_window: list[dict[str, Any]] = []
+    after_window: list[dict[str, Any]] = []
+    undated: list[dict[str, Any]] = []
+
+    for filing in filings:
+        filing_date = _parse_optional_iso_date(str(filing.get("filing_date") or ""))
+        if filing_date is None:
+            undated.append(filing)
+        elif start <= filing_date <= end:
+            in_window.append(filing)
+        elif filing_date < start:
+            before_window.append(filing)
+        else:
+            after_window.append(filing)
+
+    before_window.sort(key=_sec_filing_sort_date, reverse=True)
+    after_window.sort(key=_sec_filing_sort_date)
+    return [*in_window, *before_window, *after_window, *undated]
+
+
+def _parse_optional_iso_date(value: str | None) -> date | None:
+    if not value:
+        return None
+    raw = str(value).strip()
+    if not raw:
+        return None
+    if re.match(r"^\d{4}-\d{2}-\d{2}$", raw):
+        return date.fromisoformat(raw)
+    return _coerce_datetime(raw).date()
+
+
+def _sec_filing_sort_date(filing: dict[str, Any]) -> date:
+    return _parse_optional_iso_date(str(filing.get("filing_date") or "")) or date.min
 
 
 def _parse_sec_accepted_at(accepted_at: str, filing_date: str) -> str:

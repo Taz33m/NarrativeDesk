@@ -56,12 +56,16 @@ async function main() {
     const bodyText = await page.locator('body').innerText();
 
     assert.match(bodyText, /NarrativeDesk Replay/i);
-    assert.match(bodyText, /Replay-safe narrative ranking for abnormal market moves/i);
-    assert.match(bodyText, /Competing market narratives\. Time-locked evidence\. Later validation\./i);
+    assert.match(bodyText, /Replay-safe market narrative verification/i);
+    assert.match(bodyText, /Incomplete signals\. Time-locked evidence\. Historical validation\./i);
     assert.match(bodyText, /ORION/);
     assert.match(bodyText, /Case library/i);
-    assert.match(bodyText, /Top Replay Narrative/i);
-    assert.match(bodyText, /Why it ranked first/i);
+    assert.match(bodyText, /Historical analogs/i);
+    assert.match(bodyText, /How similar narratives validated/i);
+    assert.match(bodyText, /AURORA/);
+    assert.match(bodyText, /Similarity/i);
+    assert.match(bodyText, /Narrative under audit/i);
+    assert.match(bodyText, /Verification score/i);
     assert.match(bodyText, /Replay timeline/i);
     assert.match(bodyText, /Replay Lock/i);
     assert.match(bodyText, /Future validation/i);
@@ -71,17 +75,17 @@ async function main() {
     const orionThesis = await page.locator('[data-testid="event-header"]').innerText();
     assert.match(orionThesis, /surface baseline[\s\S]*Margin compression/i);
     assert.match(orionThesis, /Ranked #4/i);
-    assert.match(orionThesis, /Ranked #1 at the lock[\s\S]*T\+20 later supported top replay narrative/i);
-    assert.match(orionThesis, /top replay narrative[\s\S]*Forward demand slowdown/i);
+    assert.match(orionThesis, /Ranked #1 at the lock[\s\S]*T\+20 later supported replay rank #1/i);
+    assert.match(orionThesis, /Narrative under audit[\s\S]*Forward demand slowdown/i);
     assert.match(orionThesis, /Held out from replay scoring/i);
     assert.doesNotMatch(bodyText, /SRC-009/);
-    assert.match(bodyText, /T\+20 later supported top replay narrative/i);
+    assert.match(bodyText, /T\+20 later supported replay rank #1/i);
     assert.match(bodyText, /Demo provenance: synthetic benchmark case/i);
 
     await page.getByRole('button', { name: /^Tournament$/i }).click();
     const bracketText = await page.locator('[data-testid="tournament-bracket"]').innerText();
-    assert.match(bracketText, /NarrativeDesk Tournament/i);
-    assert.match(bracketText, /Head-to-head explanation bracket/i);
+    assert.match(bracketText, /NarrativeDesk Verification Bracket/i);
+    assert.match(bracketText, /Head-to-head explanation audit/i);
     await page.locator('[data-testid="narrative-tournament"]').getByRole('button', { name: /Margin compression/i }).click();
     const marginText = await page.locator('[data-testid="evidence-inspector"]').innerText();
     assert.match(marginText, /Gross margin improved year over year/);
@@ -98,6 +102,7 @@ async function main() {
     await page.getByRole('button', { name: /^Benchmark$/i }).click();
     const benchmarkText = await page.locator('body').innerText();
     assert.match(benchmarkText, /Benchmark corpus/i);
+    assert.match(benchmarkText, /Historical analogs/i);
     assert.match(benchmarkText, /Synthetic case-index summary/i);
     assert.match(benchmarkText, /Source reliability/i);
     assert.match(benchmarkText, /Provenance quality ledger/i);
@@ -165,7 +170,7 @@ async function main() {
     assert.match(lyraThesis, /surface baseline[\s\S]*Renewal discounting pressure/i);
     assert.match(lyraThesis, /Ranked #2/i);
     assert.match(lyraThesis, /Ranked #1 at the lock[\s\S]*T\+20 later supported rank #2/i);
-    assert.match(lyraThesis, /top replay narrative[\s\S]*AI module adoption slowdown/i);
+    assert.match(lyraThesis, /Narrative under audit[\s\S]*AI module adoption slowdown/i);
     await page.getByRole('button', { name: /^Report$/i }).click();
     assert.equal(
       await page.locator('[data-testid="ledger-export"]').getAttribute('download'),
@@ -175,7 +180,7 @@ async function main() {
     assert.match(decodeDataHref(lyraReportHref), /NarrativeDesk Event Report: LYRA/);
     assert.doesNotMatch(decodeDataHref(lyraReportHref), /NarrativeDesk Event Report: ORION/);
     assert.doesNotMatch(decodeDataHref(lyraReportHref), /Future Validation Fixture/);
-    assert.doesNotMatch(decodeDataHref(lyraReportHref), /Top-ranked narrative validated/);
+    assert.doesNotMatch(decodeDataHref(lyraReportHref), /Replay rank #1 validated: yes/);
 
     await page.setViewportSize({ width: 390, height: 1100 });
     await page.goto(baseUrl, { waitUntil: 'networkidle' });
@@ -192,7 +197,7 @@ async function main() {
     ));
 
     assert.equal(consoleErrors.length, 0, consoleErrors.join('\n'));
-    console.log('Browser smoke passed: preview workbench loaded, tournament rendered, evidence interaction worked.');
+    console.log('Browser smoke passed: preview workbench loaded, verification bracket rendered, evidence interaction worked.');
   } finally {
     if (browser) await browser.close();
     if (server) server.kill('SIGTERM');

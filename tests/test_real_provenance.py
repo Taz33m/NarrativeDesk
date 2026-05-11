@@ -1,5 +1,6 @@
 import json
 import importlib.util
+import os
 import subprocess
 import sys
 import tempfile
@@ -14,6 +15,7 @@ from narrativedesk.real_provenance import (
     RealProvenanceError,
     _normalize_text,
     _sec_filing_excerpt,
+    _select_recent_sec_filings,
     apply_curated_narratives,
     draft_real_case,
     fetch_real_data,
@@ -230,6 +232,75 @@ class RealProvenanceTests(unittest.TestCase):
         sec_call = next(call for call in fetcher.calls if call["url"].startswith("https://data.sec.gov"))
         self.assertEqual(sec_call["headers"]["User-Agent"], "NarrativeDesk Tests test@example.com")
 
+    def test_sec_document_selection_prefers_event_window_filings(self):
+        submissions = {
+            "name": "Example Co",
+            "filings": {
+                "recent": {
+                    "form": ["10-Q", "8-K", "10-Q", "8-K"],
+                    "accessionNumber": [
+                        "0001234567-26-000001",
+                        "0001234567-25-000002",
+                        "0001234567-25-000001",
+                        "0001234567-24-000099",
+                    ],
+                    "primaryDocument": [
+                        "exmpl-20260331.htm",
+                        "exmpl-20250103.htm",
+                        "exmpl-20250102.htm",
+                        "exmpl-20241031.htm",
+                    ],
+                    "filingDate": ["2026-04-30", "2025-01-03", "2025-01-02", "2024-10-31"],
+                    "acceptanceDateTime": [
+                        "2026-04-30T20:30:00.000Z",
+                        "2025-01-03T21:00:00.000Z",
+                        "2025-01-02T13:10:00.000Z",
+                        "2024-10-31T20:30:00.000Z",
+                    ],
+                }
+            },
+        }
+
+        filings = _select_recent_sec_filings(
+            submissions,
+            ticker="EXMPL",
+            cik="1234567",
+            forms=["8-K", "10-Q"],
+            count=3,
+            date_from="2025-01-01",
+            date_to="2025-01-07",
+        )
+
+        self.assertEqual(
+            [filing["accession"] for filing in filings],
+            ["0001234567-25-000002", "0001234567-25-000001", "0001234567-24-000099"],
+        )
+        self.assertNotIn("0001234567-26-000001", [filing["accession"] for filing in filings])
+
+    def test_sec_document_selection_preserves_recent_default_without_window(self):
+        submissions = {
+            "name": "Example Co",
+            "filings": {
+                "recent": {
+                    "form": ["10-Q", "8-K"],
+                    "accessionNumber": ["0001234567-26-000001", "0001234567-25-000001"],
+                    "primaryDocument": ["exmpl-20260331.htm", "exmpl-20250102.htm"],
+                    "filingDate": ["2026-04-30", "2025-01-02"],
+                    "acceptanceDateTime": ["2026-04-30T20:30:00.000Z", "2025-01-02T13:10:00.000Z"],
+                }
+            },
+        }
+
+        filings = _select_recent_sec_filings(
+            submissions,
+            ticker="EXMPL",
+            cik="1234567",
+            forms=["8-K", "10-Q"],
+            count=1,
+        )
+
+        self.assertEqual([filing["accession"] for filing in filings], ["0001234567-26-000001"])
+
     def test_normalize_real_data_fetch_builds_candidates_and_rejections(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             out_dir = Path(tmpdir) / "fetch"
@@ -444,6 +515,49 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(response["missing_requirements"], [])
         self.assertEqual(config["market_data"]["path"], "market_bars.csv")
         self.assertIn("2025-01-02T10:00:00-05:00,EXMPL,100.0,94.0,2000", copied_bars)
+
+    def test_rehearse_real_case_accepts_explicit_frozen_market_bars(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            market_bars = root / "market_bars.csv"
+            market_bars.write_text(
+                "\n".join(
+                    [
+                        "date,ticker,open,close,volume",
+                        "2025-01-02T10:00:00-05:00,EXMPL,100.0,94.0,2000",
+                    ]
+                )
+                + "\n"
+            )
+
+            response = rehearse_real_case(
+                ticker="EXMPL",
+                company_name="Example Co",
+                event_type="earnings/guidance",
+                event_date="2025-01-02",
+                replay_lock="2025-01-02T10:00:00-05:00",
+                date_from="2025-01-01",
+                date_to="2025-01-07",
+                out_root=root,
+                providers=["finnhub", "sec"],
+                finnhub_token="secret-token",
+                sec_user_agent="NarrativeDesk Tests test@example.com",
+                fetcher=FakeProvenanceFetcher(fail_candles=True),
+                retrieved_at="2026-05-11T00:00:00Z",
+                forms=["8-K"],
+                sec_count=1,
+                include_sec_document_text=True,
+                market_bars_path=market_bars,
+                sec_throttle_seconds=0,
+            )
+            draft_config = json.loads(Path(response["real_case_config_out"]).read_text())
+
+        self.assertFalse(response["ok"])
+        self.assertEqual(response["stage"], "complete_with_fetch_errors")
+        self.assertTrue(response["market_bars_available"])
+        self.assertEqual(response["case_readiness"], "curator_ready")
+        self.assertEqual(response["missing_requirements"], [])
+        self.assertEqual(draft_config["market_data"]["path"], "market_bars.csv")
 
     def test_draft_real_case_rejects_future_market_bar_override_for_readiness(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -669,7 +783,7 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(manifest["artifacts"][0]["params"]["token"], "[REDACTED]")
         self.assertEqual(config["case_metadata"]["ticker"], "EXMPL")
         self.assertEqual(summary["recommended_next_action"], "Add 3-5 human-curated competing narratives.")
-        self.assertIn("No winning narrative has been asserted", worksheet)
+        self.assertIn("No verified narrative outcome has been asserted", worksheet)
         self.assertEqual(len(curation_template["narratives"]), 5)
         self.assertEqual(curation_template["source_pool"]["allowed"][0]["availability_status"], "allowed")
         self.assertIn("supporting_source_ids", curation_template["narratives"][0])
@@ -832,6 +946,9 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(config_errors, [])
         self.assertEqual(source_pack_errors, [])
         self.assertNotIn("supporting_source_ids", curated_config["narratives"][0])
+        self.assertIn("human-curated competing narratives", curated_config["case_metadata"]["event_summary"])
+        self.assertIn("Review citations and validation", curated_config["event"]["event_summary"])
+        self.assertNotIn("No narrative claims have been asserted", curated_config["case_metadata"]["event_summary"])
         self.assertIn("NARR-REAL-001", source_by_id[allowed_ids[0]]["supported_narrative_ids"])
         self.assertIn("NARR-REAL-001", source_by_id[allowed_ids[1]]["contradicted_narrative_ids"])
         self.assertIn("NARR-REAL-001", source_by_id[future_ids[0]]["supported_narrative_ids"])
@@ -1021,6 +1138,8 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertNotIn("contact@example.com", preflight_after.stdout)
         self.assertTrue(verification["ok"])
         self.assertEqual(source_pack["narratives"][0]["narrative_id"], "NARR-REAL-001")
+        self.assertIn("human-curated competing narratives", source_pack["case_metadata"]["event_summary"])
+        self.assertNotIn("No narrative claims have been asserted", source_pack["case_metadata"]["event_summary"])
         self.assertTrue(report_exists)
         self.assertTrue(manifest_exists)
         self.assertTrue(curated_config_exists)
@@ -1275,6 +1394,61 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertIn("fill non-empty local values", response["next_action"])
         self.assertNotIn("''", result.stdout)
 
+    def test_aapl_rehearsal_runner_passes_market_bars_to_initial_rehearse(self):
+        runner = _load_aapl_rehearsal_runner()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            calls = []
+
+            def fake_run_cli(command, **_kwargs):
+                calls.append(command)
+                if command[0] == "real-case-preflight":
+                    return {"returncode": 0, "command": command, "json": {"ok": True, "status": "ready_to_fetch"}}
+                if command[0] == "real-case-rehearse":
+                    return {
+                        "returncode": 1,
+                        "command": command,
+                        "json": {
+                            "ok": False,
+                            "stage": "complete_with_fetch_errors",
+                            "case_readiness": "curator_ready",
+                            "real_case_config_out": str(root / "draft" / "real_case_config.json"),
+                        },
+                    }
+                if command[0] == "real-case-status":
+                    return {"returncode": 0, "command": command, "json": {"ok": True, "status": "ready_to_bundle"}}
+                raise AssertionError(f"Unexpected command: {command}")
+
+            args = SimpleNamespace(
+                ticker="AAPL",
+                company_name="Apple Inc.",
+                event_type="earnings/guidance",
+                event_date="2024-05-02",
+                replay_lock="2024-05-03T10:00:00-04:00",
+                date_from="2024-05-01",
+                date_to="2024-05-20",
+                providers="finnhub,sec",
+                env_file=str(root / ".env.local"),
+                fetch_dir=str(root / "fetch"),
+                draft_dir=str(root / "draft"),
+                bundle_dir=str(root / "bundle"),
+                narratives=None,
+                sec_count=5,
+                forms="8-K,10-Q,10-K",
+                no_sec_document_text=False,
+                preflight_only=False,
+                build_bundle=False,
+                market_bars=str(root / "market_bars.csv"),
+            )
+            with patch.object(runner, "_run_cli", side_effect=fake_run_cli):
+                response = runner.run_rehearsal(args)
+
+        rehearse_call = next(call for call in calls if call[0] == "real-case-rehearse")
+        self.assertFalse(response["ok"])
+        self.assertEqual(response["status"], "needs_curation")
+        self.assertIn("--market-bars", rehearse_call)
+        self.assertIn(str(root / "market_bars.csv"), rehearse_call)
+
     def test_aapl_rehearsal_runner_resumes_from_curated_draft_to_bundle(self):
         runner = _load_aapl_rehearsal_runner()
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -1335,6 +1509,131 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(response["status"], "quality_ready")
         self.assertEqual([call[0] for call in calls], ["real-case-preflight", "real-case-curated-bundle", "real-case-quality"])
         self.assertNotIn("real-case-rehearse", [call[0] for call in calls])
+
+    def test_aapl_rehearsal_runner_rebuilds_stale_verified_bundle(self):
+        runner = _load_aapl_rehearsal_runner()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            draft_dir = root / "draft"
+            bundle_dir = root / "bundle"
+            draft_dir.mkdir()
+            bundle_dir.mkdir()
+            curated = draft_dir / "curated_narratives.json"
+            config = draft_dir / "real_case_config.json"
+            manifest = bundle_dir / "manifest.json"
+            verify = bundle_dir / "bundle_verify.json"
+            curated.write_text("{}\n")
+            config.write_text("{}\n")
+            manifest.write_text("{}\n")
+            verify.write_text("{}\n")
+            os.utime(manifest, (100, 100))
+            os.utime(verify, (100, 100))
+            os.utime(config, (200, 200))
+            os.utime(curated, (300, 300))
+            calls = []
+
+            def fake_run_cli(command, **_kwargs):
+                calls.append(command)
+                if command[0] == "real-case-preflight":
+                    return {
+                        "returncode": 0,
+                        "json": {
+                            "ok": True,
+                            "status": "bundle_verified",
+                            "next_action": "Review the bundle report.",
+                        },
+                    }
+                if command[0] == "real-case-curated-bundle":
+                    return {"returncode": 0, "json": {"ok": True}}
+                if command[0] == "real-case-quality":
+                    return {"returncode": 0, "json": {"ok": True, "next_action": "Review."}}
+                raise AssertionError(f"Unexpected command: {command}")
+
+            args = SimpleNamespace(
+                ticker="EXMPL",
+                company_name="Example Co",
+                event_type="earnings/guidance",
+                event_date="2025-01-02",
+                replay_lock="2025-01-02T10:00:00-05:00",
+                date_from="2025-01-01",
+                date_to="2025-01-07",
+                providers="finnhub,sec",
+                env_file=str(root / ".env.local"),
+                fetch_dir=str(root / "fetch"),
+                draft_dir=str(draft_dir),
+                bundle_dir=str(bundle_dir),
+                narratives=None,
+                sec_count=5,
+                forms="8-K,10-Q,10-K",
+                no_sec_document_text=False,
+                preflight_only=False,
+                build_bundle=False,
+                market_bars=None,
+            )
+            with patch.object(runner, "_run_cli", side_effect=fake_run_cli):
+                response = runner.run_rehearsal(args)
+
+        self.assertTrue(response["ok"])
+        self.assertEqual(response["status"], "quality_ready")
+        self.assertEqual([call[0] for call in calls], ["real-case-preflight", "real-case-curated-bundle", "real-case-quality"])
+
+    def test_aapl_rehearsal_runner_build_bundle_forces_verified_bundle_refresh(self):
+        runner = _load_aapl_rehearsal_runner()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            draft_dir = root / "draft"
+            bundle_dir = root / "bundle"
+            draft_dir.mkdir()
+            bundle_dir.mkdir()
+            (draft_dir / "curated_narratives.json").write_text("{}\n")
+            (bundle_dir / "manifest.json").write_text("{}\n")
+            (bundle_dir / "bundle_verify.json").write_text("{}\n")
+            calls = []
+
+            def fake_run_cli(command, **_kwargs):
+                calls.append(command)
+                if command[0] == "real-case-preflight":
+                    return {
+                        "returncode": 0,
+                        "json": {
+                            "ok": True,
+                            "status": "bundle_verified",
+                            "next_action": "Review the bundle report.",
+                        },
+                    }
+                if command[0] == "real-case-curated-bundle":
+                    return {"returncode": 0, "json": {"ok": True}}
+                if command[0] == "real-case-quality":
+                    return {"returncode": 0, "json": {"ok": True, "next_action": "Review."}}
+                raise AssertionError(f"Unexpected command: {command}")
+
+            args = SimpleNamespace(
+                ticker="EXMPL",
+                company_name="Example Co",
+                event_type="earnings/guidance",
+                event_date="2025-01-02",
+                replay_lock="2025-01-02T10:00:00-05:00",
+                date_from="2025-01-01",
+                date_to="2025-01-07",
+                providers="finnhub,sec",
+                env_file=str(root / ".env.local"),
+                fetch_dir=str(root / "fetch"),
+                draft_dir=str(draft_dir),
+                bundle_dir=str(bundle_dir),
+                narratives=None,
+                sec_count=5,
+                forms="8-K,10-Q,10-K",
+                no_sec_document_text=False,
+                preflight_only=False,
+                build_bundle=True,
+                market_bars=None,
+            )
+            with patch.object(runner, "_run_cli", side_effect=fake_run_cli):
+                response = runner.run_rehearsal(args)
+
+        self.assertTrue(response["ok"])
+        self.assertEqual(response["status"], "quality_ready")
+        self.assertEqual([call[0] for call in calls], ["real-case-preflight", "real-case-curated-bundle", "real-case-quality"])
 
     def test_aapl_rehearsal_runner_resumes_from_frozen_fetch_without_env(self):
         runner = _load_aapl_rehearsal_runner()
@@ -1720,7 +2019,7 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertIn("SRC-ALLOWED", worksheet)
         self.assertIn("SRC-FUTURE", worksheet)
         self.assertIn("pipe \\| character", worksheet)
-        self.assertIn("No winning narrative has been asserted", worksheet)
+        self.assertIn("No verified narrative outcome has been asserted", worksheet)
 
     def test_cli_real_case_preflight_reports_missing_env_without_values(self):
         with tempfile.TemporaryDirectory() as tmpdir:

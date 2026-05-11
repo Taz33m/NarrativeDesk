@@ -14,6 +14,19 @@ import type {
 
 type Mode = 'overview' | 'tournament' | 'evidence' | 'validation' | 'benchmark' | 'report';
 
+type HistoricalAnalog = {
+  caseId: string;
+  ticker: string;
+  companyName: string;
+  eventType: string;
+  narrative: Narrative;
+  similarity: number;
+  basis: string[];
+  validationLabel: string;
+  validationWindow: string;
+  validationCopy: string;
+};
+
 const scoreRows: Array<{ key: keyof Narrative['scoring_inputs']; label: string; penalty?: boolean }> = [
   { key: 'evidence_strength', label: 'Evidence strength' },
   { key: 'mechanism_specificity', label: 'Mechanism specificity' },
@@ -34,6 +47,35 @@ const modes: Array<{ id: Mode; label: string }> = [
   { id: 'benchmark', label: 'Benchmark' },
   { id: 'report', label: 'Report' },
 ];
+
+const analogStopWords = new Set([
+  'the',
+  'and',
+  'or',
+  'to',
+  'of',
+  'a',
+  'an',
+  'in',
+  'is',
+  'are',
+  'as',
+  'by',
+  'with',
+  'from',
+  'after',
+  'future',
+  'stock',
+  'move',
+  'moves',
+  'market',
+  'investors',
+  'company',
+  'event',
+  'narrative',
+  'replay',
+  'evidence',
+]);
 
 function pct(value: number | null | undefined): string {
   if (value === null || value === undefined) return 'n/a';
@@ -119,7 +161,7 @@ function validationHeadline(evaluation: EvaluationSummary | null, validation: Va
   const validatedWindow = validation?.rows.find((row) => row.label === 'validated');
   if (!evaluation) return 'Validation pending';
   if (evaluation.top_ranked_validated) {
-    return `${validatedWindow?.window ?? 'Future'} later supported top replay narrative`;
+    return `${validatedWindow?.window ?? 'Future'} later supported replay rank #1`;
   }
   if (evaluation.validated_rank) {
     return `${validatedWindow?.window ?? 'Future'} later supported rank #${evaluation.validated_rank}`;
@@ -170,24 +212,24 @@ function narrativeOutcomeLabel(narrative: Narrative, evaluation: EvaluationSumma
   return narrative.validation_status;
 }
 
-function losingReason(narrative: Narrative, winner: Narrative): string {
-  if (narrative.narrative_id === winner.narrative_id) return narrativeReason(winner);
+function auditGapReason(narrative: Narrative, rankOne: Narrative): string {
+  if (narrative.narrative_id === rankOne.narrative_id) return narrativeReason(rankOne);
   const reasons = [
     {
       label: 'weaker evidence',
-      delta: winner.scoring_inputs.evidence_strength - narrative.scoring_inputs.evidence_strength,
+      delta: rankOne.scoring_inputs.evidence_strength - narrative.scoring_inputs.evidence_strength,
     },
     {
       label: 'less specific mechanism',
-      delta: winner.scoring_inputs.mechanism_specificity - narrative.scoring_inputs.mechanism_specificity,
+      delta: rankOne.scoring_inputs.mechanism_specificity - narrative.scoring_inputs.mechanism_specificity,
     },
     {
       label: 'less timestamp advantage',
-      delta: winner.scoring_inputs.timestamp_advantage - narrative.scoring_inputs.timestamp_advantage,
+      delta: rankOne.scoring_inputs.timestamp_advantage - narrative.scoring_inputs.timestamp_advantage,
     },
     {
       label: 'more unsupported-claim risk',
-      delta: narrative.scoring_inputs.unsupported_claim_penalty - winner.scoring_inputs.unsupported_claim_penalty,
+      delta: narrative.scoring_inputs.unsupported_claim_penalty - rankOne.scoring_inputs.unsupported_claim_penalty,
     },
   ]
     .filter((item) => item.delta > 0.015)
@@ -195,6 +237,109 @@ function losingReason(narrative: Narrative, winner: Narrative): string {
     .slice(0, 2)
     .map((item) => item.label);
   return reasons.length ? reasons.join(' / ') : 'lower total replay-safe score';
+}
+
+function tokenizeAnalogText(value: string): Set<string> {
+  return new Set(
+    (value.toLowerCase().match(/[a-z0-9]+/g) ?? [])
+      .filter((token) => token.length > 2 && !analogStopWords.has(token)),
+  );
+}
+
+function overlapScore(left: Set<string>, right: Set<string>): number {
+  if (!left.size || !right.size) return 0;
+  const shared = [...left].filter((token) => right.has(token)).length;
+  const total = new Set([...left, ...right]).size;
+  return total ? shared / total : 0;
+}
+
+function narrativeFeatureText(narrative: Narrative): string {
+  return [
+    narrative.title,
+    narrative.narrative,
+    narrative.mechanism,
+    ...narrative.expected_observables,
+  ].join(' ');
+}
+
+function analogOutcome(
+  narrative: Narrative,
+  validationCase: ValidationCasesPayload['cases'][number] | undefined,
+): Pick<HistoricalAnalog, 'validationCopy' | 'validationLabel' | 'validationWindow'> {
+  const rows = validationCase?.validation.rows.filter((row) => row.narrative_id === narrative.narrative_id) ?? [];
+  const row = rows.find((item) => item.label === 'validated')
+    ?? rows.find((item) => item.label === 'partial')
+    ?? rows[0]
+    ?? null;
+  const isValidated = validationCase?.evaluation.validated_narrative_ids.includes(narrative.narrative_id) ?? false;
+  const missedRankOne = narrative.rank === 1 && validationCase?.evaluation.top_ranked_validated === false && !isValidated;
+
+  return {
+    validationLabel: isValidated ? 'validated' : missedRankOne ? 'miss' : row?.label ?? narrative.validation_status,
+    validationWindow: row?.window ?? 'n/a',
+    validationCopy: row
+      ? cleanValidationCopy(row, narrative.title)
+      : 'No future validation row is attached to this narrative yet.',
+  };
+}
+
+function buildHistoricalAnalogs({
+  baseLedger,
+  baseNarrative,
+  cases,
+  validationCases,
+  selectedCaseId,
+}: {
+  baseLedger: Ledger;
+  baseNarrative: Narrative;
+  cases: CasesPayload;
+  validationCases: ValidationCasesPayload | null;
+  selectedCaseId: string;
+}): HistoricalAnalog[] {
+  const baseTitleTokens = tokenizeAnalogText(baseNarrative.title);
+  const baseFeatureTokens = tokenizeAnalogText(narrativeFeatureText(baseNarrative));
+  const validationByCase = new Map(validationCases?.cases.map((item) => [item.case_id, item]));
+
+  return cases.cases
+    .filter((caseItem) => caseItem.case_id !== selectedCaseId)
+    .flatMap((caseItem) => caseItem.ledger.narratives.map((narrative) => {
+      const titleTokens = tokenizeAnalogText(narrative.title);
+      const featureTokens = tokenizeAnalogText(narrativeFeatureText(narrative));
+      const titleOverlap = overlapScore(baseTitleTokens, titleTokens);
+      const featureOverlap = overlapScore(baseFeatureTokens, featureTokens);
+      const sameEventType = caseItem.ledger.event.event_type === baseLedger.event.event_type;
+      const sameDirection = narrative.directional_implication === baseNarrative.directional_implication;
+      const similarity = (
+        titleOverlap * 0.38
+        + featureOverlap * 0.32
+        + (sameEventType ? 0.15 : 0)
+        + (sameDirection ? 0.15 : 0)
+      );
+      const sharedTitleTerms = [...baseTitleTokens].filter((token) => titleTokens.has(token)).slice(0, 3);
+      const basis = [
+        ...(sameEventType ? ['same event type'] : []),
+        ...(sameDirection ? [`same ${narrative.directional_implication} direction`] : []),
+        ...(sharedTitleTerms.length ? [`shared terms: ${sharedTitleTerms.join(', ')}`] : []),
+        ...(narrative.rank === 1 ? ['rank #1 at replay lock'] : [`rank #${narrative.rank} at replay lock`]),
+      ];
+      return {
+        caseId: caseItem.case_id,
+        ticker: caseItem.ledger.event.ticker,
+        companyName: caseItem.ledger.event.company_name,
+        eventType: caseItem.ledger.event.event_type,
+        narrative,
+        similarity,
+        basis,
+        ...analogOutcome(narrative, validationByCase.get(caseItem.case_id)),
+      };
+    }))
+    .filter((analog) => analog.similarity > 0)
+    .sort((left, right) => (
+      right.similarity - left.similarity
+      || left.narrative.rank - right.narrative.rank
+      || left.caseId.localeCompare(right.caseId)
+    ))
+    .slice(0, 4);
 }
 
 function uniqueEvidence(narrative: Narrative): EvidenceItem[] {
@@ -286,6 +431,17 @@ function App() {
     return ledger?.narratives.find((narrative) => narrative.rank === 1) ?? ledger?.narratives[0] ?? null;
   }, [ledger]);
 
+  const historicalAnalogs = useMemo(() => {
+    if (!cases || !ledger || !topNarrative) return [];
+    return buildHistoricalAnalogs({
+      baseLedger: ledger,
+      baseNarrative: topNarrative,
+      cases,
+      validationCases,
+      selectedCaseId,
+    });
+  }, [cases, ledger, selectedCaseId, topNarrative, validationCases]);
+
   const surfaceBaselineNarrative = useMemo(() => {
     return [...(ledger?.narratives ?? [])].sort((left, right) => (
       right.scoring_inputs.crowding_risk - left.scoring_inputs.crowding_risk
@@ -329,9 +485,9 @@ function App() {
           />
           <div>
             <p className="eyebrow">NarrativeDesk Replay</p>
-            <h1>Replay-safe narrative ranking for abnormal market moves</h1>
+            <h1>Replay-safe market narrative verification</h1>
             <p className="dek">
-              Competing market narratives. Time-locked evidence. Later validation.
+              Incomplete signals. Time-locked evidence. Historical validation.
             </p>
             <p className="safety-note">
               Research and education only. Synthetic demo. Not investment advice.
@@ -367,6 +523,7 @@ function App() {
           baselineNarrative={surfaceBaselineNarrative}
           evaluation={evaluation}
           validation={validation}
+          historicalAnalogs={historicalAnalogs}
           onModeChange={setActiveMode}
         />
       ) : null}
@@ -429,6 +586,10 @@ function App() {
           <CaseContextBar ledger={ledger} topNarrative={topNarrative ?? selectedNarrative} evaluation={evaluation} validation={validation} />
           <div className="mode-grid mode-grid--benchmark">
             {validationCases?.aggregate ? <BenchmarkCorpusPanel aggregate={validationCases.aggregate} /> : null}
+            <HistoricalAnalogsPanel
+              analogs={historicalAnalogs}
+              baseNarrative={topNarrative ?? selectedNarrative}
+            />
             {evaluation ? <EvaluationPanel evaluation={evaluation} /> : null}
             <SourceReliabilityPanel ledger={ledger} />
             <SourceClusteringPanel ledger={ledger} />
@@ -457,6 +618,7 @@ function OverviewMode({
   baselineNarrative,
   evaluation,
   validation,
+  historicalAnalogs,
   onModeChange,
 }: {
   ledger: Ledger;
@@ -464,6 +626,7 @@ function OverviewMode({
   baselineNarrative: Narrative | null;
   evaluation: EvaluationSummary | null;
   validation: ValidationFixture | null;
+  historicalAnalogs: HistoricalAnalog[];
   onModeChange: (mode: Mode) => void;
 }) {
   return (
@@ -476,6 +639,7 @@ function OverviewMode({
         validation={validation}
         onModeChange={onModeChange}
       />
+      <HistoricalAnalogsPanel analogs={historicalAnalogs} baseNarrative={topNarrative} />
     </section>
   );
 }
@@ -499,7 +663,7 @@ function CaseContextBar({
       </div>
       <span>{humanize(ledger.event.event_type)} | {ledger.event.event_date}</span>
       <span>{pct(ledger.event.abnormal_return)} abnormal</span>
-      <span>Replay rank #1: {topNarrative.title}</span>
+      <span>Replay audit rank #1: {topNarrative.title}</span>
       <span className={`status-pill ${statusClass(validationTone(evaluation))}`}>
         {validationHeadline(evaluation, validation)}
       </span>
@@ -548,12 +712,12 @@ function CaseHero({
 
       <section className="hero-decision" data-testid="thesis-strip">
         <div>
-          <span className="strip-label">Top Replay Narrative</span>
+          <span className="strip-label">Narrative under audit</span>
           <strong>{topNarrative.title}</strong>
           <p>{compactNarrativeThesis(topNarrative)}</p>
         </div>
         <div>
-          <span className="strip-label">Why it ranked first</span>
+          <span className="strip-label">Verification score</span>
           <strong>Score {score(topNarrative.overall_narrative_score)}</strong>
           <p>
             Evidence {score(topNarrative.scoring_inputs.evidence_strength)} | Mechanism{' '}
@@ -613,12 +777,12 @@ function BaselineComparisonModule({
         <p>Ranked #{baselineNarrative?.rank ?? 'n/a'}</p>
       </div>
       <div>
-        <span className="strip-label">Replay-ranked winner</span>
+        <span className="strip-label">Replay audit rank #1</span>
         <strong>{topNarrative.title}</strong>
         <p>Ranked #{topNarrative.rank} at the lock.</p>
       </div>
       <p>
-        It weighted stronger allowed evidence, cleaner mechanism specificity, and lower unsupported-claim risk.
+        The audit weighted stronger allowed evidence, cleaner mechanism specificity, and lower unsupported-claim risk.
         <span className="future-validation-note"> Future validation is separate: {validationHeadline(evaluation, validation)}.</span>
       </p>
     </section>
@@ -731,12 +895,12 @@ function CaseLibrary({
     <section className="case-library" data-testid="case-library">
       <div className="case-library__header">
         <span className="eyebrow">Replay Case Library</span>
-        <p>Finds the explanation that survives time.</p>
+        <p>Tests whether explanations survive time.</p>
       </div>
       <div className="case-library__rows">
         {cases.cases.map((caseItem) => {
           const validationCase = validationByCase.get(caseItem.case_id);
-          const winner = caseItem.ledger.narratives.find((narrative) => narrative.rank === 1)
+          const rankOne = caseItem.ledger.narratives.find((narrative) => narrative.rank === 1)
             ?? caseItem.ledger.narratives[0];
           return (
             <button
@@ -751,13 +915,61 @@ function CaseLibrary({
               </span>
               <span>{humanize(caseItem.ledger.event.event_type)}</span>
               <span>{pct(caseItem.ledger.event.abnormal_return)} abnormal</span>
-              <span>{winner?.title ?? 'No winner'}</span>
+              <span>{rankOne?.title ?? 'No rank #1'}</span>
               <span className={`status-pill ${statusClass(validationTone(validationCase?.evaluation ?? null))}`}>
                 {validationHeadline(validationCase?.evaluation ?? null, validationCase?.validation ?? null)}
               </span>
             </button>
           );
         })}
+      </div>
+    </section>
+  );
+}
+
+function HistoricalAnalogsPanel({
+  analogs,
+  baseNarrative,
+}: {
+  analogs: HistoricalAnalog[];
+  baseNarrative: Narrative;
+}) {
+  const validatedCount = analogs.filter((analog) => analog.validationLabel === 'validated').length;
+  const missCount = analogs.filter((analog) => analog.validationLabel === 'miss' || analog.validationLabel === 'invalidated').length;
+
+  return (
+    <section className="panel historical-analogs" data-testid="historical-analogs">
+      <PanelHeader kicker="Historical analogs" title="How similar narratives validated" />
+      <p className="panel-note">
+        Deterministic analogs for {baseNarrative.title}. Similarity uses narrative text, mechanism, event type, and direction; future validation remains held out.
+      </p>
+      <div className="analog-summary">
+        <MetricTile label="Analogs" value={String(analogs.length)} />
+        <MetricTile label="Validated" value={String(validatedCount)} />
+        <MetricTile label="Misses" value={String(missCount)} />
+      </div>
+      <div className="analog-list">
+        {analogs.map((analog) => (
+          <article className="analog-row" key={`${analog.caseId}-${analog.narrative.narrative_id}`}>
+            <div className="analog-row__top">
+              <span>
+                <strong>{analog.ticker}</strong>
+                {analog.companyName}
+              </span>
+              <span className={`status-pill ${statusClass(analog.validationLabel)}`}>
+                {analog.validationWindow} | {analog.validationLabel}
+              </span>
+            </div>
+            <h3>{analog.narrative.title}</h3>
+            <p>{analog.validationCopy}</p>
+            <small>
+              Similarity {score(analog.similarity)} | {humanize(analog.eventType)} | {analog.basis.join(' | ')}
+            </small>
+          </article>
+        ))}
+        {!analogs.length ? (
+          <p className="empty-copy">No historical analogs are available in the loaded case corpus.</p>
+        ) : null}
       </div>
     </section>
   );
@@ -826,8 +1038,8 @@ function NarrativeTournamentList({
               </span>
               <span className="loss-reason">
                 {narrative.narrative_id === topNarrative.narrative_id
-                  ? 'Why it won: replay-safe score led the field'
-                  : `Why it lost: ${losingReason(narrative, topNarrative)}`}
+                  ? 'Audit note: replay-safe score led the field'
+                  : `Audit gap: ${auditGapReason(narrative, topNarrative)}`}
               </span>
             </span>
           </button>
@@ -849,12 +1061,12 @@ function SelectedNarrativeCaseFile({
   const blocked = ledger.replay_audit.blocked_evidence.filter(
     (source) => source.narrative_id === narrative.narrative_id,
   );
-  const isWinner = narrative.narrative_id === topNarrative.narrative_id;
+  const isRankOne = narrative.narrative_id === topNarrative.narrative_id;
 
   return (
     <section className="panel case-file" data-testid="evidence-inspector">
       <PanelHeader
-        kicker={isWinner ? 'Selected Narrative | Winner' : 'Selected Narrative'}
+        kicker={isRankOne ? 'Selected Narrative | Rank #1 under audit' : 'Selected Narrative'}
         title={narrative.title}
       />
       <div className="case-file__thesis">
@@ -862,8 +1074,8 @@ function SelectedNarrativeCaseFile({
         <p>{narrative.mechanism}</p>
       </div>
       <div className="case-file__why">
-        <h3>Why it beat baseline</h3>
-        <p>{isWinner ? narrativeReason(narrative) : 'Selected for inspection. The tournament winner remains above it after replay-safe scoring.'}</p>
+        <h3>Audit rationale</h3>
+        <p>{isRankOne ? narrativeReason(narrative) : 'Selected for inspection. The replay rank #1 narrative remains above it after replay-safe scoring.'}</p>
       </div>
       <ScoreStack narrative={narrative} />
       <section className="case-file__evidence-preview">
@@ -1072,19 +1284,19 @@ function TournamentBracket({
 
   return (
     <section className="panel bracket-panel" data-testid="tournament-bracket">
-      <PanelHeader kicker="NarrativeDesk Tournament" title="Head-to-head explanation bracket" />
+      <PanelHeader kicker="NarrativeDesk Verification Bracket" title="Head-to-head explanation audit" />
       <div className="bracket-grid">
         <div className="bracket-round">
           <span className="bracket-label">Semifinals</span>
-          <BracketMatch narratives={pairA} winner={pairA[0] ?? topNarrative} onSelect={onSelect} />
-          <BracketMatch narratives={pairB} winner={finalist} onSelect={onSelect} />
+          <BracketMatch narratives={pairA} rankOne={pairA[0] ?? topNarrative} onSelect={onSelect} />
+          <BracketMatch narratives={pairB} rankOne={finalist} onSelect={onSelect} />
         </div>
         <div className="bracket-round">
           <span className="bracket-label">Final</span>
-          <BracketMatch narratives={[pairA[0] ?? topNarrative, finalist]} winner={topNarrative} onSelect={onSelect} />
+          <BracketMatch narratives={[pairA[0] ?? topNarrative, finalist]} rankOne={topNarrative} onSelect={onSelect} />
         </div>
-        <div className="bracket-winner">
-          <span className="bracket-label">Winner</span>
+        <div className="bracket-rank-one">
+          <span className="bracket-label">Rank #1</span>
           <button type="button" onClick={() => onSelect(topNarrative.narrative_id)}>
             <strong>{topNarrative.title}</strong>
             <p>{narrativeReason(topNarrative)}</p>
@@ -1095,7 +1307,7 @@ function TournamentBracket({
         <span className="strip-label">Baseline comparison</span>
         <strong>{baselineNarrative?.title ?? 'No baseline selected'} vs {topNarrative.title}</strong>
         <p>
-          The tournament uses replay-safe scoring instead of surface consensus. Timestamp advantage, contradiction
+          The verification bracket uses replay-safe scoring instead of surface consensus. Timestamp advantage, contradiction
           resistance, and unsupported-claim penalties decide ties.
         </p>
       </div>
@@ -1105,18 +1317,18 @@ function TournamentBracket({
 
 function BracketMatch({
   narratives,
-  winner,
+  rankOne,
   onSelect,
 }: {
   narratives: Narrative[];
-  winner: Narrative;
+  rankOne: Narrative;
   onSelect: (narrativeId: string) => void;
 }) {
   return (
     <article className="bracket-match">
       {narratives.map((narrative) => (
         <button
-          className={narrative.narrative_id === winner.narrative_id ? 'is-winner' : ''}
+          className={narrative.narrative_id === rankOne.narrative_id ? 'is-rank-one' : ''}
           key={narrative.narrative_id}
           type="button"
           onClick={() => onSelect(narrative.narrative_id)}
@@ -1126,7 +1338,7 @@ function BracketMatch({
           <small>{score(narrative.overall_narrative_score)}</small>
         </button>
       ))}
-      <p>Reason: {narrativeReason(winner)}</p>
+      <p>Audit reason: {narrativeReason(rankOne)}</p>
     </article>
   );
 }
@@ -1195,7 +1407,7 @@ function ReportPanel({
   const reportSections = [
     'Event Summary',
     'Abnormal Move',
-    'Top Replay Narrative',
+    'Narrative Under Audit',
     'Evidence Supporting the Narrative',
     'Contradictions',
     'Replay Integrity',
@@ -1285,7 +1497,7 @@ function BenchmarkCorpusPanel({ aggregate }: { aggregate: BenchmarkAggregate }) 
   const primaryMetrics = [
     ['Cases', `${aggregate.evaluated_case_count}/${aggregate.case_count}`],
     ['Recall@3', pct(aggregate.narrative_recall_at_3_rate)],
-    ['Tournament hit', pct(aggregate.narrativedesk_tournament_validated_rate)],
+    ['Rank #1 hit', pct(aggregate.narrativedesk_tournament_validated_rate)],
     ['Headline hit', pct(aggregate.headline_baseline_validated_rate)],
   ];
   const ablationMetrics = [

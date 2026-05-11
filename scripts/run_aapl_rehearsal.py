@@ -76,6 +76,10 @@ def run_rehearsal(args: argparse.Namespace) -> dict[str, Any]:
             preflight["json"].get("next_action"),
         )
     if preflight_status == "bundle_verified":
+        if args.build_bundle:
+            return _run_bundle_and_quality(args, stages, redaction_values)
+        if _bundle_stale_after_curation(args):
+            return _run_bundle_and_quality(args, stages, redaction_values)
         return _run_quality(args, stages, redaction_values)
     if preflight_status in {"missing_bundle", "bundle_failed", "ready_to_bundle"}:
         return _run_bundle_and_quality(args, stages, redaction_values)
@@ -120,12 +124,24 @@ def run_rehearsal(args: argparse.Namespace) -> dict[str, Any]:
     ]
     if not args.no_sec_document_text:
         rehearse_args.append("--include-sec-document-text")
+    if args.market_bars:
+        rehearse_args.extend(["--market-bars", args.market_bars])
     rehearse = _run_cli(rehearse_args, redaction_values=redaction_values)
     stages["rehearse"] = rehearse
     if rehearse["returncode"] != 0:
+        if _rehearsal_produced_curator_ready_draft(rehearse["json"]):
+            return _run_status_then_bundle(args, stages, redaction_values)
         return _final(False, "rehearsal_failed", stages, "Inspect the rehearsal stage errors; no real claims were committed.")
 
     return _run_status_then_bundle(args, stages, redaction_values)
+
+
+def _rehearsal_produced_curator_ready_draft(response: dict[str, Any]) -> bool:
+    return (
+        str(response.get("stage") or "") == "complete_with_fetch_errors"
+        and str(response.get("case_readiness") or "") == "curator_ready"
+        and bool(response.get("real_case_config_out"))
+    )
 
 
 def _run_normalize_draft_status_then_bundle(
@@ -333,6 +349,24 @@ def _select_narratives_path(args: argparse.Namespace) -> Path | None:
     if template.exists():
         return template
     return None
+
+
+def _bundle_stale_after_curation(args: argparse.Namespace) -> bool:
+    bundle_manifest = Path(args.bundle_dir) / "manifest.json"
+    if not bundle_manifest.exists():
+        return False
+    input_paths = [Path(args.draft_dir) / "real_case_config.json"]
+    narratives_path = _select_narratives_path(args)
+    if narratives_path is not None:
+        input_paths.append(narratives_path)
+    existing_inputs = [path for path in input_paths if path.exists()]
+    if not existing_inputs:
+        return False
+    newest_input_mtime = max(path.stat().st_mtime for path in existing_inputs)
+    bundle_paths = [bundle_manifest, Path(args.bundle_dir) / "bundle_verify.json"]
+    existing_bundle_paths = [path for path in bundle_paths if path.exists()]
+    oldest_bundle_mtime = min(path.stat().st_mtime for path in existing_bundle_paths)
+    return newest_input_mtime > oldest_bundle_mtime
 
 
 def _env_file_args(path_value: str | None) -> list[str]:

@@ -11,7 +11,7 @@
     "volume_ratio": 2.25,
     "sector_etf_return": -0.009,
     "peer_median_return": -0.017,
-    "event_summary": "Synthetic hard-case fixture: a cybersecurity platform sells off after earnings. The replay intentionally ranks one plausible narrative above the later-validated consensus narrative.",
+    "event_summary": "Synthetic hard-case fixture: a cybersecurity platform sells off after earnings. The replay intentionally places one plausible narrative at rank #1 while later validation supports rank #2.",
     "case_id": "EVT-LYRA-2025-11-13",
     "data_provenance_mode": "synthetic"
   },

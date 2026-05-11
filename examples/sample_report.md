@@ -18,7 +18,7 @@ This sample report is generated from a synthetic fixture. Real event reports mus
 - Sector ETF return: -0.8%
 - Peer median return: -1.2%
 
-Synthetic demo event: a liquid streaming company sells off after earnings. The fixture is designed to exercise replay filtering, narrative ranking, and validation separation.
+Synthetic demo event: a liquid streaming company sells off after earnings. The fixture is designed to exercise replay filtering, narrative verification, and validation separation.
 
 ## Replay Audit
 
@@ -91,7 +91,7 @@ Clusters use replay-safe allowed evidence only. Future-dated source text stays q
 | claim-772595a6ed95 | claim_text_fingerprint | SRC-006 | Synthetic Price Feed | 1.00 | The sector ETF was negative on the event morning. |
 | claim-8a13cc3153f0 | claim_text_fingerprint | SRC-004 | Synthetic Market News | 1.00 | Early headlines framed the selloff around margin disappointment and rising content spend. |
 
-## Narrative Tournament
+## Narrative Verification Ranking
 
 | Rank | Narrative | Direction | Score | Horizon |
 | ---: | --- | --- | ---: | --- |

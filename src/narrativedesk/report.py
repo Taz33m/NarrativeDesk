@@ -97,10 +97,7 @@ def generate_markdown_report(
     lines.append("")
     lines.append("## Data Note")
     lines.append("")
-    lines.append(
-        "This sample report is generated from a synthetic fixture. Real event reports must include "
-        "source URLs, publication timestamps, and raw document hashes."
-    )
+    lines.append(_data_note(event))
     lines.append("")
     lines.append("## Event")
     lines.append("")
@@ -215,7 +212,7 @@ def generate_markdown_report(
         )
     lines.append("")
 
-    lines.append("## Narrative Tournament")
+    lines.append("## Narrative Verification Ranking")
     lines.append("")
     lines.append("| Rank | Narrative | Direction | Score | Horizon |")
     lines.append("| ---: | --- | --- | ---: | --- |")
@@ -281,7 +278,7 @@ def generate_markdown_report(
             else "- Validated narrative rank: n/a"
         )
         lines.append(f"- Narrative Recall@3: {_bool_label(evaluation.narrative_recall_at_3)}")
-        lines.append(f"- Top-ranked narrative validated: {_bool_label(evaluation.top_ranked_validated)}")
+        lines.append(f"- Replay rank #1 validated: {_bool_label(evaluation.top_ranked_validated)}")
         lines.append(f"- Average unsupported claim penalty: {evaluation.unsupported_claim_penalty_avg:.2f}")
         lines.append(f"- Max unsupported claim penalty: {evaluation.unsupported_claim_penalty_max:.2f}")
         lines.append(
@@ -342,3 +339,16 @@ def generate_markdown_report(
         lines.append("")
 
     return "\n".join(lines).strip() + "\n"
+
+
+def _data_note(event: Event) -> str:
+    if event.data_provenance_mode == "real-curated":
+        return (
+            "This report is generated from a real-curated replay bundle. Treat it as research support only; "
+            "public use requires curator review of source URLs, publication timestamps, raw document hashes, "
+            "and validation status."
+        )
+    return (
+        "This sample report is generated from a synthetic fixture. Real event reports must include "
+        "source URLs, publication timestamps, and raw document hashes."
+    )

@@ -287,6 +287,8 @@ h1 {
 }
 
 .overview-workspace {
+  display: grid;
+  gap: 16px;
   min-height: calc(100vh - 154px);
 }
 
@@ -522,6 +524,69 @@ h1 {
   display: block;
   color: var(--ink);
   font-family: "Aptos Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+.historical-analogs {
+  display: grid;
+  gap: 12px;
+}
+
+.mode-grid--benchmark .historical-analogs {
+  grid-column: 1 / -1;
+}
+
+.analog-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.analog-list {
+  display: grid;
+  gap: 10px;
+}
+
+.analog-row {
+  border: 1px solid var(--line);
+  background: rgba(8, 12, 10, 0.62);
+  padding: 12px;
+}
+
+.analog-row__top {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.analog-row__top > span:first-child {
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.analog-row__top strong {
+  display: block;
+  color: var(--ink);
+  font-family: "Aptos Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+.analog-row h3 {
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
+.analog-row p {
+  margin-top: 7px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.analog-row small {
+  display: block;
+  margin-top: 9px;
+  color: var(--faint);
+  font-family: "Aptos Mono", "SFMono-Regular", Consolas, monospace;
+  line-height: 1.35;
 }
 
 .mode-tabs {
@@ -887,7 +952,7 @@ h1 {
 }
 
 .bracket-round,
-.bracket-winner {
+.bracket-rank-one {
   display: grid;
   gap: 12px;
   align-content: start;
@@ -907,7 +972,7 @@ h1 {
 }
 
 .bracket-match button,
-.bracket-winner button {
+.bracket-rank-one button {
   width: 100%;
   border: 1px solid var(--line);
   background: rgba(8, 12, 10, 0.72);
@@ -925,21 +990,21 @@ h1 {
   margin-top: 8px;
 }
 
-.bracket-match button.is-winner,
-.bracket-winner button {
+.bracket-match button.is-rank-one,
+.bracket-rank-one button {
   border-color: var(--accent);
   color: var(--ink);
   background: rgba(200, 240, 109, 0.08);
 }
 
-.bracket-winner button {
+.bracket-rank-one button {
   grid-template-columns: 1fr;
   align-content: start;
   min-height: 170px;
 }
 
 .bracket-match p,
-.bracket-winner p {
+.bracket-rank-one p {
   margin-top: 10px;
   color: var(--muted);
   line-height: 1.45;

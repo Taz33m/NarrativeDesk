@@ -331,6 +331,10 @@ def build_parser() -> argparse.ArgumentParser:
     real_rehearsal.add_argument("--fetch-dir", help="Output directory for frozen provider artifacts.")
     real_rehearsal.add_argument("--draft-dir", help="Output directory for the curator-ready draft.")
     real_rehearsal.add_argument(
+        "--market-bars",
+        help="Optional frozen market_bars.csv override to copy into the draft before readiness checks.",
+    )
+    real_rehearsal.add_argument(
         "--finnhub-token-env",
         default="FINNHUB_API_KEY",
         help="Environment variable containing the Finnhub API token.",
@@ -1133,6 +1137,7 @@ def run_real_case_rehearse(args: argparse.Namespace) -> int:
             include_sec_document_text=args.include_sec_document_text,
             news_query=args.news_query,
             news_domains=args.news_domains,
+            market_bars_path=args.market_bars,
             worksheet=not args.no_worksheet,
             curation_template=not args.no_curation_template,
             allowed_limit=args.allowed_limit,
