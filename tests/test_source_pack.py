@@ -312,6 +312,67 @@ class SourcePackTests(unittest.TestCase):
         self.assertGreaterEqual(result['metrics']['linked_source_type_count'], 2)
         self.assertGreaterEqual(result['metrics']['linked_publisher_count'], 2)
         self.assertEqual(result['metrics']['validation_outcome_count'], 1)
+        self.assertEqual(
+            result['checks']['validation_outcomes']['rows'][0]['future_source_ids'],
+            ['PK-SRC-009'],
+        )
+
+    def test_real_case_quality_accepts_public_ready_pack(self):
+        result = assess_real_case_quality(
+            _demo_ready_pack(),
+            require_public_ready=True,
+            validation_fixture=_validated_fixture(),
+        )
+
+        self.assertTrue(result['ok'])
+        self.assertEqual(result['status'], 'public_demo_ready')
+        self.assertEqual(result['gate'], 'public_demo')
+        self.assertTrue(result['checks']['demo_market_context']['ok'])
+        self.assertTrue(result['checks']['public_replay_evidence']['ok'])
+        self.assertTrue(result['checks']['public_validation_evidence']['ok'])
+        self.assertGreaterEqual(result['metrics']['public_non_sec_replay_source_count'], 2)
+        self.assertGreaterEqual(result['metrics']['public_replay_source_type_count'], 2)
+        self.assertEqual(result['metrics']['validation_outcome_with_source_count'], 1)
+
+    def test_real_case_quality_public_gate_flags_provenance_only_rehearsal(self):
+        payload = _demo_ready_pack()
+        for source in payload['sources']:
+            if source['availability_status'] != 'allowed':
+                continue
+            if source['source_type'] == 'market_data':
+                source['publisher'] = 'Frozen market bars'
+                continue
+            source['publisher'] = 'SEC EDGAR'
+            source['source_type'] = 'filing'
+
+        result = assess_real_case_quality(
+            payload,
+            require_public_ready=True,
+            validation_fixture=_validated_fixture(),
+        )
+
+        self.assertFalse(result['ok'])
+        self.assertEqual(result['status'], 'needs_curation')
+        self.assertTrue(result['checks']['demo_market_context']['ok'])
+        self.assertTrue(result['checks']['validation_outcomes']['ok'])
+        self.assertFalse(result['checks']['public_replay_evidence']['ok'])
+        self.assertEqual(result['checks']['public_replay_evidence']['non_sec_actual'], 0)
+        self.assertIn('non-SEC replay-time evidence', result['next_action'])
+
+    def test_real_case_quality_public_gate_requires_sourced_validation_outcome(self):
+        validation = _validated_fixture()
+        validation['rows'][0]['future_source_ids'] = []
+
+        result = assess_real_case_quality(
+            _demo_ready_pack(),
+            require_public_ready=True,
+            validation_fixture=validation,
+        )
+
+        self.assertFalse(result['ok'])
+        self.assertTrue(result['checks']['validation_outcomes']['ok'])
+        self.assertFalse(result['checks']['public_validation_evidence']['ok'])
+        self.assertIn('held-out validation outcomes', result['next_action'])
 
     def test_real_case_quality_demo_gate_flags_private_rehearsal_gaps(self):
         result = assess_real_case_quality(_quality_ready_pack(), require_demo_ready=True)

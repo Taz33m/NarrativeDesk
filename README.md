@@ -232,6 +232,14 @@ PYTHONPATH=src python3 -m narrativedesk.cli real-case-quality \
   --require-demo-ready
 ```
 
+For public promotion, run the final gate. It keeps provenance-only rehearsals private until replay-time narrative evidence includes non-SEC, non-market sources:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli real-case-quality \
+  --bundle-dir .codex-work/real-cases/aapl-2024-q2-bundle \
+  --require-public-ready
+```
+
 Inspect local prior-art repos for timestamped manual-source candidates:
 
 ```bash
