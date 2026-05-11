@@ -8,12 +8,65 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from narrativedesk.prior_art import inspect_prior_art_repos
+from narrativedesk.prior_art import extract_mktmind_market_bars, inspect_prior_art_repos
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class PriorArtInspectionTests(unittest.TestCase):
+    def test_extract_mktmind_market_bars_writes_scratch_csv_and_manifest(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            workspace = Path(tmpdir)
+            dataset = workspace / "marketmind_qml_dataset.csv"
+            with dataset.open("w", newline="") as handle:
+                writer = csv.DictWriter(
+                    handle,
+                    fieldnames=["date", "ticker", "close", "volume", "ret_1d"],
+                )
+                writer.writeheader()
+                writer.writerow(
+                    {
+                        "date": "2024-05-02",
+                        "ticker": "XLK",
+                        "close": "97.29266357421875",
+                        "volume": "13340000",
+                        "ret_1d": "0.01441363986805344",
+                    }
+                )
+                writer.writerow(
+                    {
+                        "date": "2024-05-03",
+                        "ticker": "XLY",
+                        "close": "86.0",
+                        "volume": "1000",
+                        "ret_1d": "0.01",
+                    }
+                )
+            out_dir = workspace / "out"
+
+            result = extract_mktmind_market_bars(
+                dataset,
+                output_dir=out_dir,
+                tickers=["XLK"],
+                date_from="2024-05-01",
+                date_to="2024-05-03",
+            )
+            with result.market_bars_path.open() as handle:
+                market_rows = list(csv.DictReader(handle))
+            manifest = json.loads(result.manifest_path.read_text())
+
+        self.assertEqual(len(market_rows), 1)
+        self.assertEqual(market_rows[0]["date"], "2024-05-02")
+        self.assertEqual(market_rows[0]["ticker"], "XLK")
+        self.assertEqual(market_rows[0]["close"], "97.292664")
+        self.assertAlmostEqual(float(market_rows[0]["open"]), 95.91024780273438, places=6)
+        self.assertEqual(manifest["row_count"], 1)
+        self.assertEqual(manifest["input_row_count"], 2)
+        self.assertEqual(manifest["filtered_row_count"], 1)
+        self.assertEqual(manifest["invalid_row_count"], 0)
+        self.assertEqual(manifest["tickers"], ["XLK"])
+        self.assertIn("previous close", manifest["derivation"])
+
     def test_inspection_maps_targets_and_extracts_only_provenanced_records(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             workspace = Path(tmpdir)
@@ -129,14 +182,65 @@ class PriorArtInspectionTests(unittest.TestCase):
                 text=True,
                 check=False,
             )
+            response = json.loads(result.stdout)
 
             self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
             self.assertTrue((out_dir / "prior-art-map.json").exists())
             self.assertTrue((out_dir / "prior-art-manual-sources.json").exists())
             self.assertEqual(len(list(out_dir.iterdir())), 2)
-            response = json.loads(result.stdout)
             self.assertEqual(response["manual_source_count"], 1)
             self.assertIn("missing_field_counts", response)
+
+    def test_market_bars_script_writes_only_scratch_outputs(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            workspace = Path(tmpdir)
+            dataset = workspace / "marketmind_qml_dataset.csv"
+            with dataset.open("w", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=["date", "ticker", "close", "volume", "ret_1d"])
+                writer.writeheader()
+                writer.writerow(
+                    {
+                        "date": "2024-05-03",
+                        "ticker": "XLK",
+                        "close": "100.0",
+                        "volume": "2000",
+                        "ret_1d": "0.025",
+                    }
+                )
+            out_dir = workspace / "out"
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(ROOT / "scripts" / "extract_prior_art_market_bars.py"),
+                    "--mktmind-csv",
+                    str(dataset),
+                    "--out-dir",
+                    str(out_dir),
+                    "--tickers",
+                    "XLK",
+                    "--from",
+                    "2024-05-01",
+                    "--to",
+                    "2024-05-03",
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src"), "PYTHONDONTWRITEBYTECODE": "1"},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            response = json.loads(result.stdout)
+            market_exists = (out_dir / "market_bars.csv").exists()
+            manifest_exists = (out_dir / "market_bars_manifest.json").exists()
+            output_count = len(list(out_dir.iterdir()))
+
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertTrue(response["ok"])
+        self.assertEqual(response["row_count"], 1)
+        self.assertTrue(market_exists)
+        self.assertTrue(manifest_exists)
+        self.assertEqual(output_count, 2)
 
 
 if __name__ == "__main__":
