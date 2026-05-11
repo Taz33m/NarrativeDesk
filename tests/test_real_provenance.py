@@ -1007,7 +1007,7 @@ class RealProvenanceTests(unittest.TestCase):
             )
             calls = []
 
-            def fake_run_cli(command):
+            def fake_run_cli(command, **_kwargs):
                 calls.append(command)
                 if command[0] == "real-case-preflight":
                     return {
@@ -1037,6 +1037,46 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(response["status"], "quality_ready")
         self.assertEqual([call[0] for call in calls], ["real-case-preflight", "real-case-curated-bundle", "real-case-quality"])
         self.assertNotIn("real-case-rehearse", [call[0] for call in calls])
+
+    def test_aapl_rehearsal_runner_redacts_sensitive_child_output(self):
+        runner = _load_aapl_rehearsal_runner()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env_file = Path(tmpdir) / ".env.local"
+            env_file.write_text(
+                "\n".join(
+                    [
+                        "FINNHUB_API_KEY=fake-finnhub-secret",
+                        "SEC_USER_AGENT='Private User Agent (contact@example.com)'",
+                        "UNRELATED_VALUE=leave-visible",
+                    ]
+                )
+            )
+            redaction_values = runner._redaction_values(str(env_file))
+            json_response = runner._json_or_error(
+                json.dumps(
+                    {
+                        "ok": False,
+                        "errors": [
+                            "provider echoed fake-finnhub-secret",
+                            "SEC said Private User Agent (contact@example.com)",
+                        ],
+                    }
+                ),
+                "",
+                redaction_values,
+            )
+            text_response = runner._json_or_error(
+                "stdout fake-finnhub-secret",
+                "stderr contact@example.com",
+                redaction_values,
+            )
+            env_file_text = env_file.read_text()
+
+        combined = json.dumps({"json": json_response, "text": text_response})
+        self.assertIn("[REDACTED]", combined)
+        self.assertNotIn("fake-finnhub-secret", combined)
+        self.assertNotIn("contact@example.com", combined)
+        self.assertIn("leave-visible", env_file_text)
 
     def test_cli_real_case_worksheet_writes_curation_markdown(self):
         with tempfile.TemporaryDirectory() as tmpdir:

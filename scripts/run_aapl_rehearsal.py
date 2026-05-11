@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -14,6 +15,14 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_FETCH_DIR = ".codex-work/live-fetches/aapl-2024-q2"
 DEFAULT_DRAFT_DIR = ".codex-work/real-cases/aapl-2024-q2-rehearsal"
 DEFAULT_BUNDLE_DIR = ".codex-work/real-cases/aapl-2024-q2-bundle"
+SENSITIVE_ENV_NAMES = {
+    "ALPHA_VANTAGE_API_KEY",
+    "FINNHUB_API_KEY",
+    "NEWS_API_KEY",
+    "OPENROUTER_API_KEY",
+    "PERPLEXITY_API_KEY",
+    "SEC_USER_AGENT",
+}
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -54,7 +63,8 @@ def main(argv: list[str] | None = None) -> int:
 
 def run_rehearsal(args: argparse.Namespace) -> dict[str, Any]:
     stages: dict[str, Any] = {}
-    preflight = _run_preflight(args)
+    redaction_values = _redaction_values(args.env_file)
+    preflight = _run_preflight(args, redaction_values)
     stages["preflight"] = preflight
     preflight_status = str(preflight["json"].get("status", ""))
     if args.preflight_only:
@@ -65,9 +75,9 @@ def run_rehearsal(args: argparse.Namespace) -> dict[str, Any]:
             preflight["json"].get("next_action"),
         )
     if preflight_status == "bundle_verified":
-        return _run_quality(args, stages)
+        return _run_quality(args, stages, redaction_values)
     if preflight_status in {"missing_bundle", "bundle_failed", "ready_to_bundle"}:
-        return _run_bundle_and_quality(args, stages)
+        return _run_bundle_and_quality(args, stages, redaction_values)
     if preflight["returncode"] != 0:
         return _final(False, "preflight_failed", stages, preflight["json"].get("next_action"))
 
@@ -101,15 +111,15 @@ def run_rehearsal(args: argparse.Namespace) -> dict[str, Any]:
     ]
     if not args.no_sec_document_text:
         rehearse_args.append("--include-sec-document-text")
-    rehearse = _run_cli(rehearse_args)
+    rehearse = _run_cli(rehearse_args, redaction_values=redaction_values)
     stages["rehearse"] = rehearse
     if rehearse["returncode"] != 0:
         return _final(False, "rehearsal_failed", stages, "Inspect the rehearsal stage errors; no real claims were committed.")
 
-    return _run_status_then_bundle(args, stages)
+    return _run_status_then_bundle(args, stages, redaction_values)
 
 
-def _run_preflight(args: argparse.Namespace) -> dict[str, Any]:
+def _run_preflight(args: argparse.Namespace, redaction_values: list[str]) -> dict[str, Any]:
     preflight_args = [
         "real-case-preflight",
         "--ticker",
@@ -128,15 +138,19 @@ def _run_preflight(args: argparse.Namespace) -> dict[str, Any]:
     ]
     if args.narratives:
         preflight_args.extend(["--narratives", args.narratives])
-    return _run_cli(preflight_args)
+    return _run_cli(preflight_args, redaction_values=redaction_values)
 
 
-def _run_status_then_bundle(args: argparse.Namespace, stages: dict[str, Any]) -> dict[str, Any]:
+def _run_status_then_bundle(
+    args: argparse.Namespace,
+    stages: dict[str, Any],
+    redaction_values: list[str],
+) -> dict[str, Any]:
     narratives_path = _select_narratives_path(args)
     status_args = ["real-case-status", "--draft-dir", args.draft_dir]
     if narratives_path is not None:
         status_args.extend(["--narratives", str(narratives_path)])
-    status = _run_cli(status_args)
+    status = _run_cli(status_args, redaction_values=redaction_values)
     stages["status"] = status
 
     if narratives_path is None:
@@ -147,12 +161,13 @@ def _run_status_then_bundle(args: argparse.Namespace, stages: dict[str, Any]) ->
             "Curate 3-5 narratives in curated_narratives.json, then rerun this script.",
         )
 
-    return _run_bundle_and_quality(args, stages, narratives_path=narratives_path)
+    return _run_bundle_and_quality(args, stages, redaction_values, narratives_path=narratives_path)
 
 
 def _run_bundle_and_quality(
     args: argparse.Namespace,
     stages: dict[str, Any],
+    redaction_values: list[str],
     *,
     narratives_path: Path | None = None,
 ) -> dict[str, Any]:
@@ -185,17 +200,18 @@ def _run_bundle_and_quality(
             args.bundle_dir,
             "--label",
             f"{args.ticker.upper()} private real-case rehearsal",
-        ]
+        ],
+        redaction_values=redaction_values,
     )
     stages["bundle"] = bundle
     if bundle["returncode"] != 0:
         return _final(False, "bundle_failed", stages, "Fix curated narratives and source links, then rebuild the bundle.")
 
-    return _run_quality(args, stages)
+    return _run_quality(args, stages, redaction_values)
 
 
-def _run_quality(args: argparse.Namespace, stages: dict[str, Any]) -> dict[str, Any]:
-    quality = _run_cli(["real-case-quality", "--bundle-dir", args.bundle_dir])
+def _run_quality(args: argparse.Namespace, stages: dict[str, Any], redaction_values: list[str]) -> dict[str, Any]:
+    quality = _run_cli(["real-case-quality", "--bundle-dir", args.bundle_dir], redaction_values=redaction_values)
     stages["quality"] = quality
     if quality["returncode"] != 0:
         return _final(False, "quality_failed", stages, quality["json"].get("next_action"))
@@ -223,7 +239,7 @@ def _env_file_args(path_value: str | None) -> list[str]:
     return []
 
 
-def _run_cli(cli_args: list[str]) -> dict[str, Any]:
+def _run_cli(cli_args: list[str], *, redaction_values: list[str] | None = None) -> dict[str, Any]:
     env = os.environ.copy()
     src_path = str(ROOT / "src")
     env["PYTHONPATH"] = src_path if not env.get("PYTHONPATH") else f"{src_path}{os.pathsep}{env['PYTHONPATH']}"
@@ -238,19 +254,83 @@ def _run_cli(cli_args: list[str]) -> dict[str, Any]:
     )
     return {
         "returncode": result.returncode,
-        "command": ["python3", "-m", "narrativedesk.cli", *cli_args],
-        "json": _json_or_error(result.stdout, result.stderr),
+        "command": _redact_obj(["python3", "-m", "narrativedesk.cli", *cli_args], redaction_values or []),
+        "json": _json_or_error(result.stdout, result.stderr, redaction_values or []),
     }
 
 
-def _json_or_error(stdout: str, stderr: str) -> dict[str, Any]:
+def _json_or_error(stdout: str, stderr: str, redaction_values: list[str] | None = None) -> dict[str, Any]:
+    redaction_values = redaction_values or []
     try:
         parsed = json.loads(stdout)
     except json.JSONDecodeError:
-        return {"ok": False, "stdout": stdout, "stderr": stderr}
+        return {
+            "ok": False,
+            "stdout": _redact_text(stdout, redaction_values),
+            "stderr": _redact_text(stderr, redaction_values),
+        }
     if not isinstance(parsed, dict):
-        return {"ok": False, "stdout": stdout, "stderr": stderr}
-    return parsed
+        return {
+            "ok": False,
+            "stdout": _redact_text(stdout, redaction_values),
+            "stderr": _redact_text(stderr, redaction_values),
+        }
+    return _redact_obj(parsed, redaction_values)
+
+
+def _redaction_values(env_file: str | None) -> list[str]:
+    values = [os.environ.get(name, "") for name in sorted(SENSITIVE_ENV_NAMES)]
+    if env_file and Path(env_file).exists():
+        values.extend(_load_sensitive_env_file_values(Path(env_file)).values())
+    values.extend(_sensitive_substrings(values))
+    deduped = []
+    for value in values:
+        if value and len(value) >= 4 and value not in deduped:
+            deduped.append(value)
+    return sorted(deduped, key=len, reverse=True)
+
+
+def _load_sensitive_env_file_values(path: Path) -> dict[str, str]:
+    values: dict[str, str] = {}
+    for line in path.read_text().splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or "=" not in stripped:
+            continue
+        key, value = stripped.split("=", 1)
+        key = key.strip()
+        if key.startswith("export "):
+            key = key.removeprefix("export ").strip()
+        if key not in SENSITIVE_ENV_NAMES:
+            continue
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+            value = value[1:-1]
+        values[key] = value
+    return values
+
+
+def _sensitive_substrings(values: list[str]) -> list[str]:
+    substrings: list[str] = []
+    for value in values:
+        substrings.extend(re.findall(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}", value))
+    return substrings
+
+
+def _redact_obj(value: Any, redaction_values: list[str]) -> Any:
+    if isinstance(value, str):
+        return _redact_text(value, redaction_values)
+    if isinstance(value, list):
+        return [_redact_obj(item, redaction_values) for item in value]
+    if isinstance(value, dict):
+        return {key: _redact_obj(item, redaction_values) for key, item in value.items()}
+    return value
+
+
+def _redact_text(value: str, redaction_values: list[str]) -> str:
+    redacted = value
+    for secret in redaction_values:
+        redacted = redacted.replace(secret, "[REDACTED]")
+    return redacted
 
 
 def _final(ok: bool, status: str, stages: dict[str, Any], next_action: str | None) -> dict[str, Any]:
