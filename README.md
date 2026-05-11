@@ -163,6 +163,16 @@ PYTHONPATH=src python3 -m narrativedesk.cli real-case-rehearse \
 
 Live-provider rehearsal requires `FINNHUB_API_KEY` and `SEC_USER_AGENT`; `NEWS_API_KEY` is optional when using `--providers newsapi`. Outputs remain scratch until a human adds competing narratives, `real-pack-build --require-narratives` passes, and the final bundle verifies.
 
+After curation, apply a separate narrative JSON file without hand-editing source link arrays:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli real-case-apply-narratives \
+  --draft-dir .codex-work/real-cases/aapl-2024-q2-rehearsal \
+  --narratives .codex-work/real-cases/aapl-2024-q2-rehearsal/curated_narratives.json
+```
+
+Each curated narrative can include `supporting_source_ids`, `contradicting_source_ids`, `future_supporting_source_ids`, and `future_contradicting_source_ids`; these helper fields are used to link sources and are omitted from the written config.
+
 Inspect local prior-art repos for timestamped manual-source candidates:
 
 ```bash

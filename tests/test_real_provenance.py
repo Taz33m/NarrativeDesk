@@ -11,6 +11,7 @@ from narrativedesk.real_provenance import (
     RealProvenanceError,
     _normalize_text,
     _sec_filing_excerpt,
+    apply_curated_narratives,
     draft_real_case,
     fetch_real_data,
     normalize_real_data_fetch,
@@ -394,6 +395,95 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(config["case_metadata"]["ticker"], "EXMPL")
         self.assertEqual(summary["recommended_next_action"], "Add 3-5 human-curated competing narratives.")
         self.assertIn("No winning narrative has been asserted", worksheet)
+
+    def test_apply_curated_narratives_links_sources_and_writes_curated_config(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            rehearsal = rehearse_real_case(
+                ticker="EXMPL",
+                company_name="Example Co",
+                event_type="earnings/guidance",
+                event_date="2025-01-02",
+                replay_lock="2025-01-02T10:00:00-05:00",
+                date_from="2025-01-01",
+                date_to="2025-01-07",
+                out_root=root,
+                providers=["finnhub", "sec"],
+                finnhub_token="secret-token",
+                sec_user_agent="NarrativeDesk Tests test@example.com",
+                fetcher=FakeProvenanceFetcher(),
+                retrieved_at="2026-05-11T00:00:00Z",
+                forms=["8-K"],
+                sec_count=1,
+                include_sec_document_text=True,
+                sec_throttle_seconds=0,
+            )
+            draft_dir = Path(rehearsal["draft_dir"])
+            draft_config = json.loads((draft_dir / "real_case_config.json").read_text())
+            allowed_ids = [
+                source["source_id"]
+                for source in draft_config["manual_sources"]
+                if source["availability_status"] == "allowed"
+            ]
+            future_ids = [
+                source["source_id"]
+                for source in draft_config["manual_sources"]
+                if source["availability_status"] == "blocked_future"
+            ]
+            narratives_path = draft_dir / "curated_narratives.json"
+            narratives_path.write_text(
+                json.dumps(
+                    {
+                        "narratives": [
+                            {
+                                "narrative_id": "NARR-REAL-001",
+                                "title": "Forward demand slowdown",
+                                "narrative": "The move reflects concern that forward demand is slowing.",
+                                "mechanism": "Lower expected demand reduces forward revenue estimates.",
+                                "directional_implication": "bearish",
+                                "time_horizon": "20 trading days",
+                                "expected_observables": ["Forward estimates fall after the replay window."],
+                                "supporting_source_ids": [allowed_ids[0]],
+                                "contradicting_source_ids": [allowed_ids[1]],
+                                "future_supporting_source_ids": [future_ids[0]],
+                                "scoring_inputs": {
+                                    "evidence_strength": 0.75,
+                                    "mechanism_specificity": 0.8,
+                                    "source_independence": 0.65,
+                                    "cross_sectional_fit": 0.7,
+                                    "contradiction_resistance": 0.6,
+                                    "timestamp_advantage": 0.8,
+                                    "forward_observable_quality": 0.78,
+                                    "crowding_risk": 0.25,
+                                    "unsupported_claim_penalty": 0.03,
+                                },
+                            }
+                        ]
+                    }
+                )
+            )
+
+            response = apply_curated_narratives(draft_dir, narratives_path)
+            curated_config = json.loads(Path(response["out"]).read_text())
+            source_pack = build_real_source_pack(
+                curated_config,
+                base_path=draft_dir,
+                retrieved_at="2026-05-11T00:00:00Z",
+            )
+            config_errors = validate_real_case_config(curated_config, base_path=draft_dir, check_files=True)
+            source_pack_errors = validate_source_pack(source_pack, require_narratives=True)
+            source_by_id = {source["source_id"]: source for source in curated_config["manual_sources"]}
+
+        self.assertTrue(response["ok"])
+        self.assertEqual(response["narrative_count"], 1)
+        self.assertEqual(response["allowed_source_link_count"], 2)
+        self.assertEqual(response["future_source_link_count"], 1)
+        self.assertEqual(config_errors, [])
+        self.assertEqual(source_pack_errors, [])
+        self.assertNotIn("supporting_source_ids", curated_config["narratives"][0])
+        self.assertIn("NARR-REAL-001", source_by_id[allowed_ids[0]]["supported_narrative_ids"])
+        self.assertIn("NARR-REAL-001", source_by_id[allowed_ids[1]]["contradicted_narrative_ids"])
+        self.assertIn("NARR-REAL-001", source_by_id[future_ids[0]]["supported_narrative_ids"])
 
     def test_provider_error_is_manifested_and_normalization_continues(self):
         with tempfile.TemporaryDirectory() as tmpdir:

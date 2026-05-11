@@ -25,6 +25,7 @@ from narrativedesk.real_data import (
 )
 from narrativedesk.real_provenance import (
     RealProvenanceError,
+    apply_curated_narratives,
     draft_real_case,
     fetch_real_data,
     normalize_real_data_fetch,
@@ -289,6 +290,21 @@ def build_parser() -> argparse.ArgumentParser:
     )
     real_rehearsal.add_argument("--allowed-limit", type=int, default=12, help="Maximum replay-eligible sources to render.")
     real_rehearsal.add_argument("--blocked-limit", type=int, default=10, help="Maximum blocked future sources to render.")
+
+    real_apply_narratives = sub.add_parser(
+        "real-case-apply-narratives",
+        help="Apply human-curated narratives and source links to a real-case draft config.",
+    )
+    real_apply_narratives.add_argument("--draft-dir", required=True, help="Directory containing real_case_config.json.")
+    real_apply_narratives.add_argument(
+        "--narratives",
+        required=True,
+        help="JSON file containing a list or {narratives: [...]} with curated narrative records.",
+    )
+    real_apply_narratives.add_argument(
+        "--out",
+        help="Output config path. Defaults to <draft-dir>/real_case_config.curated.json.",
+    )
 
     ingest = sub.add_parser("source-pack-ingest", help="Convert a source pack into a replay fixture.")
     ingest.add_argument("path", help="Path to source pack JSON.")
@@ -739,6 +755,20 @@ def run_real_case_rehearse(args: argparse.Namespace) -> int:
     return 0 if response["ok"] else 1
 
 
+def run_real_case_apply_narratives(args: argparse.Namespace) -> int:
+    try:
+        response = apply_curated_narratives(
+            args.draft_dir,
+            args.narratives,
+            out=args.out,
+        )
+    except (OSError, json.JSONDecodeError, RealProvenanceError) as exc:
+        print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
+        return 1
+    print(json.dumps(response, indent=2, sort_keys=True))
+    return 0
+
+
 def run_source_pack_ingest(args: argparse.Namespace) -> int:
     payload = load_source_pack(args.path)
     errors = validate_source_pack(payload, require_narratives=True)
@@ -953,6 +983,8 @@ def main() -> int:
         return run_real_case_worksheet(args)
     if args.command == "real-case-rehearse":
         return run_real_case_rehearse(args)
+    if args.command == "real-case-apply-narratives":
+        return run_real_case_apply_narratives(args)
     if args.command == "source-pack-ingest":
         return run_source_pack_ingest(args)
     if args.command == "validation-validate":
