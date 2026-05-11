@@ -177,6 +177,13 @@ Live-provider rehearsal requires `FINNHUB_API_KEY` and `SEC_USER_AGENT`; `NEWS_A
 
 If you have a frozen, timestamped market CSV from another trusted local source, pass it during draft repair with `real-case-draft --market-bars path/to/market_bars.csv`; the file is copied into the scratch draft and still goes through the normal readiness and bundle checks.
 
+Before using a frozen price file, inspect it against the case replay lock:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli real-market-bars-check path/to/market_bars.csv \
+  --ticker AAPL --replay-lock 2024-05-03T10:00:00-04:00
+```
+
 The rehearsal command also writes `curated_narratives.template.json`. After curation, apply a separate narrative JSON file without hand-editing source link arrays:
 
 ```bash
