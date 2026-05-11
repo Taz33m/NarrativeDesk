@@ -326,6 +326,23 @@ def build_parser() -> argparse.ArgumentParser:
     real_narrative_template.add_argument("--allowed-limit", type=int, default=20, help="Maximum allowed sources to include.")
     real_narrative_template.add_argument("--blocked-limit", type=int, default=20, help="Maximum blocked future sources to include.")
 
+    real_curated_bundle = sub.add_parser(
+        "real-case-curated-bundle",
+        help="Apply curated narratives to a draft and build a verified scratch replay bundle.",
+    )
+    real_curated_bundle.add_argument("--draft-dir", required=True, help="Directory containing real_case_config.json.")
+    real_curated_bundle.add_argument(
+        "--narratives",
+        required=True,
+        help="JSON file containing human-curated narratives and source link helper fields.",
+    )
+    real_curated_bundle.add_argument("--out-dir", required=True, help="Output directory for the generated replay bundle.")
+    real_curated_bundle.add_argument(
+        "--retrieved-at",
+        help="Optional ISO timestamp to stamp generated provider-derived source-pack records.",
+    )
+    real_curated_bundle.add_argument("--label", help="Human-readable case label for the local case index.")
+
     ingest = sub.add_parser("source-pack-ingest", help="Convert a source pack into a replay fixture.")
     ingest.add_argument("path", help="Path to source pack JSON.")
     ingest.add_argument("--out", required=True, help="Write the generated event fixture JSON to this path.")
@@ -807,6 +824,52 @@ def run_real_case_curation_template(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_real_case_curated_bundle(args: argparse.Namespace) -> int:
+    out_dir = Path(args.out_dir)
+    try:
+        applied = apply_curated_narratives(args.draft_dir, args.narratives)
+        config_path = Path(applied["out"])
+        config = load_real_case_config(config_path)
+        payload = build_real_source_pack(
+            config,
+            retrieved_at=args.retrieved_at,
+            base_path=config_path.parent,
+        )
+    except (OSError, json.JSONDecodeError, RealProvenanceError, RealDataError) as exc:
+        print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
+        return 1
+
+    response, status = _bundle_source_pack_payload(
+        payload,
+        out_dir,
+        label=args.label,
+        persist_source_pack_on_failure=True,
+    )
+    if status == 0:
+        verify = verify_replay_bundle(out_dir)
+        verify_path = out_dir / "bundle_verify.json"
+        _write_json(verify_path, verify)
+        response = {
+            **response,
+            "ok": bool(response.get("ok")) and bool(verify.get("ok")),
+            "curated_config_out": applied["out"],
+            "bundle_verify_out": str(verify_path),
+            "bundle_verify": {
+                "ok": verify.get("ok"),
+                "artifact_count": verify.get("artifact_count"),
+                "errors": verify.get("errors", []),
+            },
+        }
+        status = 0 if response["ok"] else 1
+    else:
+        response = {
+            **response,
+            "curated_config_out": applied["out"],
+        }
+    print(json.dumps(response, indent=2, sort_keys=True))
+    return status
+
+
 def run_source_pack_ingest(args: argparse.Namespace) -> int:
     payload = load_source_pack(args.path)
     errors = validate_source_pack(payload, require_narratives=True)
@@ -1025,6 +1088,8 @@ def main() -> int:
         return run_real_case_apply_narratives(args)
     if args.command == "real-case-curation-template":
         return run_real_case_curation_template(args)
+    if args.command == "real-case-curated-bundle":
+        return run_real_case_curated_bundle(args)
     if args.command == "source-pack-ingest":
         return run_source_pack_ingest(args)
     if args.command == "validation-validate":
