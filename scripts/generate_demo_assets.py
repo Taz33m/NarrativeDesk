@@ -44,6 +44,7 @@ def main() -> int:
             "label": case["label"],
             "ledger": ledger,
             "report": report,
+            "bundle_integrity": bundle_integrity_summary(ledger, validation),
         })
         validation_payload["cases"].append({
             "case_id": case["case_id"],
@@ -71,6 +72,30 @@ def main() -> int:
     write_json(ARTIFACTS_DIR / "sample_ledger.json", default_case["ledger"])
     print("Generated web demo assets, example report, and sample ledger.")
     return 0
+
+
+def bundle_integrity_summary(ledger: dict[str, object], validation: dict[str, object]) -> dict[str, object]:
+    audit = ledger["replay_audit"]
+    citation_qa = ledger["citation_qa"]
+    if not isinstance(audit, dict) or not isinstance(citation_qa, dict):
+        raise TypeError("ledger is missing replay audit or citation QA")
+    future_source_ids = validation.get("future_source_ids", [])
+    if not isinstance(future_source_ids, list):
+        future_source_ids = []
+    blocked_source_ids = audit.get("blocked_source_ids", [])
+    if not isinstance(blocked_source_ids, list):
+        blocked_source_ids = []
+    return {
+        "verified_by_bundle_verify": False,
+        "artifact_hashes_ok": None,
+        "replay_integrity_ok": bool(
+            citation_qa.get("replay_filter_pass") and citation_qa.get("event_time_integrity_pass")
+        ),
+        "readiness_status": "synthetic_demo_fixture",
+        "blocked_future_source_count": len(blocked_source_ids),
+        "validation_future_source_count": len(future_source_ids),
+        "note": "Synthetic demo fixture. Real-curated replay bundles should pass bundle-verify before sharing or registration.",
+    }
 
 
 if __name__ == "__main__":

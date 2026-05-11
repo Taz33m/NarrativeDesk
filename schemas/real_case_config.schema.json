@@ -1,0 +1,299 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://narrativedesk.local/schemas/real_case_config.schema.json",
+  "title": "NarrativeDesk Real Case Config",
+  "type": "object",
+  "required": ["case_metadata"],
+  "properties": {
+    "case_metadata": { "$ref": "#/$defs/case_metadata" },
+    "event": { "$ref": "#/$defs/event" },
+    "market_data": { "$ref": "#/$defs/market_data" },
+    "news": { "$ref": "#/$defs/news" },
+    "sec_filings": { "$ref": "#/$defs/sec_filings" },
+    "sec_facts": { "$ref": "#/$defs/sec_facts" },
+    "transcripts": { "$ref": "#/$defs/transcripts" },
+    "estimate_revisions": { "$ref": "#/$defs/estimate_revisions" },
+    "manual_sources": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/manual_source" }
+    },
+    "narratives": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/narrative" }
+    }
+  },
+  "$defs": {
+    "score01": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "number": { "type": "number" },
+    "string_array": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "case_metadata": {
+      "type": "object",
+      "required": ["case_id", "ticker", "company_name", "event_timestamp"],
+      "properties": {
+        "case_id": { "type": "string" },
+        "ticker": { "type": "string" },
+        "company_name": { "type": "string" },
+        "event_timestamp": { "type": "string", "format": "date-time" },
+        "data_provenance_mode": {
+          "type": "string",
+          "enum": ["real-curated"]
+        },
+        "event_type": { "type": "string" },
+        "event_summary": { "type": "string" }
+      }
+    },
+    "event": {
+      "type": "object",
+      "properties": {
+        "event_id": { "type": "string" },
+        "event_date": { "type": "string" },
+        "event_type": { "type": "string" },
+        "event_summary": { "type": "string" },
+        "daily_return": { "$ref": "#/$defs/number" },
+        "abnormal_return": { "$ref": "#/$defs/number" },
+        "volume_ratio": { "$ref": "#/$defs/number" },
+        "sector_etf_return": { "$ref": "#/$defs/number" },
+        "peer_median_return": { "$ref": "#/$defs/number" }
+      }
+    },
+    "market_data": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "enum": ["finnhub", "csv", "frozen_csv", "local_csv"]
+        },
+        "resolution": { "type": "string" },
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "path": { "type": "string" },
+        "csv_path": { "type": "string" },
+        "peers": { "$ref": "#/$defs/string_array" },
+        "sector_symbol": { "type": "string" },
+        "allow_event_day_daily_close": { "type": "boolean" },
+        "lookback_days": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "news": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "enum": ["finnhub"]
+        },
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "max_articles": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "sec_filings": {
+      "type": "object",
+      "properties": {
+        "forms": { "$ref": "#/$defs/string_array" },
+        "count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cik": { "type": "string" },
+        "include_document_text": { "type": "boolean" },
+        "document_text_max_chars": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "sec_facts": {
+      "type": "object",
+      "required": ["concepts"],
+      "properties": {
+        "concepts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/sec_fact_concept" },
+          "minItems": 1
+        },
+        "cik": { "type": "string" },
+        "max_facts_per_concept": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "sec_fact_concept": {
+      "type": "object",
+      "required": ["tag"],
+      "properties": {
+        "taxonomy": { "type": "string" },
+        "tag": { "type": "string" },
+        "unit": { "type": "string" },
+        "label": { "type": "string" }
+      }
+    },
+    "transcripts": {
+      "anyOf": [
+        { "$ref": "#/$defs/transcript_collection" },
+        {
+          "type": "array",
+          "items": { "$ref": "#/$defs/transcript_item" },
+          "minItems": 1
+        },
+        { "$ref": "#/$defs/transcript_item" }
+      ]
+    },
+    "transcript_collection": {
+      "type": "object",
+      "required": ["items"],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/transcript_item" },
+          "minItems": 1
+        },
+        "provider": {
+          "type": "string",
+          "enum": ["local_text", "text", "file"]
+        },
+        "source_type": { "type": "string" },
+        "publisher": { "type": "string" },
+        "url": { "type": "string" },
+        "supported_narrative_ids": { "$ref": "#/$defs/string_array" },
+        "contradicted_narrative_ids": { "$ref": "#/$defs/string_array" }
+      }
+    },
+    "transcript_item": {
+      "type": "object",
+      "required": ["path", "published_at"],
+      "properties": {
+        "provider": {
+          "type": "string",
+          "enum": ["local_text", "text", "file"]
+        },
+        "path": { "type": "string" },
+        "text_path": { "type": "string" },
+        "source_id": { "type": "string" },
+        "source_type": { "type": "string" },
+        "publisher": { "type": "string" },
+        "title": { "type": "string" },
+        "url": { "type": "string" },
+        "published_at": { "type": "string", "format": "date-time" },
+        "supported_narrative_ids": { "$ref": "#/$defs/string_array" },
+        "contradicted_narrative_ids": { "$ref": "#/$defs/string_array" },
+        "independence_cluster_id": { "type": "string" }
+      }
+    },
+    "estimate_revisions": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "enum": ["csv", "frozen_csv", "local_csv"]
+        },
+        "path": { "type": "string" },
+        "csv_path": { "type": "string" },
+        "max_rows": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "publisher": { "type": "string" },
+        "url": { "type": "string" },
+        "default_supported_narrative_ids": { "$ref": "#/$defs/string_array" },
+        "default_contradicted_narrative_ids": { "$ref": "#/$defs/string_array" }
+      }
+    },
+    "manual_source": {
+      "type": "object",
+      "required": ["claim_extracted", "published_at"],
+      "properties": {
+        "source_id": { "type": "string" },
+        "source_type": { "type": "string" },
+        "publisher": { "type": "string" },
+        "title": { "type": "string" },
+        "url": { "type": "string" },
+        "published_at": { "type": "string", "format": "date-time" },
+        "retrieved_at": { "type": "string", "format": "date-time" },
+        "claim_extracted": { "type": "string" },
+        "document_text": { "type": "string" },
+        "raw_text": { "type": "string" },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "availability_status": {
+          "type": "string",
+          "enum": ["allowed", "blocked_future", "unavailable", "placeholder"]
+        },
+        "supported_narrative_ids": { "$ref": "#/$defs/string_array" },
+        "contradicted_narrative_ids": { "$ref": "#/$defs/string_array" },
+        "originality_score": { "$ref": "#/$defs/score01" },
+        "support_strength": { "$ref": "#/$defs/score01" },
+        "evidence_quality": { "$ref": "#/$defs/score01" },
+        "independence": { "$ref": "#/$defs/score01" },
+        "incentive_conflict": { "$ref": "#/$defs/score01" },
+        "independence_cluster_id": { "type": "string" }
+      }
+    },
+    "narrative": {
+      "type": "object",
+      "required": [
+        "narrative_id",
+        "title",
+        "narrative",
+        "mechanism",
+        "directional_implication",
+        "time_horizon",
+        "expected_observables",
+        "scoring_inputs"
+      ],
+      "properties": {
+        "narrative_id": { "type": "string" },
+        "title": { "type": "string" },
+        "narrative": { "type": "string" },
+        "mechanism": { "type": "string" },
+        "directional_implication": {
+          "type": "string",
+          "enum": ["bullish", "bearish", "neutral", "mixed"]
+        },
+        "time_horizon": { "type": "string" },
+        "expected_observables": { "$ref": "#/$defs/string_array" },
+        "scoring_inputs": { "$ref": "#/$defs/scoring_inputs" }
+      }
+    },
+    "scoring_inputs": {
+      "type": "object",
+      "required": [
+        "evidence_strength",
+        "mechanism_specificity",
+        "source_independence",
+        "cross_sectional_fit",
+        "contradiction_resistance",
+        "timestamp_advantage",
+        "forward_observable_quality",
+        "crowding_risk",
+        "unsupported_claim_penalty"
+      ],
+      "properties": {
+        "evidence_strength": { "$ref": "#/$defs/score01" },
+        "mechanism_specificity": { "$ref": "#/$defs/score01" },
+        "source_independence": { "$ref": "#/$defs/score01" },
+        "cross_sectional_fit": { "$ref": "#/$defs/score01" },
+        "contradiction_resistance": { "$ref": "#/$defs/score01" },
+        "timestamp_advantage": { "$ref": "#/$defs/score01" },
+        "forward_observable_quality": { "$ref": "#/$defs/score01" },
+        "crowding_risk": { "$ref": "#/$defs/score01" },
+        "unsupported_claim_penalty": { "$ref": "#/$defs/score01" }
+      }
+    }
+  }
+}
