@@ -78,6 +78,12 @@ def run_rehearsal(args: argparse.Namespace) -> dict[str, Any]:
         return _run_quality(args, stages, redaction_values)
     if preflight_status in {"missing_bundle", "bundle_failed", "ready_to_bundle"}:
         return _run_bundle_and_quality(args, stages, redaction_values)
+    if preflight_status == "ready_to_normalize":
+        return _run_normalize_draft_status_then_bundle(args, stages, redaction_values)
+    if preflight_status == "ready_to_draft":
+        return _run_draft_status_then_bundle(args, stages, redaction_values)
+    if preflight_status in {"invalid_draft", "needs_sources", "needs_curation"}:
+        return _final(False, preflight_status, stages, preflight["json"].get("next_action"))
     if preflight["returncode"] != 0:
         return _final(False, "preflight_failed", stages, preflight["json"].get("next_action"))
 
@@ -115,6 +121,71 @@ def run_rehearsal(args: argparse.Namespace) -> dict[str, Any]:
     stages["rehearse"] = rehearse
     if rehearse["returncode"] != 0:
         return _final(False, "rehearsal_failed", stages, "Inspect the rehearsal stage errors; no real claims were committed.")
+
+    return _run_status_then_bundle(args, stages, redaction_values)
+
+
+def _run_normalize_draft_status_then_bundle(
+    args: argparse.Namespace,
+    stages: dict[str, Any],
+    redaction_values: list[str],
+) -> dict[str, Any]:
+    normalize = _run_cli(
+        [
+            "real-data-normalize",
+            args.fetch_dir,
+            "--replay-lock",
+            args.replay_lock,
+        ],
+        redaction_values=redaction_values,
+    )
+    stages["normalize"] = normalize
+    if normalize["returncode"] != 0:
+        return _final(False, "normalize_failed", stages, "Inspect frozen fetch artifacts, then rerun normalization.")
+    normalized_dir = normalize["json"].get("out_dir") or str(Path(args.fetch_dir) / "normalized")
+    return _run_draft_status_then_bundle(args, stages, redaction_values, normalized_dir=normalized_dir)
+
+
+def _run_draft_status_then_bundle(
+    args: argparse.Namespace,
+    stages: dict[str, Any],
+    redaction_values: list[str],
+    *,
+    normalized_dir: str | None = None,
+) -> dict[str, Any]:
+    draft = _run_cli(
+        [
+            "real-case-draft",
+            "--ticker",
+            args.ticker,
+            "--company-name",
+            args.company_name,
+            "--event-type",
+            args.event_type,
+            "--event-date",
+            args.event_date,
+            "--replay-lock",
+            args.replay_lock,
+            "--normalized-dir",
+            normalized_dir or str(Path(args.fetch_dir) / "normalized"),
+            "--out-dir",
+            args.draft_dir,
+        ],
+        redaction_values=redaction_values,
+    )
+    stages["draft"] = draft
+    if draft["returncode"] != 0:
+        return _final(False, "draft_failed", stages, "Inspect normalized source candidates, then rerun drafting.")
+
+    worksheet = _run_cli(["real-case-worksheet", "--draft-dir", args.draft_dir], redaction_values=redaction_values)
+    stages["worksheet"] = worksheet
+    if worksheet["returncode"] != 0:
+        return _final(False, "worksheet_failed", stages, "Inspect the drafted real-case config, then rerun worksheet generation.")
+
+    template = _run_cli(["real-case-curation-template", "--draft-dir", args.draft_dir], redaction_values=redaction_values)
+    stages["curation_template"] = template
+    if template["returncode"] != 0:
+        return _final(False, "curation_template_failed", stages, "Inspect the drafted real-case config, then rerun curation template generation.")
 
     return _run_status_then_bundle(args, stages, redaction_values)
 

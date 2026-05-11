@@ -910,33 +910,22 @@ def _real_case_preflight(
         "artifacts": artifacts,
     }
 
-    if unavailable_env:
+    if artifacts["real_case_config"]:
+        status = _real_case_status(
+            draft_path,
+            narratives_path=narratives_path,
+            bundle_dir=bundle_path if bundle_dir is not None or artifacts["bundle_dir"] else None,
+        )
         response.update(
             {
-                "status": "missing_env",
-                "next_action": f"Populate {', '.join(unavailable_env)} locally, then rerun real-case-rehearse.",
+                "ok": bool(status.get("ok")),
+                "status": status.get("status"),
+                "case_status": status,
+                "next_action": status.get("next_action"),
             }
         )
         return response
-    if not artifacts["fetch_manifest"]:
-        response.update(
-            {
-                "ok": True,
-                "status": "ready_to_fetch",
-                "next_action": "Run real-case-rehearse to fetch, normalize, draft, and write curation artifacts.",
-            }
-        )
-        return response
-    if not artifacts["normalized_candidates"]:
-        response.update(
-            {
-                "ok": True,
-                "status": "ready_to_normalize",
-                "next_action": "Run real-data-normalize, then real-case-draft.",
-            }
-        )
-        return response
-    if not artifacts["real_case_config"]:
+    if artifacts["normalized_candidates"]:
         response.update(
             {
                 "ok": True,
@@ -945,18 +934,28 @@ def _real_case_preflight(
             }
         )
         return response
-
-    status = _real_case_status(
-        draft_path,
-        narratives_path=narratives_path,
-        bundle_dir=bundle_path if bundle_dir is not None or artifacts["bundle_dir"] else None,
-    )
+    if artifacts["fetch_manifest"]:
+        response.update(
+            {
+                "ok": True,
+                "status": "ready_to_normalize",
+                "next_action": "Run real-data-normalize, then real-case-draft.",
+            }
+        )
+        return response
+    if unavailable_env:
+        response.update(
+            {
+                "status": "missing_env",
+                "next_action": f"Populate {', '.join(unavailable_env)} locally, then rerun real-case-rehearse.",
+            }
+        )
+        return response
     response.update(
         {
-            "ok": bool(status.get("ok")),
-            "status": status.get("status"),
-            "case_status": status,
-            "next_action": status.get("next_action"),
+            "ok": True,
+            "status": "ready_to_fetch",
+            "next_action": "Run real-case-rehearse to fetch, normalize, draft, and write curation artifacts.",
         }
     )
     return response
