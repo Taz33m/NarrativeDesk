@@ -1,9 +1,9 @@
 {
   "aggregate": {
-    "blocked_future_source_count": 4,
-    "case_count": 3,
+    "blocked_future_source_count": 6,
+    "case_count": 4,
     "citation_qa_pass_rate": 1.0,
-    "evaluated_case_count": 3,
+    "evaluated_case_count": 4,
     "evidence_only_validated_rate": 1.0,
     "headline_baseline_validated_rate": 0.0,
     "low_quality_evidence_count": 0,
@@ -15,15 +15,15 @@
     "provenance_ready_rate": 1.0,
     "quality_weighted_validated_rate": 1.0,
     "replay_filter_pass_rate": 1.0,
-    "source_cluster_count": 15,
-    "source_clustering_avg_derived_originality": 0.704541,
-    "source_duplicate_cluster_count": 6,
-    "source_reliability_avg_evidence_quality": 0.767291,
-    "source_reliability_avg_independence": 0.714995,
-    "source_reliability_avg_originality": 0.758205,
+    "source_cluster_count": 18,
+    "source_clustering_avg_derived_originality": 0.689655,
+    "source_duplicate_cluster_count": 9,
+    "source_reliability_avg_evidence_quality": 0.770359,
+    "source_reliability_avg_independence": 0.72931,
+    "source_reliability_avg_originality": 0.763466,
     "support_coverage_pass_rate": 1.0,
     "top_ranked_validated_rate": 1.0,
-    "unsupported_claim_penalty_avg": 0.081667
+    "unsupported_claim_penalty_avg": 0.086875
   },
   "cases": [
     {
@@ -398,6 +398,114 @@
             "label": "invalidated",
             "narrative_id": "NARR-NKE-004",
             "what_happened": "Held-out Q1 results still showed gross-margin improvement, but revenue, Direct, wholesale, and EPS declined, weakening a margin-led explanation for the original selloff.",
+            "window": "T+60"
+          }
+        ],
+        "status": "validated"
+      }
+    },
+    {
+      "case_id": "EVT-REAL-CRWD-2024-07-19",
+      "evaluation": {
+        "allowed_source_count": 7,
+        "blocked_future_source_count": 2,
+        "high_unsupported_claim_count": 2,
+        "missing_validated_narrative_ids": [],
+        "model_comparisons": [
+          {
+            "selected_narrative_id": "NARR-CRWD-004",
+            "selected_rank": 4,
+            "selection_reason": "Selects the most crowded allowed narrative as a proxy for surface consensus.",
+            "system_id": "headline_baseline",
+            "validated": false
+          },
+          {
+            "selected_narrative_id": "NARR-CRWD-001",
+            "selected_rank": 1,
+            "selection_reason": "Ablation that selects the strongest evidence score without mechanism or contradiction terms.",
+            "system_id": "evidence_only",
+            "validated": true
+          },
+          {
+            "selected_narrative_id": "NARR-CRWD-001",
+            "selected_rank": 1,
+            "selection_reason": "Ablation that reranks without contradiction resistance or unsupported-claim penalty.",
+            "system_id": "no_contradiction_penalty",
+            "validated": true
+          },
+          {
+            "selected_narrative_id": "NARR-CRWD-001",
+            "selected_rank": 1,
+            "selection_reason": "Ablation that selects the strongest evidence score weighted by allowed source quality.",
+            "system_id": "quality_weighted",
+            "validated": true
+          },
+          {
+            "selected_narrative_id": "NARR-CRWD-001",
+            "selected_rank": 1,
+            "selection_reason": "Selects the highest deterministic narrative score after replay filtering.",
+            "system_id": "narrativedesk_tournament",
+            "validated": true
+          }
+        ],
+        "narrative_recall_at_3": true,
+        "top_ranked_validated": true,
+        "unsupported_claim_penalty_avg": 0.1025,
+        "unsupported_claim_penalty_max": 0.16,
+        "validated_narrative_ids": [
+          "NARR-CRWD-001"
+        ],
+        "validated_rank": 1
+      },
+      "label": "CRWD July 2024 outage real-curated replay",
+      "validation": {
+        "event_id": "EVT-REAL-CRWD-2024-07-19",
+        "future_source_count": 2,
+        "future_source_ids": [
+          "CRWD-TECH-FUT-001",
+          "CRWD-IR-FUT-001"
+        ],
+        "note": "Real-curated validation fixture. Held-out future evidence stays separate from event-time replay inputs.",
+        "rows": [
+          {
+            "expected_observable": "Post-lock technical evidence should confirm a CrowdStrike-controlled update mechanism rather than an outside attack.",
+            "future_source_ids": [
+              "CRWD-TECH-FUT-001",
+              "CRWD-IR-FUT-001"
+            ],
+            "label": "validated",
+            "narrative_id": "NARR-CRWD-001",
+            "what_happened": "Held-out CrowdStrike technical details identified a Windows sensor configuration update and logic error, while the later Q2 release referenced customer recovery work and Channel File 291 incident costs, supporting the operational reliability liability narrative.",
+            "window": "T+60"
+          },
+          {
+            "expected_observable": "Later technical disclosures would need to identify malicious activity or breach mechanics.",
+            "future_source_ids": [
+              "CRWD-TECH-FUT-001"
+            ],
+            "label": "invalidated",
+            "narrative_id": "NARR-CRWD-002",
+            "what_happened": "Held-out technical details kept the cause inside CrowdStrike's update path and stated the issue was not related to a cyberattack, weakening a cyberattack-scare explanation.",
+            "window": "T+5"
+          },
+          {
+            "expected_observable": "Later evidence should continue to emphasize Windows-host scope and Microsoft ecosystem exposure.",
+            "future_source_ids": [
+              "CRWD-TECH-FUT-001"
+            ],
+            "label": "pending",
+            "narrative_id": "NARR-CRWD-003",
+            "what_happened": "Held-out technical details confirmed Windows-host scope, but the validation label remains pending because the financial validation evidence centered more directly on CrowdStrike customer recovery and incident costs.",
+            "window": "T+5"
+          },
+          {
+            "expected_observable": "Future company results should show limited customer, ARR, guidance, or incident-cost effects.",
+            "future_source_ids": [
+              "CRWD-IR-FUT-001"
+            ],
+            "label": "invalidated",
+            "narrative_id": "NARR-CRWD-004",
+            "what_happened": "Held-out Q2 fiscal 2025 results referenced customer recovery work and Channel File 291 incident related costs, reducing confidence that the original selloff was only a temporary outage overreaction.",
             "window": "T+60"
           }
         ],

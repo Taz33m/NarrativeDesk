@@ -1,0 +1,11 @@
+{
+  "cases": [
+    {
+      "case_id": "EVT-REAL-CRWD-2024-07-19",
+      "event_fixture": "event_fixture.json",
+      "label": "CRWD July 2024 outage real-curated replay",
+      "validation_fixture": "validation_fixture.json"
+    }
+  ],
+  "default_case_id": "EVT-REAL-CRWD-2024-07-19"
+}

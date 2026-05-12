@@ -16,6 +16,7 @@ def assess_public_corpus_quality(
     *,
     min_cases: int = 3,
     min_unique_tickers: int = 3,
+    min_unique_event_types: int = 2,
     min_blocked_future_sources_per_case: int = 1,
     min_top_ranked_validated_rate: float = 1.0,
 ) -> dict[str, Any]:
@@ -57,6 +58,12 @@ def assess_public_corpus_quality(
             "actual": len(tickers),
             "minimum": min_unique_tickers,
             "tickers": tickers,
+        },
+        "unique_event_type_breadth": {
+            "ok": len(event_types) >= min_unique_event_types,
+            "actual": len(event_types),
+            "minimum": min_unique_event_types,
+            "event_types": event_types,
         },
         "bundle_verification": {
             "ok": all(bool(item.get("bundle_verified")) for item in case_results),
@@ -276,6 +283,8 @@ def _next_action(checks: dict[str, dict[str, Any]]) -> str:
         return "Add more verified public replay cases before positioning this as serious."
     if not checks["unique_ticker_breadth"]["ok"]:
         return "Add cases from more distinct tickers to avoid single-name demo bias."
+    if not checks["unique_event_type_breadth"]["ok"]:
+        return "Add replay cases from more than one event type before positioning this as serious."
     if not checks["bundle_verification"]["ok"]:
         return "Rebuild or remove public cases that do not pass bundle verification."
     if not checks["public_case_quality"]["ok"]:

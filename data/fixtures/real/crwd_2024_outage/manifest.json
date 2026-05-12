@@ -1,0 +1,60 @@
+{
+  "artifacts": [
+    {
+      "bytes": 21446,
+      "path": "source_pack.json",
+      "sha256": "c66d98c270188b50c2a4a5a5d7f57174ba3a30d49a731f0ee564847e0aaee071"
+    },
+    {
+      "bytes": 3018,
+      "path": "readiness.json",
+      "sha256": "4096db922e5b96b8eb8be0765d95a131ee05460c0433c45de2fccbae93f2a136"
+    },
+    {
+      "bytes": 60057,
+      "path": "event_fixture.json",
+      "sha256": "2621807be8a2354078c038dcebb149ff7710df48fca0d5c0eb475fac82772f64"
+    },
+    {
+      "bytes": 2491,
+      "path": "validation_fixture.json",
+      "sha256": "2a97e12850a8692f08557a0b0fc41b263a70a58300ff3a88927ab76086b4cc92"
+    },
+    {
+      "bytes": 57321,
+      "path": "ledger.json",
+      "sha256": "b847e45fac1aa22bbaf50bd4da32b10127ae2ccd0df4581f16f925f5061684e1"
+    },
+    {
+      "bytes": 20763,
+      "path": "report.md",
+      "sha256": "f2922afdc06dbee5a06dd0dcdbefcb8d6c9de8180b81b93a46db7defc8ce8038"
+    },
+    {
+      "bytes": 286,
+      "path": "case_index.json",
+      "sha256": "2fd5d629dd2d948a296afef079bcfe9f9c46a0c44f69d98a0c6877b59a0e64c9"
+    }
+  ],
+  "bundle_type": "narrativedesk_replay_bundle",
+  "case_id": "EVT-REAL-CRWD-2024-07-19",
+  "data_provenance_mode": "real-curated",
+  "event_id": "EVT-REAL-CRWD-2024-07-19",
+  "readiness_status": "ready_to_ingest",
+  "replay_integrity": {
+    "blocked_future_source_count": 2,
+    "blocked_future_source_ids": [
+      "CRWD-IR-FUT-001",
+      "CRWD-TECH-FUT-001"
+    ],
+    "future_validation_separate": true,
+    "validation_future_source_count": 2,
+    "validation_future_source_ids": [
+      "CRWD-TECH-FUT-001",
+      "CRWD-IR-FUT-001"
+    ]
+  },
+  "replay_timestamp": "2024-07-19T16:10:00-04:00",
+  "schema_version": 1,
+  "ticker": "CRWD"
+}

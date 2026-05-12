@@ -62,12 +62,13 @@ async function main() {
     assert.match(bodyText, /Apple Inc\./);
     assert.match(bodyText, /NVDA/);
     assert.match(bodyText, /NKE/);
+    assert.match(bodyText, /CRWD/);
     assert.match(bodyText, /Real-curated replay/i);
     assert.match(bodyText, /Case library/i);
     const libraryText = await page.locator('[data-testid="case-library-stats"]').innerText();
-    assert.match(libraryText, /Real cases[\s\S]*3/i);
-    assert.match(libraryText, /Verified[\s\S]*3/i);
-    assert.match(libraryText, /Blocked future[\s\S]*4/i);
+    assert.match(libraryText, /Real cases[\s\S]*4/i);
+    assert.match(libraryText, /Verified[\s\S]*4/i);
+    assert.match(libraryText, /Blocked future[\s\S]*6/i);
     assert.match(libraryText, /Rank #1 hit[\s\S]*100\.0%/i);
     assert.match(bodyText, /Historical analogs/i);
     assert.match(bodyText, /How similar narratives validated/i);
@@ -191,6 +192,31 @@ async function main() {
     );
     const nkeBundleIntegrityText = await page.locator('[data-testid="bundle-integrity"]').innerText();
     assert.match(nkeBundleIntegrityText, /Blocked future[\s\S]*1/i);
+
+    await page.locator('[data-testid="case-selector"]').selectOption('EVT-REAL-CRWD-2024-07-19');
+    await page.getByRole('button', { name: /^Overview$/i }).click();
+    await assert.doesNotReject(async () => (
+      page.getByRole('heading', { name: 'CrowdStrike Holdings, Inc.' }).waitFor()
+    ));
+    const crwdOverview = await page.locator('[data-testid="event-header"]').innerText();
+    assert.match(crwdOverview, /Narrative under audit[\s\S]*Operational reliability liability/i);
+    assert.match(crwdOverview, /Ranked #1 at the lock[\s\S]*T\+60 later supported replay rank #1/i);
+    await page.getByRole('button', { name: /^Evidence$/i }).click();
+    const crwdEvidenceText = await page.locator('body').innerText();
+    assert.match(crwdEvidenceText, /CRWD-IR-FUT-001/);
+    assert.match(crwdEvidenceText, /CRWD-TECH-FUT-001/);
+    assert.match(crwdEvidenceText, /Blocked from ranking/i);
+    await page.getByRole('button', { name: /^Report$/i }).click();
+    assert.equal(
+      await page.locator('[data-testid="ledger-export"]').getAttribute('download'),
+      'evt-real-crwd-2024-07-19-ledger.json',
+    );
+    assert.equal(
+      await page.locator('[data-testid="report-export"]').getAttribute('download'),
+      'evt-real-crwd-2024-07-19-report.md',
+    );
+    const crwdBundleIntegrityText = await page.locator('[data-testid="bundle-integrity"]').innerText();
+    assert.match(crwdBundleIntegrityText, /Blocked future[\s\S]*2/i);
 
     await page.setViewportSize({ width: 390, height: 1100 });
     await page.goto(baseUrl, { waitUntil: 'networkidle' });

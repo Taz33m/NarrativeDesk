@@ -1,0 +1,53 @@
+{
+  "event_id": "EVT-REAL-CRWD-2024-07-19",
+  "future_source_count": 2,
+  "future_source_ids": [
+    "CRWD-TECH-FUT-001",
+    "CRWD-IR-FUT-001"
+  ],
+  "note": "Real-curated validation fixture. Held-out future evidence stays separate from event-time replay inputs.",
+  "rows": [
+    {
+      "expected_observable": "Post-lock technical evidence should confirm a CrowdStrike-controlled update mechanism rather than an outside attack.",
+      "future_source_ids": [
+        "CRWD-TECH-FUT-001",
+        "CRWD-IR-FUT-001"
+      ],
+      "label": "validated",
+      "narrative_id": "NARR-CRWD-001",
+      "what_happened": "Held-out CrowdStrike technical details identified a Windows sensor configuration update and logic error, while the later Q2 release referenced customer recovery work and Channel File 291 incident costs, supporting the operational reliability liability narrative.",
+      "window": "T+60"
+    },
+    {
+      "expected_observable": "Later technical disclosures would need to identify malicious activity or breach mechanics.",
+      "future_source_ids": [
+        "CRWD-TECH-FUT-001"
+      ],
+      "label": "invalidated",
+      "narrative_id": "NARR-CRWD-002",
+      "what_happened": "Held-out technical details kept the cause inside CrowdStrike's update path and stated the issue was not related to a cyberattack, weakening a cyberattack-scare explanation.",
+      "window": "T+5"
+    },
+    {
+      "expected_observable": "Later evidence should continue to emphasize Windows-host scope and Microsoft ecosystem exposure.",
+      "future_source_ids": [
+        "CRWD-TECH-FUT-001"
+      ],
+      "label": "pending",
+      "narrative_id": "NARR-CRWD-003",
+      "what_happened": "Held-out technical details confirmed Windows-host scope, but the validation label remains pending because the financial validation evidence centered more directly on CrowdStrike customer recovery and incident costs.",
+      "window": "T+5"
+    },
+    {
+      "expected_observable": "Future company results should show limited customer, ARR, guidance, or incident-cost effects.",
+      "future_source_ids": [
+        "CRWD-IR-FUT-001"
+      ],
+      "label": "invalidated",
+      "narrative_id": "NARR-CRWD-004",
+      "what_happened": "Held-out Q2 fiscal 2025 results referenced customer recovery work and Channel File 291 incident related costs, reducing confidence that the original selloff was only a temporary outage overreaction.",
+      "window": "T+60"
+    }
+  ],
+  "status": "validated"
+}

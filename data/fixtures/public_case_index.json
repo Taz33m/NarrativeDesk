@@ -18,6 +18,12 @@
       "label": "NKE FY2024 Q4 real-curated replay",
       "event_fixture": "data/fixtures/real/nke_2024_q4/event_fixture.json",
       "validation_fixture": "data/fixtures/real/nke_2024_q4/validation_fixture.json"
+    },
+    {
+      "case_id": "EVT-REAL-CRWD-2024-07-19",
+      "label": "CRWD July 2024 outage real-curated replay",
+      "event_fixture": "data/fixtures/real/crwd_2024_outage/event_fixture.json",
+      "validation_fixture": "data/fixtures/real/crwd_2024_outage/validation_fixture.json"
     }
   ]
 }
