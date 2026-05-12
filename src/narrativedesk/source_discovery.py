@@ -1,14 +1,18 @@
 from __future__ import annotations
 
-import json
+import gzip
 import ipaddress
+import json
 import re
+import socket
+import zlib
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Protocol
-from urllib.parse import urlparse
-from urllib.request import Request, urlopen
+from urllib.error import HTTPError
+from urllib.parse import urljoin, urlparse
+from urllib.request import HTTPRedirectHandler, Request, build_opener, urlopen
 
 from narrativedesk.models import parse_datetime
 from narrativedesk.real_data import JsonFetcher, UrllibJsonFetcher
@@ -64,6 +68,9 @@ class UrllibJsonPoster:
 DISCOVERY_STATUSES = {"candidate", "rejected"}
 SONAR_ENDPOINT = "https://api.perplexity.ai/v1/sonar"
 DEFAULT_SONAR_MODEL = "sonar"
+DEFAULT_TEXT_FETCHER_TYPE = UrllibJsonFetcher
+MAX_DISCOVERY_PAGE_BYTES = 1_000_000
+MAX_DISCOVERY_REDIRECTS = 3
 
 
 @dataclass(frozen=True)
@@ -288,6 +295,7 @@ def freeze_discovery_candidates(
     lock = _coerce_datetime(replay_lock)
     now = _iso_timestamp(_coerce_datetime(generated_at) if generated_at else datetime.now(timezone.utc))
     fetch = fetcher or UrllibJsonFetcher()
+    use_builtin_text_fetcher = fetcher is None and isinstance(fetch, DEFAULT_TEXT_FETCHER_TYPE)
 
     existing_candidates: list[SourceCandidate] = []
     existing_rejected: list[SourceCandidate] = []
@@ -316,7 +324,17 @@ def freeze_discovery_candidates(
             )
             continue
         try:
-            html_text = fetch.get_text(discovery_candidate.url, headers={"User-Agent": "NarrativeDesk source discovery"})
+            if use_builtin_text_fetcher:
+                html_text = _fetch_public_page_text(
+                    discovery_candidate.url,
+                    headers={"User-Agent": "NarrativeDesk source discovery"},
+                    timeout_seconds=fetch.timeout_seconds,
+                )
+            else:
+                html_text = fetch.get_text(
+                    discovery_candidate.url,
+                    headers={"User-Agent": "NarrativeDesk source discovery"},
+                )
         except Exception as exc:  # pragma: no cover - exact provider failures vary
             rejected_candidates.append(
                 _rejected_source_candidate(
@@ -727,6 +745,82 @@ def _is_http_url(url: str) -> bool:
             address.is_unspecified,
         ]
     )
+
+
+class _NoRedirectHandler(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):  # type: ignore[no-untyped-def]
+        return None
+
+
+def _fetch_public_page_text(
+    url: str,
+    *,
+    headers: dict[str, str] | None = None,
+    timeout_seconds: float = 20,
+) -> str:
+    current_url = url
+    opener = build_opener(_NoRedirectHandler)
+    for _redirect_count in range(MAX_DISCOVERY_REDIRECTS + 1):
+        if not _is_publicly_resolvable_http_url(current_url):
+            raise SourceDiscoveryError("unsafe_or_unresolvable_url")
+        request = Request(current_url, headers=headers or {})
+        try:
+            with opener.open(request, timeout=timeout_seconds) as response:
+                final_url = response.geturl()
+                if not _is_publicly_resolvable_http_url(final_url):
+                    raise SourceDiscoveryError("unsafe_redirect_target")
+                raw = response.read(MAX_DISCOVERY_PAGE_BYTES + 1)
+                if len(raw) > MAX_DISCOVERY_PAGE_BYTES:
+                    raise SourceDiscoveryError("response_too_large")
+                encoding = response.headers.get("Content-Encoding", "").lower()
+                if encoding == "gzip":
+                    raw = gzip.decompress(raw)
+                elif encoding == "deflate":
+                    raw = zlib.decompress(raw)
+                if len(raw) > MAX_DISCOVERY_PAGE_BYTES:
+                    raise SourceDiscoveryError("response_too_large")
+                return raw.decode(response.headers.get_content_charset() or "utf-8", errors="replace")
+        except HTTPError as exc:
+            if 300 <= exc.code < 400:
+                location = exc.headers.get("Location", "")
+                if not location:
+                    raise SourceDiscoveryError("redirect_without_location") from exc
+                current_url = urljoin(current_url, location)
+                continue
+            raise
+    raise SourceDiscoveryError("too_many_redirects")
+
+
+def _is_publicly_resolvable_http_url(url: str) -> bool:
+    if not _is_http_url(url):
+        return False
+    host = urlparse(url).hostname
+    if not host:
+        return False
+    try:
+        infos = socket.getaddrinfo(host, None, type=socket.SOCK_STREAM)
+    except OSError:
+        return False
+    if not infos:
+        return False
+    for info in infos:
+        address_text = info[4][0]
+        try:
+            address = ipaddress.ip_address(address_text)
+        except ValueError:
+            return False
+        if any(
+            [
+                address.is_loopback,
+                address.is_private,
+                address.is_link_local,
+                address.is_multicast,
+                address.is_reserved,
+                address.is_unspecified,
+            ]
+        ):
+            return False
+    return True
 
 
 def _sonar_message_text(response: Any) -> str:
