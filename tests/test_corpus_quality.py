@@ -1,0 +1,60 @@
+from __future__ import annotations
+
+import os
+import subprocess
+import sys
+import unittest
+from pathlib import Path
+
+from narrativedesk.corpus_quality import assess_public_corpus_quality
+
+
+ROOT = Path(__file__).resolve().parents[1]
+PUBLIC_CASE_INDEX = ROOT / "data" / "fixtures" / "public_case_index.json"
+
+
+class PublicCorpusQualityTests(unittest.TestCase):
+    def test_public_corpus_clears_serious_gate(self) -> None:
+        result = assess_public_corpus_quality(PUBLIC_CASE_INDEX)
+
+        self.assertTrue(result["ok"], result["next_action"])
+        self.assertEqual(result["status"], "serious_corpus_ready")
+        self.assertEqual(result["metrics"]["case_count"], 3)
+        self.assertEqual(result["metrics"]["unique_ticker_count"], 3)
+        self.assertEqual(result["metrics"]["blocked_future_source_count"], 4)
+        self.assertEqual(result["aggregate"]["top_ranked_validated_rate"], 1)
+        self.assertGreater(
+            result["aggregate"]["narrativedesk_tournament_validated_rate"],
+            result["aggregate"]["headline_baseline_validated_rate"],
+        )
+        self.assertEqual(result["checks"]["provenance_clean"]["missing_url_count"], 0)
+
+    def test_public_corpus_reports_minimum_case_failure(self) -> None:
+        result = assess_public_corpus_quality(PUBLIC_CASE_INDEX, min_cases=99)
+
+        self.assertFalse(result["ok"])
+        self.assertFalse(result["checks"]["minimum_case_count"]["ok"])
+        self.assertEqual(result["checks"]["minimum_case_count"]["actual"], 3)
+
+    def test_public_corpus_quality_cli(self) -> None:
+        completed = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "narrativedesk.cli",
+                "public-corpus-quality",
+                str(PUBLIC_CASE_INDEX),
+            ],
+            cwd=ROOT,
+            env={**os.environ, "PYTHONPATH": str(ROOT / "src")},
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertEqual(completed.returncode, 0, completed.stderr + completed.stdout)
+        self.assertIn("serious_corpus_ready", completed.stdout)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from narrativedesk.case_index import register_case_index_entry, validate_case_index
+from narrativedesk.corpus_quality import assess_public_corpus_quality
 from narrativedesk.evaluation import evaluate_replay, summarize_case_evaluations
 from narrativedesk.pipeline import (
     ledger_export,
@@ -539,6 +540,36 @@ def build_parser() -> argparse.ArgumentParser:
         nargs="?",
         default="data/fixtures/case_index.json",
         help="Path to a case index JSON file.",
+    )
+
+    corpus_quality = sub.add_parser(
+        "public-corpus-quality",
+        help="Assess whether the registered public corpus clears serious-product quality gates.",
+    )
+    corpus_quality.add_argument(
+        "case_index",
+        nargs="?",
+        default="data/fixtures/public_case_index.json",
+        help="Path to a public case index JSON file.",
+    )
+    corpus_quality.add_argument("--min-cases", type=int, default=3, help="Minimum public cases.")
+    corpus_quality.add_argument(
+        "--min-unique-tickers",
+        type=int,
+        default=3,
+        help="Minimum distinct tickers in the public corpus.",
+    )
+    corpus_quality.add_argument(
+        "--min-blocked-future-sources-per-case",
+        type=int,
+        default=1,
+        help="Minimum blocked future sources required for every loaded public case.",
+    )
+    corpus_quality.add_argument(
+        "--min-top-ranked-validated-rate",
+        type=float,
+        default=1.0,
+        help="Minimum aggregate rate for replay rank #1 validation.",
     )
 
     register = sub.add_parser("case-index-register", help="Register a replay fixture in a case index.")
@@ -2030,6 +2061,18 @@ def run_evaluate_cases(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_public_corpus_quality(args: argparse.Namespace) -> int:
+    result = assess_public_corpus_quality(
+        args.case_index,
+        min_cases=args.min_cases,
+        min_unique_tickers=args.min_unique_tickers,
+        min_blocked_future_sources_per_case=args.min_blocked_future_sources_per_case,
+        min_top_ranked_validated_rate=args.min_top_ranked_validated_rate,
+    )
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0 if result["ok"] else 1
+
+
 def run_case_index_register(args: argparse.Namespace) -> int:
     try:
         result = register_case_index_entry(
@@ -2116,6 +2159,8 @@ def main() -> int:
         return run_validation_validate(args)
     if args.command == "evaluate-cases":
         return run_evaluate_cases(args)
+    if args.command == "public-corpus-quality":
+        return run_public_corpus_quality(args)
     if args.command == "case-index-register":
         return run_case_index_register(args)
     if args.command == "case-index-validate":

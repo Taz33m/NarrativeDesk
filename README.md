@@ -359,6 +359,12 @@ Run the browser smoke test:
 npm run web:smoke
 ```
 
+Check that the registered public corpus clears the stricter product-quality gate:
+
+```bash
+npm run public-corpus:quality
+```
+
 Run the release verification path, including real browser QA:
 
 ```bash
