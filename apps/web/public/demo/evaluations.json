@@ -1,307 +1,199 @@
 {
   "aggregate": {
-    "blocked_future_source_count": 3,
-    "case_count": 3,
-    "citation_qa_pass_rate": 0.6666666666666666,
-    "evaluated_case_count": 3,
-    "evidence_only_validated_rate": 0.6666666666666666,
-    "headline_baseline_validated_rate": 0.3333333333333333,
-    "low_quality_evidence_count": 2,
-    "missing_content_hash_count": 8,
-    "missing_url_count": 8,
+    "blocked_future_source_count": 1,
+    "case_count": 1,
+    "citation_qa_pass_rate": 1.0,
+    "evaluated_case_count": 1,
+    "evidence_only_validated_rate": 1.0,
+    "headline_baseline_validated_rate": 0.0,
+    "low_quality_evidence_count": 0,
+    "missing_content_hash_count": 0,
+    "missing_url_count": 0,
     "narrative_recall_at_3_rate": 1.0,
-    "narrativedesk_tournament_validated_rate": 0.6666666666666666,
-    "no_contradiction_penalty_validated_rate": 0.6666666666666666,
-    "provenance_ready_rate": 0.6666666666666666,
-    "quality_weighted_validated_rate": 0.6666666666666666,
+    "narrativedesk_tournament_validated_rate": 1.0,
+    "no_contradiction_penalty_validated_rate": 1.0,
+    "provenance_ready_rate": 1.0,
+    "quality_weighted_validated_rate": 1.0,
     "replay_filter_pass_rate": 1.0,
-    "source_cluster_count": 12,
-    "source_clustering_avg_derived_originality": 0.541667,
-    "source_duplicate_cluster_count": 3,
-    "source_reliability_avg_evidence_quality": 0.804167,
-    "source_reliability_avg_independence": 0.8192,
-    "source_reliability_avg_originality": 0.591667,
+    "source_cluster_count": 4,
+    "source_clustering_avg_derived_originality": 0.571414,
+    "source_duplicate_cluster_count": 2,
+    "source_reliability_avg_evidence_quality": 0.7329,
+    "source_reliability_avg_independence": 0.7243,
+    "source_reliability_avg_originality": 0.7486,
     "support_coverage_pass_rate": 1.0,
-    "top_ranked_validated_rate": 0.6666666666666666,
-    "unsupported_claim_penalty_avg": 0.053333
+    "top_ranked_validated_rate": 1.0,
+    "unsupported_claim_penalty_avg": 0.0825
   },
   "cases": [
     {
-      "case_id": "EVT-ORION-2025-08-07",
+      "case_id": "EVT-REAL-AAPL-2024-05-02",
       "evaluation": {
-        "allowed_source_count": 8,
+        "allowed_source_count": 7,
         "blocked_future_source_count": 1,
         "high_unsupported_claim_count": 1,
         "missing_validated_narrative_ids": [],
         "model_comparisons": [
           {
-            "selected_narrative_id": "NARR-002",
-            "selected_rank": 4,
-            "selection_reason": "Selects the most crowded allowed narrative as a proxy for surface consensus.",
-            "system_id": "headline_baseline",
-            "validated": false
-          },
-          {
-            "selected_narrative_id": "NARR-001",
-            "selected_rank": 1,
-            "selection_reason": "Ablation that selects the strongest evidence score without mechanism or contradiction terms.",
-            "system_id": "evidence_only",
-            "validated": true
-          },
-          {
-            "selected_narrative_id": "NARR-001",
-            "selected_rank": 1,
-            "selection_reason": "Ablation that reranks without contradiction resistance or unsupported-claim penalty.",
-            "system_id": "no_contradiction_penalty",
-            "validated": true
-          },
-          {
-            "selected_narrative_id": "NARR-001",
-            "selected_rank": 1,
-            "selection_reason": "Ablation that selects the strongest evidence score weighted by allowed source quality.",
-            "system_id": "quality_weighted",
-            "validated": true
-          },
-          {
-            "selected_narrative_id": "NARR-001",
-            "selected_rank": 1,
-            "selection_reason": "Selects the highest deterministic narrative score after replay filtering.",
-            "system_id": "narrativedesk_tournament",
-            "validated": true
-          }
-        ],
-        "narrative_recall_at_3": true,
-        "top_ranked_validated": true,
-        "unsupported_claim_penalty_avg": 0.0575,
-        "unsupported_claim_penalty_max": 0.1,
-        "validated_narrative_ids": [
-          "NARR-001"
-        ],
-        "validated_rank": 1
-      },
-      "label": "ORION synthetic earnings",
-      "validation": {
-        "event_id": "EVT-ORION-2025-08-07",
-        "future_source_count": 1,
-        "future_source_ids": [
-          "SRC-009"
-        ],
-        "note": "Future validation is stored separately from event-time replay evidence and must not be visible to generation or ranking steps.",
-        "rows": [
-          {
-            "expected_observable": "The stock underperforms a peer basket after the event.",
-            "future_source_ids": [],
-            "label": "partial",
-            "narrative_id": "NARR-001",
-            "what_happened": "Synthetic replay: ORION continued to underperform the peer basket, but estimate revisions were not yet broad enough for a full validation label.",
-            "window": "T+5"
-          },
-          {
-            "expected_observable": "Analysts reduce forward revenue or subscriber estimates within 30 days.",
-            "future_source_ids": [
-              "SRC-009"
-            ],
-            "label": "validated",
-            "narrative_id": "NARR-001",
-            "what_happened": "Synthetic replay: forward demand slowdown became the validated narrative as estimate cuts and follow-up commentary centered on net additions and churn.",
-            "window": "T+20"
-          },
-          {
-            "expected_observable": "Future company commentary focuses on acquisition efficiency or churn.",
-            "future_source_ids": [],
-            "label": "pending",
-            "narrative_id": "NARR-001",
-            "what_happened": "Synthetic replay: left pending to show that not every validation window should be force-labeled.",
-            "window": "T+60"
-          }
-        ],
-        "status": "synthetic_future_fixture"
-      }
-    },
-    {
-      "case_id": "EVT-AURORA-2025-10-22",
-      "evaluation": {
-        "allowed_source_count": 8,
-        "blocked_future_source_count": 1,
-        "high_unsupported_claim_count": 1,
-        "missing_validated_narrative_ids": [],
-        "model_comparisons": [
-          {
-            "selected_narrative_id": "AUR-NARR-002",
-            "selected_rank": 4,
-            "selection_reason": "Selects the most crowded allowed narrative as a proxy for surface consensus.",
-            "system_id": "headline_baseline",
-            "validated": false
-          },
-          {
-            "selected_narrative_id": "AUR-NARR-001",
-            "selected_rank": 1,
-            "selection_reason": "Ablation that selects the strongest evidence score without mechanism or contradiction terms.",
-            "system_id": "evidence_only",
-            "validated": true
-          },
-          {
-            "selected_narrative_id": "AUR-NARR-001",
-            "selected_rank": 1,
-            "selection_reason": "Ablation that reranks without contradiction resistance or unsupported-claim penalty.",
-            "system_id": "no_contradiction_penalty",
-            "validated": true
-          },
-          {
-            "selected_narrative_id": "AUR-NARR-001",
-            "selected_rank": 1,
-            "selection_reason": "Ablation that selects the strongest evidence score weighted by allowed source quality.",
-            "system_id": "quality_weighted",
-            "validated": true
-          },
-          {
-            "selected_narrative_id": "AUR-NARR-001",
-            "selected_rank": 1,
-            "selection_reason": "Selects the highest deterministic narrative score after replay filtering.",
-            "system_id": "narrativedesk_tournament",
-            "validated": true
-          }
-        ],
-        "narrative_recall_at_3": true,
-        "top_ranked_validated": true,
-        "unsupported_claim_penalty_avg": 0.0575,
-        "unsupported_claim_penalty_max": 0.1,
-        "validated_narrative_ids": [
-          "AUR-NARR-001"
-        ],
-        "validated_rank": 1
-      },
-      "label": "AURORA synthetic guidance miss",
-      "validation": {
-        "event_id": "EVT-AURORA-2025-10-22",
-        "future_source_count": 1,
-        "future_source_ids": [
-          "AUR-SRC-009"
-        ],
-        "note": "Synthetic validation is stored separately from event-time replay evidence and must not be visible to generation or ranking steps.",
-        "rows": [
-          {
-            "expected_observable": "The stock underperforms a peer basket after the event.",
-            "future_source_ids": [],
-            "label": "partial",
-            "narrative_id": "AUR-NARR-001",
-            "what_happened": "Synthetic replay: AURORA continued to underperform commerce software peers, but estimate revisions were not yet broad enough for a full validation label.",
-            "window": "T+5"
-          },
-          {
-            "expected_observable": "Analysts reduce forward revenue or gross merchandise volume estimates within 30 days.",
-            "future_source_ids": [
-              "AUR-SRC-009"
-            ],
-            "label": "validated",
-            "narrative_id": "AUR-NARR-001",
-            "what_happened": "Synthetic replay: forward demand slowdown became the validated narrative as estimate cuts and follow-up commentary centered on merchant expansion and retention.",
-            "window": "T+20"
-          },
-          {
-            "expected_observable": "Future company commentary focuses on merchant retention, sales-cycle length, or attach rates.",
-            "future_source_ids": [],
-            "label": "pending",
-            "narrative_id": "AUR-NARR-001",
-            "what_happened": "Synthetic replay: left pending to show that not every validation window should be force-labeled.",
-            "window": "T+60"
-          }
-        ],
-        "status": "synthetic"
-      }
-    },
-    {
-      "case_id": "EVT-LYRA-2025-11-13",
-      "evaluation": {
-        "allowed_source_count": 8,
-        "blocked_future_source_count": 1,
-        "high_unsupported_claim_count": 0,
-        "missing_validated_narrative_ids": [],
-        "model_comparisons": [
-          {
-            "selected_narrative_id": "LYR-NARR-002",
+            "selected_narrative_id": "NARR-AAPL-002",
             "selected_rank": 2,
             "selection_reason": "Selects the most crowded allowed narrative as a proxy for surface consensus.",
             "system_id": "headline_baseline",
-            "validated": true
+            "validated": false
           },
           {
-            "selected_narrative_id": "LYR-NARR-001",
+            "selected_narrative_id": "NARR-AAPL-001",
             "selected_rank": 1,
             "selection_reason": "Ablation that selects the strongest evidence score without mechanism or contradiction terms.",
             "system_id": "evidence_only",
-            "validated": false
+            "validated": true
           },
           {
-            "selected_narrative_id": "LYR-NARR-001",
+            "selected_narrative_id": "NARR-AAPL-001",
             "selected_rank": 1,
             "selection_reason": "Ablation that reranks without contradiction resistance or unsupported-claim penalty.",
             "system_id": "no_contradiction_penalty",
-            "validated": false
+            "validated": true
           },
           {
-            "selected_narrative_id": "LYR-NARR-001",
+            "selected_narrative_id": "NARR-AAPL-001",
             "selected_rank": 1,
             "selection_reason": "Ablation that selects the strongest evidence score weighted by allowed source quality.",
             "system_id": "quality_weighted",
-            "validated": false
+            "validated": true
           },
           {
-            "selected_narrative_id": "LYR-NARR-001",
+            "selected_narrative_id": "NARR-AAPL-001",
             "selected_rank": 1,
             "selection_reason": "Selects the highest deterministic narrative score after replay filtering.",
             "system_id": "narrativedesk_tournament",
-            "validated": false
+            "validated": true
           }
         ],
         "narrative_recall_at_3": true,
-        "top_ranked_validated": false,
-        "unsupported_claim_penalty_avg": 0.045,
-        "unsupported_claim_penalty_max": 0.07,
+        "top_ranked_validated": true,
+        "unsupported_claim_penalty_avg": 0.0825,
+        "unsupported_claim_penalty_max": 0.1,
         "validated_narrative_ids": [
-          "LYR-NARR-002"
+          "NARR-AAPL-001"
         ],
-        "validated_rank": 2
+        "validated_rank": 1
       },
-      "label": "LYRA synthetic hard case",
+      "label": "AAPL Q2 2024 real-curated replay",
       "validation": {
-        "event_id": "EVT-LYRA-2025-11-13",
+        "event_id": "EVT-REAL-AAPL-2024-05-02",
         "future_source_count": 1,
         "future_source_ids": [
-          "LYR-SRC-009"
+          "SEC-027"
         ],
-        "note": "Synthetic validation is stored separately from event-time replay evidence and must not be visible to generation or ranking steps.",
+        "note": "Real-curated validation fixture. Held-out future evidence stays separate from event-time replay inputs.",
         "rows": [
           {
-            "expected_observable": "The stock underperforms cybersecurity peers over the next 20 trading days.",
-            "future_source_ids": [],
-            "label": "partial",
-            "narrative_id": "LYR-NARR-002",
-            "what_happened": "Synthetic replay: LYRA continued to underperform cybersecurity peers, but the cause was not yet fully separable from broader sector weakness.",
-            "window": "T+5"
-          },
-          {
-            "expected_observable": "Analysts cut net retention or billings quality assumptions within 30 days.",
+            "expected_observable": "Capital return should be prominent in near-term investor discussion.",
             "future_source_ids": [
-              "LYR-SRC-009"
+              "SEC-027"
             ],
-            "label": "validated",
-            "narrative_id": "LYR-NARR-002",
-            "what_happened": "Synthetic replay: renewal discounting pressure became the validated narrative as later estimate notes focused on net retention and billings quality.",
+            "label": "pending",
+            "narrative_id": "NARR-AAPL-001",
+            "what_happened": "Pending future validation; fill only after the validation window closes.",
             "window": "T+20"
           },
           {
-            "expected_observable": "Follow-up commentary focuses on enterprise renewal concessions.",
+            "expected_observable": "Per-share support should matter more than reported product revenue weakness if the buyback narrative dominates.",
+            "future_source_ids": [
+              "SEC-027"
+            ],
+            "label": "pending",
+            "narrative_id": "NARR-AAPL-001",
+            "what_happened": "Pending future validation; fill only after the validation window closes.",
+            "window": "T+20"
+          },
+          {
+            "expected_observable": "Follow-up filings should preserve evidence of the newly authorized repurchase program.",
+            "future_source_ids": [
+              "SEC-027"
+            ],
+            "label": "validated",
+            "narrative_id": "NARR-AAPL-001",
+            "what_happened": "Held-out SEC-027, Apple's Q3 2024 Form 10-Q filed after the replay lock, preserved the May 2, 2024 additional $110 billion share repurchase authorization disclosure.",
+            "window": "T+60"
+          },
+          {
+            "expected_observable": "Services should remain a central offset to hardware category declines.",
             "future_source_ids": [],
             "label": "pending",
-            "narrative_id": "LYR-NARR-002",
-            "what_happened": "Synthetic replay: left pending to show that consensus tracking should not force every validation window into a binary label.",
-            "window": "T+60"
+            "narrative_id": "NARR-AAPL-002",
+            "what_happened": "Pending future validation; fill only after the validation window closes.",
+            "window": "T+20"
+          },
+          {
+            "expected_observable": "Gross margin resilience should matter in interpretation of the quarter.",
+            "future_source_ids": [],
+            "label": "pending",
+            "narrative_id": "NARR-AAPL-002",
+            "what_happened": "Pending future validation; fill only after the validation window closes.",
+            "window": "T+20"
+          },
+          {
+            "expected_observable": "Future discussion should compare Services growth with product revenue softness.",
+            "future_source_ids": [],
+            "label": "pending",
+            "narrative_id": "NARR-AAPL-002",
+            "what_happened": "Pending future validation; fill only after the validation window closes.",
+            "window": "T+20"
+          },
+          {
+            "expected_observable": "Hardware-focused analysis should emphasize iPhone, iPad, and Wearables declines.",
+            "future_source_ids": [],
+            "label": "pending",
+            "narrative_id": "NARR-AAPL-003",
+            "what_happened": "Pending future validation; fill only after the validation window closes.",
+            "window": "T+20"
+          },
+          {
+            "expected_observable": "If this narrative dominates, later commentary should focus on unit demand or product-cycle weakness.",
+            "future_source_ids": [],
+            "label": "pending",
+            "narrative_id": "NARR-AAPL-003",
+            "what_happened": "Pending future validation; fill only after the validation window closes.",
+            "window": "T+20"
+          },
+          {
+            "expected_observable": "Capital return and Services growth would need to be treated as offsets rather than primary drivers.",
+            "future_source_ids": [],
+            "label": "pending",
+            "narrative_id": "NARR-AAPL-003",
+            "what_happened": "Pending future validation; fill only after the validation window closes.",
+            "window": "T+20"
+          },
+          {
+            "expected_observable": "Greater China should remain a named risk if the regional narrative is correct.",
+            "future_source_ids": [],
+            "label": "pending",
+            "narrative_id": "NARR-AAPL-004",
+            "what_happened": "Pending future validation; fill only after the validation window closes.",
+            "window": "T+20"
+          },
+          {
+            "expected_observable": "Later filings or commentary should show whether China weakness persists or stabilizes.",
+            "future_source_ids": [],
+            "label": "pending",
+            "narrative_id": "NARR-AAPL-004",
+            "what_happened": "Pending future validation; fill only after the validation window closes.",
+            "window": "T+20"
+          },
+          {
+            "expected_observable": "The explanation should be weaker if non-China regions and Services carry the investment debate.",
+            "future_source_ids": [],
+            "label": "pending",
+            "narrative_id": "NARR-AAPL-004",
+            "what_happened": "Pending future validation; fill only after the validation window closes.",
+            "window": "T+20"
           }
         ],
-        "status": "synthetic"
+        "status": "validated"
       }
     }
   ],
-  "default_case_id": "EVT-ORION-2025-08-07"
+  "default_case_id": "EVT-REAL-AAPL-2024-05-02"
 }

@@ -21,6 +21,12 @@ def _score(value: float | None) -> str:
     return f"{value:.2f}"
 
 
+def _ratio(value: float | None) -> str:
+    if value is None:
+        return "n/a"
+    return f"{value:.2f}x"
+
+
 def _bool_label(value: bool | None) -> str:
     if value is None:
         return "n/a"
@@ -107,7 +113,7 @@ def generate_markdown_report(
     lines.append(f"- Event type: {event.event_type}")
     lines.append(f"- Daily return: {_pct(event.daily_return)}")
     lines.append(f"- Abnormal return: {_pct(event.abnormal_return)}")
-    lines.append(f"- Volume ratio: {_score(event.volume_ratio)}x")
+    lines.append(f"- Volume ratio: {_ratio(event.volume_ratio)}")
     lines.append(f"- Sector ETF return: {_pct(event.sector_etf_return)}")
     lines.append(f"- Peer median return: {_pct(event.peer_median_return)}")
     lines.append("")
@@ -316,7 +322,7 @@ def generate_markdown_report(
         rows = validation.get("rows")
         if isinstance(rows, list):
             lines.append("")
-            lines.append("| Window | Label | Expected Observable | Future Sources | Synthetic Outcome |")
+            lines.append("| Window | Label | Expected Observable | Future Sources | Validation Outcome |")
             lines.append("| --- | --- | --- | --- | --- |")
             for row in rows:
                 row_future_sources = row.get("future_source_ids")

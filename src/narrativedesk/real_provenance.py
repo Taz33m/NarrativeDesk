@@ -13,6 +13,7 @@ from pathlib import Path
 from statistics import median
 from typing import Any
 
+from narrativedesk.market import compute_event_market_metrics
 from narrativedesk.models import parse_datetime
 from narrativedesk.real_data import JsonFetcher, UrllibJsonFetcher
 from narrativedesk.source_pack import (
@@ -656,10 +657,15 @@ def _market_manual_source(
 
 
 def _market_event_claim(ticker: str, row: dict[str, Any]) -> str:
+    volume = row.get("volume")
+    volume_text = (
+        f"and traded {_format_market_volume(volume)} shares"
+        if volume not in {None, ""}
+        else "with volume unavailable"
+    )
     return (
         f"{ticker} frozen market bar: opened at {float(row['open']):.6g}, "
-        f"closed at {float(row['close']):.6g}, and traded "
-        f"{_format_market_volume(row.get('volume'))} shares on {row.get('date')}."
+        f"closed at {float(row['close']):.6g}, {volume_text} on {row.get('date')}."
     )
 
 
@@ -741,6 +747,13 @@ def inspect_market_bars(
         "available_tickers": [],
         "selected_row": None,
         "selected_rows": {},
+        "target_bar_present": False,
+        "peer_bar_count": 0,
+        "peer_bars_present": False,
+        "peer_median_measurable": False,
+        "abnormal_return_measurable": False,
+        "market_metrics": {},
+        "market_metrics_error": None,
         "missing_required_tickers": [],
         "errors": [],
     }
@@ -811,8 +824,63 @@ def inspect_market_bars(
     response["missing_required_tickers"] = missing_required_tickers
     if normalized_ticker in selected_rows:
         response["selected_row"] = selected_rows[normalized_ticker]
+    selected_peer_symbols = [
+        symbol for symbol in peer_symbols if isinstance(selected_rows.get(symbol), dict)
+    ]
+    response["target_bar_present"] = normalized_ticker in selected_rows
+    response["peer_bar_count"] = len(selected_peer_symbols)
+    response["peer_bars_present"] = bool(peer_symbols) and len(selected_peer_symbols) == len(peer_symbols)
+    snapshot = _market_snapshot_from_selected_rows(
+        selected_rows,
+        ticker=normalized_ticker,
+        peer_symbols=peer_symbols,
+        sector_symbol=normalized_sector_symbol,
+    )
+    if snapshot is not None:
+        try:
+            metrics = compute_event_market_metrics(snapshot, replay_timestamp=lock)
+        except (KeyError, TypeError, ValueError) as exc:
+            response["market_metrics_error"] = str(exc)
+        else:
+            response["market_metrics"] = metrics
+            response["peer_median_measurable"] = metrics.get("peer_median_return") is not None
+            response["abnormal_return_measurable"] = metrics.get("abnormal_return") is not None
     response["ok"] = not missing_required_tickers
     return response
+
+
+def _market_snapshot_from_selected_rows(
+    selected_rows: dict[str, dict[str, Any]],
+    *,
+    ticker: str,
+    peer_symbols: list[str],
+    sector_symbol: str,
+) -> dict[str, Any] | None:
+    event_row = selected_rows.get(ticker)
+    if not isinstance(event_row, dict):
+        return None
+
+    snapshot: dict[str, Any] = {
+        "event_bar": _market_snapshot_bar(event_row),
+        "peer_bars": [
+            _market_snapshot_bar(selected_rows[symbol])
+            for symbol in peer_symbols
+            if isinstance(selected_rows.get(symbol), dict)
+        ],
+    }
+    if sector_symbol and isinstance(selected_rows.get(sector_symbol), dict):
+        snapshot["sector_bar"] = _market_snapshot_bar(selected_rows[sector_symbol])
+    return snapshot
+
+
+def _market_snapshot_bar(row: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "symbol": str(row.get("ticker")),
+        "open": row.get("open"),
+        "close": row.get("close"),
+        "volume": row.get("volume"),
+        "as_of": row.get("as_of"),
+    }
 
 
 def write_real_case_worksheet(

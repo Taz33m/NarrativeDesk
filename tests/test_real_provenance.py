@@ -535,6 +535,61 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(config["market_data"]["sector_symbol"], "SECTOR")
         self.assertIn("2025-01-02T10:00:00-05:00,EXMPL,100.0,94.0,2000", copied_bars)
 
+    def test_draft_real_case_market_source_handles_missing_volume(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            normalized = root / "normalized"
+            normalized.mkdir()
+            (normalized / "market_bars.csv").write_text("date,ticker,open,close,volume\n")
+            (normalized / "source_candidates.json").write_text(
+                json.dumps(
+                    {
+                        "candidates": [
+                            {
+                                "source_id": "SEC-001",
+                                "provider": "sec",
+                                "publisher": "SEC EDGAR",
+                                "title": "Example Co 8-K filed 2025-01-02",
+                                "url": "https://www.sec.gov/example",
+                                "published_at": "2025-01-02T13:00:00Z",
+                                "retrieved_at": "2026-05-11T00:00:00Z",
+                                "source_type": "filing",
+                                "excerpt": "Example Co filed an 8-K.",
+                                "raw_artifact_path": "raw/sec/submissions.json",
+                                "content_hash": "sha256:14cdba325e2bc0b7cbb92a74aba5a268f8734599d27646cc556d0fe58182f5cd",
+                                "replay_status": "eligible",
+                                "rejection_reason": None,
+                            }
+                        ]
+                    }
+                )
+            )
+            (normalized / "rejected_candidates.json").write_text(json.dumps({"rejected_candidates": []}))
+            market_bars = root / "curated_market_bars.csv"
+            market_bars.write_text(
+                "date,ticker,open,close,volume\n"
+                "2025-01-02T10:00:00-05:00,EXMPL,100.0,94.0,\n"
+            )
+
+            draft_dir = root / "draft"
+            draft_real_case(
+                ticker="EXMPL",
+                company_name="Example Co",
+                event_type="earnings/guidance",
+                event_date="2025-01-02",
+                replay_lock="2025-01-02T10:00:00-05:00",
+                normalized_dir=normalized,
+                out_dir=draft_dir,
+                market_bars_path=market_bars,
+            )
+            config = json.loads((draft_dir / "real_case_config.json").read_text())
+
+        market_source = next(
+            source for source in config["manual_sources"] if source["source_id"] == "MKT-EXMPL-001"
+        )
+        self.assertIn("with volume unavailable", market_source["claim_extracted"])
+        self.assertNotIn("unknown shares", market_source["claim_extracted"])
+
     def test_inspect_market_bars_requires_peer_context_when_requested(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             market_bars = Path(tmpdir) / "market_bars.csv"
@@ -560,6 +615,14 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertFalse(response["ok"])
         self.assertEqual(response["selected_rows"]["EXMPL"]["close"], 94.0)
         self.assertEqual(response["selected_rows"]["PEER"]["close"], 98.0)
+        self.assertTrue(response["target_bar_present"])
+        self.assertTrue(response["peer_bars_present"])
+        self.assertEqual(response["peer_bar_count"], 1)
+        self.assertTrue(response["peer_median_measurable"])
+        self.assertTrue(response["abnormal_return_measurable"])
+        self.assertEqual(response["market_metrics"]["daily_return"], -0.06)
+        self.assertEqual(response["market_metrics"]["peer_median_return"], -0.02)
+        self.assertEqual(response["market_metrics"]["abnormal_return"], -0.04)
         self.assertEqual(response["missing_required_tickers"], ["SECTOR"])
         self.assertIn("No rows found for ticker SECTOR.", response["errors"])
 
@@ -692,6 +755,12 @@ class RealProvenanceTests(unittest.TestCase):
                         "market_bars_check": {
                             "ok": False,
                             "errors": ["No replay-eligible rows found for EXMPL at or before the replay lock."],
+                            "target_bar_present": False,
+                            "peer_bar_count": 0,
+                            "peer_bars_present": False,
+                            "peer_median_measurable": False,
+                            "abnormal_return_measurable": False,
+                            "market_metrics": {},
                         },
                         "missing_requirements": [
                             "Frozen market_bars.csv with at least one replay-eligible ticker row"
@@ -724,6 +793,9 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(response["status"], "needs_sources")
         self.assertIn("Provide replay-eligible market bars", response["next_action"])
         self.assertIn("No replay-eligible rows found", response["next_action"])
+        self.assertFalse(response["draft"]["market_context"]["ok"])
+        self.assertFalse(response["draft"]["market_context"]["target_bar_present"])
+        self.assertFalse(response["draft"]["market_context"]["abnormal_return_measurable"])
 
     def test_cli_real_case_status_uses_current_sources_after_curation_edits(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -733,7 +805,7 @@ class RealProvenanceTests(unittest.TestCase):
                 json.dumps(
                     {
                         "case_metadata": {"case_id": "EVT-EXMPL", "ticker": "EXMPL"},
-                        "market_data": {"path": "market_bars.csv"},
+                        "market_data": {"path": "market_bars.csv", "peers": ["PEER"]},
                         "manual_sources": [
                             {"availability_status": "allowed", "source_type": "filing"},
                             {"availability_status": "allowed", "source_type": "news"},
@@ -742,14 +814,40 @@ class RealProvenanceTests(unittest.TestCase):
                     }
                 )
             )
+            (draft_dir / "market_bars.csv").write_text(
+                "\n".join(
+                    [
+                        "date,ticker,open,close,volume",
+                        "2025-01-01,EXMPL,100.0,94.0,2000",
+                        "2025-01-01,PEER,100.0,98.0,1000",
+                    ]
+                )
+                + "\n"
+            )
             (draft_dir / "draft_summary.json").write_text(
                 json.dumps(
                     {
                         "case_readiness": "curator_ready",
+                        "ticker": "EXMPL",
+                        "replay_lock": "2025-01-02T10:00:00-05:00",
                         "accepted_sources": 1,
                         "blocked_future_sources": 0,
                         "rejected_sources": 0,
                         "market_bars_available": False,
+                        "market_bars_check": {
+                            "ok": True,
+                            "target_bar_present": True,
+                            "peer_bar_count": 1,
+                            "peer_bars_present": True,
+                            "peer_median_measurable": True,
+                            "abnormal_return_measurable": True,
+                            "market_metrics": {
+                                "daily_return": -0.06,
+                                "peer_median_return": -0.02,
+                                "abnormal_return": -0.04,
+                            },
+                            "errors": [],
+                        },
                         "filings_available": False,
                         "news_available": False,
                         "missing_requirements": [],
@@ -778,6 +876,10 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(response["draft"]["accepted_sources"], 2)
         self.assertEqual(response["draft"]["blocked_future_sources"], 1)
         self.assertTrue(response["draft"]["market_bars_available"])
+        self.assertTrue(response["draft"]["market_context"]["ok"])
+        self.assertTrue(response["draft"]["market_context"]["peer_median_measurable"])
+        self.assertTrue(response["draft"]["market_context"]["abnormal_return_measurable"])
+        self.assertEqual(response["draft"]["market_context"]["abnormal_return"], -0.04)
         self.assertTrue(response["draft"]["filings_available"])
         self.assertTrue(response["draft"]["news_available"])
 
@@ -1236,6 +1338,11 @@ class RealProvenanceTests(unittest.TestCase):
         self.assertEqual(status_after_response["status"], "bundle_verified")
         self.assertTrue(status_after_response["bundle"]["ok"])
         self.assertIn("quality", status_after_response)
+        self.assertIn("market_context", status_after_response["quality"]["gates"]["demo"])
+        self.assertIn(
+            "abnormal_return_measurable",
+            status_after_response["quality"]["gates"]["demo"]["market_context"],
+        )
         self.assertFalse(status_after_response["quality"]["gates"]["quality"]["ok"])
         self.assertIn(
             "narrative_count",

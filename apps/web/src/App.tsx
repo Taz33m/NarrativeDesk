@@ -141,6 +141,19 @@ function humanize(value: string): string {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function provenanceCopy(mode: string): string {
+  if (mode === 'real-curated') return 'real-curated replay';
+  if (mode === 'synthetic') return 'synthetic benchmark';
+  return humanize(mode).toLowerCase();
+}
+
+function safetyCopy(mode: string): string {
+  if (mode === 'real-curated') {
+    return 'Research and education only. Real-curated replay. Not investment advice.';
+  }
+  return 'Research and education only. Replay demo. Not investment advice.';
+}
+
 function narrativeReason(narrative: Narrative): string {
   const inputs = narrative.scoring_inputs;
   const strengths = [
@@ -490,7 +503,7 @@ function App() {
               Incomplete signals. Time-locked evidence. Historical validation.
             </p>
             <p className="safety-note">
-              Research and education only. Synthetic demo. Not investment advice.
+              {safetyCopy(ledger.event.data_provenance_mode)}
             </p>
           </div>
         </div>
@@ -510,7 +523,7 @@ function App() {
               ))}
             </select>
           </label>
-          <span className="provenance-chip">Demo provenance: {ledger.event.data_provenance_mode}</span>
+          <span className="provenance-chip">Provenance: {provenanceCopy(ledger.event.data_provenance_mode)}</span>
         </div>
       </header>
 
@@ -697,7 +710,7 @@ function CaseHero({
         <div>
           <p className="case-kicker">{humanize(event.event_type)} | {event.event_date}</p>
           <h2>{event.company_name}</h2>
-          <p>Demo provenance: synthetic benchmark case.</p>
+          <p>Provenance: {provenanceCopy(event.data_provenance_mode)} case.</p>
         </div>
       </div>
 
@@ -1519,7 +1532,7 @@ function BenchmarkCorpusPanel({ aggregate }: { aggregate: BenchmarkAggregate }) 
 
   return (
     <section className="panel benchmark-corpus" data-testid="benchmark-corpus">
-      <PanelHeader kicker="Benchmark corpus" title="Synthetic case-index summary" />
+      <PanelHeader kicker="Benchmark corpus" title="Case-index summary" />
       <div className="benchmark-corpus__body">
         <div className="benchmark-primary">
           {primaryMetrics.map(([label, value]) => (

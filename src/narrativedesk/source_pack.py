@@ -647,6 +647,8 @@ def _demo_market_context_check(payload: dict[str, Any], meta: dict[str, Any]) ->
     event_bar = snapshot.get("event_bar")
     peer_bars = snapshot.get("peer_bars", [])
     peer_bar_count = len(peer_bars) if isinstance(peer_bars, list) else 0
+    event_bar_as_of = _market_bar_reference_time(event_bar) if isinstance(event_bar, dict) else None
+    latest_evidence_at = _latest_linked_replay_evidence_time(payload)
     if not isinstance(event_bar, dict):
         errors.append("event_bar is required")
     if peer_bar_count == 0:
@@ -662,6 +664,14 @@ def _demo_market_context_check(payload: dict[str, Any], meta: dict[str, Any]) ->
             errors.append("peer_median_return is not computable")
         if metrics.get("abnormal_return") is None:
             errors.append("abnormal_return is not computable")
+    if latest_evidence_at is not None:
+        if event_bar_as_of is None:
+            errors.append("event_bar must include a timestamp or as_of for public demo market context")
+        elif event_bar_as_of < latest_evidence_at:
+            errors.append(
+                "event_bar is stale relative to latest linked replay-time evidence; "
+                "use intraday or replay-lock market bars"
+            )
 
     return {
         "ok": not errors,
@@ -669,8 +679,45 @@ def _demo_market_context_check(payload: dict[str, Any], meta: dict[str, Any]) ->
         "event_bar_present": isinstance(event_bar, dict),
         "peer_bar_count": peer_bar_count,
         "sector_bar_present": isinstance(snapshot.get("sector_bar"), dict),
+        "event_bar_as_of": event_bar_as_of.isoformat() if event_bar_as_of is not None else None,
+        "latest_linked_evidence_at": latest_evidence_at.isoformat() if latest_evidence_at is not None else None,
+        "post_evidence_bar_present": (
+            event_bar_as_of is not None
+            and latest_evidence_at is not None
+            and event_bar_as_of >= latest_evidence_at
+        )
+        if latest_evidence_at is not None
+        else None,
         "metrics": metrics,
     }
+
+
+def _market_bar_reference_time(bar: dict[str, Any]) -> Any:
+    for field in ("as_of", "timestamp"):
+        if not bar.get(field):
+            continue
+        try:
+            return parse_datetime(str(bar[field]))
+        except ValueError:
+            return None
+    return None
+
+
+def _latest_linked_replay_evidence_time(payload: dict[str, Any]) -> Any:
+    sources = _source_items(payload)
+    timestamps = []
+    for source in sources:
+        if source.get("availability_status") != "allowed":
+            continue
+        if str(source.get("source_type", "")).strip() == "market_data":
+            continue
+        if not source.get("supported_narrative_ids") and not source.get("contradicted_narrative_ids"):
+            continue
+        try:
+            timestamps.append(parse_datetime(str(source.get("published_at"))))
+        except ValueError:
+            continue
+    return max(timestamps) if timestamps else None
 
 
 def _distinct_nonempty(values: Any) -> list[str]:
@@ -707,6 +754,9 @@ def _quality_next_action(checks: dict[str, dict[str, Any]]) -> str:
     if checks["case_identity"]["ok"] is False:
         return "Add case ID, ticker, and replay timestamp metadata."
     if checks.get("demo_market_context", {}).get("ok") is False:
+        context_errors = checks.get("demo_market_context", {}).get("errors", [])
+        if any("stale relative to latest linked replay-time evidence" in str(error) for error in context_errors):
+            return "Add intraday or replay-lock market bars so abnormal return is measured after the event evidence."
         return "Add peer market bars so daily, peer median, and abnormal returns are measurable."
     if checks.get("linked_replay_time_sources", {}).get("ok") is False:
         return "Link more replay-time sources directly to narrative claims before public demo use."
@@ -720,7 +770,9 @@ def _quality_next_action(checks: dict[str, dict[str, Any]]) -> str:
         return "Add non-SEC replay-time evidence from multiple non-market sources before public demo use."
     if checks.get("public_validation_evidence", {}).get("ok") is False:
         return "Link held-out validation outcomes to blocked future source IDs before public demo use."
-    return "Review the report and decide whether this private case is demo-worthy."
+    if checks.get("public_replay_evidence", {}).get("ok") and checks.get("public_validation_evidence", {}).get("ok"):
+        return "Public demo gate passed; review report copy and publish only with the research/education disclaimer intact."
+    return "Review the report and decide whether this case is demo-worthy."
 
 
 def _readiness_replay_check(payload: dict[str, Any], meta: dict[str, Any]) -> dict[str, Any]:

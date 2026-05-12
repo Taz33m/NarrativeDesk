@@ -58,41 +58,41 @@ async function main() {
     assert.match(bodyText, /NarrativeDesk Replay/i);
     assert.match(bodyText, /Replay-safe market narrative verification/i);
     assert.match(bodyText, /Incomplete signals\. Time-locked evidence\. Historical validation\./i);
-    assert.match(bodyText, /ORION/);
+    assert.match(bodyText, /AAPL/);
+    assert.match(bodyText, /Apple Inc\./);
+    assert.match(bodyText, /Real-curated replay/i);
     assert.match(bodyText, /Case library/i);
     assert.match(bodyText, /Historical analogs/i);
     assert.match(bodyText, /How similar narratives validated/i);
-    assert.match(bodyText, /AURORA/);
-    assert.match(bodyText, /Similarity/i);
+    assert.match(bodyText, /No historical analogs are available/i);
     assert.match(bodyText, /Narrative under audit/i);
     assert.match(bodyText, /Verification score/i);
     assert.match(bodyText, /Replay timeline/i);
     assert.match(bodyText, /Replay Lock/i);
     assert.match(bodyText, /Future validation/i);
-    assert.match(bodyText, /Forward demand slowdown/);
-    assert.match(bodyText, /Margin compression/);
+    assert.match(bodyText, /Capital return reset/);
+    assert.match(bodyText, /Services mix resilience/);
     assert.match(bodyText, /Only evidence left of the lock entered ranking/i);
-    const orionThesis = await page.locator('[data-testid="event-header"]').innerText();
-    assert.match(orionThesis, /surface baseline[\s\S]*Margin compression/i);
-    assert.match(orionThesis, /Ranked #4/i);
-    assert.match(orionThesis, /Ranked #1 at the lock[\s\S]*T\+20 later supported replay rank #1/i);
-    assert.match(orionThesis, /Narrative under audit[\s\S]*Forward demand slowdown/i);
-    assert.match(orionThesis, /Held out from replay scoring/i);
-    assert.doesNotMatch(bodyText, /SRC-009/);
-    assert.match(bodyText, /T\+20 later supported replay rank #1/i);
-    assert.match(bodyText, /Demo provenance: synthetic benchmark case/i);
+    const aaplThesis = await page.locator('[data-testid="event-header"]').innerText();
+    assert.match(aaplThesis, /surface baseline[\s\S]*Services mix resilience/i);
+    assert.match(aaplThesis, /Ranked #2/i);
+    assert.match(aaplThesis, /Ranked #1 at the lock[\s\S]*T\+60 later supported replay rank #1/i);
+    assert.match(aaplThesis, /Narrative under audit[\s\S]*Capital return reset/i);
+    assert.match(aaplThesis, /Held out from replay scoring/i);
+    assert.match(bodyText, /Provenance: real-curated replay/i);
 
     await page.getByRole('button', { name: /^Tournament$/i }).click();
     const bracketText = await page.locator('[data-testid="tournament-bracket"]').innerText();
     assert.match(bracketText, /NarrativeDesk Verification Bracket/i);
     assert.match(bracketText, /Head-to-head explanation audit/i);
-    await page.locator('[data-testid="narrative-tournament"]').getByRole('button', { name: /Margin compression/i }).click();
-    const marginText = await page.locator('[data-testid="evidence-inspector"]').innerText();
-    assert.match(marginText, /Gross margin improved year over year/);
+    assert.match(bracketText, /Hardware demand pressure/i);
+    await page.locator('[data-testid="narrative-tournament"]').getByRole('button', { name: /Hardware demand pressure/i }).click();
+    const hardwareText = await page.locator('[data-testid="evidence-inspector"]').innerText();
+    assert.match(hardwareText, /iPhone/i);
 
     await page.getByRole('button', { name: /^Evidence$/i }).click();
     const evidenceText = await page.locator('body').innerText();
-    assert.match(evidenceText, /SRC-009/);
+    assert.match(evidenceText, /SEC-027/);
     assert.match(evidenceText, /Evidence Chain/i);
     assert.match(evidenceText, /Leakage audit/i);
     assert.match(evidenceText, /Replay source inventory/i);
@@ -103,7 +103,7 @@ async function main() {
     const benchmarkText = await page.locator('body').innerText();
     assert.match(benchmarkText, /Benchmark corpus/i);
     assert.match(benchmarkText, /Historical analogs/i);
-    assert.match(benchmarkText, /Synthetic case-index summary/i);
+    assert.match(benchmarkText, /Case-index summary/i);
     assert.match(benchmarkText, /Source reliability/i);
     assert.match(benchmarkText, /Provenance quality ledger/i);
     assert.match(benchmarkText, /Source clustering/i);
@@ -117,74 +117,28 @@ async function main() {
     assert.match(benchmarkText, /narrativedesk tournament/i);
 
     await page.getByRole('button', { name: /^Report$/i }).click();
-    assert.match(await page.locator('[data-testid="report-preview"]').innerText(), /NarrativeDesk Event Report: ORION/);
+    assert.match(await page.locator('[data-testid="report-preview"]').innerText(), /NarrativeDesk Event Report: AAPL/);
     const bundleIntegrityText = await page.locator('[data-testid="bundle-integrity"]').innerText();
     assert.match(bundleIntegrityText, /Bundle Integrity/i);
     assert.match(bundleIntegrityText, /Replay integrity[\s\S]*pass/i);
-    assert.match(bundleIntegrityText, /Artifact hashes[\s\S]*not attached/i);
+    assert.match(bundleIntegrityText, /Artifact hashes[\s\S]*pass/i);
+    assert.match(bundleIntegrityText, /Readiness[\s\S]*Ready To Ingest/i);
     assert.match(bundleIntegrityText, /Validation future[\s\S]*1/i);
-
-    await page.locator('[data-testid="case-selector"]').selectOption('EVT-AURORA-2025-10-22');
-    await page.getByRole('button', { name: /^Overview$/i }).click();
-    await assert.doesNotReject(async () => (
-      page.getByRole('heading', { name: 'Aurora Commerce Cloud' }).waitFor()
-    ));
-    await page.getByRole('button', { name: /^Evidence$/i }).click();
-    const auroraText = await page.locator('body').innerText();
-    assert.match(auroraText, /AUR-SRC-009/);
-    assert.match(auroraText, /merchant expansion/);
-    assert.match(auroraText, /Blocked from ranking/i);
-    await page.getByRole('button', { name: /^Report$/i }).click();
     assert.equal(
       await page.locator('[data-testid="ledger-export"]').getAttribute('download'),
-      'evt-aurora-2025-10-22-ledger.json',
+      'evt-real-aapl-2024-05-02-ledger.json',
     );
     assert.match(await page.locator('[data-testid="ledger-export"]').getAttribute('href'), /^data:application\/json/);
     assert.equal(
       await page.locator('[data-testid="report-export"]').getAttribute('download'),
-      'evt-aurora-2025-10-22-report.md',
+      'evt-real-aapl-2024-05-02-report.md',
     );
-
-    await page.locator('[data-testid="case-selector"]').selectOption('EVT-LYRA-2025-11-13');
-    await page.getByRole('button', { name: /^Overview$/i }).click();
-    await assert.doesNotReject(async () => (
-      page.getByRole('heading', { name: 'Lyra Security Systems' }).waitFor()
-    ));
-    await page.getByRole('button', { name: /^Evidence$/i }).click();
-    const lyraEvidenceText = await page.locator('body').innerText();
-    assert.match(lyraEvidenceText, /LYR-SRC-009/);
-    await page.getByRole('button', { name: /^Validation$/i }).click();
-    const lyraText = await page.locator('body').innerText();
-    assert.match(lyraText, /Renewal discounting pressure/);
-    assert.match(lyraText, /Future sources: LYR-SRC-009/);
-    assert.doesNotMatch(lyraText, /headline baseline/i);
-    await page.getByRole('button', { name: /^Benchmark$/i }).click();
-    const lyraBenchmarkText = await page.locator('body').innerText();
-    assert.match(lyraBenchmarkText, /Top validated\s+miss/i);
-    const lyraEvaluation = await page.locator('[data-testid="evaluation-checks"]').innerText();
-    assert.match(lyraEvaluation, /headline baseline[\s\S]*pass/i);
-    assert.match(lyraEvaluation, /evidence only[\s\S]*miss/i);
-    assert.match(lyraEvaluation, /quality weighted[\s\S]*miss/i);
-    await page.getByRole('button', { name: /^Overview$/i }).click();
-    const lyraThesis = await page.locator('[data-testid="event-header"]').innerText();
-    assert.match(lyraThesis, /surface baseline[\s\S]*Renewal discounting pressure/i);
-    assert.match(lyraThesis, /Ranked #2/i);
-    assert.match(lyraThesis, /Ranked #1 at the lock[\s\S]*T\+20 later supported rank #2/i);
-    assert.match(lyraThesis, /Narrative under audit[\s\S]*AI module adoption slowdown/i);
-    await page.getByRole('button', { name: /^Report$/i }).click();
-    assert.equal(
-      await page.locator('[data-testid="ledger-export"]').getAttribute('download'),
-      'evt-lyra-2025-11-13-ledger.json',
-    );
-    const lyraReportHref = await page.locator('[data-testid="report-export"]').getAttribute('href');
-    assert.match(decodeDataHref(lyraReportHref), /NarrativeDesk Event Report: LYRA/);
-    assert.doesNotMatch(decodeDataHref(lyraReportHref), /NarrativeDesk Event Report: ORION/);
-    assert.doesNotMatch(decodeDataHref(lyraReportHref), /Future Validation Fixture/);
-    assert.doesNotMatch(decodeDataHref(lyraReportHref), /Replay rank #1 validated: yes/);
+    const reportHref = await page.locator('[data-testid="report-export"]').getAttribute('href');
+    assert.match(decodeDataHref(reportHref), /NarrativeDesk Event Report: AAPL/);
+    assert.doesNotMatch(decodeDataHref(reportHref), /Future Validation Fixture/);
 
     await page.setViewportSize({ width: 390, height: 1100 });
     await page.goto(baseUrl, { waitUntil: 'networkidle' });
-    await page.locator('[data-testid="case-selector"]').selectOption('EVT-LYRA-2025-11-13');
     await page.getByRole('button', { name: /^Tournament$/i }).click();
     await page.locator('[data-testid="narrative-tournament"]').waitFor();
     await page.getByRole('button', { name: /^Report$/i }).click();
