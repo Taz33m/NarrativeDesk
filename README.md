@@ -6,7 +6,7 @@ It is not the AI that tells people what to think about a stock. It is the audit 
 
 ## What the app does
 
-The public browser workbench now opens a real-curated AAPL Q2 2024 earnings replay. The case uses timestamped source provenance, replay-locked evidence, blocked future validation evidence, deterministic ranking, and bundle verification. NarrativeDesk ranks the capital-return-reset explanation above competing Services, hardware-demand, and Greater China narratives using only evidence available at the replay lock.
+The public browser workbench now opens real-curated replay cases for AAPL Q2 2024 and NVIDIA Q1 fiscal 2025 earnings. Each case uses timestamped source provenance, replay-locked evidence, blocked future validation evidence, deterministic ranking, and bundle verification. NarrativeDesk ranks the selected explanation above competing narratives using only evidence available at the replay lock.
 
 The browser workbench shows:
 
@@ -23,7 +23,7 @@ The browser workbench shows:
 - Future validation panel kept separate from event-time replay evidence.
 - Export links for ledger JSON and report Markdown.
 
-The public shell uses a real-curated replay bundle, not live market data and not investment advice. Synthetic ORION/AURORA/LYRA fixtures remain in the repo for deterministic regression tests and examples.
+The public shell uses frozen real-curated replay bundles, not live market data and not investment advice. Synthetic ORION/AURORA/LYRA fixtures remain in the repo for deterministic regression tests and examples.
 
 ## Demo loop
 
@@ -50,13 +50,13 @@ The repo keeps the deterministic research kernel separate from the product surfa
 - `src/narrativedesk/`: typed ledger models, replay filtering, scoring, validation helpers, pipeline, CLI, and report export.
 - `apps/api/`: FastAPI service exposing event ID based endpoints around the kernel.
 - `apps/web/`: Vite React workbench that renders kernel-generated demo artifacts.
-- `data/fixtures/`: public real-curated AAPL replay bundle plus synthetic regression fixtures.
+- `data/fixtures/`: public real-curated replay bundles plus synthetic regression fixtures.
 - `schemas/`: Narrative Ledger, Source Pack, Real Case Config, Validation Fixture, and Replay Bundle Manifest JSON schemas.
 - `tests/`: unit and API tests.
 
 The browser demo reads generated JSON from `apps/web/public/demo/`. Generate those artifacts from the Python kernel with `make web-data`. Replay bundles stay separate from future validation and evaluation bundles.
 
-The generated example report lives at [`examples/sample_report.md`](examples/sample_report.md), and the bundled real-curated AAPL report lives at [`data/fixtures/real/aapl_2024_q2/report.md`](data/fixtures/real/aapl_2024_q2/report.md).
+The generated example report lives at [`examples/sample_report.md`](examples/sample_report.md). Bundled real-curated reports live under `data/fixtures/real/*/report.md`.
 
 ## Deterministic vs future AI/data work
 

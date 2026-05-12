@@ -1,0 +1,118 @@
+{
+  "case_id": "EVT-REAL-NVDA-2024-05-22",
+  "checks": {
+    "ingestion_ready": {
+      "errors": [],
+      "ok": true
+    },
+    "narrative_linkage": {
+      "allowed_sources_without_links": [],
+      "errors": [],
+      "narrative_link_counts": [
+        {
+          "allowed_contradiction_source_count": 0,
+          "allowed_support_source_count": 7,
+          "blocked_future_source_count": 2,
+          "narrative_id": "NARR-NVDA-001"
+        },
+        {
+          "allowed_contradiction_source_count": 0,
+          "allowed_support_source_count": 6,
+          "blocked_future_source_count": 1,
+          "narrative_id": "NARR-NVDA-002"
+        },
+        {
+          "allowed_contradiction_source_count": 1,
+          "allowed_support_source_count": 1,
+          "blocked_future_source_count": 0,
+          "narrative_id": "NARR-NVDA-003"
+        },
+        {
+          "allowed_contradiction_source_count": 0,
+          "allowed_support_source_count": 3,
+          "blocked_future_source_count": 1,
+          "narrative_id": "NARR-NVDA-004"
+        }
+      ],
+      "narratives_without_allowed_support": [],
+      "ok": true
+    },
+    "preview_valid": {
+      "errors": [],
+      "ok": true
+    },
+    "provenance_ready": {
+      "document_text_source_ids": [
+        "NVDA-IR-001",
+        "NVDA-SEC-001",
+        "NVDA-NASDAQ-001",
+        "NVDA-MW-001",
+        "NVDA-INVEST-001",
+        "NVDA-MKT-001",
+        "NVDA-MKT-BENCH-001",
+        "NVDA-IR-FUT-001",
+        "NVDA-SEC-FUT-001"
+      ],
+      "errors": [],
+      "hash_mismatch_source_ids": [],
+      "missing_hash_source_ids": [],
+      "missing_retrieved_at_source_ids": [],
+      "missing_stable_url_source_ids": [],
+      "ok": true
+    },
+    "replay_safe": {
+      "allowed_after_lock_source_ids": [],
+      "blocked_before_lock_source_ids": [],
+      "blocked_future_source_ids": [
+        "NVDA-IR-FUT-001",
+        "NVDA-SEC-FUT-001"
+      ],
+      "errors": [],
+      "ok": true
+    }
+  },
+  "ok": true,
+  "preview": {
+    "allowed_source_ids": [
+      "NVDA-IR-001",
+      "NVDA-SEC-001",
+      "NVDA-NASDAQ-001",
+      "NVDA-MW-001",
+      "NVDA-INVEST-001",
+      "NVDA-MKT-001",
+      "NVDA-MKT-BENCH-001"
+    ],
+    "blocked_future_source_ids": [
+      "NVDA-IR-FUT-001",
+      "NVDA-SEC-FUT-001"
+    ],
+    "case_id": "EVT-REAL-NVDA-2024-05-22",
+    "narrative_count": 4,
+    "provenance_mode": "real-curated",
+    "source_counts": {
+      "allowed": 7,
+      "blocked_future": 2,
+      "total": 9
+    },
+    "source_ids": [
+      "NVDA-IR-001",
+      "NVDA-SEC-001",
+      "NVDA-NASDAQ-001",
+      "NVDA-MW-001",
+      "NVDA-INVEST-001",
+      "NVDA-MKT-001",
+      "NVDA-MKT-BENCH-001",
+      "NVDA-IR-FUT-001",
+      "NVDA-SEC-FUT-001"
+    ],
+    "source_type_counts": {
+      "company_release": 3,
+      "filing": 2,
+      "market_data": 2,
+      "news": 2
+    },
+    "ticker": "NVDA"
+  },
+  "status": "ready_to_ingest",
+  "ticker": "NVDA"
+}

@@ -1,9 +1,9 @@
 {
   "aggregate": {
-    "blocked_future_source_count": 1,
-    "case_count": 1,
+    "blocked_future_source_count": 3,
+    "case_count": 2,
     "citation_qa_pass_rate": 1.0,
-    "evaluated_case_count": 1,
+    "evaluated_case_count": 2,
     "evidence_only_validated_rate": 1.0,
     "headline_baseline_validated_rate": 0.0,
     "low_quality_evidence_count": 0,
@@ -15,15 +15,15 @@
     "provenance_ready_rate": 1.0,
     "quality_weighted_validated_rate": 1.0,
     "replay_filter_pass_rate": 1.0,
-    "source_cluster_count": 4,
-    "source_clustering_avg_derived_originality": 0.571414,
-    "source_duplicate_cluster_count": 2,
-    "source_reliability_avg_evidence_quality": 0.7329,
-    "source_reliability_avg_independence": 0.7243,
-    "source_reliability_avg_originality": 0.7486,
+    "source_cluster_count": 9,
+    "source_clustering_avg_derived_originality": 0.678564,
+    "source_duplicate_cluster_count": 4,
+    "source_reliability_avg_evidence_quality": 0.7586,
+    "source_reliability_avg_independence": 0.71785,
+    "source_reliability_avg_originality": 0.75575,
     "support_coverage_pass_rate": 1.0,
     "top_ranked_validated_rate": 1.0,
-    "unsupported_claim_penalty_avg": 0.0825
+    "unsupported_claim_penalty_avg": 0.08
   },
   "cases": [
     {
@@ -189,6 +189,110 @@
             "narrative_id": "NARR-AAPL-004",
             "what_happened": "Pending future validation; fill only after the validation window closes.",
             "window": "T+20"
+          }
+        ],
+        "status": "validated"
+      }
+    },
+    {
+      "case_id": "EVT-REAL-NVDA-2024-05-22",
+      "evaluation": {
+        "allowed_source_count": 7,
+        "blocked_future_source_count": 2,
+        "high_unsupported_claim_count": 1,
+        "missing_validated_narrative_ids": [],
+        "model_comparisons": [
+          {
+            "selected_narrative_id": "NARR-NVDA-004",
+            "selected_rank": 3,
+            "selection_reason": "Selects the most crowded allowed narrative as a proxy for surface consensus.",
+            "system_id": "headline_baseline",
+            "validated": false
+          },
+          {
+            "selected_narrative_id": "NARR-NVDA-001",
+            "selected_rank": 1,
+            "selection_reason": "Ablation that selects the strongest evidence score without mechanism or contradiction terms.",
+            "system_id": "evidence_only",
+            "validated": true
+          },
+          {
+            "selected_narrative_id": "NARR-NVDA-001",
+            "selected_rank": 1,
+            "selection_reason": "Ablation that reranks without contradiction resistance or unsupported-claim penalty.",
+            "system_id": "no_contradiction_penalty",
+            "validated": true
+          },
+          {
+            "selected_narrative_id": "NARR-NVDA-001",
+            "selected_rank": 1,
+            "selection_reason": "Ablation that selects the strongest evidence score weighted by allowed source quality.",
+            "system_id": "quality_weighted",
+            "validated": true
+          },
+          {
+            "selected_narrative_id": "NARR-NVDA-001",
+            "selected_rank": 1,
+            "selection_reason": "Selects the highest deterministic narrative score after replay filtering.",
+            "system_id": "narrativedesk_tournament",
+            "validated": true
+          }
+        ],
+        "narrative_recall_at_3": true,
+        "top_ranked_validated": true,
+        "unsupported_claim_penalty_avg": 0.0775,
+        "unsupported_claim_penalty_max": 0.12,
+        "validated_narrative_ids": [
+          "NARR-NVDA-001"
+        ],
+        "validated_rank": 1
+      },
+      "label": "NVDA Q1 FY2025 real-curated replay",
+      "validation": {
+        "event_id": "EVT-REAL-NVDA-2024-05-22",
+        "future_source_count": 1,
+        "future_source_ids": [
+          "NVDA-IR-FUT-001"
+        ],
+        "note": "Real-curated validation fixture. Held-out future evidence stays separate from event-time replay inputs.",
+        "rows": [
+          {
+            "expected_observable": "Data Center revenue should remain the dominant revenue driver in the next reported quarter.",
+            "future_source_ids": [
+              "NVDA-IR-FUT-001"
+            ],
+            "label": "validated",
+            "narrative_id": "NARR-NVDA-001",
+            "what_happened": "Held-out Q2 fiscal 2025 results reported revenue of $30.0 billion and Data Center revenue of $26.3 billion, up 16% from Q1, keeping Data Center demand central to the follow-up evidence.",
+            "window": "T+60"
+          },
+          {
+            "expected_observable": "The next reported quarter should land near or above the guided revenue range.",
+            "future_source_ids": [
+              "NVDA-IR-FUT-001"
+            ],
+            "label": "pending",
+            "narrative_id": "NARR-NVDA-002",
+            "what_happened": "Pending separate curation of the guidance-accuracy label; held-out Q2 results are available for review.",
+            "window": "T+60"
+          },
+          {
+            "expected_observable": "Gaming revenue should become a central explanation in follow-up commentary.",
+            "future_source_ids": [],
+            "label": "pending",
+            "narrative_id": "NARR-NVDA-003",
+            "what_happened": "Pending; no held-out validation label has been assigned to the gaming-rebound narrative.",
+            "window": "T+60"
+          },
+          {
+            "expected_observable": "Later commentary should focus on Blackwell demand and production timing.",
+            "future_source_ids": [
+              "NVDA-IR-FUT-001"
+            ],
+            "label": "pending",
+            "narrative_id": "NARR-NVDA-004",
+            "what_happened": "Pending separate curation of Blackwell-specific validation; held-out Q2 commentary references Hopper demand and Blackwell anticipation.",
+            "window": "T+60"
           }
         ],
         "status": "validated"

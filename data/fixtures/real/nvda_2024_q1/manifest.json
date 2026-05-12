@@ -1,0 +1,59 @@
+{
+  "artifacts": [
+    {
+      "bytes": 18385,
+      "path": "source_pack.json",
+      "sha256": "4e7de5886ec368bd1ce261987ccbfaa763364c14cc21041313317a770c4b8f08"
+    },
+    {
+      "bytes": 2936,
+      "path": "readiness.json",
+      "sha256": "343f57e3d5be536df5aaf30a313eee4001306e8208e184f725847655082ce4e1"
+    },
+    {
+      "bytes": 44461,
+      "path": "event_fixture.json",
+      "sha256": "4e9eadda8308fd54f7c61e2e618cad4d921373261ff775d050498023774f1f7c"
+    },
+    {
+      "bytes": 1978,
+      "path": "validation_fixture.json",
+      "sha256": "bd7cbfa6d8671427e6624c2c74addb6f004df4d3933c54c8f8025851668618b0"
+    },
+    {
+      "bytes": 49669,
+      "path": "ledger.json",
+      "sha256": "2dcfae053a4179ad3238719f1f2060b27c9a3b42b047fcff6392a55ce10a5c42"
+    },
+    {
+      "bytes": 16828,
+      "path": "report.md",
+      "sha256": "9aadf5e63195adf1df038a54589a1dd8eadeb016a2bfee9eaf601ca702871ecf"
+    },
+    {
+      "bytes": 279,
+      "path": "case_index.json",
+      "sha256": "c212149b9ad2569af9270d9d28b7599ab5f368cc95ea9a3b1d0d564ff138e798"
+    }
+  ],
+  "bundle_type": "narrativedesk_replay_bundle",
+  "case_id": "EVT-REAL-NVDA-2024-05-22",
+  "data_provenance_mode": "real-curated",
+  "event_id": "EVT-REAL-NVDA-2024-05-22",
+  "readiness_status": "ready_to_ingest",
+  "replay_integrity": {
+    "blocked_future_source_count": 2,
+    "blocked_future_source_ids": [
+      "NVDA-IR-FUT-001",
+      "NVDA-SEC-FUT-001"
+    ],
+    "future_validation_separate": true,
+    "validation_future_source_count": 1,
+    "validation_future_source_ids": [
+      "NVDA-IR-FUT-001"
+    ]
+  },
+  "replay_timestamp": "2024-05-23T10:00:00-04:00",
+  "schema_version": 1,
+  "ticker": "NVDA"
+}

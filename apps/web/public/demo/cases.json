@@ -1003,6 +1003,1133 @@
         }
       },
       "report": "# NarrativeDesk Event Report: AAPL\n\n> Research support output. Not investment advice.\n\n## Data Note\n\nThis report is generated from a real-curated replay bundle. Treat it as research support only; public use requires curator review of source URLs, publication timestamps, raw document hashes, and validation status.\n\n## Event\n\n- Event ID: `EVT-REAL-AAPL-2024-05-02`\n- Company: Apple Inc. (`AAPL`)\n- Timestamp lock: `2024-05-03T10:00:00-04:00`\n- Event type: earnings/guidance\n- Daily return: 7.9%\n- Abnormal return: 7.9%\n- Volume ratio: n/a\n- Sector ETF return: 0.0%\n- Peer median return: 0.0%\n\nReal-curated Apple Q2 2024 earnings replay with timestamped citations, replay-locked evidence, and held-out validation. Research and education only; not investment advice.\n\n## Replay Audit\n\n- Allowed sources: MKT-AAPL-001, MKT-BENCH-001, PUB-MACRUMORS-001, PUB-NASDAQ-001, SEC-030, SEC-031, SEC-033\n- Blocked future sources: SEC-027\n- Removed from `NARR-AAPL-001`: SEC-027\n\n## Source Map\n\n| Source | Status | Type | Publisher | Narratives | Relations |\n| --- | --- | --- | --- | --- | --- |\n| MKT-AAPL-001 | allowed | market_data | Frozen market bars | NARR-AAPL-001 | support |\n| MKT-BENCH-001 | allowed | market_data | Frozen market bars | NARR-AAPL-001, NARR-AAPL-003, NARR-AAPL-004 | support |\n| PUB-MACRUMORS-001 | allowed | news | MacRumors | NARR-AAPL-001, NARR-AAPL-002, NARR-AAPL-003 | support |\n| PUB-NASDAQ-001 | allowed | company_release | Nasdaq / Business Wire | NARR-AAPL-001, NARR-AAPL-002 | support |\n| SEC-030 | allowed | filing | SEC EDGAR | NARR-AAPL-001, NARR-AAPL-002, NARR-AAPL-003, NARR-AAPL-004 | support |\n| SEC-031 | allowed | filing | SEC EDGAR | NARR-AAPL-001 | support |\n| SEC-033 | allowed | filing | SEC EDGAR | NARR-AAPL-001, NARR-AAPL-003, NARR-AAPL-004 | contradict, support |\n| SEC-027 | blocked_future | filing | n/a | NARR-AAPL-001 | support |\n\n## Citation QA\n\n- Replay filter: pass\n- Support coverage: pass\n- Event-time integrity: pass\n- Citation QA: pass\n- Provenance-ready allowed sources: pass\n- Returned blocked sources: 0\n- Narratives with support: 4/4\n- Missing URLs: 0\n- Missing content hashes: 0\n- Low-quality evidence sources: 0\n\n## Source Reliability\n\nBlocked future sources are counted for auditability but excluded from scoring and ranking.\n- Allowed sources: 7\n- Blocked future sources: 1\n- Average evidence quality: 0.73\n- Average independence: 0.72\n- Average originality score: 0.75\n- Low-quality evidence sources: 0\n- Blocked source IDs: SEC-027\n\n| Publisher | Allowed | Blocked Future | Evidence Quality | Independence | Originality |\n| --- | ---: | ---: | ---: | ---: | ---: |\n| Frozen market bars | 2 | 0 | 0.80 | 0.85 | 0.80 |\n| MacRumors | 1 | 0 | 0.76 | 0.72 | 0.72 |\n| Nasdaq / Business Wire | 1 | 0 | 0.82 | 0.55 | 0.82 |\n| SEC EDGAR | 3 | 0 | 0.65 | 0.70 | 0.70 |\n| unknown | 0 | 1 | n/a | n/a | n/a |\n\n## Source Clustering\n\nClusters use replay-safe allowed evidence only. Future-dated source text stays quarantined.\n- Allowed sources clustered: 7\n- Blocked future sources excluded: 1\n- Cluster count: 4\n- Duplicate clusters: 2\n- Average derived originality: 0.57\n\n| Cluster | Basis | Sources | Publishers | Derived Originality | Representative Claim |\n| --- | --- | --- | --- | ---: | --- |\n| issuer-release-mirrors | independence_cluster_id | PUB-NASDAQ-001 | Nasdaq / Business Wire | 1.00 | Nasdaq / Business Wire published Apple's fiscal Q2 2024 results release at 4:30 PM EDT on May 2, 2024, including lower year-over-year revenue, an all-time Services revenue record, a March-quarter EPS record, a dividend increase, and authorization for up to $110 billion in additional share repurchases. |\n| manual-sec-edgar | independence_cluster_id | SEC-030, SEC-031, SEC-033 | SEC EDGAR | 0.33 | Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s |\n| market-bars | independence_cluster_id | MKT-AAPL-001, MKT-BENCH-001 | Frozen market bars | 0.50 | AAPL frozen market bar: opened at 173.03, closed at 186.65, with volume unavailable on 2024-05-03T09:30:00-04:00. |\n| technology-news | independence_cluster_id | PUB-MACRUMORS-001 | MacRumors | 1.00 | MacRumors reported shortly after Apple's Q2 2024 release that Services set an all-time quarterly record, iPhone revenue fell by more than $5 billion year over year, and Apple authorized an additional $110 billion for share repurchases. |\n\n## Narrative Verification Ranking\n\n| Rank | Narrative | Direction | Score | Horizon |\n| ---: | --- | --- | ---: | --- |\n| 1 | Capital return reset | bullish | 0.68 | 20 trading days |\n| 2 | Services mix resilience | bullish | 0.66 | 20 trading days |\n| 3 | Hardware demand pressure | bearish | 0.60 | 20 trading days |\n| 4 | Greater China pressure | bearish | 0.58 | 20 trading days |\n\n## #1: Capital return reset\n\nInvestors focused on Apple's capital return reset after the company disclosed a new authorization to repurchase up to $110 billion of common stock and raised the quarterly dividend.\n\nMechanism: A larger repurchase authorization and higher dividend can change the near-term equity story from reported revenue softness to capital-return support for per-share value.\n\nExpected observables:\n- Capital return should be prominent in near-term investor discussion.\n- Per-share support should matter more than reported product revenue weakness if the buyback narrative dominates.\n- Follow-up filings should preserve evidence of the newly authorized repurchase program.\n\nSupporting evidence:\n- `SEC-030` (filing): Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s\n- `SEC-031` (filing): Item 2.02 Results of Operations and Financial Condition. On May 2, 2024, Apple Inc. (\u201cApple\u201d) issued a press release regarding Apple\u2019s financial results for its second fiscal quarter ended March 30, 2024. A copy of Apple\u2019s press release is attached hereto as Exhibit 99.1. The information contained in this Current Report shall not be deemed \u201cfiled\u201d for purposes of Section 18 of the Securities Exchange Act of 1934, as amended (the \u201cExchange Act\u201d), or incorporated by reference in any filing under the Securities Act of 1933, as amended, or the Exchange Act, except as shall be expressly set forth by specific reference in such a filing. Item 9.01 Financial Statements and Exhibits. (d) Exhibits. Exhibit Number Exhibit Description 99.1 Press release issued by Apple Inc. on May 2, 2024. 104 Inline XBRL for the cover page of this Current Report on Form 8-K. SIGNATURE Pursuant to the requirements of the Securities Exchange Act of 1934, the Registrant has duly caused this report to be signed on it\n- `MKT-AAPL-001` (market_data): AAPL frozen market bar: opened at 173.03, closed at 186.65, with volume unavailable on 2024-05-03T09:30:00-04:00.\n- `MKT-BENCH-001` (market_data): Frozen benchmark market bars showed daily returns of XLK 0.00%, XLC 0.00%, XLY 0.00%; benchmark median return was 0.00%.\n- `PUB-MACRUMORS-001` (news): MacRumors reported shortly after Apple's Q2 2024 release that Services set an all-time quarterly record, iPhone revenue fell by more than $5 billion year over year, and Apple authorized an additional $110 billion for share repurchases.\n- `PUB-NASDAQ-001` (company_release): Nasdaq / Business Wire published Apple's fiscal Q2 2024 results release at 4:30 PM EDT on May 2, 2024, including lower year-over-year revenue, an all-time Services revenue record, a March-quarter EPS record, a dividend increase, and authorization for up to $110 billion in additional share repurchases.\n\nContradicting evidence:\n- `SEC-033` (filing): Segment Operating Performance The following table shows net sales by reportable segment for the three months ended December 30, 2023 and December 31, 2022 (dollars in millions): Three Months Ended December 30, 2023 December 31, 2022 Change Net sales by reportable segment: Americas $ 50,430 $ 49,278 2 % Europe 30,397 27,681 10 % Greater China 20,819 23,905 (13) % Japan 7,767 6,755 15 % Rest of Asia Pacific 10,162 9,535 7 % Total net sales $ 119,575 $ 117,154 2 % Americas Americas net sales increased 2% or $1.2 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to higher net sales of Services and iPhone, partially offset by lower net sales of iPad. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Americas net sales during the first quarter of 2024. Europe Europe net sales increased 10% or $2.7 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to hi\n\nScore components:\n- evidence_strength: 0.82\n- mechanism_specificity: 0.84\n- source_independence: 0.42\n- cross_sectional_fit: 0.58\n- contradiction_resistance: 0.70\n- timestamp_advantage: 0.90\n- forward_observable_quality: 0.70\n- crowding_risk: 0.44\n- unsupported_claim_penalty: 0.06\n\n## #2: Services mix resilience\n\nThe quarter was interpreted through Services resilience: Services revenue grew while several product categories declined, giving investors a higher-margin offset to weaker hardware demand.\n\nMechanism: Services growth and mix can protect gross margin and earnings quality even when hardware categories decline.\n\nExpected observables:\n- Services should remain a central offset to hardware category declines.\n- Gross margin resilience should matter in interpretation of the quarter.\n- Future discussion should compare Services growth with product revenue softness.\n\nSupporting evidence:\n- `SEC-030` (filing): Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s\n- `PUB-MACRUMORS-001` (news): MacRumors reported shortly after Apple's Q2 2024 release that Services set an all-time quarterly record, iPhone revenue fell by more than $5 billion year over year, and Apple authorized an additional $110 billion for share repurchases.\n- `PUB-NASDAQ-001` (company_release): Nasdaq / Business Wire published Apple's fiscal Q2 2024 results release at 4:30 PM EDT on May 2, 2024, including lower year-over-year revenue, an all-time Services revenue record, a March-quarter EPS record, a dividend increase, and authorization for up to $110 billion in additional share repurchases.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.78\n- mechanism_specificity: 0.80\n- source_independence: 0.48\n- cross_sectional_fit: 0.55\n- contradiction_resistance: 0.66\n- timestamp_advantage: 0.86\n- forward_observable_quality: 0.68\n- crowding_risk: 0.50\n- unsupported_claim_penalty: 0.08\n\n## #3: Hardware demand pressure\n\nThe event exposed hardware demand weakness: iPhone, iPad, and Wearables revenue declined year over year while total net sales fell.\n\nMechanism: Broad product-category declines can signal weaker hardware demand and pressure the durability of future revenue growth.\n\nExpected observables:\n- Hardware-focused analysis should emphasize iPhone, iPad, and Wearables declines.\n- If this narrative dominates, later commentary should focus on unit demand or product-cycle weakness.\n- Capital return and Services growth would need to be treated as offsets rather than primary drivers.\n\nSupporting evidence:\n- `SEC-030` (filing): Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s\n- `SEC-033` (filing): Segment Operating Performance The following table shows net sales by reportable segment for the three months ended December 30, 2023 and December 31, 2022 (dollars in millions): Three Months Ended December 30, 2023 December 31, 2022 Change Net sales by reportable segment: Americas $ 50,430 $ 49,278 2 % Europe 30,397 27,681 10 % Greater China 20,819 23,905 (13) % Japan 7,767 6,755 15 % Rest of Asia Pacific 10,162 9,535 7 % Total net sales $ 119,575 $ 117,154 2 % Americas Americas net sales increased 2% or $1.2 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to higher net sales of Services and iPhone, partially offset by lower net sales of iPad. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Americas net sales during the first quarter of 2024. Europe Europe net sales increased 10% or $2.7 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to hi\n- `MKT-BENCH-001` (market_data): Frozen benchmark market bars showed daily returns of XLK 0.00%, XLC 0.00%, XLY 0.00%; benchmark median return was 0.00%.\n- `PUB-MACRUMORS-001` (news): MacRumors reported shortly after Apple's Q2 2024 release that Services set an all-time quarterly record, iPhone revenue fell by more than $5 billion year over year, and Apple authorized an additional $110 billion for share repurchases.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.75\n- mechanism_specificity: 0.73\n- source_independence: 0.40\n- cross_sectional_fit: 0.50\n- contradiction_resistance: 0.52\n- timestamp_advantage: 0.86\n- forward_observable_quality: 0.62\n- crowding_risk: 0.46\n- unsupported_claim_penalty: 0.09\n\n## #4: Greater China pressure\n\nInvestors were weighing regional pressure, especially Greater China, where reported net sales declined and iPhone represented a larger proportion of segment sales.\n\nMechanism: Weakness in Greater China can create a region-specific demand concern that investors may separate from company-wide category mix.\n\nExpected observables:\n- Greater China should remain a named risk if the regional narrative is correct.\n- Later filings or commentary should show whether China weakness persists or stabilizes.\n- The explanation should be weaker if non-China regions and Services carry the investment debate.\n\nSupporting evidence:\n- `SEC-030` (filing): Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s\n- `SEC-033` (filing): Segment Operating Performance The following table shows net sales by reportable segment for the three months ended December 30, 2023 and December 31, 2022 (dollars in millions): Three Months Ended December 30, 2023 December 31, 2022 Change Net sales by reportable segment: Americas $ 50,430 $ 49,278 2 % Europe 30,397 27,681 10 % Greater China 20,819 23,905 (13) % Japan 7,767 6,755 15 % Rest of Asia Pacific 10,162 9,535 7 % Total net sales $ 119,575 $ 117,154 2 % Americas Americas net sales increased 2% or $1.2 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to higher net sales of Services and iPhone, partially offset by lower net sales of iPad. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Americas net sales during the first quarter of 2024. Europe Europe net sales increased 10% or $2.7 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to hi\n- `MKT-BENCH-001` (market_data): Frozen benchmark market bars showed daily returns of XLK 0.00%, XLC 0.00%, XLY 0.00%; benchmark median return was 0.00%.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.69\n- mechanism_specificity: 0.68\n- source_independence: 0.42\n- cross_sectional_fit: 0.48\n- contradiction_resistance: 0.50\n- timestamp_advantage: 0.84\n- forward_observable_quality: 0.60\n- crowding_risk: 0.44\n- unsupported_claim_penalty: 0.10\n\n## Scoring Weights\n\n- evidence_strength: 0.20\n- mechanism_specificity: 0.15\n- source_independence: 0.15\n- cross_sectional_fit: 0.10\n- contradiction_resistance: 0.10\n- timestamp_advantage: 0.10\n- forward_observable_quality: 0.10\n- crowding_risk: 0.05\n- unsupported_claim_penalty: 0.05\n"
+    },
+    {
+      "bundle_integrity": {
+        "artifact_hashes_ok": true,
+        "blocked_future_source_count": 2,
+        "note": "Real-curated replay bundle verified from timestamped, replay-locked source artifacts.",
+        "readiness_status": "ready_to_ingest",
+        "replay_integrity_ok": true,
+        "validation_future_source_count": 1,
+        "verified_by_bundle_verify": true
+      },
+      "case_id": "EVT-REAL-NVDA-2024-05-22",
+      "label": "NVDA Q1 FY2025 real-curated replay",
+      "ledger": {
+        "citation_qa": {
+          "allowed_source_count": 7,
+          "blocked_future_source_count": 2,
+          "citation_qa_pass": true,
+          "event_time_integrity_pass": true,
+          "low_quality_evidence_count": 0,
+          "missing_content_hash_count": 0,
+          "missing_publisher_count": 0,
+          "missing_url_count": 0,
+          "narrative_count": 4,
+          "narratives_with_support_count": 4,
+          "provenance_ready": true,
+          "replay_filter_pass": true,
+          "returned_blocked_source_count": 0,
+          "support_coverage_pass": true
+        },
+        "event": {
+          "abnormal_return": 0.097748,
+          "case_id": "EVT-REAL-NVDA-2024-05-22",
+          "company_name": "NVIDIA Corporation",
+          "daily_return": 0.093256,
+          "data_provenance_mode": "real-curated",
+          "event_date": "2024-05-22",
+          "event_id": "EVT-REAL-NVDA-2024-05-22",
+          "event_summary": "Real-curated NVIDIA Q1 fiscal 2025 earnings replay with timestamped citations, replay-locked evidence, and held-out validation. Research and education only; not investment advice.",
+          "event_timestamp": "2024-05-23T10:00:00-04:00",
+          "event_type": "earnings/guidance",
+          "peer_median_return": -0.004492,
+          "sector_etf_return": -0.004492,
+          "ticker": "NVDA",
+          "volume_ratio": null
+        },
+        "narratives": [
+          {
+            "confidence": null,
+            "contradicting_evidence": [],
+            "directional_implication": "bullish",
+            "event_id": "EVT-REAL-NVDA-2024-05-22",
+            "expected_observables": [
+              "Data Center revenue should remain the dominant revenue driver in the next reported quarter.",
+              "Follow-up commentary should keep demand for Hopper, Blackwell, or AI infrastructure central.",
+              "The explanation should survive even if stock-split accessibility is treated as secondary."
+            ],
+            "mechanism": "Record Data Center revenue, management commentary on generative AI demand, and later Data Center growth made the move primarily about durable AI infrastructure demand rather than a one-off headline item.",
+            "narrative": "Investors treated NVIDIA's post-earnings move as confirmation that accelerated-computing and generative-AI demand was still scaling through the Data Center segment.",
+            "narrative_id": "NARR-NVDA-001",
+            "overall_narrative_score": 0.758888888888889,
+            "rank": 1,
+            "scores": {
+              "contradiction_resistance": 0.07600000000000001,
+              "cross_sectional_fit": 0.068,
+              "crowding_risk_penalty": 0.021,
+              "evidence_strength": 0.17200000000000001,
+              "forward_observable_quality": 0.07800000000000001,
+              "mechanism_specificity": 0.129,
+              "overall_narrative_score": 0.758888888888889,
+              "penalty_score_normalized": 0.025555555555555557,
+              "positive_score_normalized": 0.7844444444444445,
+              "source_independence": 0.093,
+              "timestamp_advantage": 0.09000000000000001,
+              "unsupported_claim_penalty": 0.002
+            },
+            "scoring_inputs": {
+              "contradiction_resistance": 0.76,
+              "cross_sectional_fit": 0.68,
+              "crowding_risk": 0.42,
+              "evidence_strength": 0.86,
+              "forward_observable_quality": 0.78,
+              "mechanism_specificity": 0.86,
+              "source_independence": 0.62,
+              "timestamp_advantage": 0.9,
+              "unsupported_claim_penalty": 0.04
+            },
+            "supporting_evidence": [
+              {
+                "availability_status": "allowed",
+                "claim": "NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.",
+                "claim_extracted": "NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.",
+                "content_hash": "sha256:8c9a89d1f3e055c918a65c84f23973aa949bc03ef5755b1b7d71d469f676ee56",
+                "contradicted_narrative_ids": [
+                  "NARR-NVDA-003"
+                ],
+                "evidence_quality": 0.86,
+                "incentive_conflict": 0.28,
+                "independence": 0.58,
+                "independence_cluster_id": "issuer-release",
+                "originality_score": 0.86,
+                "published_at": "2024-05-22T20:20:00+00:00",
+                "publisher": "NVIDIA Investor Relations",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-IR-001",
+                "source_type": "company_release",
+                "support_strength": 0.88,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-002",
+                  "NARR-NVDA-004"
+                ],
+                "title": "NVIDIA Announces Financial Results for First Quarter Fiscal 2025",
+                "url": "https://investor.nvidia.com/news/press-release-details/2024/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2025/default.aspx"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "NVIDIA filed an 8-K after the May 22, 2024 earnings release, attaching first-quarter fiscal 2025 results and related company disclosures to the SEC record.",
+                "claim_extracted": "NVIDIA filed an 8-K after the May 22, 2024 earnings release, attaching first-quarter fiscal 2025 results and related company disclosures to the SEC record.",
+                "content_hash": "sha256:34c1ae600102d80544f0059c3fe6a7082df44966c22a50d8d23ee08983fdfc10",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.76,
+                "incentive_conflict": 0.1,
+                "independence": 0.68,
+                "independence_cluster_id": "sec-edgar",
+                "originality_score": 0.66,
+                "published_at": "2024-05-22T20:21:29+00:00",
+                "publisher": "SEC EDGAR",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-SEC-001",
+                "source_type": "filing",
+                "support_strength": 0.72,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-002"
+                ],
+                "title": "NVIDIA 8-K filed May 22, 2024",
+                "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581024000113/nvda-20240522.htm"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Nasdaq carried the NVIDIA first-quarter fiscal 2025 release, including the current-quarter outlook, conference call timing, and references to NVIDIA CFO commentary at investor.nvidia.com.",
+                "claim_extracted": "Nasdaq carried the NVIDIA first-quarter fiscal 2025 release, including the current-quarter outlook, conference call timing, and references to NVIDIA CFO commentary at investor.nvidia.com.",
+                "content_hash": "sha256:9060a29b59ecf20728ebcfa6e58f04b14de25dac7bc9519922a338bc9edf236a",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.18,
+                "independence": 0.56,
+                "independence_cluster_id": "issuer-release-mirrors",
+                "originality_score": 0.72,
+                "published_at": "2024-05-22T20:20:00+00:00",
+                "publisher": "Nasdaq / GlobeNewswire",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-NASDAQ-001",
+                "source_type": "company_release",
+                "support_strength": 0.74,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-002"
+                ],
+                "title": "NVIDIA Announces Financial Results for First Quarter Fiscal 2025",
+                "url": "https://www.nasdaq.com/press-release/nvidia-announces-financial-results-for-first-quarter-fiscal-2025-2024-05-22"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "MarketWatch reported NVIDIA executive commentary that Data Center growth was fueled by strong and accelerating demand for generative AI training and inference on Hopper, and that major cloud providers represented a mid-40% share of Data Center revenue.",
+                "claim_extracted": "MarketWatch reported NVIDIA executive commentary that Data Center growth was fueled by strong and accelerating demand for generative AI training and inference on Hopper, and that major cloud providers represented a mid-40% share of Data Center revenue.",
+                "content_hash": "sha256:7eb3a731626aae4f820fc02d4c8793c758b351f9b61838ac896e46ac8b271601",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.76,
+                "incentive_conflict": 0.08,
+                "independence": 0.74,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.76,
+                "published_at": "2024-05-22T20:38:00+00:00",
+                "publisher": "MarketWatch",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-MW-001",
+                "source_type": "news",
+                "support_strength": 0.76,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-004"
+                ],
+                "title": "Here is what Nvidia executives had to say about earnings",
+                "url": "https://www.marketwatch.com/livecoverage/nvidia-earnings-stock-ai-expectations-results-revenue-q1/card/here-s-what-nvidia-executives-have-to-say-about-earnings-tw0MPnA7hSjH6NTr8WB4"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Investopedia reported that NVIDIA first-quarter fiscal 2025 results topped expectations, with record revenue, Data Center sales of $22.6 billion, and a 10-for-1 stock split announcement.",
+                "claim_extracted": "Investopedia reported that NVIDIA first-quarter fiscal 2025 results topped expectations, with record revenue, Data Center sales of $22.6 billion, and a 10-for-1 stock split announcement.",
+                "content_hash": "sha256:27f172ad89d9079df40b3b142ef0183f07d099d25bfa70b184bad8edfbe18b85",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.73,
+                "incentive_conflict": 0.08,
+                "independence": 0.74,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.74,
+                "published_at": "2024-05-22T21:30:00+00:00",
+                "publisher": "Investopedia",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-INVEST-001",
+                "source_type": "news",
+                "support_strength": 0.7,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-002",
+                  "NARR-NVDA-003"
+                ],
+                "title": "Nvidia Earnings Top Expectations As Sales Soar Amid Booming AI Demand",
+                "url": "https://www.investopedia.com/nvidia-q1-fy-2025-earnings-8652629"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Frozen market bars use NVIDIA split-adjusted close-to-close prices around the event: $94.90 on May 22, 2024 and $103.75 on May 23, 2024, implying a 9.33% event move before peer adjustment.",
+                "claim_extracted": "Frozen market bars use NVIDIA split-adjusted close-to-close prices around the event: $94.90 on May 22, 2024 and $103.75 on May 23, 2024, implying a 9.33% event move before peer adjustment.",
+                "content_hash": "sha256:472aebc84a8c00e078b2c956c71ad263cf42bd18d58f48e0fd031de401c4ccc2",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.8,
+                "incentive_conflict": 0.04,
+                "independence": 0.84,
+                "independence_cluster_id": "market-bars",
+                "originality_score": 0.8,
+                "published_at": "2024-05-23T13:30:00+00:00",
+                "publisher": "Frozen market bars",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-MKT-001",
+                "source_type": "market_data",
+                "support_strength": 0.68,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-002"
+                ],
+                "title": "NVDA close-to-close market move for May 23, 2024",
+                "url": "https://www.statmuse.com/money/ask?q=nvda+stock+price+may+23%2C+2024"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Frozen benchmark bars use QQQ close-to-close prices around the event: $451.91 on May 22, 2024 and $449.88 on May 23, 2024, giving a negative benchmark move while NVIDIA rose.",
+                "claim_extracted": "Frozen benchmark bars use QQQ close-to-close prices around the event: $451.91 on May 22, 2024 and $449.88 on May 23, 2024, giving a negative benchmark move while NVIDIA rose.",
+                "content_hash": "sha256:cb3323793cd34ec48109eda147ed08653b18e6563561ebbae10cf8453eed2ebe",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.8,
+                "incentive_conflict": 0.04,
+                "independence": 0.84,
+                "independence_cluster_id": "market-bars",
+                "originality_score": 0.8,
+                "published_at": "2024-05-23T13:30:00+00:00",
+                "publisher": "Frozen market bars",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-MKT-BENCH-001",
+                "source_type": "market_data",
+                "support_strength": 0.66,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-002",
+                  "NARR-NVDA-004"
+                ],
+                "title": "QQQ close-to-close benchmark move for May 23, 2024",
+                "url": "https://www.statmuse.com/money/ask/qqq-price-in-may-2024"
+              }
+            ],
+            "ticker": "NVDA",
+            "time_horizon": "60 trading days",
+            "timestamp_created": "2024-05-23T10:00:00-04:00",
+            "title": "Data center demand acceleration",
+            "validation_status": "pending"
+          },
+          {
+            "confidence": null,
+            "contradicting_evidence": [],
+            "directional_implication": "bullish",
+            "event_id": "EVT-REAL-NVDA-2024-05-22",
+            "expected_observables": [
+              "The next reported quarter should land near or above the guided revenue range.",
+              "Gross margins should remain around the mid-70% range.",
+              "Follow-up analysis should discuss whether guidance was conservative or demand-limited."
+            ],
+            "mechanism": "A $28.0 billion next-quarter revenue outlook and mid-70s gross-margin guide gave investors a near-term observable that the AI demand cycle had not peaked at the reported quarter.",
+            "narrative": "The market repriced NVIDIA because the second-quarter revenue outlook reset near-term expectations above the already strong first-quarter base.",
+            "narrative_id": "NARR-NVDA-002",
+            "overall_narrative_score": 0.7244444444444444,
+            "rank": 2,
+            "scores": {
+              "contradiction_resistance": 0.06999999999999999,
+              "cross_sectional_fit": 0.064,
+              "crowding_risk_penalty": 0.023000000000000003,
+              "evidence_strength": 0.164,
+              "forward_observable_quality": 0.082,
+              "mechanism_specificity": 0.126,
+              "overall_narrative_score": 0.7244444444444444,
+              "penalty_score_normalized": 0.028888888888888895,
+              "positive_score_normalized": 0.7533333333333333,
+              "source_independence": 0.084,
+              "timestamp_advantage": 0.08800000000000001,
+              "unsupported_claim_penalty": 0.003
+            },
+            "scoring_inputs": {
+              "contradiction_resistance": 0.7,
+              "cross_sectional_fit": 0.64,
+              "crowding_risk": 0.46,
+              "evidence_strength": 0.82,
+              "forward_observable_quality": 0.82,
+              "mechanism_specificity": 0.84,
+              "source_independence": 0.56,
+              "timestamp_advantage": 0.88,
+              "unsupported_claim_penalty": 0.06
+            },
+            "supporting_evidence": [
+              {
+                "availability_status": "allowed",
+                "claim": "NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.",
+                "claim_extracted": "NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.",
+                "content_hash": "sha256:8c9a89d1f3e055c918a65c84f23973aa949bc03ef5755b1b7d71d469f676ee56",
+                "contradicted_narrative_ids": [
+                  "NARR-NVDA-003"
+                ],
+                "evidence_quality": 0.86,
+                "incentive_conflict": 0.28,
+                "independence": 0.58,
+                "independence_cluster_id": "issuer-release",
+                "originality_score": 0.86,
+                "published_at": "2024-05-22T20:20:00+00:00",
+                "publisher": "NVIDIA Investor Relations",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-IR-001",
+                "source_type": "company_release",
+                "support_strength": 0.88,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-002",
+                  "NARR-NVDA-004"
+                ],
+                "title": "NVIDIA Announces Financial Results for First Quarter Fiscal 2025",
+                "url": "https://investor.nvidia.com/news/press-release-details/2024/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2025/default.aspx"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "NVIDIA filed an 8-K after the May 22, 2024 earnings release, attaching first-quarter fiscal 2025 results and related company disclosures to the SEC record.",
+                "claim_extracted": "NVIDIA filed an 8-K after the May 22, 2024 earnings release, attaching first-quarter fiscal 2025 results and related company disclosures to the SEC record.",
+                "content_hash": "sha256:34c1ae600102d80544f0059c3fe6a7082df44966c22a50d8d23ee08983fdfc10",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.76,
+                "incentive_conflict": 0.1,
+                "independence": 0.68,
+                "independence_cluster_id": "sec-edgar",
+                "originality_score": 0.66,
+                "published_at": "2024-05-22T20:21:29+00:00",
+                "publisher": "SEC EDGAR",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-SEC-001",
+                "source_type": "filing",
+                "support_strength": 0.72,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-002"
+                ],
+                "title": "NVIDIA 8-K filed May 22, 2024",
+                "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581024000113/nvda-20240522.htm"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Nasdaq carried the NVIDIA first-quarter fiscal 2025 release, including the current-quarter outlook, conference call timing, and references to NVIDIA CFO commentary at investor.nvidia.com.",
+                "claim_extracted": "Nasdaq carried the NVIDIA first-quarter fiscal 2025 release, including the current-quarter outlook, conference call timing, and references to NVIDIA CFO commentary at investor.nvidia.com.",
+                "content_hash": "sha256:9060a29b59ecf20728ebcfa6e58f04b14de25dac7bc9519922a338bc9edf236a",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.18,
+                "independence": 0.56,
+                "independence_cluster_id": "issuer-release-mirrors",
+                "originality_score": 0.72,
+                "published_at": "2024-05-22T20:20:00+00:00",
+                "publisher": "Nasdaq / GlobeNewswire",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-NASDAQ-001",
+                "source_type": "company_release",
+                "support_strength": 0.74,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-002"
+                ],
+                "title": "NVIDIA Announces Financial Results for First Quarter Fiscal 2025",
+                "url": "https://www.nasdaq.com/press-release/nvidia-announces-financial-results-for-first-quarter-fiscal-2025-2024-05-22"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Investopedia reported that NVIDIA first-quarter fiscal 2025 results topped expectations, with record revenue, Data Center sales of $22.6 billion, and a 10-for-1 stock split announcement.",
+                "claim_extracted": "Investopedia reported that NVIDIA first-quarter fiscal 2025 results topped expectations, with record revenue, Data Center sales of $22.6 billion, and a 10-for-1 stock split announcement.",
+                "content_hash": "sha256:27f172ad89d9079df40b3b142ef0183f07d099d25bfa70b184bad8edfbe18b85",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.73,
+                "incentive_conflict": 0.08,
+                "independence": 0.74,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.74,
+                "published_at": "2024-05-22T21:30:00+00:00",
+                "publisher": "Investopedia",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-INVEST-001",
+                "source_type": "news",
+                "support_strength": 0.7,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-002",
+                  "NARR-NVDA-003"
+                ],
+                "title": "Nvidia Earnings Top Expectations As Sales Soar Amid Booming AI Demand",
+                "url": "https://www.investopedia.com/nvidia-q1-fy-2025-earnings-8652629"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Frozen market bars use NVIDIA split-adjusted close-to-close prices around the event: $94.90 on May 22, 2024 and $103.75 on May 23, 2024, implying a 9.33% event move before peer adjustment.",
+                "claim_extracted": "Frozen market bars use NVIDIA split-adjusted close-to-close prices around the event: $94.90 on May 22, 2024 and $103.75 on May 23, 2024, implying a 9.33% event move before peer adjustment.",
+                "content_hash": "sha256:472aebc84a8c00e078b2c956c71ad263cf42bd18d58f48e0fd031de401c4ccc2",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.8,
+                "incentive_conflict": 0.04,
+                "independence": 0.84,
+                "independence_cluster_id": "market-bars",
+                "originality_score": 0.8,
+                "published_at": "2024-05-23T13:30:00+00:00",
+                "publisher": "Frozen market bars",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-MKT-001",
+                "source_type": "market_data",
+                "support_strength": 0.68,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-002"
+                ],
+                "title": "NVDA close-to-close market move for May 23, 2024",
+                "url": "https://www.statmuse.com/money/ask?q=nvda+stock+price+may+23%2C+2024"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Frozen benchmark bars use QQQ close-to-close prices around the event: $451.91 on May 22, 2024 and $449.88 on May 23, 2024, giving a negative benchmark move while NVIDIA rose.",
+                "claim_extracted": "Frozen benchmark bars use QQQ close-to-close prices around the event: $451.91 on May 22, 2024 and $449.88 on May 23, 2024, giving a negative benchmark move while NVIDIA rose.",
+                "content_hash": "sha256:cb3323793cd34ec48109eda147ed08653b18e6563561ebbae10cf8453eed2ebe",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.8,
+                "incentive_conflict": 0.04,
+                "independence": 0.84,
+                "independence_cluster_id": "market-bars",
+                "originality_score": 0.8,
+                "published_at": "2024-05-23T13:30:00+00:00",
+                "publisher": "Frozen market bars",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-MKT-BENCH-001",
+                "source_type": "market_data",
+                "support_strength": 0.66,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-002",
+                  "NARR-NVDA-004"
+                ],
+                "title": "QQQ close-to-close benchmark move for May 23, 2024",
+                "url": "https://www.statmuse.com/money/ask/qqq-price-in-may-2024"
+              }
+            ],
+            "ticker": "NVDA",
+            "time_horizon": "60 trading days",
+            "timestamp_created": "2024-05-23T10:00:00-04:00",
+            "title": "Forward guidance reset",
+            "validation_status": "pending"
+          },
+          {
+            "confidence": null,
+            "contradicting_evidence": [],
+            "directional_implication": "bullish",
+            "event_id": "EVT-REAL-NVDA-2024-05-22",
+            "expected_observables": [
+              "Later commentary should focus on Blackwell demand and production timing.",
+              "Data-center-scale platform language should persist in future releases.",
+              "The explanation should remain secondary if near-term Data Center revenue explains the move more directly."
+            ],
+            "mechanism": "The roadmap widened the future addressable-market story, but much of that optionality was less immediately measurable than Data Center revenue and the forward guide.",
+            "narrative": "Investors may have emphasized the strategic platform story around Blackwell, AI factories, Spectrum-X, and NVIDIA's expanding software ecosystem.",
+            "narrative_id": "NARR-NVDA-004",
+            "overall_narrative_score": 0.6372222222222222,
+            "rank": 3,
+            "scores": {
+              "contradiction_resistance": 0.062,
+              "cross_sectional_fit": 0.06,
+              "crowding_risk_penalty": 0.027000000000000003,
+              "evidence_strength": 0.144,
+              "forward_observable_quality": 0.066,
+              "mechanism_specificity": 0.108,
+              "overall_narrative_score": 0.6372222222222222,
+              "penalty_score_normalized": 0.035,
+              "positive_score_normalized": 0.6722222222222223,
+              "source_independence": 0.081,
+              "timestamp_advantage": 0.084,
+              "unsupported_claim_penalty": 0.0045
+            },
+            "scoring_inputs": {
+              "contradiction_resistance": 0.62,
+              "cross_sectional_fit": 0.6,
+              "crowding_risk": 0.54,
+              "evidence_strength": 0.72,
+              "forward_observable_quality": 0.66,
+              "mechanism_specificity": 0.72,
+              "source_independence": 0.54,
+              "timestamp_advantage": 0.84,
+              "unsupported_claim_penalty": 0.09
+            },
+            "supporting_evidence": [
+              {
+                "availability_status": "allowed",
+                "claim": "NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.",
+                "claim_extracted": "NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.",
+                "content_hash": "sha256:8c9a89d1f3e055c918a65c84f23973aa949bc03ef5755b1b7d71d469f676ee56",
+                "contradicted_narrative_ids": [
+                  "NARR-NVDA-003"
+                ],
+                "evidence_quality": 0.86,
+                "incentive_conflict": 0.28,
+                "independence": 0.58,
+                "independence_cluster_id": "issuer-release",
+                "originality_score": 0.86,
+                "published_at": "2024-05-22T20:20:00+00:00",
+                "publisher": "NVIDIA Investor Relations",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-IR-001",
+                "source_type": "company_release",
+                "support_strength": 0.88,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-002",
+                  "NARR-NVDA-004"
+                ],
+                "title": "NVIDIA Announces Financial Results for First Quarter Fiscal 2025",
+                "url": "https://investor.nvidia.com/news/press-release-details/2024/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2025/default.aspx"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "MarketWatch reported NVIDIA executive commentary that Data Center growth was fueled by strong and accelerating demand for generative AI training and inference on Hopper, and that major cloud providers represented a mid-40% share of Data Center revenue.",
+                "claim_extracted": "MarketWatch reported NVIDIA executive commentary that Data Center growth was fueled by strong and accelerating demand for generative AI training and inference on Hopper, and that major cloud providers represented a mid-40% share of Data Center revenue.",
+                "content_hash": "sha256:7eb3a731626aae4f820fc02d4c8793c758b351f9b61838ac896e46ac8b271601",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.76,
+                "incentive_conflict": 0.08,
+                "independence": 0.74,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.76,
+                "published_at": "2024-05-22T20:38:00+00:00",
+                "publisher": "MarketWatch",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-MW-001",
+                "source_type": "news",
+                "support_strength": 0.76,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-004"
+                ],
+                "title": "Here is what Nvidia executives had to say about earnings",
+                "url": "https://www.marketwatch.com/livecoverage/nvidia-earnings-stock-ai-expectations-results-revenue-q1/card/here-s-what-nvidia-executives-have-to-say-about-earnings-tw0MPnA7hSjH6NTr8WB4"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Frozen benchmark bars use QQQ close-to-close prices around the event: $451.91 on May 22, 2024 and $449.88 on May 23, 2024, giving a negative benchmark move while NVIDIA rose.",
+                "claim_extracted": "Frozen benchmark bars use QQQ close-to-close prices around the event: $451.91 on May 22, 2024 and $449.88 on May 23, 2024, giving a negative benchmark move while NVIDIA rose.",
+                "content_hash": "sha256:cb3323793cd34ec48109eda147ed08653b18e6563561ebbae10cf8453eed2ebe",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.8,
+                "incentive_conflict": 0.04,
+                "independence": 0.84,
+                "independence_cluster_id": "market-bars",
+                "originality_score": 0.8,
+                "published_at": "2024-05-23T13:30:00+00:00",
+                "publisher": "Frozen market bars",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-MKT-BENCH-001",
+                "source_type": "market_data",
+                "support_strength": 0.66,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-002",
+                  "NARR-NVDA-004"
+                ],
+                "title": "QQQ close-to-close benchmark move for May 23, 2024",
+                "url": "https://www.statmuse.com/money/ask/qqq-price-in-may-2024"
+              }
+            ],
+            "ticker": "NVDA",
+            "time_horizon": "60 trading days",
+            "timestamp_created": "2024-05-23T10:00:00-04:00",
+            "title": "Blackwell platform optionality",
+            "validation_status": "pending"
+          },
+          {
+            "confidence": null,
+            "contradicting_evidence": [
+              {
+                "availability_status": "allowed",
+                "claim": "NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.",
+                "claim_extracted": "NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.",
+                "content_hash": "sha256:8c9a89d1f3e055c918a65c84f23973aa949bc03ef5755b1b7d71d469f676ee56",
+                "contradicted_narrative_ids": [
+                  "NARR-NVDA-003"
+                ],
+                "evidence_quality": 0.86,
+                "incentive_conflict": 0.28,
+                "independence": 0.58,
+                "independence_cluster_id": "issuer-release",
+                "originality_score": 0.86,
+                "published_at": "2024-05-22T20:20:00+00:00",
+                "publisher": "NVIDIA Investor Relations",
+                "relation": "contradict",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-IR-001",
+                "source_type": "company_release",
+                "support_strength": 0.88,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-002",
+                  "NARR-NVDA-004"
+                ],
+                "title": "NVIDIA Announces Financial Results for First Quarter Fiscal 2025",
+                "url": "https://investor.nvidia.com/news/press-release-details/2024/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2025/default.aspx"
+              }
+            ],
+            "directional_implication": "bullish",
+            "event_id": "EVT-REAL-NVDA-2024-05-22",
+            "expected_observables": [
+              "Gaming revenue should become a central explanation in follow-up commentary.",
+              "Gaming should contribute enough scale to compete with Data Center in the narrative.",
+              "The explanation should weaken if Data Center remains the main growth driver."
+            ],
+            "mechanism": "Gaming growth may support sentiment, but the scale of the Data Center segment makes a gaming-led explanation less specific for the abnormal move.",
+            "narrative": "The move could be read as a broad consumer and gaming recovery after NVIDIA reported growth outside Data Center.",
+            "narrative_id": "NARR-NVDA-003",
+            "overall_narrative_score": 0.5094444444444445,
+            "rank": 4,
+            "scores": {
+              "contradiction_resistance": 0.044000000000000004,
+              "cross_sectional_fit": 0.048,
+              "crowding_risk_penalty": 0.019000000000000003,
+              "evidence_strength": 0.11599999999999999,
+              "forward_observable_quality": 0.05,
+              "mechanism_specificity": 0.0825,
+              "overall_narrative_score": 0.5094444444444445,
+              "penalty_score_normalized": 0.027777777777777783,
+              "positive_score_normalized": 0.5372222222222223,
+              "source_independence": 0.063,
+              "timestamp_advantage": 0.08000000000000002,
+              "unsupported_claim_penalty": 0.006
+            },
+            "scoring_inputs": {
+              "contradiction_resistance": 0.44,
+              "cross_sectional_fit": 0.48,
+              "crowding_risk": 0.38,
+              "evidence_strength": 0.58,
+              "forward_observable_quality": 0.5,
+              "mechanism_specificity": 0.55,
+              "source_independence": 0.42,
+              "timestamp_advantage": 0.8,
+              "unsupported_claim_penalty": 0.12
+            },
+            "supporting_evidence": [
+              {
+                "availability_status": "allowed",
+                "claim": "Investopedia reported that NVIDIA first-quarter fiscal 2025 results topped expectations, with record revenue, Data Center sales of $22.6 billion, and a 10-for-1 stock split announcement.",
+                "claim_extracted": "Investopedia reported that NVIDIA first-quarter fiscal 2025 results topped expectations, with record revenue, Data Center sales of $22.6 billion, and a 10-for-1 stock split announcement.",
+                "content_hash": "sha256:27f172ad89d9079df40b3b142ef0183f07d099d25bfa70b184bad8edfbe18b85",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.73,
+                "incentive_conflict": 0.08,
+                "independence": 0.74,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.74,
+                "published_at": "2024-05-22T21:30:00+00:00",
+                "publisher": "Investopedia",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T01:21:17.051816+00:00",
+                "source_id": "NVDA-INVEST-001",
+                "source_type": "news",
+                "support_strength": 0.7,
+                "supported_narrative_ids": [
+                  "NARR-NVDA-001",
+                  "NARR-NVDA-002",
+                  "NARR-NVDA-003"
+                ],
+                "title": "Nvidia Earnings Top Expectations As Sales Soar Amid Booming AI Demand",
+                "url": "https://www.investopedia.com/nvidia-q1-fy-2025-earnings-8652629"
+              }
+            ],
+            "ticker": "NVDA",
+            "time_horizon": "60 trading days",
+            "timestamp_created": "2024-05-23T10:00:00-04:00",
+            "title": "Gaming rebound",
+            "validation_status": "pending"
+          }
+        ],
+        "replay_audit": {
+          "allowed_source_ids": [
+            "NVDA-INVEST-001",
+            "NVDA-IR-001",
+            "NVDA-MKT-001",
+            "NVDA-MKT-BENCH-001",
+            "NVDA-MW-001",
+            "NVDA-NASDAQ-001",
+            "NVDA-SEC-001"
+          ],
+          "blocked_evidence": [
+            {
+              "availability_status": "blocked_future",
+              "blocked_reason": "marked_blocked_future",
+              "narrative_id": "NARR-NVDA-001",
+              "published_at": "2024-08-28T20:20:00+00:00",
+              "relation": "support",
+              "replay_status": "blocked_future",
+              "source_id": "NVDA-IR-FUT-001",
+              "source_type": "company_release"
+            },
+            {
+              "availability_status": "blocked_future",
+              "blocked_reason": "marked_blocked_future",
+              "narrative_id": "NARR-NVDA-001",
+              "published_at": "2024-08-28T20:21:16+00:00",
+              "relation": "support",
+              "replay_status": "blocked_future",
+              "source_id": "NVDA-SEC-FUT-001",
+              "source_type": "filing"
+            },
+            {
+              "availability_status": "blocked_future",
+              "blocked_reason": "marked_blocked_future",
+              "narrative_id": "NARR-NVDA-002",
+              "published_at": "2024-08-28T20:20:00+00:00",
+              "relation": "support",
+              "replay_status": "blocked_future",
+              "source_id": "NVDA-IR-FUT-001",
+              "source_type": "company_release"
+            },
+            {
+              "availability_status": "blocked_future",
+              "blocked_reason": "marked_blocked_future",
+              "narrative_id": "NARR-NVDA-004",
+              "published_at": "2024-08-28T20:20:00+00:00",
+              "relation": "support",
+              "replay_status": "blocked_future",
+              "source_id": "NVDA-IR-FUT-001",
+              "source_type": "company_release"
+            }
+          ],
+          "blocked_source_ids": [
+            "NVDA-IR-FUT-001",
+            "NVDA-SEC-FUT-001"
+          ],
+          "removed_evidence_by_narrative": {
+            "NARR-NVDA-001": [
+              "NVDA-IR-FUT-001",
+              "NVDA-SEC-FUT-001"
+            ],
+            "NARR-NVDA-002": [
+              "NVDA-IR-FUT-001"
+            ],
+            "NARR-NVDA-004": [
+              "NVDA-IR-FUT-001"
+            ]
+          },
+          "replay_timestamp": "2024-05-23T10:00:00-04:00"
+        },
+        "source_clustering": {
+          "allowed_source_count": 7,
+          "average_cluster_size": 1.4,
+          "average_derived_originality_score": 0.785714,
+          "blocked_future_source_count": 2,
+          "blocked_future_source_ids": [
+            "NVDA-IR-FUT-001",
+            "NVDA-SEC-FUT-001"
+          ],
+          "cluster_count": 5,
+          "clusters": [
+            {
+              "average_fixture_originality_score": 0.75,
+              "cluster_basis": "independence_cluster_id",
+              "cluster_id": "financial-news",
+              "derived_originality_score": 0.75,
+              "narrative_ids": [
+                "NARR-NVDA-001",
+                "NARR-NVDA-002",
+                "NARR-NVDA-003",
+                "NARR-NVDA-004"
+              ],
+              "publishers": [
+                "Investopedia",
+                "MarketWatch"
+              ],
+              "relation_counts": {
+                "contradict": 0,
+                "support": 5
+              },
+              "representative_claim": "MarketWatch reported NVIDIA executive commentary that Data Center growth was fueled by strong and accelerating demand for generative AI training and inference on Hopper, and that major cloud providers represented a mid-40% share of Data Center revenue.",
+              "source_count": 2,
+              "source_ids": [
+                "NVDA-INVEST-001",
+                "NVDA-MW-001"
+              ],
+              "source_types": [
+                "news"
+              ]
+            },
+            {
+              "average_fixture_originality_score": 0.86,
+              "cluster_basis": "independence_cluster_id",
+              "cluster_id": "issuer-release",
+              "derived_originality_score": 1.0,
+              "narrative_ids": [
+                "NARR-NVDA-001",
+                "NARR-NVDA-002",
+                "NARR-NVDA-003",
+                "NARR-NVDA-004"
+              ],
+              "publishers": [
+                "NVIDIA Investor Relations"
+              ],
+              "relation_counts": {
+                "contradict": 1,
+                "support": 3
+              },
+              "representative_claim": "NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.",
+              "source_count": 1,
+              "source_ids": [
+                "NVDA-IR-001"
+              ],
+              "source_types": [
+                "company_release"
+              ]
+            },
+            {
+              "average_fixture_originality_score": 0.72,
+              "cluster_basis": "independence_cluster_id",
+              "cluster_id": "issuer-release-mirrors",
+              "derived_originality_score": 1.0,
+              "narrative_ids": [
+                "NARR-NVDA-001",
+                "NARR-NVDA-002"
+              ],
+              "publishers": [
+                "Nasdaq / GlobeNewswire"
+              ],
+              "relation_counts": {
+                "contradict": 0,
+                "support": 2
+              },
+              "representative_claim": "Nasdaq carried the NVIDIA first-quarter fiscal 2025 release, including the current-quarter outlook, conference call timing, and references to NVIDIA CFO commentary at investor.nvidia.com.",
+              "source_count": 1,
+              "source_ids": [
+                "NVDA-NASDAQ-001"
+              ],
+              "source_types": [
+                "company_release"
+              ]
+            },
+            {
+              "average_fixture_originality_score": 0.8,
+              "cluster_basis": "independence_cluster_id",
+              "cluster_id": "market-bars",
+              "derived_originality_score": 0.5,
+              "narrative_ids": [
+                "NARR-NVDA-001",
+                "NARR-NVDA-002",
+                "NARR-NVDA-004"
+              ],
+              "publishers": [
+                "Frozen market bars"
+              ],
+              "relation_counts": {
+                "contradict": 0,
+                "support": 5
+              },
+              "representative_claim": "Frozen market bars use NVIDIA split-adjusted close-to-close prices around the event: $94.90 on May 22, 2024 and $103.75 on May 23, 2024, implying a 9.33% event move before peer adjustment.",
+              "source_count": 2,
+              "source_ids": [
+                "NVDA-MKT-001",
+                "NVDA-MKT-BENCH-001"
+              ],
+              "source_types": [
+                "market_data"
+              ]
+            },
+            {
+              "average_fixture_originality_score": 0.66,
+              "cluster_basis": "independence_cluster_id",
+              "cluster_id": "sec-edgar",
+              "derived_originality_score": 1.0,
+              "narrative_ids": [
+                "NARR-NVDA-001",
+                "NARR-NVDA-002"
+              ],
+              "publishers": [
+                "SEC EDGAR"
+              ],
+              "relation_counts": {
+                "contradict": 0,
+                "support": 2
+              },
+              "representative_claim": "NVIDIA filed an 8-K after the May 22, 2024 earnings release, attaching first-quarter fiscal 2025 results and related company disclosures to the SEC record.",
+              "source_count": 1,
+              "source_ids": [
+                "NVDA-SEC-001"
+              ],
+              "source_types": [
+                "filing"
+              ]
+            }
+          ],
+          "duplicate_cluster_count": 2
+        },
+        "source_reliability": {
+          "by_publisher": [
+            {
+              "allowed_source_count": 2,
+              "average_evidence_quality": 0.8,
+              "average_independence": 0.84,
+              "average_originality_score": 0.8,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "Frozen market bars",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NVDA-MKT-001",
+                "NVDA-MKT-BENCH-001"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.73,
+              "average_independence": 0.74,
+              "average_originality_score": 0.74,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "Investopedia",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NVDA-INVEST-001"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.76,
+              "average_independence": 0.74,
+              "average_originality_score": 0.76,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "MarketWatch",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NVDA-MW-001"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.86,
+              "average_independence": 0.58,
+              "average_originality_score": 0.86,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "NVIDIA Investor Relations",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NVDA-IR-001"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.78,
+              "average_independence": 0.56,
+              "average_originality_score": 0.72,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "Nasdaq / GlobeNewswire",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NVDA-NASDAQ-001"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.76,
+              "average_independence": 0.68,
+              "average_originality_score": 0.66,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "SEC EDGAR",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NVDA-SEC-001"
+              ]
+            },
+            {
+              "allowed_source_count": 0,
+              "average_evidence_quality": null,
+              "average_independence": null,
+              "average_originality_score": null,
+              "blocked_future_count": 2,
+              "blocked_future_source_ids": [
+                "NVDA-IR-FUT-001",
+                "NVDA-SEC-FUT-001"
+              ],
+              "group": "publisher",
+              "key": "unknown",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NVDA-IR-FUT-001",
+                "NVDA-SEC-FUT-001"
+              ]
+            }
+          ],
+          "by_source_type": [
+            {
+              "allowed_source_count": 2,
+              "average_evidence_quality": 0.82,
+              "average_independence": 0.57,
+              "average_originality_score": 0.79,
+              "blocked_future_count": 1,
+              "blocked_future_source_ids": [
+                "NVDA-IR-FUT-001"
+              ],
+              "group": "source_type",
+              "key": "company_release",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NVDA-IR-001",
+                "NVDA-IR-FUT-001",
+                "NVDA-NASDAQ-001"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.76,
+              "average_independence": 0.68,
+              "average_originality_score": 0.66,
+              "blocked_future_count": 1,
+              "blocked_future_source_ids": [
+                "NVDA-SEC-FUT-001"
+              ],
+              "group": "source_type",
+              "key": "filing",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NVDA-SEC-001",
+                "NVDA-SEC-FUT-001"
+              ]
+            },
+            {
+              "allowed_source_count": 2,
+              "average_evidence_quality": 0.8,
+              "average_independence": 0.84,
+              "average_originality_score": 0.8,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "source_type",
+              "key": "market_data",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NVDA-MKT-001",
+                "NVDA-MKT-BENCH-001"
+              ]
+            },
+            {
+              "allowed_source_count": 2,
+              "average_evidence_quality": 0.745,
+              "average_independence": 0.74,
+              "average_originality_score": 0.75,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "source_type",
+              "key": "news",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NVDA-INVEST-001",
+                "NVDA-MW-001"
+              ]
+            }
+          ],
+          "overall": {
+            "allowed_source_count": 7,
+            "average_evidence_quality": 0.7843,
+            "average_independence": 0.7114,
+            "average_originality_score": 0.7629,
+            "blocked_future_count": 2,
+            "blocked_future_source_ids": [
+              "NVDA-IR-FUT-001",
+              "NVDA-SEC-FUT-001"
+            ],
+            "group": "overall",
+            "key": "all_sources",
+            "low_quality_source_count": 0,
+            "source_ids": [
+              "NVDA-INVEST-001",
+              "NVDA-IR-001",
+              "NVDA-IR-FUT-001",
+              "NVDA-MKT-001",
+              "NVDA-MKT-BENCH-001",
+              "NVDA-MW-001",
+              "NVDA-NASDAQ-001",
+              "NVDA-SEC-001",
+              "NVDA-SEC-FUT-001"
+            ]
+          }
+        }
+      },
+      "report": "# NarrativeDesk Event Report: NVDA\n\n> Research support output. Not investment advice.\n\n## Data Note\n\nThis report is generated from a real-curated replay bundle. Treat it as research support only; public use requires curator review of source URLs, publication timestamps, raw document hashes, and validation status.\n\n## Event\n\n- Event ID: `EVT-REAL-NVDA-2024-05-22`\n- Company: NVIDIA Corporation (`NVDA`)\n- Timestamp lock: `2024-05-23T10:00:00-04:00`\n- Event type: earnings/guidance\n- Daily return: 9.3%\n- Abnormal return: 9.8%\n- Volume ratio: n/a\n- Sector ETF return: -0.4%\n- Peer median return: -0.4%\n\nReal-curated NVIDIA Q1 fiscal 2025 earnings replay with timestamped citations, replay-locked evidence, and held-out validation. Research and education only; not investment advice.\n\n## Replay Audit\n\n- Allowed sources: NVDA-INVEST-001, NVDA-IR-001, NVDA-MKT-001, NVDA-MKT-BENCH-001, NVDA-MW-001, NVDA-NASDAQ-001, NVDA-SEC-001\n- Blocked future sources: NVDA-IR-FUT-001, NVDA-SEC-FUT-001\n- Removed from `NARR-NVDA-001`: NVDA-IR-FUT-001, NVDA-SEC-FUT-001\n- Removed from `NARR-NVDA-002`: NVDA-IR-FUT-001\n- Removed from `NARR-NVDA-004`: NVDA-IR-FUT-001\n\n## Source Map\n\n| Source | Status | Type | Publisher | Narratives | Relations |\n| --- | --- | --- | --- | --- | --- |\n| NVDA-INVEST-001 | allowed | news | Investopedia | NARR-NVDA-001, NARR-NVDA-002, NARR-NVDA-003 | support |\n| NVDA-IR-001 | allowed | company_release | NVIDIA Investor Relations | NARR-NVDA-001, NARR-NVDA-002, NARR-NVDA-003, NARR-NVDA-004 | contradict, support |\n| NVDA-MKT-001 | allowed | market_data | Frozen market bars | NARR-NVDA-001, NARR-NVDA-002 | support |\n| NVDA-MKT-BENCH-001 | allowed | market_data | Frozen market bars | NARR-NVDA-001, NARR-NVDA-002, NARR-NVDA-004 | support |\n| NVDA-MW-001 | allowed | news | MarketWatch | NARR-NVDA-001, NARR-NVDA-004 | support |\n| NVDA-NASDAQ-001 | allowed | company_release | Nasdaq / GlobeNewswire | NARR-NVDA-001, NARR-NVDA-002 | support |\n| NVDA-SEC-001 | allowed | filing | SEC EDGAR | NARR-NVDA-001, NARR-NVDA-002 | support |\n| NVDA-IR-FUT-001 | blocked_future | company_release | n/a | NARR-NVDA-001, NARR-NVDA-002, NARR-NVDA-004 | support |\n| NVDA-SEC-FUT-001 | blocked_future | filing | n/a | NARR-NVDA-001 | support |\n\n## Citation QA\n\n- Replay filter: pass\n- Support coverage: pass\n- Event-time integrity: pass\n- Citation QA: pass\n- Provenance-ready allowed sources: pass\n- Returned blocked sources: 0\n- Narratives with support: 4/4\n- Missing URLs: 0\n- Missing content hashes: 0\n- Low-quality evidence sources: 0\n\n## Source Reliability\n\nBlocked future sources are counted for auditability but excluded from scoring and ranking.\n- Allowed sources: 7\n- Blocked future sources: 2\n- Average evidence quality: 0.78\n- Average independence: 0.71\n- Average originality score: 0.76\n- Low-quality evidence sources: 0\n- Blocked source IDs: NVDA-IR-FUT-001, NVDA-SEC-FUT-001\n\n| Publisher | Allowed | Blocked Future | Evidence Quality | Independence | Originality |\n| --- | ---: | ---: | ---: | ---: | ---: |\n| Frozen market bars | 2 | 0 | 0.80 | 0.84 | 0.80 |\n| Investopedia | 1 | 0 | 0.73 | 0.74 | 0.74 |\n| MarketWatch | 1 | 0 | 0.76 | 0.74 | 0.76 |\n| NVIDIA Investor Relations | 1 | 0 | 0.86 | 0.58 | 0.86 |\n| Nasdaq / GlobeNewswire | 1 | 0 | 0.78 | 0.56 | 0.72 |\n| SEC EDGAR | 1 | 0 | 0.76 | 0.68 | 0.66 |\n| unknown | 0 | 2 | n/a | n/a | n/a |\n\n## Source Clustering\n\nClusters use replay-safe allowed evidence only. Future-dated source text stays quarantined.\n- Allowed sources clustered: 7\n- Blocked future sources excluded: 2\n- Cluster count: 5\n- Duplicate clusters: 2\n- Average derived originality: 0.79\n\n| Cluster | Basis | Sources | Publishers | Derived Originality | Representative Claim |\n| --- | --- | --- | --- | ---: | --- |\n| financial-news | independence_cluster_id | NVDA-INVEST-001, NVDA-MW-001 | Investopedia, MarketWatch | 0.75 | MarketWatch reported NVIDIA executive commentary that Data Center growth was fueled by strong and accelerating demand for generative AI training and inference on Hopper, and that major cloud providers represented a mid-40% share of Data Center revenue. |\n| issuer-release | independence_cluster_id | NVDA-IR-001 | NVIDIA Investor Relations | 1.00 | NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase. |\n| issuer-release-mirrors | independence_cluster_id | NVDA-NASDAQ-001 | Nasdaq / GlobeNewswire | 1.00 | Nasdaq carried the NVIDIA first-quarter fiscal 2025 release, including the current-quarter outlook, conference call timing, and references to NVIDIA CFO commentary at investor.nvidia.com. |\n| market-bars | independence_cluster_id | NVDA-MKT-001, NVDA-MKT-BENCH-001 | Frozen market bars | 0.50 | Frozen market bars use NVIDIA split-adjusted close-to-close prices around the event: $94.90 on May 22, 2024 and $103.75 on May 23, 2024, implying a 9.33% event move before peer adjustment. |\n| sec-edgar | independence_cluster_id | NVDA-SEC-001 | SEC EDGAR | 1.00 | NVIDIA filed an 8-K after the May 22, 2024 earnings release, attaching first-quarter fiscal 2025 results and related company disclosures to the SEC record. |\n\n## Narrative Verification Ranking\n\n| Rank | Narrative | Direction | Score | Horizon |\n| ---: | --- | --- | ---: | --- |\n| 1 | Data center demand acceleration | bullish | 0.76 | 60 trading days |\n| 2 | Forward guidance reset | bullish | 0.72 | 60 trading days |\n| 3 | Blackwell platform optionality | bullish | 0.64 | 60 trading days |\n| 4 | Gaming rebound | bullish | 0.51 | 60 trading days |\n\n## #1: Data center demand acceleration\n\nInvestors treated NVIDIA's post-earnings move as confirmation that accelerated-computing and generative-AI demand was still scaling through the Data Center segment.\n\nMechanism: Record Data Center revenue, management commentary on generative AI demand, and later Data Center growth made the move primarily about durable AI infrastructure demand rather than a one-off headline item.\n\nExpected observables:\n- Data Center revenue should remain the dominant revenue driver in the next reported quarter.\n- Follow-up commentary should keep demand for Hopper, Blackwell, or AI infrastructure central.\n- The explanation should survive even if stock-split accessibility is treated as secondary.\n\nSupporting evidence:\n- `NVDA-IR-001` (company_release): NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.\n- `NVDA-SEC-001` (filing): NVIDIA filed an 8-K after the May 22, 2024 earnings release, attaching first-quarter fiscal 2025 results and related company disclosures to the SEC record.\n- `NVDA-NASDAQ-001` (company_release): Nasdaq carried the NVIDIA first-quarter fiscal 2025 release, including the current-quarter outlook, conference call timing, and references to NVIDIA CFO commentary at investor.nvidia.com.\n- `NVDA-MW-001` (news): MarketWatch reported NVIDIA executive commentary that Data Center growth was fueled by strong and accelerating demand for generative AI training and inference on Hopper, and that major cloud providers represented a mid-40% share of Data Center revenue.\n- `NVDA-INVEST-001` (news): Investopedia reported that NVIDIA first-quarter fiscal 2025 results topped expectations, with record revenue, Data Center sales of $22.6 billion, and a 10-for-1 stock split announcement.\n- `NVDA-MKT-001` (market_data): Frozen market bars use NVIDIA split-adjusted close-to-close prices around the event: $94.90 on May 22, 2024 and $103.75 on May 23, 2024, implying a 9.33% event move before peer adjustment.\n- `NVDA-MKT-BENCH-001` (market_data): Frozen benchmark bars use QQQ close-to-close prices around the event: $451.91 on May 22, 2024 and $449.88 on May 23, 2024, giving a negative benchmark move while NVIDIA rose.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.86\n- mechanism_specificity: 0.86\n- source_independence: 0.62\n- cross_sectional_fit: 0.68\n- contradiction_resistance: 0.76\n- timestamp_advantage: 0.90\n- forward_observable_quality: 0.78\n- crowding_risk: 0.42\n- unsupported_claim_penalty: 0.04\n\n## #2: Forward guidance reset\n\nThe market repriced NVIDIA because the second-quarter revenue outlook reset near-term expectations above the already strong first-quarter base.\n\nMechanism: A $28.0 billion next-quarter revenue outlook and mid-70s gross-margin guide gave investors a near-term observable that the AI demand cycle had not peaked at the reported quarter.\n\nExpected observables:\n- The next reported quarter should land near or above the guided revenue range.\n- Gross margins should remain around the mid-70% range.\n- Follow-up analysis should discuss whether guidance was conservative or demand-limited.\n\nSupporting evidence:\n- `NVDA-IR-001` (company_release): NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.\n- `NVDA-SEC-001` (filing): NVIDIA filed an 8-K after the May 22, 2024 earnings release, attaching first-quarter fiscal 2025 results and related company disclosures to the SEC record.\n- `NVDA-NASDAQ-001` (company_release): Nasdaq carried the NVIDIA first-quarter fiscal 2025 release, including the current-quarter outlook, conference call timing, and references to NVIDIA CFO commentary at investor.nvidia.com.\n- `NVDA-INVEST-001` (news): Investopedia reported that NVIDIA first-quarter fiscal 2025 results topped expectations, with record revenue, Data Center sales of $22.6 billion, and a 10-for-1 stock split announcement.\n- `NVDA-MKT-001` (market_data): Frozen market bars use NVIDIA split-adjusted close-to-close prices around the event: $94.90 on May 22, 2024 and $103.75 on May 23, 2024, implying a 9.33% event move before peer adjustment.\n- `NVDA-MKT-BENCH-001` (market_data): Frozen benchmark bars use QQQ close-to-close prices around the event: $451.91 on May 22, 2024 and $449.88 on May 23, 2024, giving a negative benchmark move while NVIDIA rose.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.82\n- mechanism_specificity: 0.84\n- source_independence: 0.56\n- cross_sectional_fit: 0.64\n- contradiction_resistance: 0.70\n- timestamp_advantage: 0.88\n- forward_observable_quality: 0.82\n- crowding_risk: 0.46\n- unsupported_claim_penalty: 0.06\n\n## #3: Blackwell platform optionality\n\nInvestors may have emphasized the strategic platform story around Blackwell, AI factories, Spectrum-X, and NVIDIA's expanding software ecosystem.\n\nMechanism: The roadmap widened the future addressable-market story, but much of that optionality was less immediately measurable than Data Center revenue and the forward guide.\n\nExpected observables:\n- Later commentary should focus on Blackwell demand and production timing.\n- Data-center-scale platform language should persist in future releases.\n- The explanation should remain secondary if near-term Data Center revenue explains the move more directly.\n\nSupporting evidence:\n- `NVDA-IR-001` (company_release): NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.\n- `NVDA-MW-001` (news): MarketWatch reported NVIDIA executive commentary that Data Center growth was fueled by strong and accelerating demand for generative AI training and inference on Hopper, and that major cloud providers represented a mid-40% share of Data Center revenue.\n- `NVDA-MKT-BENCH-001` (market_data): Frozen benchmark bars use QQQ close-to-close prices around the event: $451.91 on May 22, 2024 and $449.88 on May 23, 2024, giving a negative benchmark move while NVIDIA rose.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.72\n- mechanism_specificity: 0.72\n- source_independence: 0.54\n- cross_sectional_fit: 0.60\n- contradiction_resistance: 0.62\n- timestamp_advantage: 0.84\n- forward_observable_quality: 0.66\n- crowding_risk: 0.54\n- unsupported_claim_penalty: 0.09\n\n## #4: Gaming rebound\n\nThe move could be read as a broad consumer and gaming recovery after NVIDIA reported growth outside Data Center.\n\nMechanism: Gaming growth may support sentiment, but the scale of the Data Center segment makes a gaming-led explanation less specific for the abnormal move.\n\nExpected observables:\n- Gaming revenue should become a central explanation in follow-up commentary.\n- Gaming should contribute enough scale to compete with Data Center in the narrative.\n- The explanation should weaken if Data Center remains the main growth driver.\n\nSupporting evidence:\n- `NVDA-INVEST-001` (news): Investopedia reported that NVIDIA first-quarter fiscal 2025 results topped expectations, with record revenue, Data Center sales of $22.6 billion, and a 10-for-1 stock split announcement.\n\nContradicting evidence:\n- `NVDA-IR-001` (company_release): NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.\n\nScore components:\n- evidence_strength: 0.58\n- mechanism_specificity: 0.55\n- source_independence: 0.42\n- cross_sectional_fit: 0.48\n- contradiction_resistance: 0.44\n- timestamp_advantage: 0.80\n- forward_observable_quality: 0.50\n- crowding_risk: 0.38\n- unsupported_claim_penalty: 0.12\n\n## Scoring Weights\n\n- evidence_strength: 0.20\n- mechanism_specificity: 0.15\n- source_independence: 0.15\n- cross_sectional_fit: 0.10\n- contradiction_resistance: 0.10\n- timestamp_advantage: 0.10\n- forward_observable_quality: 0.10\n- crowding_risk: 0.05\n- unsupported_claim_penalty: 0.05\n"
     }
   ],
   "default_case_id": "EVT-REAL-AAPL-2024-05-02"

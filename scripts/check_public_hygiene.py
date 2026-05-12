@@ -28,9 +28,11 @@ ALLOWED_MARKDOWN = {
     "AGENTS.md",
     "README.md",
     "apps/web/public/demo/report.md",
-    "data/fixtures/real/aapl_2024_q2/report.md",
     "examples/sample_report.md",
 }
+ALLOWED_MARKDOWN_PATTERNS = (
+    re.compile(r"^data/fixtures/real/[^/]+/report\.md$"),
+)
 PACKAGE_FILES = (
     "package.json",
     "package-lock.json",
@@ -91,7 +93,11 @@ def run_checks(root: Path = ROOT) -> list[str]:
             errors.append(f"forbidden generated/private path is tracked: {path}")
 
     markdown_files = {path for path in files if path.endswith(".md")}
-    unexpected_markdown = sorted(markdown_files - ALLOWED_MARKDOWN)
+    unexpected_markdown = sorted(
+        path
+        for path in markdown_files - ALLOWED_MARKDOWN
+        if not any(pattern.search(path) for pattern in ALLOWED_MARKDOWN_PATTERNS)
+    )
     if unexpected_markdown:
         errors.append(f"unexpected public markdown files: {', '.join(unexpected_markdown)}")
 

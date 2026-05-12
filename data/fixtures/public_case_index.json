@@ -6,6 +6,12 @@
       "label": "AAPL Q2 2024 real-curated replay",
       "event_fixture": "data/fixtures/real/aapl_2024_q2/event_fixture.json",
       "validation_fixture": "data/fixtures/real/aapl_2024_q2/validation_fixture.json"
+    },
+    {
+      "case_id": "EVT-REAL-NVDA-2024-05-22",
+      "label": "NVDA Q1 FY2025 real-curated replay",
+      "event_fixture": "data/fixtures/real/nvda_2024_q1/event_fixture.json",
+      "validation_fixture": "data/fixtures/real/nvda_2024_q1/validation_fixture.json"
     }
   ]
 }

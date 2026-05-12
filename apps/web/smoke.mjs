@@ -60,11 +60,12 @@ async function main() {
     assert.match(bodyText, /Incomplete signals\. Time-locked evidence\. Historical validation\./i);
     assert.match(bodyText, /AAPL/);
     assert.match(bodyText, /Apple Inc\./);
+    assert.match(bodyText, /NVDA/);
     assert.match(bodyText, /Real-curated replay/i);
     assert.match(bodyText, /Case library/i);
     assert.match(bodyText, /Historical analogs/i);
     assert.match(bodyText, /How similar narratives validated/i);
-    assert.match(bodyText, /No historical analogs are available/i);
+    assert.match(bodyText, /Similarity/i);
     assert.match(bodyText, /Narrative under audit/i);
     assert.match(bodyText, /Verification score/i);
     assert.match(bodyText, /Replay timeline/i);
@@ -136,6 +137,30 @@ async function main() {
     const reportHref = await page.locator('[data-testid="report-export"]').getAttribute('href');
     assert.match(decodeDataHref(reportHref), /NarrativeDesk Event Report: AAPL/);
     assert.doesNotMatch(decodeDataHref(reportHref), /Future Validation Fixture/);
+
+    await page.locator('[data-testid="case-selector"]').selectOption('EVT-REAL-NVDA-2024-05-22');
+    await page.getByRole('button', { name: /^Overview$/i }).click();
+    await assert.doesNotReject(async () => (
+      page.getByRole('heading', { name: 'NVIDIA Corporation' }).waitFor()
+    ));
+    const nvdaOverview = await page.locator('[data-testid="event-header"]').innerText();
+    assert.match(nvdaOverview, /Narrative under audit[\s\S]*Data center demand acceleration/i);
+    assert.match(nvdaOverview, /Ranked #1 at the lock[\s\S]*T\+60 later supported replay rank #1/i);
+    await page.getByRole('button', { name: /^Evidence$/i }).click();
+    const nvdaEvidenceText = await page.locator('body').innerText();
+    assert.match(nvdaEvidenceText, /NVDA-IR-FUT-001/);
+    assert.match(nvdaEvidenceText, /Blocked from ranking/i);
+    await page.getByRole('button', { name: /^Report$/i }).click();
+    assert.equal(
+      await page.locator('[data-testid="ledger-export"]').getAttribute('download'),
+      'evt-real-nvda-2024-05-22-ledger.json',
+    );
+    assert.equal(
+      await page.locator('[data-testid="report-export"]').getAttribute('download'),
+      'evt-real-nvda-2024-05-22-report.md',
+    );
+    const nvdaBundleIntegrityText = await page.locator('[data-testid="bundle-integrity"]').innerText();
+    assert.match(nvdaBundleIntegrityText, /Blocked future[\s\S]*2/i);
 
     await page.setViewportSize({ width: 390, height: 1100 });
     await page.goto(baseUrl, { waitUntil: 'networkidle' });

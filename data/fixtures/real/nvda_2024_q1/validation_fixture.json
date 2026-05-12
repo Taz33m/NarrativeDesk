@@ -1,0 +1,49 @@
+{
+  "event_id": "EVT-REAL-NVDA-2024-05-22",
+  "future_source_count": 1,
+  "future_source_ids": [
+    "NVDA-IR-FUT-001"
+  ],
+  "note": "Real-curated validation fixture. Held-out future evidence stays separate from event-time replay inputs.",
+  "rows": [
+    {
+      "expected_observable": "Data Center revenue should remain the dominant revenue driver in the next reported quarter.",
+      "future_source_ids": [
+        "NVDA-IR-FUT-001"
+      ],
+      "label": "validated",
+      "narrative_id": "NARR-NVDA-001",
+      "what_happened": "Held-out Q2 fiscal 2025 results reported revenue of $30.0 billion and Data Center revenue of $26.3 billion, up 16% from Q1, keeping Data Center demand central to the follow-up evidence.",
+      "window": "T+60"
+    },
+    {
+      "expected_observable": "The next reported quarter should land near or above the guided revenue range.",
+      "future_source_ids": [
+        "NVDA-IR-FUT-001"
+      ],
+      "label": "pending",
+      "narrative_id": "NARR-NVDA-002",
+      "what_happened": "Pending separate curation of the guidance-accuracy label; held-out Q2 results are available for review.",
+      "window": "T+60"
+    },
+    {
+      "expected_observable": "Gaming revenue should become a central explanation in follow-up commentary.",
+      "future_source_ids": [],
+      "label": "pending",
+      "narrative_id": "NARR-NVDA-003",
+      "what_happened": "Pending; no held-out validation label has been assigned to the gaming-rebound narrative.",
+      "window": "T+60"
+    },
+    {
+      "expected_observable": "Later commentary should focus on Blackwell demand and production timing.",
+      "future_source_ids": [
+        "NVDA-IR-FUT-001"
+      ],
+      "label": "pending",
+      "narrative_id": "NARR-NVDA-004",
+      "what_happened": "Pending separate curation of Blackwell-specific validation; held-out Q2 commentary references Hopper demand and Blackwell anticipation.",
+      "window": "T+60"
+    }
+  ],
+  "status": "validated"
+}
