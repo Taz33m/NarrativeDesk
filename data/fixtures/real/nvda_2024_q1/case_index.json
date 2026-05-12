@@ -1,0 +1,11 @@
+{
+  "cases": [
+    {
+      "case_id": "EVT-REAL-NVDA-2024-05-22",
+      "event_fixture": "event_fixture.json",
+      "label": "NVDA Q1 FY2025 real-curated replay",
+      "validation_fixture": "validation_fixture.json"
+    }
+  ],
+  "default_case_id": "EVT-REAL-NVDA-2024-05-22"
+}
