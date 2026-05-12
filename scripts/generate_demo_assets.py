@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from narrativedesk.corpus_quality import assess_public_corpus_quality
 from narrativedesk.evaluation import evaluate_replay, summarize_case_evaluations
 from narrativedesk.pipeline import ledger_export, load_event_fixture, load_validation_fixture, run_replay
 from narrativedesk.report import generate_markdown_report
@@ -68,6 +69,10 @@ def main() -> int:
             "evaluation": evaluation,
         })
     validation_payload["aggregate"] = summarize_case_evaluations(case_evaluations)
+    if case_index_path == PUBLIC_CASE_INDEX_FIXTURE:
+        case_payload["corpus_quality"] = corpus_quality_summary(
+            assess_public_corpus_quality(case_index_path)
+        )
 
     default_case = next(item for item in case_payload["cases"] if item["case_id"] == case_payload["default_case_id"])
     default_validation_case = next(
@@ -139,6 +144,57 @@ def bundle_integrity_summary(
         "validation_future_source_count": len(future_source_ids),
         "note": "Synthetic demo fixture. Real-curated replay bundles should pass bundle-verify before sharing or registration.",
     }
+
+
+def corpus_quality_summary(result: dict[str, object]) -> dict[str, object]:
+    checks = result.get("checks", {})
+    if not isinstance(checks, dict):
+        checks = {}
+    exposed_checks = [
+        "minimum_case_count",
+        "unique_ticker_breadth",
+        "unique_event_type_breadth",
+        "bundle_verification",
+        "public_case_quality",
+        "blocked_future_per_case",
+        "aggregate_evaluation",
+        "provenance_clean",
+        "baseline_separation",
+    ]
+    return {
+        "ok": bool(result.get("ok")),
+        "status": str(result.get("status", "unknown")),
+        "metrics": result.get("metrics", {}),
+        "checks": {
+            check_name: _public_check_summary(checks.get(check_name))
+            for check_name in exposed_checks
+        },
+        "next_action": str(result.get("next_action", "")),
+    }
+
+
+def _public_check_summary(check: object) -> dict[str, object]:
+    if not isinstance(check, dict):
+        return {"ok": False}
+    summary: dict[str, object] = {"ok": bool(check.get("ok"))}
+    for key in [
+        "actual",
+        "minimum",
+        "tickers",
+        "event_types",
+        "failed_case_ids",
+        "missing_url_count",
+        "missing_content_hash_count",
+        "low_quality_evidence_count",
+        "top_ranked_validated_rate",
+        "narrativedesk_tournament_validated_rate",
+        "headline_baseline_validated_rate",
+        "counts_by_case",
+        "errors",
+    ]:
+        if key in check:
+            summary[key] = check[key]
+    return summary
 
 
 if __name__ == "__main__":
