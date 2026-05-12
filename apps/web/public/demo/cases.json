@@ -2130,6 +2130,1273 @@
         }
       },
       "report": "# NarrativeDesk Event Report: NVDA\n\n> Research support output. Not investment advice.\n\n## Data Note\n\nThis report is generated from a real-curated replay bundle. Treat it as research support only; public use requires curator review of source URLs, publication timestamps, raw document hashes, and validation status.\n\n## Event\n\n- Event ID: `EVT-REAL-NVDA-2024-05-22`\n- Company: NVIDIA Corporation (`NVDA`)\n- Timestamp lock: `2024-05-23T10:00:00-04:00`\n- Event type: earnings/guidance\n- Daily return: 9.3%\n- Abnormal return: 9.8%\n- Volume ratio: n/a\n- Sector ETF return: -0.4%\n- Peer median return: -0.4%\n\nReal-curated NVIDIA Q1 fiscal 2025 earnings replay with timestamped citations, replay-locked evidence, and held-out validation. Research and education only; not investment advice.\n\n## Replay Audit\n\n- Allowed sources: NVDA-INVEST-001, NVDA-IR-001, NVDA-MKT-001, NVDA-MKT-BENCH-001, NVDA-MW-001, NVDA-NASDAQ-001, NVDA-SEC-001\n- Blocked future sources: NVDA-IR-FUT-001, NVDA-SEC-FUT-001\n- Removed from `NARR-NVDA-001`: NVDA-IR-FUT-001, NVDA-SEC-FUT-001\n- Removed from `NARR-NVDA-002`: NVDA-IR-FUT-001\n- Removed from `NARR-NVDA-004`: NVDA-IR-FUT-001\n\n## Source Map\n\n| Source | Status | Type | Publisher | Narratives | Relations |\n| --- | --- | --- | --- | --- | --- |\n| NVDA-INVEST-001 | allowed | news | Investopedia | NARR-NVDA-001, NARR-NVDA-002, NARR-NVDA-003 | support |\n| NVDA-IR-001 | allowed | company_release | NVIDIA Investor Relations | NARR-NVDA-001, NARR-NVDA-002, NARR-NVDA-003, NARR-NVDA-004 | contradict, support |\n| NVDA-MKT-001 | allowed | market_data | Frozen market bars | NARR-NVDA-001, NARR-NVDA-002 | support |\n| NVDA-MKT-BENCH-001 | allowed | market_data | Frozen market bars | NARR-NVDA-001, NARR-NVDA-002, NARR-NVDA-004 | support |\n| NVDA-MW-001 | allowed | news | MarketWatch | NARR-NVDA-001, NARR-NVDA-004 | support |\n| NVDA-NASDAQ-001 | allowed | company_release | Nasdaq / GlobeNewswire | NARR-NVDA-001, NARR-NVDA-002 | support |\n| NVDA-SEC-001 | allowed | filing | SEC EDGAR | NARR-NVDA-001, NARR-NVDA-002 | support |\n| NVDA-IR-FUT-001 | blocked_future | company_release | n/a | NARR-NVDA-001, NARR-NVDA-002, NARR-NVDA-004 | support |\n| NVDA-SEC-FUT-001 | blocked_future | filing | n/a | NARR-NVDA-001 | support |\n\n## Citation QA\n\n- Replay filter: pass\n- Support coverage: pass\n- Event-time integrity: pass\n- Citation QA: pass\n- Provenance-ready allowed sources: pass\n- Returned blocked sources: 0\n- Narratives with support: 4/4\n- Missing URLs: 0\n- Missing content hashes: 0\n- Low-quality evidence sources: 0\n\n## Source Reliability\n\nBlocked future sources are counted for auditability but excluded from scoring and ranking.\n- Allowed sources: 7\n- Blocked future sources: 2\n- Average evidence quality: 0.78\n- Average independence: 0.71\n- Average originality score: 0.76\n- Low-quality evidence sources: 0\n- Blocked source IDs: NVDA-IR-FUT-001, NVDA-SEC-FUT-001\n\n| Publisher | Allowed | Blocked Future | Evidence Quality | Independence | Originality |\n| --- | ---: | ---: | ---: | ---: | ---: |\n| Frozen market bars | 2 | 0 | 0.80 | 0.84 | 0.80 |\n| Investopedia | 1 | 0 | 0.73 | 0.74 | 0.74 |\n| MarketWatch | 1 | 0 | 0.76 | 0.74 | 0.76 |\n| NVIDIA Investor Relations | 1 | 0 | 0.86 | 0.58 | 0.86 |\n| Nasdaq / GlobeNewswire | 1 | 0 | 0.78 | 0.56 | 0.72 |\n| SEC EDGAR | 1 | 0 | 0.76 | 0.68 | 0.66 |\n| unknown | 0 | 2 | n/a | n/a | n/a |\n\n## Source Clustering\n\nClusters use replay-safe allowed evidence only. Future-dated source text stays quarantined.\n- Allowed sources clustered: 7\n- Blocked future sources excluded: 2\n- Cluster count: 5\n- Duplicate clusters: 2\n- Average derived originality: 0.79\n\n| Cluster | Basis | Sources | Publishers | Derived Originality | Representative Claim |\n| --- | --- | --- | --- | ---: | --- |\n| financial-news | independence_cluster_id | NVDA-INVEST-001, NVDA-MW-001 | Investopedia, MarketWatch | 0.75 | MarketWatch reported NVIDIA executive commentary that Data Center growth was fueled by strong and accelerating demand for generative AI training and inference on Hopper, and that major cloud providers represented a mid-40% share of Data Center revenue. |\n| issuer-release | independence_cluster_id | NVDA-IR-001 | NVIDIA Investor Relations | 1.00 | NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase. |\n| issuer-release-mirrors | independence_cluster_id | NVDA-NASDAQ-001 | Nasdaq / GlobeNewswire | 1.00 | Nasdaq carried the NVIDIA first-quarter fiscal 2025 release, including the current-quarter outlook, conference call timing, and references to NVIDIA CFO commentary at investor.nvidia.com. |\n| market-bars | independence_cluster_id | NVDA-MKT-001, NVDA-MKT-BENCH-001 | Frozen market bars | 0.50 | Frozen market bars use NVIDIA split-adjusted close-to-close prices around the event: $94.90 on May 22, 2024 and $103.75 on May 23, 2024, implying a 9.33% event move before peer adjustment. |\n| sec-edgar | independence_cluster_id | NVDA-SEC-001 | SEC EDGAR | 1.00 | NVIDIA filed an 8-K after the May 22, 2024 earnings release, attaching first-quarter fiscal 2025 results and related company disclosures to the SEC record. |\n\n## Narrative Verification Ranking\n\n| Rank | Narrative | Direction | Score | Horizon |\n| ---: | --- | --- | ---: | --- |\n| 1 | Data center demand acceleration | bullish | 0.76 | 60 trading days |\n| 2 | Forward guidance reset | bullish | 0.72 | 60 trading days |\n| 3 | Blackwell platform optionality | bullish | 0.64 | 60 trading days |\n| 4 | Gaming rebound | bullish | 0.51 | 60 trading days |\n\n## #1: Data center demand acceleration\n\nInvestors treated NVIDIA's post-earnings move as confirmation that accelerated-computing and generative-AI demand was still scaling through the Data Center segment.\n\nMechanism: Record Data Center revenue, management commentary on generative AI demand, and later Data Center growth made the move primarily about durable AI infrastructure demand rather than a one-off headline item.\n\nExpected observables:\n- Data Center revenue should remain the dominant revenue driver in the next reported quarter.\n- Follow-up commentary should keep demand for Hopper, Blackwell, or AI infrastructure central.\n- The explanation should survive even if stock-split accessibility is treated as secondary.\n\nSupporting evidence:\n- `NVDA-IR-001` (company_release): NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.\n- `NVDA-SEC-001` (filing): NVIDIA filed an 8-K after the May 22, 2024 earnings release, attaching first-quarter fiscal 2025 results and related company disclosures to the SEC record.\n- `NVDA-NASDAQ-001` (company_release): Nasdaq carried the NVIDIA first-quarter fiscal 2025 release, including the current-quarter outlook, conference call timing, and references to NVIDIA CFO commentary at investor.nvidia.com.\n- `NVDA-MW-001` (news): MarketWatch reported NVIDIA executive commentary that Data Center growth was fueled by strong and accelerating demand for generative AI training and inference on Hopper, and that major cloud providers represented a mid-40% share of Data Center revenue.\n- `NVDA-INVEST-001` (news): Investopedia reported that NVIDIA first-quarter fiscal 2025 results topped expectations, with record revenue, Data Center sales of $22.6 billion, and a 10-for-1 stock split announcement.\n- `NVDA-MKT-001` (market_data): Frozen market bars use NVIDIA split-adjusted close-to-close prices around the event: $94.90 on May 22, 2024 and $103.75 on May 23, 2024, implying a 9.33% event move before peer adjustment.\n- `NVDA-MKT-BENCH-001` (market_data): Frozen benchmark bars use QQQ close-to-close prices around the event: $451.91 on May 22, 2024 and $449.88 on May 23, 2024, giving a negative benchmark move while NVIDIA rose.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.86\n- mechanism_specificity: 0.86\n- source_independence: 0.62\n- cross_sectional_fit: 0.68\n- contradiction_resistance: 0.76\n- timestamp_advantage: 0.90\n- forward_observable_quality: 0.78\n- crowding_risk: 0.42\n- unsupported_claim_penalty: 0.04\n\n## #2: Forward guidance reset\n\nThe market repriced NVIDIA because the second-quarter revenue outlook reset near-term expectations above the already strong first-quarter base.\n\nMechanism: A $28.0 billion next-quarter revenue outlook and mid-70s gross-margin guide gave investors a near-term observable that the AI demand cycle had not peaked at the reported quarter.\n\nExpected observables:\n- The next reported quarter should land near or above the guided revenue range.\n- Gross margins should remain around the mid-70% range.\n- Follow-up analysis should discuss whether guidance was conservative or demand-limited.\n\nSupporting evidence:\n- `NVDA-IR-001` (company_release): NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.\n- `NVDA-SEC-001` (filing): NVIDIA filed an 8-K after the May 22, 2024 earnings release, attaching first-quarter fiscal 2025 results and related company disclosures to the SEC record.\n- `NVDA-NASDAQ-001` (company_release): Nasdaq carried the NVIDIA first-quarter fiscal 2025 release, including the current-quarter outlook, conference call timing, and references to NVIDIA CFO commentary at investor.nvidia.com.\n- `NVDA-INVEST-001` (news): Investopedia reported that NVIDIA first-quarter fiscal 2025 results topped expectations, with record revenue, Data Center sales of $22.6 billion, and a 10-for-1 stock split announcement.\n- `NVDA-MKT-001` (market_data): Frozen market bars use NVIDIA split-adjusted close-to-close prices around the event: $94.90 on May 22, 2024 and $103.75 on May 23, 2024, implying a 9.33% event move before peer adjustment.\n- `NVDA-MKT-BENCH-001` (market_data): Frozen benchmark bars use QQQ close-to-close prices around the event: $451.91 on May 22, 2024 and $449.88 on May 23, 2024, giving a negative benchmark move while NVIDIA rose.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.82\n- mechanism_specificity: 0.84\n- source_independence: 0.56\n- cross_sectional_fit: 0.64\n- contradiction_resistance: 0.70\n- timestamp_advantage: 0.88\n- forward_observable_quality: 0.82\n- crowding_risk: 0.46\n- unsupported_claim_penalty: 0.06\n\n## #3: Blackwell platform optionality\n\nInvestors may have emphasized the strategic platform story around Blackwell, AI factories, Spectrum-X, and NVIDIA's expanding software ecosystem.\n\nMechanism: The roadmap widened the future addressable-market story, but much of that optionality was less immediately measurable than Data Center revenue and the forward guide.\n\nExpected observables:\n- Later commentary should focus on Blackwell demand and production timing.\n- Data-center-scale platform language should persist in future releases.\n- The explanation should remain secondary if near-term Data Center revenue explains the move more directly.\n\nSupporting evidence:\n- `NVDA-IR-001` (company_release): NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.\n- `NVDA-MW-001` (news): MarketWatch reported NVIDIA executive commentary that Data Center growth was fueled by strong and accelerating demand for generative AI training and inference on Hopper, and that major cloud providers represented a mid-40% share of Data Center revenue.\n- `NVDA-MKT-BENCH-001` (market_data): Frozen benchmark bars use QQQ close-to-close prices around the event: $451.91 on May 22, 2024 and $449.88 on May 23, 2024, giving a negative benchmark move while NVIDIA rose.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.72\n- mechanism_specificity: 0.72\n- source_independence: 0.54\n- cross_sectional_fit: 0.60\n- contradiction_resistance: 0.62\n- timestamp_advantage: 0.84\n- forward_observable_quality: 0.66\n- crowding_risk: 0.54\n- unsupported_claim_penalty: 0.09\n\n## #4: Gaming rebound\n\nThe move could be read as a broad consumer and gaming recovery after NVIDIA reported growth outside Data Center.\n\nMechanism: Gaming growth may support sentiment, but the scale of the Data Center segment makes a gaming-led explanation less specific for the abnormal move.\n\nExpected observables:\n- Gaming revenue should become a central explanation in follow-up commentary.\n- Gaming should contribute enough scale to compete with Data Center in the narrative.\n- The explanation should weaken if Data Center remains the main growth driver.\n\nSupporting evidence:\n- `NVDA-INVEST-001` (news): Investopedia reported that NVIDIA first-quarter fiscal 2025 results topped expectations, with record revenue, Data Center sales of $22.6 billion, and a 10-for-1 stock split announcement.\n\nContradicting evidence:\n- `NVDA-IR-001` (company_release): NVIDIA reported first-quarter fiscal 2025 revenue of $26.0 billion, Data Center revenue of $22.6 billion, a second-quarter revenue outlook of $28.0 billion plus or minus 2%, a ten-for-one forward stock split effective June 7, 2024, and a 150% dividend increase.\n\nScore components:\n- evidence_strength: 0.58\n- mechanism_specificity: 0.55\n- source_independence: 0.42\n- cross_sectional_fit: 0.48\n- contradiction_resistance: 0.44\n- timestamp_advantage: 0.80\n- forward_observable_quality: 0.50\n- crowding_risk: 0.38\n- unsupported_claim_penalty: 0.12\n\n## Scoring Weights\n\n- evidence_strength: 0.20\n- mechanism_specificity: 0.15\n- source_independence: 0.15\n- cross_sectional_fit: 0.10\n- contradiction_resistance: 0.10\n- timestamp_advantage: 0.10\n- forward_observable_quality: 0.10\n- crowding_risk: 0.05\n- unsupported_claim_penalty: 0.05\n"
+    },
+    {
+      "bundle_integrity": {
+        "artifact_hashes_ok": true,
+        "blocked_future_source_count": 1,
+        "note": "Real-curated replay bundle verified from timestamped, replay-locked source artifacts.",
+        "readiness_status": "ready_to_ingest",
+        "replay_integrity_ok": true,
+        "validation_future_source_count": 1,
+        "verified_by_bundle_verify": true
+      },
+      "case_id": "EVT-REAL-NKE-2024-06-27",
+      "label": "NKE FY2024 Q4 real-curated replay",
+      "ledger": {
+        "citation_qa": {
+          "allowed_source_count": 8,
+          "blocked_future_source_count": 1,
+          "citation_qa_pass": true,
+          "event_time_integrity_pass": true,
+          "low_quality_evidence_count": 0,
+          "missing_content_hash_count": 0,
+          "missing_publisher_count": 0,
+          "missing_url_count": 0,
+          "narrative_count": 4,
+          "narratives_with_support_count": 4,
+          "provenance_ready": true,
+          "replay_filter_pass": true,
+          "returned_blocked_source_count": 0,
+          "support_coverage_pass": true
+        },
+        "event": {
+          "abnormal_return": -0.195796,
+          "case_id": "EVT-REAL-NKE-2024-06-27",
+          "company_name": "NIKE, Inc.",
+          "daily_return": -0.199735,
+          "data_provenance_mode": "real-curated",
+          "event_date": "2024-06-27",
+          "event_id": "EVT-REAL-NKE-2024-06-27",
+          "event_summary": "Real-curated NIKE fiscal 2024 fourth-quarter earnings and fiscal 2025 guidance replay with timestamped citations, replay-locked evidence, and held-out validation. Research and education only; not investment advice.",
+          "event_timestamp": "2024-06-28T10:00:00-04:00",
+          "event_type": "earnings/guidance",
+          "peer_median_return": -0.003939,
+          "sector_etf_return": -0.003939,
+          "ticker": "NKE",
+          "volume_ratio": null
+        },
+        "narratives": [
+          {
+            "confidence": null,
+            "contradicting_evidence": [],
+            "directional_implication": "bearish",
+            "event_id": "EVT-REAL-NKE-2024-06-27",
+            "expected_observables": [
+              "Later reported results should show revenue pressure extending beyond the fourth-quarter release.",
+              "Follow-up commentary should keep turnaround timing, demand, or guidance credibility central.",
+              "The explanation should survive even if gross margin and EPS were stronger than the headline revenue story."
+            ],
+            "mechanism": "The event-time evidence showed a revenue miss, explicit fiscal 2025 outlook reset, a first-quarter decline guide, and weak digital/lifestyle demand. That created a direct mechanism from lower future revenue expectations to the abnormal stock move.",
+            "narrative": "Investors repriced NIKE after the company lowered the fiscal 2025 revenue outlook, with the selloff centered on weaker forward demand rather than the reported quarter alone.",
+            "narrative_id": "NARR-NKE-001",
+            "overall_narrative_score": 0.8038888888888889,
+            "rank": 1,
+            "scores": {
+              "contradiction_resistance": 0.07800000000000001,
+              "cross_sectional_fit": 0.082,
+              "crowding_risk_penalty": 0.019000000000000003,
+              "evidence_strength": 0.17200000000000001,
+              "forward_observable_quality": 0.084,
+              "mechanism_specificity": 0.1305,
+              "overall_narrative_score": 0.8038888888888889,
+              "penalty_score_normalized": 0.02333333333333334,
+              "positive_score_normalized": 0.8272222222222222,
+              "source_independence": 0.108,
+              "timestamp_advantage": 0.09000000000000001,
+              "unsupported_claim_penalty": 0.002
+            },
+            "scoring_inputs": {
+              "contradiction_resistance": 0.78,
+              "cross_sectional_fit": 0.82,
+              "crowding_risk": 0.38,
+              "evidence_strength": 0.86,
+              "forward_observable_quality": 0.84,
+              "mechanism_specificity": 0.87,
+              "source_independence": 0.72,
+              "timestamp_advantage": 0.9,
+              "unsupported_claim_penalty": 0.04
+            },
+            "supporting_evidence": [
+              {
+                "availability_status": "allowed",
+                "claim": "NIKE reported fiscal 2024 fourth-quarter revenue of $12.6 billion, down 2% reported, NIKE Direct revenue down 8% reported, gross margin up 110 basis points to 44.7%, diluted EPS of $0.99, and management said fourth-quarter challenges led it to update the fiscal 2025 outlook.",
+                "claim_extracted": "NIKE reported fiscal 2024 fourth-quarter revenue of $12.6 billion, down 2% reported, NIKE Direct revenue down 8% reported, gross margin up 110 basis points to 44.7%, diluted EPS of $0.99, and management said fourth-quarter challenges led it to update the fiscal 2025 outlook.",
+                "content_hash": "sha256:788fcf3e8f75b7073d91af43469d31971f7d26a8f9b8242055460b4eee52641e",
+                "contradicted_narrative_ids": [
+                  "NARR-NKE-004"
+                ],
+                "evidence_quality": 0.86,
+                "incentive_conflict": 0.28,
+                "independence": 0.58,
+                "independence_cluster_id": "issuer-release",
+                "originality_score": 0.86,
+                "published_at": "2024-06-27T20:15:00+00:00",
+                "publisher": "NIKE Investor Relations",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-IR-001",
+                "source_type": "company_release",
+                "support_strength": 0.86,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-002"
+                ],
+                "title": "NIKE, Inc. Reports Fiscal 2024 Fourth Quarter and Full Year Results",
+                "url": "https://investors.nike.com/investors/news-events-and-reports/investor-news/investor-news-details/2024/NIKE-Inc.-Reports-Fiscal-2024-Fourth-Quarter-and-Full-Year-Results/default.aspx"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "NIKE filed a Form 8-K on June 27, 2024 stating it issued a press release disclosing financial results for the fiscal quarter and year ended May 31, 2024 and furnished the release as Exhibit 99.1.",
+                "claim_extracted": "NIKE filed a Form 8-K on June 27, 2024 stating it issued a press release disclosing financial results for the fiscal quarter and year ended May 31, 2024 and furnished the release as Exhibit 99.1.",
+                "content_hash": "sha256:dfc7320bec0364ffbaae47e85d82292647b75cb1a2d4202294d0f0d8d4c73d6e",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.76,
+                "incentive_conflict": 0.1,
+                "independence": 0.68,
+                "independence_cluster_id": "sec-edgar",
+                "originality_score": 0.66,
+                "published_at": "2024-06-27T20:16:39+00:00",
+                "publisher": "SEC EDGAR",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-SEC-001",
+                "source_type": "filing",
+                "support_strength": 0.72,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-002"
+                ],
+                "title": "NIKE 8-K filed June 27, 2024",
+                "url": "https://www.sec.gov/Archives/edgar/data/320187/000032018724000028/nke-20240627.htm"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Nasdaq carried the Business Wire version of NIKE fiscal 2024 fourth-quarter results at 4:15 p.m. EDT, including the revenue decline, NIKE Direct decline, gross-margin increase, EPS result, and management comments about updating fiscal 2025 outlook.",
+                "claim_extracted": "Nasdaq carried the Business Wire version of NIKE fiscal 2024 fourth-quarter results at 4:15 p.m. EDT, including the revenue decline, NIKE Direct decline, gross-margin increase, EPS result, and management comments about updating fiscal 2025 outlook.",
+                "content_hash": "sha256:ccb011240c3829afa29ca8759465aa0a03a351528b7779422bb879aa1d8ab057",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.18,
+                "independence": 0.56,
+                "independence_cluster_id": "issuer-release-mirrors",
+                "originality_score": 0.72,
+                "published_at": "2024-06-27T20:15:00+00:00",
+                "publisher": "Nasdaq / Business Wire",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-NASDAQ-001",
+                "source_type": "company_release",
+                "support_strength": 0.74,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-002",
+                  "NARR-NKE-004"
+                ],
+                "title": "NIKE, Inc. Reports Fiscal 2024 Fourth Quarter and Full Year Results",
+                "url": "https://www.nasdaq.com/press-release/nike-inc-reports-fiscal-2024-fourth-quarter-and-full-year-results-2024-06-27"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Investopedia reported after the release that NIKE revenue missed analyst estimates, the company said results drove it to update fiscal 2025 guidance, and shares fell in extended trading despite net income and EPS coming in above year-earlier levels and estimates.",
+                "claim_extracted": "Investopedia reported after the release that NIKE revenue missed analyst estimates, the company said results drove it to update fiscal 2025 guidance, and shares fell in extended trading despite net income and EPS coming in above year-earlier levels and estimates.",
+                "content_hash": "sha256:7da9cb4516e884b9bb8fb0350a50c5e2b3c2c4061c8a0d65805ec79a05da8684",
+                "contradicted_narrative_ids": [
+                  "NARR-NKE-004"
+                ],
+                "evidence_quality": 0.74,
+                "incentive_conflict": 0.08,
+                "independence": 0.74,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.75,
+                "published_at": "2024-06-27T21:24:00+00:00",
+                "publisher": "Investopedia",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-INVEST-001",
+                "source_type": "news",
+                "support_strength": 0.76,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001"
+                ],
+                "title": "Nike Stock Drops on Revenue Miss, Guidance Warning",
+                "url": "https://www.investopedia.com/nike-q4-fy-2024-earnings-8669119"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Investopedia reported before the market open on June 28, 2024 that NIKE shares were down about 15% premarket after lower-than-expected quarterly revenue and lowered fiscal 2025 sales guidance, including management commentary that first-quarter revenue was expected to decline approximately 10%.",
+                "claim_extracted": "Investopedia reported before the market open on June 28, 2024 that NIKE shares were down about 15% premarket after lower-than-expected quarterly revenue and lowered fiscal 2025 sales guidance, including management commentary that first-quarter revenue was expected to decline approximately 10%.",
+                "content_hash": "sha256:b67f0595423bbadf0fa769744f73dbf81c93b4b818273a81ea3c53e0ef3e624b",
+                "contradicted_narrative_ids": [
+                  "NARR-NKE-004"
+                ],
+                "evidence_quality": 0.74,
+                "incentive_conflict": 0.08,
+                "independence": 0.74,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.74,
+                "published_at": "2024-06-28T12:11:00+00:00",
+                "publisher": "Investopedia",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-INVEST-002",
+                "source_type": "news",
+                "support_strength": 0.78,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-003"
+                ],
+                "title": "5 Things to Know Before the Stock Market Opens: June 28, 2024",
+                "url": "https://www.investopedia.com/5-things-to-know-before-the-stock-market-opens-june-28-2024-8671028"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.",
+                "claim_extracted": "The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.",
+                "content_hash": "sha256:7855a18e16647d07fc4b1d702fe65de725ac11d4b8120174beca729dd8317274",
+                "contradicted_narrative_ids": [
+                  "NARR-NKE-004"
+                ],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.08,
+                "independence": 0.7,
+                "independence_cluster_id": "earnings-transcript",
+                "originality_score": 0.77,
+                "published_at": "2024-06-28T01:00:00+00:00",
+                "publisher": "MarketBeat / Quartr",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-MB-001",
+                "source_type": "transcript",
+                "support_strength": 0.8,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-002",
+                  "NARR-NKE-003"
+                ],
+                "title": "NIKE Q4 2024 Earnings Call Transcript",
+                "url": "https://www.marketbeat.com/earnings/reports/2024-6-27-nike-inc-stock/"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Frozen market bars use NIKE close-to-close prices around the event: $90.52 on June 27, 2024 and $72.44 on June 28, 2024, implying a -19.97% event move before peer adjustment.",
+                "claim_extracted": "Frozen market bars use NIKE close-to-close prices around the event: $90.52 on June 27, 2024 and $72.44 on June 28, 2024, implying a -19.97% event move before peer adjustment.",
+                "content_hash": "sha256:53d9a9b5fbe696436789b0d0c258c40bc2a98f3ef5a3a39cda790699e283cfd9",
+                "contradicted_narrative_ids": [
+                  "NARR-NKE-004"
+                ],
+                "evidence_quality": 0.8,
+                "incentive_conflict": 0.04,
+                "independence": 0.84,
+                "independence_cluster_id": "market-bars",
+                "originality_score": 0.8,
+                "published_at": "2024-06-28T13:30:00+00:00",
+                "publisher": "Frozen market bars",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-MKT-001",
+                "source_type": "market_data",
+                "support_strength": 0.68,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-002"
+                ],
+                "title": "NKE close-to-close market move for June 28, 2024",
+                "url": "https://www.statmuse.com/money/ask/nike-stock-price-in-june-2024"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Frozen benchmark bars use SPY close-to-close prices around the NIKE event: $538.15 on June 27, 2024 and $536.03 on June 28, 2024, making NIKE underperform the broad-market benchmark on the event day.",
+                "claim_extracted": "Frozen benchmark bars use SPY close-to-close prices around the NIKE event: $538.15 on June 27, 2024 and $536.03 on June 28, 2024, making NIKE underperform the broad-market benchmark on the event day.",
+                "content_hash": "sha256:fa29bf308a18011d3f4a745fc0c423eeb780e3be6e44d744aa32354ce20b9d4c",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.8,
+                "incentive_conflict": 0.04,
+                "independence": 0.84,
+                "independence_cluster_id": "market-bars",
+                "originality_score": 0.8,
+                "published_at": "2024-06-28T13:30:00+00:00",
+                "publisher": "Frozen market bars",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-MKT-BENCH-001",
+                "source_type": "market_data",
+                "support_strength": 0.66,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-003"
+                ],
+                "title": "SPY close-to-close benchmark move for June 28, 2024",
+                "url": "https://www.statmuse.com/money/ask/spy-etf-price-in-june-2024"
+              }
+            ],
+            "ticker": "NKE",
+            "time_horizon": "60 trading days",
+            "timestamp_created": "2024-06-28T10:00:00-04:00",
+            "title": "Fiscal 2025 demand reset",
+            "validation_status": "pending"
+          },
+          {
+            "confidence": null,
+            "contradicting_evidence": [],
+            "directional_implication": "bearish",
+            "event_id": "EVT-REAL-NKE-2024-06-27",
+            "expected_observables": [
+              "Future results should keep NIKE Direct and digital revenue declines central.",
+              "Management should continue discussing franchise management or channel rebalancing.",
+              "The narrative should weaken if total revenue pressure, not channel mix alone, dominates validation evidence."
+            ],
+            "mechanism": "Direct and digital weakness made the channel strategy look less durable, but the explanation is narrower than the full fiscal 2025 demand reset because it does not fully explain the guide-down and broad revenue repricing.",
+            "narrative": "The move could be explained by investors reassessing NIKE Direct and digital channel execution after the company reported declines in Direct, digital, and key lifestyle franchises.",
+            "narrative_id": "NARR-NKE-002",
+            "overall_narrative_score": 0.7183333333333334,
+            "rank": 2,
+            "scores": {
+              "contradiction_resistance": 0.068,
+              "cross_sectional_fit": 0.06999999999999999,
+              "crowding_risk_penalty": 0.022000000000000002,
+              "evidence_strength": 0.15600000000000003,
+              "forward_observable_quality": 0.074,
+              "mechanism_specificity": 0.1185,
+              "overall_narrative_score": 0.7183333333333334,
+              "penalty_score_normalized": 0.027777777777777783,
+              "positive_score_normalized": 0.7461111111111112,
+              "source_independence": 0.099,
+              "timestamp_advantage": 0.08600000000000001,
+              "unsupported_claim_penalty": 0.003
+            },
+            "scoring_inputs": {
+              "contradiction_resistance": 0.68,
+              "cross_sectional_fit": 0.7,
+              "crowding_risk": 0.44,
+              "evidence_strength": 0.78,
+              "forward_observable_quality": 0.74,
+              "mechanism_specificity": 0.79,
+              "source_independence": 0.66,
+              "timestamp_advantage": 0.86,
+              "unsupported_claim_penalty": 0.06
+            },
+            "supporting_evidence": [
+              {
+                "availability_status": "allowed",
+                "claim": "NIKE reported fiscal 2024 fourth-quarter revenue of $12.6 billion, down 2% reported, NIKE Direct revenue down 8% reported, gross margin up 110 basis points to 44.7%, diluted EPS of $0.99, and management said fourth-quarter challenges led it to update the fiscal 2025 outlook.",
+                "claim_extracted": "NIKE reported fiscal 2024 fourth-quarter revenue of $12.6 billion, down 2% reported, NIKE Direct revenue down 8% reported, gross margin up 110 basis points to 44.7%, diluted EPS of $0.99, and management said fourth-quarter challenges led it to update the fiscal 2025 outlook.",
+                "content_hash": "sha256:788fcf3e8f75b7073d91af43469d31971f7d26a8f9b8242055460b4eee52641e",
+                "contradicted_narrative_ids": [
+                  "NARR-NKE-004"
+                ],
+                "evidence_quality": 0.86,
+                "incentive_conflict": 0.28,
+                "independence": 0.58,
+                "independence_cluster_id": "issuer-release",
+                "originality_score": 0.86,
+                "published_at": "2024-06-27T20:15:00+00:00",
+                "publisher": "NIKE Investor Relations",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-IR-001",
+                "source_type": "company_release",
+                "support_strength": 0.86,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-002"
+                ],
+                "title": "NIKE, Inc. Reports Fiscal 2024 Fourth Quarter and Full Year Results",
+                "url": "https://investors.nike.com/investors/news-events-and-reports/investor-news/investor-news-details/2024/NIKE-Inc.-Reports-Fiscal-2024-Fourth-Quarter-and-Full-Year-Results/default.aspx"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "NIKE filed a Form 8-K on June 27, 2024 stating it issued a press release disclosing financial results for the fiscal quarter and year ended May 31, 2024 and furnished the release as Exhibit 99.1.",
+                "claim_extracted": "NIKE filed a Form 8-K on June 27, 2024 stating it issued a press release disclosing financial results for the fiscal quarter and year ended May 31, 2024 and furnished the release as Exhibit 99.1.",
+                "content_hash": "sha256:dfc7320bec0364ffbaae47e85d82292647b75cb1a2d4202294d0f0d8d4c73d6e",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.76,
+                "incentive_conflict": 0.1,
+                "independence": 0.68,
+                "independence_cluster_id": "sec-edgar",
+                "originality_score": 0.66,
+                "published_at": "2024-06-27T20:16:39+00:00",
+                "publisher": "SEC EDGAR",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-SEC-001",
+                "source_type": "filing",
+                "support_strength": 0.72,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-002"
+                ],
+                "title": "NIKE 8-K filed June 27, 2024",
+                "url": "https://www.sec.gov/Archives/edgar/data/320187/000032018724000028/nke-20240627.htm"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Nasdaq carried the Business Wire version of NIKE fiscal 2024 fourth-quarter results at 4:15 p.m. EDT, including the revenue decline, NIKE Direct decline, gross-margin increase, EPS result, and management comments about updating fiscal 2025 outlook.",
+                "claim_extracted": "Nasdaq carried the Business Wire version of NIKE fiscal 2024 fourth-quarter results at 4:15 p.m. EDT, including the revenue decline, NIKE Direct decline, gross-margin increase, EPS result, and management comments about updating fiscal 2025 outlook.",
+                "content_hash": "sha256:ccb011240c3829afa29ca8759465aa0a03a351528b7779422bb879aa1d8ab057",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.18,
+                "independence": 0.56,
+                "independence_cluster_id": "issuer-release-mirrors",
+                "originality_score": 0.72,
+                "published_at": "2024-06-27T20:15:00+00:00",
+                "publisher": "Nasdaq / Business Wire",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-NASDAQ-001",
+                "source_type": "company_release",
+                "support_strength": 0.74,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-002",
+                  "NARR-NKE-004"
+                ],
+                "title": "NIKE, Inc. Reports Fiscal 2024 Fourth Quarter and Full Year Results",
+                "url": "https://www.nasdaq.com/press-release/nike-inc-reports-fiscal-2024-fourth-quarter-and-full-year-results-2024-06-27"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.",
+                "claim_extracted": "The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.",
+                "content_hash": "sha256:7855a18e16647d07fc4b1d702fe65de725ac11d4b8120174beca729dd8317274",
+                "contradicted_narrative_ids": [
+                  "NARR-NKE-004"
+                ],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.08,
+                "independence": 0.7,
+                "independence_cluster_id": "earnings-transcript",
+                "originality_score": 0.77,
+                "published_at": "2024-06-28T01:00:00+00:00",
+                "publisher": "MarketBeat / Quartr",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-MB-001",
+                "source_type": "transcript",
+                "support_strength": 0.8,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-002",
+                  "NARR-NKE-003"
+                ],
+                "title": "NIKE Q4 2024 Earnings Call Transcript",
+                "url": "https://www.marketbeat.com/earnings/reports/2024-6-27-nike-inc-stock/"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Frozen market bars use NIKE close-to-close prices around the event: $90.52 on June 27, 2024 and $72.44 on June 28, 2024, implying a -19.97% event move before peer adjustment.",
+                "claim_extracted": "Frozen market bars use NIKE close-to-close prices around the event: $90.52 on June 27, 2024 and $72.44 on June 28, 2024, implying a -19.97% event move before peer adjustment.",
+                "content_hash": "sha256:53d9a9b5fbe696436789b0d0c258c40bc2a98f3ef5a3a39cda790699e283cfd9",
+                "contradicted_narrative_ids": [
+                  "NARR-NKE-004"
+                ],
+                "evidence_quality": 0.8,
+                "incentive_conflict": 0.04,
+                "independence": 0.84,
+                "independence_cluster_id": "market-bars",
+                "originality_score": 0.8,
+                "published_at": "2024-06-28T13:30:00+00:00",
+                "publisher": "Frozen market bars",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-MKT-001",
+                "source_type": "market_data",
+                "support_strength": 0.68,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-002"
+                ],
+                "title": "NKE close-to-close market move for June 28, 2024",
+                "url": "https://www.statmuse.com/money/ask/nike-stock-price-in-june-2024"
+              }
+            ],
+            "ticker": "NKE",
+            "time_horizon": "60 trading days",
+            "timestamp_created": "2024-06-28T10:00:00-04:00",
+            "title": "Direct channel reset",
+            "validation_status": "pending"
+          },
+          {
+            "confidence": null,
+            "contradicting_evidence": [],
+            "directional_implication": "bearish",
+            "event_id": "EVT-REAL-NKE-2024-06-27",
+            "expected_observables": [
+              "Future commentary should cite Greater China or macro uncertainty as the main driver.",
+              "Peer consumer discretionary names should show related pressure if the explanation is mostly macro.",
+              "The narrative should weaken if company-specific guide-down evidence explains more of the move."
+            ],
+            "mechanism": "China and consumer caution are plausible contributors, but they are less specific to the observed abnormal move than the company-level fiscal 2025 revenue reset and channel details available before the lock.",
+            "narrative": "The selloff may have reflected macro and geographic concerns, especially weaker Greater China and uneven consumer trends across discretionary markets.",
+            "narrative_id": "NARR-NKE-003",
+            "overall_narrative_score": 0.6144444444444445,
+            "rank": 3,
+            "scores": {
+              "contradiction_resistance": 0.06,
+              "cross_sectional_fit": 0.05600000000000001,
+              "crowding_risk_penalty": 0.025,
+              "evidence_strength": 0.132,
+              "forward_observable_quality": 0.062,
+              "mechanism_specificity": 0.093,
+              "overall_narrative_score": 0.6144444444444445,
+              "penalty_score_normalized": 0.03333333333333334,
+              "positive_score_normalized": 0.6477777777777778,
+              "source_independence": 0.096,
+              "timestamp_advantage": 0.084,
+              "unsupported_claim_penalty": 0.005000000000000001
+            },
+            "scoring_inputs": {
+              "contradiction_resistance": 0.6,
+              "cross_sectional_fit": 0.56,
+              "crowding_risk": 0.5,
+              "evidence_strength": 0.66,
+              "forward_observable_quality": 0.62,
+              "mechanism_specificity": 0.62,
+              "source_independence": 0.64,
+              "timestamp_advantage": 0.84,
+              "unsupported_claim_penalty": 0.1
+            },
+            "supporting_evidence": [
+              {
+                "availability_status": "allowed",
+                "claim": "Investopedia reported before the market open on June 28, 2024 that NIKE shares were down about 15% premarket after lower-than-expected quarterly revenue and lowered fiscal 2025 sales guidance, including management commentary that first-quarter revenue was expected to decline approximately 10%.",
+                "claim_extracted": "Investopedia reported before the market open on June 28, 2024 that NIKE shares were down about 15% premarket after lower-than-expected quarterly revenue and lowered fiscal 2025 sales guidance, including management commentary that first-quarter revenue was expected to decline approximately 10%.",
+                "content_hash": "sha256:b67f0595423bbadf0fa769744f73dbf81c93b4b818273a81ea3c53e0ef3e624b",
+                "contradicted_narrative_ids": [
+                  "NARR-NKE-004"
+                ],
+                "evidence_quality": 0.74,
+                "incentive_conflict": 0.08,
+                "independence": 0.74,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.74,
+                "published_at": "2024-06-28T12:11:00+00:00",
+                "publisher": "Investopedia",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-INVEST-002",
+                "source_type": "news",
+                "support_strength": 0.78,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-003"
+                ],
+                "title": "5 Things to Know Before the Stock Market Opens: June 28, 2024",
+                "url": "https://www.investopedia.com/5-things-to-know-before-the-stock-market-opens-june-28-2024-8671028"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.",
+                "claim_extracted": "The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.",
+                "content_hash": "sha256:7855a18e16647d07fc4b1d702fe65de725ac11d4b8120174beca729dd8317274",
+                "contradicted_narrative_ids": [
+                  "NARR-NKE-004"
+                ],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.08,
+                "independence": 0.7,
+                "independence_cluster_id": "earnings-transcript",
+                "originality_score": 0.77,
+                "published_at": "2024-06-28T01:00:00+00:00",
+                "publisher": "MarketBeat / Quartr",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-MB-001",
+                "source_type": "transcript",
+                "support_strength": 0.8,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-002",
+                  "NARR-NKE-003"
+                ],
+                "title": "NIKE Q4 2024 Earnings Call Transcript",
+                "url": "https://www.marketbeat.com/earnings/reports/2024-6-27-nike-inc-stock/"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Frozen benchmark bars use SPY close-to-close prices around the NIKE event: $538.15 on June 27, 2024 and $536.03 on June 28, 2024, making NIKE underperform the broad-market benchmark on the event day.",
+                "claim_extracted": "Frozen benchmark bars use SPY close-to-close prices around the NIKE event: $538.15 on June 27, 2024 and $536.03 on June 28, 2024, making NIKE underperform the broad-market benchmark on the event day.",
+                "content_hash": "sha256:fa29bf308a18011d3f4a745fc0c423eeb780e3be6e44d744aa32354ce20b9d4c",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.8,
+                "incentive_conflict": 0.04,
+                "independence": 0.84,
+                "independence_cluster_id": "market-bars",
+                "originality_score": 0.8,
+                "published_at": "2024-06-28T13:30:00+00:00",
+                "publisher": "Frozen market bars",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-MKT-BENCH-001",
+                "source_type": "market_data",
+                "support_strength": 0.66,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-003"
+                ],
+                "title": "SPY close-to-close benchmark move for June 28, 2024",
+                "url": "https://www.statmuse.com/money/ask/spy-etf-price-in-june-2024"
+              }
+            ],
+            "ticker": "NKE",
+            "time_horizon": "60 trading days",
+            "timestamp_created": "2024-06-28T10:00:00-04:00",
+            "title": "China and consumer softness",
+            "validation_status": "pending"
+          },
+          {
+            "confidence": null,
+            "contradicting_evidence": [
+              {
+                "availability_status": "allowed",
+                "claim": "NIKE reported fiscal 2024 fourth-quarter revenue of $12.6 billion, down 2% reported, NIKE Direct revenue down 8% reported, gross margin up 110 basis points to 44.7%, diluted EPS of $0.99, and management said fourth-quarter challenges led it to update the fiscal 2025 outlook.",
+                "claim_extracted": "NIKE reported fiscal 2024 fourth-quarter revenue of $12.6 billion, down 2% reported, NIKE Direct revenue down 8% reported, gross margin up 110 basis points to 44.7%, diluted EPS of $0.99, and management said fourth-quarter challenges led it to update the fiscal 2025 outlook.",
+                "content_hash": "sha256:788fcf3e8f75b7073d91af43469d31971f7d26a8f9b8242055460b4eee52641e",
+                "contradicted_narrative_ids": [
+                  "NARR-NKE-004"
+                ],
+                "evidence_quality": 0.86,
+                "incentive_conflict": 0.28,
+                "independence": 0.58,
+                "independence_cluster_id": "issuer-release",
+                "originality_score": 0.86,
+                "published_at": "2024-06-27T20:15:00+00:00",
+                "publisher": "NIKE Investor Relations",
+                "relation": "contradict",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-IR-001",
+                "source_type": "company_release",
+                "support_strength": 0.86,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-002"
+                ],
+                "title": "NIKE, Inc. Reports Fiscal 2024 Fourth Quarter and Full Year Results",
+                "url": "https://investors.nike.com/investors/news-events-and-reports/investor-news/investor-news-details/2024/NIKE-Inc.-Reports-Fiscal-2024-Fourth-Quarter-and-Full-Year-Results/default.aspx"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Investopedia reported after the release that NIKE revenue missed analyst estimates, the company said results drove it to update fiscal 2025 guidance, and shares fell in extended trading despite net income and EPS coming in above year-earlier levels and estimates.",
+                "claim_extracted": "Investopedia reported after the release that NIKE revenue missed analyst estimates, the company said results drove it to update fiscal 2025 guidance, and shares fell in extended trading despite net income and EPS coming in above year-earlier levels and estimates.",
+                "content_hash": "sha256:7da9cb4516e884b9bb8fb0350a50c5e2b3c2c4061c8a0d65805ec79a05da8684",
+                "contradicted_narrative_ids": [
+                  "NARR-NKE-004"
+                ],
+                "evidence_quality": 0.74,
+                "incentive_conflict": 0.08,
+                "independence": 0.74,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.75,
+                "published_at": "2024-06-27T21:24:00+00:00",
+                "publisher": "Investopedia",
+                "relation": "contradict",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-INVEST-001",
+                "source_type": "news",
+                "support_strength": 0.76,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001"
+                ],
+                "title": "Nike Stock Drops on Revenue Miss, Guidance Warning",
+                "url": "https://www.investopedia.com/nike-q4-fy-2024-earnings-8669119"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Investopedia reported before the market open on June 28, 2024 that NIKE shares were down about 15% premarket after lower-than-expected quarterly revenue and lowered fiscal 2025 sales guidance, including management commentary that first-quarter revenue was expected to decline approximately 10%.",
+                "claim_extracted": "Investopedia reported before the market open on June 28, 2024 that NIKE shares were down about 15% premarket after lower-than-expected quarterly revenue and lowered fiscal 2025 sales guidance, including management commentary that first-quarter revenue was expected to decline approximately 10%.",
+                "content_hash": "sha256:b67f0595423bbadf0fa769744f73dbf81c93b4b818273a81ea3c53e0ef3e624b",
+                "contradicted_narrative_ids": [
+                  "NARR-NKE-004"
+                ],
+                "evidence_quality": 0.74,
+                "incentive_conflict": 0.08,
+                "independence": 0.74,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.74,
+                "published_at": "2024-06-28T12:11:00+00:00",
+                "publisher": "Investopedia",
+                "relation": "contradict",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-INVEST-002",
+                "source_type": "news",
+                "support_strength": 0.78,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-003"
+                ],
+                "title": "5 Things to Know Before the Stock Market Opens: June 28, 2024",
+                "url": "https://www.investopedia.com/5-things-to-know-before-the-stock-market-opens-june-28-2024-8671028"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.",
+                "claim_extracted": "The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.",
+                "content_hash": "sha256:7855a18e16647d07fc4b1d702fe65de725ac11d4b8120174beca729dd8317274",
+                "contradicted_narrative_ids": [
+                  "NARR-NKE-004"
+                ],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.08,
+                "independence": 0.7,
+                "independence_cluster_id": "earnings-transcript",
+                "originality_score": 0.77,
+                "published_at": "2024-06-28T01:00:00+00:00",
+                "publisher": "MarketBeat / Quartr",
+                "relation": "contradict",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-MB-001",
+                "source_type": "transcript",
+                "support_strength": 0.8,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-002",
+                  "NARR-NKE-003"
+                ],
+                "title": "NIKE Q4 2024 Earnings Call Transcript",
+                "url": "https://www.marketbeat.com/earnings/reports/2024-6-27-nike-inc-stock/"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Frozen market bars use NIKE close-to-close prices around the event: $90.52 on June 27, 2024 and $72.44 on June 28, 2024, implying a -19.97% event move before peer adjustment.",
+                "claim_extracted": "Frozen market bars use NIKE close-to-close prices around the event: $90.52 on June 27, 2024 and $72.44 on June 28, 2024, implying a -19.97% event move before peer adjustment.",
+                "content_hash": "sha256:53d9a9b5fbe696436789b0d0c258c40bc2a98f3ef5a3a39cda790699e283cfd9",
+                "contradicted_narrative_ids": [
+                  "NARR-NKE-004"
+                ],
+                "evidence_quality": 0.8,
+                "incentive_conflict": 0.04,
+                "independence": 0.84,
+                "independence_cluster_id": "market-bars",
+                "originality_score": 0.8,
+                "published_at": "2024-06-28T13:30:00+00:00",
+                "publisher": "Frozen market bars",
+                "relation": "contradict",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-MKT-001",
+                "source_type": "market_data",
+                "support_strength": 0.68,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-002"
+                ],
+                "title": "NKE close-to-close market move for June 28, 2024",
+                "url": "https://www.statmuse.com/money/ask/nike-stock-price-in-june-2024"
+              }
+            ],
+            "directional_implication": "mixed",
+            "event_id": "EVT-REAL-NKE-2024-06-27",
+            "expected_observables": [
+              "Follow-up discussion should emphasize margin expansion and EPS resilience over demand weakness.",
+              "The stock reaction should be less negative if margin resilience dominates investor interpretation.",
+              "The narrative should weaken if later results show revenue declines despite margin progress."
+            ],
+            "mechanism": "Gross margin and EPS evidence supported operational resilience, but the large negative price reaction and guidance reset contradicted a margin-led explanation for the abnormal move.",
+            "narrative": "A competing interpretation was that investors could look past the sales outlook because fourth-quarter EPS and gross margin were resilient.",
+            "narrative_id": "NARR-NKE-004",
+            "overall_narrative_score": 0.5133333333333334,
+            "rank": 4,
+            "scores": {
+              "contradiction_resistance": 0.04000000000000001,
+              "cross_sectional_fit": 0.036,
+              "crowding_risk_penalty": 0.017,
+              "evidence_strength": 0.11599999999999999,
+              "forward_observable_quality": 0.05,
+              "mechanism_specificity": 0.081,
+              "overall_narrative_score": 0.5133333333333334,
+              "penalty_score_normalized": 0.02666666666666667,
+              "positive_score_normalized": 0.54,
+              "source_independence": 0.081,
+              "timestamp_advantage": 0.082,
+              "unsupported_claim_penalty": 0.007000000000000001
+            },
+            "scoring_inputs": {
+              "contradiction_resistance": 0.4,
+              "cross_sectional_fit": 0.36,
+              "crowding_risk": 0.34,
+              "evidence_strength": 0.58,
+              "forward_observable_quality": 0.5,
+              "mechanism_specificity": 0.54,
+              "source_independence": 0.54,
+              "timestamp_advantage": 0.82,
+              "unsupported_claim_penalty": 0.14
+            },
+            "supporting_evidence": [
+              {
+                "availability_status": "allowed",
+                "claim": "Nasdaq carried the Business Wire version of NIKE fiscal 2024 fourth-quarter results at 4:15 p.m. EDT, including the revenue decline, NIKE Direct decline, gross-margin increase, EPS result, and management comments about updating fiscal 2025 outlook.",
+                "claim_extracted": "Nasdaq carried the Business Wire version of NIKE fiscal 2024 fourth-quarter results at 4:15 p.m. EDT, including the revenue decline, NIKE Direct decline, gross-margin increase, EPS result, and management comments about updating fiscal 2025 outlook.",
+                "content_hash": "sha256:ccb011240c3829afa29ca8759465aa0a03a351528b7779422bb879aa1d8ab057",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.18,
+                "independence": 0.56,
+                "independence_cluster_id": "issuer-release-mirrors",
+                "originality_score": 0.72,
+                "published_at": "2024-06-27T20:15:00+00:00",
+                "publisher": "Nasdaq / Business Wire",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "NKE-NASDAQ-001",
+                "source_type": "company_release",
+                "support_strength": 0.74,
+                "supported_narrative_ids": [
+                  "NARR-NKE-001",
+                  "NARR-NKE-002",
+                  "NARR-NKE-004"
+                ],
+                "title": "NIKE, Inc. Reports Fiscal 2024 Fourth Quarter and Full Year Results",
+                "url": "https://www.nasdaq.com/press-release/nike-inc-reports-fiscal-2024-fourth-quarter-and-full-year-results-2024-06-27"
+              }
+            ],
+            "ticker": "NKE",
+            "time_horizon": "60 trading days",
+            "timestamp_created": "2024-06-28T10:00:00-04:00",
+            "title": "Margin and EPS resilience",
+            "validation_status": "pending"
+          }
+        ],
+        "replay_audit": {
+          "allowed_source_ids": [
+            "NKE-INVEST-001",
+            "NKE-INVEST-002",
+            "NKE-IR-001",
+            "NKE-MB-001",
+            "NKE-MKT-001",
+            "NKE-MKT-BENCH-001",
+            "NKE-NASDAQ-001",
+            "NKE-SEC-001"
+          ],
+          "blocked_evidence": [
+            {
+              "availability_status": "blocked_future",
+              "blocked_reason": "marked_blocked_future",
+              "narrative_id": "NARR-NKE-001",
+              "published_at": "2024-10-01T20:15:00+00:00",
+              "relation": "support",
+              "replay_status": "blocked_future",
+              "source_id": "NKE-IR-FUT-001",
+              "source_type": "company_release"
+            },
+            {
+              "availability_status": "blocked_future",
+              "blocked_reason": "marked_blocked_future",
+              "narrative_id": "NARR-NKE-002",
+              "published_at": "2024-10-01T20:15:00+00:00",
+              "relation": "support",
+              "replay_status": "blocked_future",
+              "source_id": "NKE-IR-FUT-001",
+              "source_type": "company_release"
+            },
+            {
+              "availability_status": "blocked_future",
+              "blocked_reason": "marked_blocked_future",
+              "narrative_id": "NARR-NKE-004",
+              "published_at": "2024-10-01T20:15:00+00:00",
+              "relation": "contradict",
+              "replay_status": "blocked_future",
+              "source_id": "NKE-IR-FUT-001",
+              "source_type": "company_release"
+            }
+          ],
+          "blocked_source_ids": [
+            "NKE-IR-FUT-001"
+          ],
+          "removed_evidence_by_narrative": {
+            "NARR-NKE-001": [
+              "NKE-IR-FUT-001"
+            ],
+            "NARR-NKE-002": [
+              "NKE-IR-FUT-001"
+            ],
+            "NARR-NKE-004": [
+              "NKE-IR-FUT-001"
+            ]
+          },
+          "replay_timestamp": "2024-06-28T10:00:00-04:00"
+        },
+        "source_clustering": {
+          "allowed_source_count": 8,
+          "average_cluster_size": 1.3333,
+          "average_derived_originality_score": 0.75,
+          "blocked_future_source_count": 1,
+          "blocked_future_source_ids": [
+            "NKE-IR-FUT-001"
+          ],
+          "cluster_count": 6,
+          "clusters": [
+            {
+              "average_fixture_originality_score": 0.77,
+              "cluster_basis": "independence_cluster_id",
+              "cluster_id": "earnings-transcript",
+              "derived_originality_score": 1.0,
+              "narrative_ids": [
+                "NARR-NKE-001",
+                "NARR-NKE-002",
+                "NARR-NKE-003",
+                "NARR-NKE-004"
+              ],
+              "publishers": [
+                "MarketBeat / Quartr"
+              ],
+              "relation_counts": {
+                "contradict": 1,
+                "support": 3
+              },
+              "representative_claim": "The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.",
+              "source_count": 1,
+              "source_ids": [
+                "NKE-MB-001"
+              ],
+              "source_types": [
+                "transcript"
+              ]
+            },
+            {
+              "average_fixture_originality_score": 0.745,
+              "cluster_basis": "independence_cluster_id",
+              "cluster_id": "financial-news",
+              "derived_originality_score": 0.5,
+              "narrative_ids": [
+                "NARR-NKE-001",
+                "NARR-NKE-003",
+                "NARR-NKE-004"
+              ],
+              "publishers": [
+                "Investopedia"
+              ],
+              "relation_counts": {
+                "contradict": 2,
+                "support": 3
+              },
+              "representative_claim": "Investopedia reported after the release that NIKE revenue missed analyst estimates, the company said results drove it to update fiscal 2025 guidance, and shares fell in extended trading despite net income and EPS coming in above year-earlier levels and estimates.",
+              "source_count": 2,
+              "source_ids": [
+                "NKE-INVEST-001",
+                "NKE-INVEST-002"
+              ],
+              "source_types": [
+                "news"
+              ]
+            },
+            {
+              "average_fixture_originality_score": 0.86,
+              "cluster_basis": "independence_cluster_id",
+              "cluster_id": "issuer-release",
+              "derived_originality_score": 1.0,
+              "narrative_ids": [
+                "NARR-NKE-001",
+                "NARR-NKE-002",
+                "NARR-NKE-004"
+              ],
+              "publishers": [
+                "NIKE Investor Relations"
+              ],
+              "relation_counts": {
+                "contradict": 1,
+                "support": 2
+              },
+              "representative_claim": "NIKE reported fiscal 2024 fourth-quarter revenue of $12.6 billion, down 2% reported, NIKE Direct revenue down 8% reported, gross margin up 110 basis points to 44.7%, diluted EPS of $0.99, and management said fourth-quarter challenges led it to update the fiscal 2025 outlook.",
+              "source_count": 1,
+              "source_ids": [
+                "NKE-IR-001"
+              ],
+              "source_types": [
+                "company_release"
+              ]
+            },
+            {
+              "average_fixture_originality_score": 0.72,
+              "cluster_basis": "independence_cluster_id",
+              "cluster_id": "issuer-release-mirrors",
+              "derived_originality_score": 1.0,
+              "narrative_ids": [
+                "NARR-NKE-001",
+                "NARR-NKE-002",
+                "NARR-NKE-004"
+              ],
+              "publishers": [
+                "Nasdaq / Business Wire"
+              ],
+              "relation_counts": {
+                "contradict": 0,
+                "support": 3
+              },
+              "representative_claim": "Nasdaq carried the Business Wire version of NIKE fiscal 2024 fourth-quarter results at 4:15 p.m. EDT, including the revenue decline, NIKE Direct decline, gross-margin increase, EPS result, and management comments about updating fiscal 2025 outlook.",
+              "source_count": 1,
+              "source_ids": [
+                "NKE-NASDAQ-001"
+              ],
+              "source_types": [
+                "company_release"
+              ]
+            },
+            {
+              "average_fixture_originality_score": 0.8,
+              "cluster_basis": "independence_cluster_id",
+              "cluster_id": "market-bars",
+              "derived_originality_score": 0.5,
+              "narrative_ids": [
+                "NARR-NKE-001",
+                "NARR-NKE-002",
+                "NARR-NKE-003",
+                "NARR-NKE-004"
+              ],
+              "publishers": [
+                "Frozen market bars"
+              ],
+              "relation_counts": {
+                "contradict": 1,
+                "support": 4
+              },
+              "representative_claim": "Frozen market bars use NIKE close-to-close prices around the event: $90.52 on June 27, 2024 and $72.44 on June 28, 2024, implying a -19.97% event move before peer adjustment.",
+              "source_count": 2,
+              "source_ids": [
+                "NKE-MKT-001",
+                "NKE-MKT-BENCH-001"
+              ],
+              "source_types": [
+                "market_data"
+              ]
+            },
+            {
+              "average_fixture_originality_score": 0.66,
+              "cluster_basis": "independence_cluster_id",
+              "cluster_id": "sec-edgar",
+              "derived_originality_score": 1.0,
+              "narrative_ids": [
+                "NARR-NKE-001",
+                "NARR-NKE-002"
+              ],
+              "publishers": [
+                "SEC EDGAR"
+              ],
+              "relation_counts": {
+                "contradict": 0,
+                "support": 2
+              },
+              "representative_claim": "NIKE filed a Form 8-K on June 27, 2024 stating it issued a press release disclosing financial results for the fiscal quarter and year ended May 31, 2024 and furnished the release as Exhibit 99.1.",
+              "source_count": 1,
+              "source_ids": [
+                "NKE-SEC-001"
+              ],
+              "source_types": [
+                "filing"
+              ]
+            }
+          ],
+          "duplicate_cluster_count": 2
+        },
+        "source_reliability": {
+          "by_publisher": [
+            {
+              "allowed_source_count": 2,
+              "average_evidence_quality": 0.8,
+              "average_independence": 0.84,
+              "average_originality_score": 0.8,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "Frozen market bars",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NKE-MKT-001",
+                "NKE-MKT-BENCH-001"
+              ]
+            },
+            {
+              "allowed_source_count": 2,
+              "average_evidence_quality": 0.74,
+              "average_independence": 0.74,
+              "average_originality_score": 0.745,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "Investopedia",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NKE-INVEST-001",
+                "NKE-INVEST-002"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.78,
+              "average_independence": 0.7,
+              "average_originality_score": 0.77,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "MarketBeat / Quartr",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NKE-MB-001"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.86,
+              "average_independence": 0.58,
+              "average_originality_score": 0.86,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "NIKE Investor Relations",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NKE-IR-001"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.78,
+              "average_independence": 0.56,
+              "average_originality_score": 0.72,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "Nasdaq / Business Wire",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NKE-NASDAQ-001"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.76,
+              "average_independence": 0.68,
+              "average_originality_score": 0.66,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "SEC EDGAR",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NKE-SEC-001"
+              ]
+            },
+            {
+              "allowed_source_count": 0,
+              "average_evidence_quality": null,
+              "average_independence": null,
+              "average_originality_score": null,
+              "blocked_future_count": 1,
+              "blocked_future_source_ids": [
+                "NKE-IR-FUT-001"
+              ],
+              "group": "publisher",
+              "key": "unknown",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NKE-IR-FUT-001"
+              ]
+            }
+          ],
+          "by_source_type": [
+            {
+              "allowed_source_count": 2,
+              "average_evidence_quality": 0.82,
+              "average_independence": 0.57,
+              "average_originality_score": 0.79,
+              "blocked_future_count": 1,
+              "blocked_future_source_ids": [
+                "NKE-IR-FUT-001"
+              ],
+              "group": "source_type",
+              "key": "company_release",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NKE-IR-001",
+                "NKE-IR-FUT-001",
+                "NKE-NASDAQ-001"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.76,
+              "average_independence": 0.68,
+              "average_originality_score": 0.66,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "source_type",
+              "key": "filing",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NKE-SEC-001"
+              ]
+            },
+            {
+              "allowed_source_count": 2,
+              "average_evidence_quality": 0.8,
+              "average_independence": 0.84,
+              "average_originality_score": 0.8,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "source_type",
+              "key": "market_data",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NKE-MKT-001",
+                "NKE-MKT-BENCH-001"
+              ]
+            },
+            {
+              "allowed_source_count": 2,
+              "average_evidence_quality": 0.74,
+              "average_independence": 0.74,
+              "average_originality_score": 0.745,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "source_type",
+              "key": "news",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NKE-INVEST-001",
+                "NKE-INVEST-002"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.78,
+              "average_independence": 0.7,
+              "average_originality_score": 0.77,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "source_type",
+              "key": "transcript",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "NKE-MB-001"
+              ]
+            }
+          ],
+          "overall": {
+            "allowed_source_count": 8,
+            "average_evidence_quality": 0.7825,
+            "average_independence": 0.71,
+            "average_originality_score": 0.7625,
+            "blocked_future_count": 1,
+            "blocked_future_source_ids": [
+              "NKE-IR-FUT-001"
+            ],
+            "group": "overall",
+            "key": "all_sources",
+            "low_quality_source_count": 0,
+            "source_ids": [
+              "NKE-INVEST-001",
+              "NKE-INVEST-002",
+              "NKE-IR-001",
+              "NKE-IR-FUT-001",
+              "NKE-MB-001",
+              "NKE-MKT-001",
+              "NKE-MKT-BENCH-001",
+              "NKE-NASDAQ-001",
+              "NKE-SEC-001"
+            ]
+          }
+        }
+      },
+      "report": "# NarrativeDesk Event Report: NKE\n\n> Research support output. Not investment advice.\n\n## Data Note\n\nThis report is generated from a real-curated replay bundle. Treat it as research support only; public use requires curator review of source URLs, publication timestamps, raw document hashes, and validation status.\n\n## Event\n\n- Event ID: `EVT-REAL-NKE-2024-06-27`\n- Company: NIKE, Inc. (`NKE`)\n- Timestamp lock: `2024-06-28T10:00:00-04:00`\n- Event type: earnings/guidance\n- Daily return: -20.0%\n- Abnormal return: -19.6%\n- Volume ratio: n/a\n- Sector ETF return: -0.4%\n- Peer median return: -0.4%\n\nReal-curated NIKE fiscal 2024 fourth-quarter earnings and fiscal 2025 guidance replay with timestamped citations, replay-locked evidence, and held-out validation. Research and education only; not investment advice.\n\n## Replay Audit\n\n- Allowed sources: NKE-INVEST-001, NKE-INVEST-002, NKE-IR-001, NKE-MB-001, NKE-MKT-001, NKE-MKT-BENCH-001, NKE-NASDAQ-001, NKE-SEC-001\n- Blocked future sources: NKE-IR-FUT-001\n- Removed from `NARR-NKE-001`: NKE-IR-FUT-001\n- Removed from `NARR-NKE-002`: NKE-IR-FUT-001\n- Removed from `NARR-NKE-004`: NKE-IR-FUT-001\n\n## Source Map\n\n| Source | Status | Type | Publisher | Narratives | Relations |\n| --- | --- | --- | --- | --- | --- |\n| NKE-INVEST-001 | allowed | news | Investopedia | NARR-NKE-001, NARR-NKE-004 | contradict, support |\n| NKE-INVEST-002 | allowed | news | Investopedia | NARR-NKE-001, NARR-NKE-003, NARR-NKE-004 | contradict, support |\n| NKE-IR-001 | allowed | company_release | NIKE Investor Relations | NARR-NKE-001, NARR-NKE-002, NARR-NKE-004 | contradict, support |\n| NKE-MB-001 | allowed | transcript | MarketBeat / Quartr | NARR-NKE-001, NARR-NKE-002, NARR-NKE-003, NARR-NKE-004 | contradict, support |\n| NKE-MKT-001 | allowed | market_data | Frozen market bars | NARR-NKE-001, NARR-NKE-002, NARR-NKE-004 | contradict, support |\n| NKE-MKT-BENCH-001 | allowed | market_data | Frozen market bars | NARR-NKE-001, NARR-NKE-003 | support |\n| NKE-NASDAQ-001 | allowed | company_release | Nasdaq / Business Wire | NARR-NKE-001, NARR-NKE-002, NARR-NKE-004 | support |\n| NKE-SEC-001 | allowed | filing | SEC EDGAR | NARR-NKE-001, NARR-NKE-002 | support |\n| NKE-IR-FUT-001 | blocked_future | company_release | n/a | NARR-NKE-001, NARR-NKE-002, NARR-NKE-004 | contradict, support |\n\n## Citation QA\n\n- Replay filter: pass\n- Support coverage: pass\n- Event-time integrity: pass\n- Citation QA: pass\n- Provenance-ready allowed sources: pass\n- Returned blocked sources: 0\n- Narratives with support: 4/4\n- Missing URLs: 0\n- Missing content hashes: 0\n- Low-quality evidence sources: 0\n\n## Source Reliability\n\nBlocked future sources are counted for auditability but excluded from scoring and ranking.\n- Allowed sources: 8\n- Blocked future sources: 1\n- Average evidence quality: 0.78\n- Average independence: 0.71\n- Average originality score: 0.76\n- Low-quality evidence sources: 0\n- Blocked source IDs: NKE-IR-FUT-001\n\n| Publisher | Allowed | Blocked Future | Evidence Quality | Independence | Originality |\n| --- | ---: | ---: | ---: | ---: | ---: |\n| Frozen market bars | 2 | 0 | 0.80 | 0.84 | 0.80 |\n| Investopedia | 2 | 0 | 0.74 | 0.74 | 0.74 |\n| MarketBeat / Quartr | 1 | 0 | 0.78 | 0.70 | 0.77 |\n| NIKE Investor Relations | 1 | 0 | 0.86 | 0.58 | 0.86 |\n| Nasdaq / Business Wire | 1 | 0 | 0.78 | 0.56 | 0.72 |\n| SEC EDGAR | 1 | 0 | 0.76 | 0.68 | 0.66 |\n| unknown | 0 | 1 | n/a | n/a | n/a |\n\n## Source Clustering\n\nClusters use replay-safe allowed evidence only. Future-dated source text stays quarantined.\n- Allowed sources clustered: 8\n- Blocked future sources excluded: 1\n- Cluster count: 6\n- Duplicate clusters: 2\n- Average derived originality: 0.75\n\n| Cluster | Basis | Sources | Publishers | Derived Originality | Representative Claim |\n| --- | --- | --- | --- | ---: | --- |\n| earnings-transcript | independence_cluster_id | NKE-MB-001 | MarketBeat / Quartr | 1.00 | The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook. |\n| financial-news | independence_cluster_id | NKE-INVEST-001, NKE-INVEST-002 | Investopedia | 0.50 | Investopedia reported after the release that NIKE revenue missed analyst estimates, the company said results drove it to update fiscal 2025 guidance, and shares fell in extended trading despite net income and EPS coming in above year-earlier levels and estimates. |\n| issuer-release | independence_cluster_id | NKE-IR-001 | NIKE Investor Relations | 1.00 | NIKE reported fiscal 2024 fourth-quarter revenue of $12.6 billion, down 2% reported, NIKE Direct revenue down 8% reported, gross margin up 110 basis points to 44.7%, diluted EPS of $0.99, and management said fourth-quarter challenges led it to update the fiscal 2025 outlook. |\n| issuer-release-mirrors | independence_cluster_id | NKE-NASDAQ-001 | Nasdaq / Business Wire | 1.00 | Nasdaq carried the Business Wire version of NIKE fiscal 2024 fourth-quarter results at 4:15 p.m. EDT, including the revenue decline, NIKE Direct decline, gross-margin increase, EPS result, and management comments about updating fiscal 2025 outlook. |\n| market-bars | independence_cluster_id | NKE-MKT-001, NKE-MKT-BENCH-001 | Frozen market bars | 0.50 | Frozen market bars use NIKE close-to-close prices around the event: $90.52 on June 27, 2024 and $72.44 on June 28, 2024, implying a -19.97% event move before peer adjustment. |\n| sec-edgar | independence_cluster_id | NKE-SEC-001 | SEC EDGAR | 1.00 | NIKE filed a Form 8-K on June 27, 2024 stating it issued a press release disclosing financial results for the fiscal quarter and year ended May 31, 2024 and furnished the release as Exhibit 99.1. |\n\n## Narrative Verification Ranking\n\n| Rank | Narrative | Direction | Score | Horizon |\n| ---: | --- | --- | ---: | --- |\n| 1 | Fiscal 2025 demand reset | bearish | 0.80 | 60 trading days |\n| 2 | Direct channel reset | bearish | 0.72 | 60 trading days |\n| 3 | China and consumer softness | bearish | 0.61 | 60 trading days |\n| 4 | Margin and EPS resilience | mixed | 0.51 | 60 trading days |\n\n## #1: Fiscal 2025 demand reset\n\nInvestors repriced NIKE after the company lowered the fiscal 2025 revenue outlook, with the selloff centered on weaker forward demand rather than the reported quarter alone.\n\nMechanism: The event-time evidence showed a revenue miss, explicit fiscal 2025 outlook reset, a first-quarter decline guide, and weak digital/lifestyle demand. That created a direct mechanism from lower future revenue expectations to the abnormal stock move.\n\nExpected observables:\n- Later reported results should show revenue pressure extending beyond the fourth-quarter release.\n- Follow-up commentary should keep turnaround timing, demand, or guidance credibility central.\n- The explanation should survive even if gross margin and EPS were stronger than the headline revenue story.\n\nSupporting evidence:\n- `NKE-IR-001` (company_release): NIKE reported fiscal 2024 fourth-quarter revenue of $12.6 billion, down 2% reported, NIKE Direct revenue down 8% reported, gross margin up 110 basis points to 44.7%, diluted EPS of $0.99, and management said fourth-quarter challenges led it to update the fiscal 2025 outlook.\n- `NKE-SEC-001` (filing): NIKE filed a Form 8-K on June 27, 2024 stating it issued a press release disclosing financial results for the fiscal quarter and year ended May 31, 2024 and furnished the release as Exhibit 99.1.\n- `NKE-NASDAQ-001` (company_release): Nasdaq carried the Business Wire version of NIKE fiscal 2024 fourth-quarter results at 4:15 p.m. EDT, including the revenue decline, NIKE Direct decline, gross-margin increase, EPS result, and management comments about updating fiscal 2025 outlook.\n- `NKE-INVEST-001` (news): Investopedia reported after the release that NIKE revenue missed analyst estimates, the company said results drove it to update fiscal 2025 guidance, and shares fell in extended trading despite net income and EPS coming in above year-earlier levels and estimates.\n- `NKE-INVEST-002` (news): Investopedia reported before the market open on June 28, 2024 that NIKE shares were down about 15% premarket after lower-than-expected quarterly revenue and lowered fiscal 2025 sales guidance, including management commentary that first-quarter revenue was expected to decline approximately 10%.\n- `NKE-MB-001` (transcript): The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.\n- `NKE-MKT-001` (market_data): Frozen market bars use NIKE close-to-close prices around the event: $90.52 on June 27, 2024 and $72.44 on June 28, 2024, implying a -19.97% event move before peer adjustment.\n- `NKE-MKT-BENCH-001` (market_data): Frozen benchmark bars use SPY close-to-close prices around the NIKE event: $538.15 on June 27, 2024 and $536.03 on June 28, 2024, making NIKE underperform the broad-market benchmark on the event day.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.86\n- mechanism_specificity: 0.87\n- source_independence: 0.72\n- cross_sectional_fit: 0.82\n- contradiction_resistance: 0.78\n- timestamp_advantage: 0.90\n- forward_observable_quality: 0.84\n- crowding_risk: 0.38\n- unsupported_claim_penalty: 0.04\n\n## #2: Direct channel reset\n\nThe move could be explained by investors reassessing NIKE Direct and digital channel execution after the company reported declines in Direct, digital, and key lifestyle franchises.\n\nMechanism: Direct and digital weakness made the channel strategy look less durable, but the explanation is narrower than the full fiscal 2025 demand reset because it does not fully explain the guide-down and broad revenue repricing.\n\nExpected observables:\n- Future results should keep NIKE Direct and digital revenue declines central.\n- Management should continue discussing franchise management or channel rebalancing.\n- The narrative should weaken if total revenue pressure, not channel mix alone, dominates validation evidence.\n\nSupporting evidence:\n- `NKE-IR-001` (company_release): NIKE reported fiscal 2024 fourth-quarter revenue of $12.6 billion, down 2% reported, NIKE Direct revenue down 8% reported, gross margin up 110 basis points to 44.7%, diluted EPS of $0.99, and management said fourth-quarter challenges led it to update the fiscal 2025 outlook.\n- `NKE-SEC-001` (filing): NIKE filed a Form 8-K on June 27, 2024 stating it issued a press release disclosing financial results for the fiscal quarter and year ended May 31, 2024 and furnished the release as Exhibit 99.1.\n- `NKE-NASDAQ-001` (company_release): Nasdaq carried the Business Wire version of NIKE fiscal 2024 fourth-quarter results at 4:15 p.m. EDT, including the revenue decline, NIKE Direct decline, gross-margin increase, EPS result, and management comments about updating fiscal 2025 outlook.\n- `NKE-MB-001` (transcript): The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.\n- `NKE-MKT-001` (market_data): Frozen market bars use NIKE close-to-close prices around the event: $90.52 on June 27, 2024 and $72.44 on June 28, 2024, implying a -19.97% event move before peer adjustment.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.78\n- mechanism_specificity: 0.79\n- source_independence: 0.66\n- cross_sectional_fit: 0.70\n- contradiction_resistance: 0.68\n- timestamp_advantage: 0.86\n- forward_observable_quality: 0.74\n- crowding_risk: 0.44\n- unsupported_claim_penalty: 0.06\n\n## #3: China and consumer softness\n\nThe selloff may have reflected macro and geographic concerns, especially weaker Greater China and uneven consumer trends across discretionary markets.\n\nMechanism: China and consumer caution are plausible contributors, but they are less specific to the observed abnormal move than the company-level fiscal 2025 revenue reset and channel details available before the lock.\n\nExpected observables:\n- Future commentary should cite Greater China or macro uncertainty as the main driver.\n- Peer consumer discretionary names should show related pressure if the explanation is mostly macro.\n- The narrative should weaken if company-specific guide-down evidence explains more of the move.\n\nSupporting evidence:\n- `NKE-INVEST-002` (news): Investopedia reported before the market open on June 28, 2024 that NIKE shares were down about 15% premarket after lower-than-expected quarterly revenue and lowered fiscal 2025 sales guidance, including management commentary that first-quarter revenue was expected to decline approximately 10%.\n- `NKE-MB-001` (transcript): The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.\n- `NKE-MKT-BENCH-001` (market_data): Frozen benchmark bars use SPY close-to-close prices around the NIKE event: $538.15 on June 27, 2024 and $536.03 on June 28, 2024, making NIKE underperform the broad-market benchmark on the event day.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.66\n- mechanism_specificity: 0.62\n- source_independence: 0.64\n- cross_sectional_fit: 0.56\n- contradiction_resistance: 0.60\n- timestamp_advantage: 0.84\n- forward_observable_quality: 0.62\n- crowding_risk: 0.50\n- unsupported_claim_penalty: 0.10\n\n## #4: Margin and EPS resilience\n\nA competing interpretation was that investors could look past the sales outlook because fourth-quarter EPS and gross margin were resilient.\n\nMechanism: Gross margin and EPS evidence supported operational resilience, but the large negative price reaction and guidance reset contradicted a margin-led explanation for the abnormal move.\n\nExpected observables:\n- Follow-up discussion should emphasize margin expansion and EPS resilience over demand weakness.\n- The stock reaction should be less negative if margin resilience dominates investor interpretation.\n- The narrative should weaken if later results show revenue declines despite margin progress.\n\nSupporting evidence:\n- `NKE-NASDAQ-001` (company_release): Nasdaq carried the Business Wire version of NIKE fiscal 2024 fourth-quarter results at 4:15 p.m. EDT, including the revenue decline, NIKE Direct decline, gross-margin increase, EPS result, and management comments about updating fiscal 2025 outlook.\n\nContradicting evidence:\n- `NKE-IR-001` (company_release): NIKE reported fiscal 2024 fourth-quarter revenue of $12.6 billion, down 2% reported, NIKE Direct revenue down 8% reported, gross margin up 110 basis points to 44.7%, diluted EPS of $0.99, and management said fourth-quarter challenges led it to update the fiscal 2025 outlook.\n- `NKE-INVEST-001` (news): Investopedia reported after the release that NIKE revenue missed analyst estimates, the company said results drove it to update fiscal 2025 guidance, and shares fell in extended trading despite net income and EPS coming in above year-earlier levels and estimates.\n- `NKE-INVEST-002` (news): Investopedia reported before the market open on June 28, 2024 that NIKE shares were down about 15% premarket after lower-than-expected quarterly revenue and lowered fiscal 2025 sales guidance, including management commentary that first-quarter revenue was expected to decline approximately 10%.\n- `NKE-MB-001` (transcript): The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.\n- `NKE-MKT-001` (market_data): Frozen market bars use NIKE close-to-close prices around the event: $90.52 on June 27, 2024 and $72.44 on June 28, 2024, implying a -19.97% event move before peer adjustment.\n\nScore components:\n- evidence_strength: 0.58\n- mechanism_specificity: 0.54\n- source_independence: 0.54\n- cross_sectional_fit: 0.36\n- contradiction_resistance: 0.40\n- timestamp_advantage: 0.82\n- forward_observable_quality: 0.50\n- crowding_risk: 0.34\n- unsupported_claim_penalty: 0.14\n\n## Scoring Weights\n\n- evidence_strength: 0.20\n- mechanism_specificity: 0.15\n- source_independence: 0.15\n- cross_sectional_fit: 0.10\n- contradiction_resistance: 0.10\n- timestamp_advantage: 0.10\n- forward_observable_quality: 0.10\n- crowding_risk: 0.05\n- unsupported_claim_penalty: 0.05\n"
     }
   ],
   "default_case_id": "EVT-REAL-AAPL-2024-05-02"

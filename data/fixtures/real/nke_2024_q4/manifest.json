@@ -1,0 +1,58 @@
+{
+  "artifacts": [
+    {
+      "bytes": 19900,
+      "path": "source_pack.json",
+      "sha256": "e55c346e20f5711ac9debc448f2d2f667c46f4e3c17cd940e3e8b9408ea0daf9"
+    },
+    {
+      "bytes": 2892,
+      "path": "readiness.json",
+      "sha256": "27f33611842ae5e447c35022f0804ac3007f336505a1b71a32f76364c27b2751"
+    },
+    {
+      "bytes": 54436,
+      "path": "event_fixture.json",
+      "sha256": "80a34b0d9ad80f9b955f8329372ab46c84c2258ad39f741032bce3e18aacd5b4"
+    },
+    {
+      "bytes": 2193,
+      "path": "validation_fixture.json",
+      "sha256": "66c1ae5a82ae716b496335126aee4b5d9849af1c2a5d97759d66d208179456b1"
+    },
+    {
+      "bytes": 59350,
+      "path": "ledger.json",
+      "sha256": "357b3de613364a56f6e7d1c652978c011586177f7ae9f19e76f79435b894e9ff"
+    },
+    {
+      "bytes": 20219,
+      "path": "report.md",
+      "sha256": "0d899dac2c781054312747e1a52b04b026740ed8fbc931afe12afeae7c8040ef"
+    },
+    {
+      "bytes": 276,
+      "path": "case_index.json",
+      "sha256": "89fafcb84bcdf007028b967e83b34a50564dea561c9e23e71be115c16b28e7d5"
+    }
+  ],
+  "bundle_type": "narrativedesk_replay_bundle",
+  "case_id": "EVT-REAL-NKE-2024-06-27",
+  "data_provenance_mode": "real-curated",
+  "event_id": "EVT-REAL-NKE-2024-06-27",
+  "readiness_status": "ready_to_ingest",
+  "replay_integrity": {
+    "blocked_future_source_count": 1,
+    "blocked_future_source_ids": [
+      "NKE-IR-FUT-001"
+    ],
+    "future_validation_separate": true,
+    "validation_future_source_count": 1,
+    "validation_future_source_ids": [
+      "NKE-IR-FUT-001"
+    ]
+  },
+  "replay_timestamp": "2024-06-28T10:00:00-04:00",
+  "schema_version": 1,
+  "ticker": "NKE"
+}

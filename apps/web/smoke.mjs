@@ -61,12 +61,13 @@ async function main() {
     assert.match(bodyText, /AAPL/);
     assert.match(bodyText, /Apple Inc\./);
     assert.match(bodyText, /NVDA/);
+    assert.match(bodyText, /NKE/);
     assert.match(bodyText, /Real-curated replay/i);
     assert.match(bodyText, /Case library/i);
     const libraryText = await page.locator('[data-testid="case-library-stats"]').innerText();
-    assert.match(libraryText, /Real cases[\s\S]*2/i);
-    assert.match(libraryText, /Verified[\s\S]*2/i);
-    assert.match(libraryText, /Blocked future[\s\S]*3/i);
+    assert.match(libraryText, /Real cases[\s\S]*3/i);
+    assert.match(libraryText, /Verified[\s\S]*3/i);
+    assert.match(libraryText, /Blocked future[\s\S]*4/i);
     assert.match(libraryText, /Rank #1 hit[\s\S]*100\.0%/i);
     assert.match(bodyText, /Historical analogs/i);
     assert.match(bodyText, /How similar narratives validated/i);
@@ -166,6 +167,30 @@ async function main() {
     );
     const nvdaBundleIntegrityText = await page.locator('[data-testid="bundle-integrity"]').innerText();
     assert.match(nvdaBundleIntegrityText, /Blocked future[\s\S]*2/i);
+
+    await page.locator('[data-testid="case-selector"]').selectOption('EVT-REAL-NKE-2024-06-27');
+    await page.getByRole('button', { name: /^Overview$/i }).click();
+    await assert.doesNotReject(async () => (
+      page.getByRole('heading', { name: 'NIKE, Inc.' }).waitFor()
+    ));
+    const nkeOverview = await page.locator('[data-testid="event-header"]').innerText();
+    assert.match(nkeOverview, /Narrative under audit[\s\S]*Fiscal 2025 demand reset/i);
+    assert.match(nkeOverview, /Ranked #1 at the lock[\s\S]*T\+60 later supported replay rank #1/i);
+    await page.getByRole('button', { name: /^Evidence$/i }).click();
+    const nkeEvidenceText = await page.locator('body').innerText();
+    assert.match(nkeEvidenceText, /NKE-IR-FUT-001/);
+    assert.match(nkeEvidenceText, /Blocked from ranking/i);
+    await page.getByRole('button', { name: /^Report$/i }).click();
+    assert.equal(
+      await page.locator('[data-testid="ledger-export"]').getAttribute('download'),
+      'evt-real-nke-2024-06-27-ledger.json',
+    );
+    assert.equal(
+      await page.locator('[data-testid="report-export"]').getAttribute('download'),
+      'evt-real-nke-2024-06-27-report.md',
+    );
+    const nkeBundleIntegrityText = await page.locator('[data-testid="bundle-integrity"]').innerText();
+    assert.match(nkeBundleIntegrityText, /Blocked future[\s\S]*1/i);
 
     await page.setViewportSize({ width: 390, height: 1100 });
     await page.goto(baseUrl, { waitUntil: 'networkidle' });
