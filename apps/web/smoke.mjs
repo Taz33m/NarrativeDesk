@@ -63,6 +63,11 @@ async function main() {
     assert.match(bodyText, /NVDA/);
     assert.match(bodyText, /Real-curated replay/i);
     assert.match(bodyText, /Case library/i);
+    const libraryText = await page.locator('[data-testid="case-library-stats"]').innerText();
+    assert.match(libraryText, /Real cases[\s\S]*2/i);
+    assert.match(libraryText, /Verified[\s\S]*2/i);
+    assert.match(libraryText, /Blocked future[\s\S]*3/i);
+    assert.match(libraryText, /Rank #1 hit[\s\S]*100\.0%/i);
     assert.match(bodyText, /Historical analogs/i);
     assert.match(bodyText, /How similar narratives validated/i);
     assert.match(bodyText, /Similarity/i);

@@ -1294,7 +1294,7 @@ h1 {
 .case-selector-panel {
   display: grid;
   justify-content: end;
-  gap: 16px;
+  gap: 12px;
   align-items: end;
   margin-bottom: 0;
   border: 1px solid var(--line);
@@ -1325,6 +1325,31 @@ h1 {
   color: var(--ink);
   padding: 9px 10px;
   font: inherit;
+}
+
+.case-library-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.case-library-stats span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  background: rgba(5, 5, 5, 0.78);
+  color: var(--faint);
+  padding: 8px 9px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.case-library-stats strong {
+  color: var(--ink);
+  font-size: 1.02rem;
 }
 
 .panel-header {
