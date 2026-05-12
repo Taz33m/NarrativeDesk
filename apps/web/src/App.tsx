@@ -3,6 +3,7 @@ import type {
   BenchmarkAggregate,
   BundleIntegritySummary,
   CasesPayload,
+  CorpusQualitySummary,
   EvidenceItem,
   EvaluationSummary,
   Ledger,
@@ -599,7 +600,12 @@ function App() {
         <>
           <CaseContextBar ledger={ledger} topNarrative={topNarrative ?? selectedNarrative} evaluation={evaluation} validation={validation} />
           <div className="mode-grid mode-grid--benchmark">
-            {validationCases?.aggregate ? <BenchmarkCorpusPanel aggregate={validationCases.aggregate} /> : null}
+            {validationCases?.aggregate ? (
+              <BenchmarkCorpusPanel
+                aggregate={validationCases.aggregate}
+                corpusQuality={cases?.corpus_quality}
+              />
+            ) : null}
             <HistoricalAnalogsPanel
               analogs={historicalAnalogs}
               baseNarrative={topNarrative ?? selectedNarrative}
@@ -640,6 +646,9 @@ function CaseLibraryStats({
     0,
   ) ?? 0;
   const topRankHit = validationCases?.aggregate?.top_ranked_validated_rate;
+  const corpusQuality = cases?.corpus_quality;
+  const eventTypeCount = corpusQuality?.metrics.unique_event_type_count
+    ?? new Set(cases?.cases.map((caseItem) => caseItem.ledger.event.event_type)).size;
 
   return (
     <div className="case-library-stats" data-testid="case-library-stats">
@@ -658,6 +667,14 @@ function CaseLibraryStats({
       <span>
         Rank #1 hit
         <strong>{pct(topRankHit)}</strong>
+      </span>
+      <span>
+        Event types
+        <strong>{eventTypeCount}</strong>
+      </span>
+      <span>
+        Corpus gate
+        <strong>{corpusQuality?.ok ? 'pass' : 'check'}</strong>
       </span>
     </div>
   );
@@ -1544,7 +1561,13 @@ function BundleIntegrityPanel({
   );
 }
 
-function BenchmarkCorpusPanel({ aggregate }: { aggregate: BenchmarkAggregate }) {
+function BenchmarkCorpusPanel({
+  aggregate,
+  corpusQuality,
+}: {
+  aggregate: BenchmarkAggregate;
+  corpusQuality?: CorpusQualitySummary;
+}) {
   const primaryMetrics = [
     ['Cases', `${aggregate.evaluated_case_count}/${aggregate.case_count}`],
     ['Recall@3', pct(aggregate.narrative_recall_at_3_rate)],
@@ -1567,6 +1590,15 @@ function BenchmarkCorpusPanel({ aggregate }: { aggregate: BenchmarkAggregate }) 
     ['Dup clusters', String(aggregate.source_duplicate_cluster_count ?? 0)],
     ['Unsupported avg', score(aggregate.unsupported_claim_penalty_avg)],
   ];
+  const qualityMetrics = corpusQuality ? [
+    ['Corpus gate', corpusQuality.ok ? 'pass' : 'check'],
+    ['Status', humanize(corpusQuality.status)],
+    ['Tickers', String(corpusQuality.metrics.unique_ticker_count)],
+    ['Event types', String(corpusQuality.metrics.unique_event_type_count)],
+    ['Verified cases', `${corpusQuality.metrics.evaluated_case_count}/${corpusQuality.metrics.case_count}`],
+    ['Blocked future', String(corpusQuality.metrics.blocked_future_source_count)],
+  ] : [];
+  const eventTypes = corpusQuality?.metrics.event_types ?? [];
 
   return (
     <section className="panel benchmark-corpus" data-testid="benchmark-corpus">
@@ -1596,10 +1628,22 @@ function BenchmarkCorpusPanel({ aggregate }: { aggregate: BenchmarkAggregate }) 
               </p>
             ))}
           </section>
+          {corpusQuality ? (
+            <section className="benchmark-stack benchmark-stack--corpus" data-testid="corpus-quality-summary">
+              <h3>Public corpus gate</h3>
+              {qualityMetrics.map(([label, value]) => (
+                <p key={label}>
+                  <span>{label}</span>
+                  <strong>{value}</strong>
+                </p>
+              ))}
+            </section>
+          ) : null}
         </div>
       </div>
       <p className="panel-note">
         Corpus gaps: {aggregate.missing_url_count ?? 0} missing URLs | {aggregate.missing_content_hash_count ?? 0} missing content hashes | {aggregate.low_quality_evidence_count ?? 0} low-quality sources
+        {eventTypes.length ? ` | event types: ${eventTypes.join(', ')}` : ''}
       </p>
     </section>
   );

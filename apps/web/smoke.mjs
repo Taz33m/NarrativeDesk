@@ -70,6 +70,8 @@ async function main() {
     assert.match(libraryText, /Verified[\s\S]*4/i);
     assert.match(libraryText, /Blocked future[\s\S]*6/i);
     assert.match(libraryText, /Rank #1 hit[\s\S]*100\.0%/i);
+    assert.match(libraryText, /Event types[\s\S]*2/i);
+    assert.match(libraryText, /Corpus gate[\s\S]*pass/i);
     assert.match(bodyText, /Historical analogs/i);
     assert.match(bodyText, /How similar narratives validated/i);
     assert.match(bodyText, /Similarity/i);
@@ -110,6 +112,10 @@ async function main() {
     await page.getByRole('button', { name: /^Benchmark$/i }).click();
     const benchmarkText = await page.locator('body').innerText();
     assert.match(benchmarkText, /Benchmark corpus/i);
+    assert.match(benchmarkText, /Public corpus gate/i);
+    assert.match(benchmarkText, /Serious Corpus Ready/i);
+    assert.match(benchmarkText, /Event types[\s\S]*2/i);
+    assert.match(benchmarkText, /earnings\/guidance, operational\/product incident/i);
     assert.match(benchmarkText, /Historical analogs/i);
     assert.match(benchmarkText, /Case-index summary/i);
     assert.match(benchmarkText, /Source reliability/i);

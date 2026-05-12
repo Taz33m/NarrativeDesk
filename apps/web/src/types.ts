@@ -234,9 +234,46 @@ export interface CaseBundle {
   bundle_integrity?: BundleIntegritySummary;
 }
 
+export interface CorpusQualityCheck {
+  ok: boolean;
+  actual?: number;
+  minimum?: number;
+  tickers?: string[];
+  event_types?: string[];
+  failed_case_ids?: string[];
+  counts_by_case?: Record<string, number>;
+  errors?: string[];
+  missing_url_count?: number;
+  missing_content_hash_count?: number;
+  low_quality_evidence_count?: number;
+  top_ranked_validated_rate?: number | null;
+  narrativedesk_tournament_validated_rate?: number | null;
+  headline_baseline_validated_rate?: number | null;
+}
+
+export interface CorpusQualitySummary {
+  ok: boolean;
+  status: string;
+  metrics: {
+    case_count: number;
+    unique_ticker_count: number;
+    unique_event_type_count: number;
+    tickers: string[];
+    event_types: string[];
+    blocked_future_source_count: number;
+    evaluated_case_count: number;
+    top_ranked_validated_rate: number | null;
+    headline_baseline_validated_rate: number | null;
+    narrativedesk_tournament_validated_rate: number | null;
+  };
+  checks: Record<string, CorpusQualityCheck>;
+  next_action: string;
+}
+
 export interface CasesPayload {
   default_case_id: string;
   cases: CaseBundle[];
+  corpus_quality?: CorpusQualitySummary;
 }
 
 export interface ValidationCaseBundle {

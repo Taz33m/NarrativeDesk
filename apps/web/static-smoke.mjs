@@ -30,6 +30,15 @@ const evaluations = JSON.parse(await readFile(resolve('dist/demo/evaluations.jso
 assert.equal(cases.default_case_id, 'EVT-REAL-AAPL-2024-05-02');
 assert.equal(cases.cases.length, 4);
 assert.equal(cases.aggregate, undefined);
+assert.equal(cases.corpus_quality.ok, true);
+assert.equal(cases.corpus_quality.status, 'serious_corpus_ready');
+assert.equal(cases.corpus_quality.metrics.case_count, 4);
+assert.equal(cases.corpus_quality.metrics.unique_ticker_count, 4);
+assert.equal(cases.corpus_quality.metrics.unique_event_type_count, 2);
+assert.deepEqual(cases.corpus_quality.metrics.event_types, ['earnings/guidance', 'operational/product incident']);
+assert.equal(cases.corpus_quality.checks.unique_event_type_breadth.ok, true);
+assert.equal(cases.corpus_quality.checks.provenance_clean.missing_url_count, 0);
+assert.equal(cases.corpus_quality.checks.baseline_separation.narrativedesk_tournament_validated_rate, 1);
 assert.equal(cases.cases[0].validation, undefined);
 assert.equal(cases.cases[0].evaluation, undefined);
 assert.equal(cases.cases[1].validation, undefined);

@@ -1728,6 +1728,10 @@ h1 {
   padding: 10px;
 }
 
+.benchmark-stack--corpus {
+  grid-column: 1 / -1;
+}
+
 .benchmark-stack h3 {
   margin-bottom: 8px;
   color: var(--ink);
