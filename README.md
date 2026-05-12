@@ -6,7 +6,7 @@ It is not the AI that tells people what to think about a stock. It is the audit 
 
 ## What the app does
 
-The public browser workbench now opens real-curated replay cases for AAPL Q2 2024, NVIDIA Q1 fiscal 2025, and NIKE fiscal 2024 Q4 earnings/guidance events. Each case uses timestamped source provenance, replay-locked evidence, blocked future validation evidence, deterministic ranking, and bundle verification. NarrativeDesk ranks the selected explanation above competing narratives using only evidence available at the replay lock.
+The public browser workbench now opens real-curated replay cases for AAPL Q2 2024, NVIDIA Q1 fiscal 2025, NIKE fiscal 2024 Q4 earnings/guidance, and CrowdStrike's July 2024 operational outage. Each case uses timestamped source provenance, replay-locked evidence, blocked future validation evidence, deterministic ranking, and bundle verification. NarrativeDesk ranks the selected explanation above competing narratives using only evidence available at the replay lock.
 
 The browser workbench shows:
 
@@ -33,7 +33,7 @@ The public shell uses frozen real-curated replay bundles, not live market data a
 4. Inspect the audit: future source `SEC-027` is quarantined and removed from replay scoring.
 5. Compare the verification bracket: capital return reset ranks above Services mix resilience, hardware demand pressure, and Greater China pressure.
 6. Open the evidence inspector: sources include frozen market bars, SEC EDGAR, MacRumors, and Nasdaq / Business Wire.
-7. Switch to NVDA or NKE from the case selector to compare another real-curated replay with the same anti-leakage gates.
+7. Switch to NVDA, NKE, or CRWD from the case selector to compare another real-curated replay with the same anti-leakage gates.
 8. Read expected observables: each narrative makes falsifiable future claims.
 9. Reveal validation: held-out future evidence supports the rank #1 narrative after the replay lock.
 10. Export the Markdown report or ledger JSON.
@@ -359,7 +359,7 @@ Run the browser smoke test:
 npm run web:smoke
 ```
 
-Check that the registered public corpus clears the stricter product-quality gate:
+Check that the registered public corpus clears the stricter product-quality gate. The gate requires verified real-curated bundles, ticker breadth, at least two event types, blocked future evidence per case, clean provenance, and replay rank #1 validation:
 
 ```bash
 npm run public-corpus:quality

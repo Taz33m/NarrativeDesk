@@ -3397,6 +3397,1165 @@
         }
       },
       "report": "# NarrativeDesk Event Report: NKE\n\n> Research support output. Not investment advice.\n\n## Data Note\n\nThis report is generated from a real-curated replay bundle. Treat it as research support only; public use requires curator review of source URLs, publication timestamps, raw document hashes, and validation status.\n\n## Event\n\n- Event ID: `EVT-REAL-NKE-2024-06-27`\n- Company: NIKE, Inc. (`NKE`)\n- Timestamp lock: `2024-06-28T10:00:00-04:00`\n- Event type: earnings/guidance\n- Daily return: -20.0%\n- Abnormal return: -19.6%\n- Volume ratio: n/a\n- Sector ETF return: -0.4%\n- Peer median return: -0.4%\n\nReal-curated NIKE fiscal 2024 fourth-quarter earnings and fiscal 2025 guidance replay with timestamped citations, replay-locked evidence, and held-out validation. Research and education only; not investment advice.\n\n## Replay Audit\n\n- Allowed sources: NKE-INVEST-001, NKE-INVEST-002, NKE-IR-001, NKE-MB-001, NKE-MKT-001, NKE-MKT-BENCH-001, NKE-NASDAQ-001, NKE-SEC-001\n- Blocked future sources: NKE-IR-FUT-001\n- Removed from `NARR-NKE-001`: NKE-IR-FUT-001\n- Removed from `NARR-NKE-002`: NKE-IR-FUT-001\n- Removed from `NARR-NKE-004`: NKE-IR-FUT-001\n\n## Source Map\n\n| Source | Status | Type | Publisher | Narratives | Relations |\n| --- | --- | --- | --- | --- | --- |\n| NKE-INVEST-001 | allowed | news | Investopedia | NARR-NKE-001, NARR-NKE-004 | contradict, support |\n| NKE-INVEST-002 | allowed | news | Investopedia | NARR-NKE-001, NARR-NKE-003, NARR-NKE-004 | contradict, support |\n| NKE-IR-001 | allowed | company_release | NIKE Investor Relations | NARR-NKE-001, NARR-NKE-002, NARR-NKE-004 | contradict, support |\n| NKE-MB-001 | allowed | transcript | MarketBeat / Quartr | NARR-NKE-001, NARR-NKE-002, NARR-NKE-003, NARR-NKE-004 | contradict, support |\n| NKE-MKT-001 | allowed | market_data | Frozen market bars | NARR-NKE-001, NARR-NKE-002, NARR-NKE-004 | contradict, support |\n| NKE-MKT-BENCH-001 | allowed | market_data | Frozen market bars | NARR-NKE-001, NARR-NKE-003 | support |\n| NKE-NASDAQ-001 | allowed | company_release | Nasdaq / Business Wire | NARR-NKE-001, NARR-NKE-002, NARR-NKE-004 | support |\n| NKE-SEC-001 | allowed | filing | SEC EDGAR | NARR-NKE-001, NARR-NKE-002 | support |\n| NKE-IR-FUT-001 | blocked_future | company_release | n/a | NARR-NKE-001, NARR-NKE-002, NARR-NKE-004 | contradict, support |\n\n## Citation QA\n\n- Replay filter: pass\n- Support coverage: pass\n- Event-time integrity: pass\n- Citation QA: pass\n- Provenance-ready allowed sources: pass\n- Returned blocked sources: 0\n- Narratives with support: 4/4\n- Missing URLs: 0\n- Missing content hashes: 0\n- Low-quality evidence sources: 0\n\n## Source Reliability\n\nBlocked future sources are counted for auditability but excluded from scoring and ranking.\n- Allowed sources: 8\n- Blocked future sources: 1\n- Average evidence quality: 0.78\n- Average independence: 0.71\n- Average originality score: 0.76\n- Low-quality evidence sources: 0\n- Blocked source IDs: NKE-IR-FUT-001\n\n| Publisher | Allowed | Blocked Future | Evidence Quality | Independence | Originality |\n| --- | ---: | ---: | ---: | ---: | ---: |\n| Frozen market bars | 2 | 0 | 0.80 | 0.84 | 0.80 |\n| Investopedia | 2 | 0 | 0.74 | 0.74 | 0.74 |\n| MarketBeat / Quartr | 1 | 0 | 0.78 | 0.70 | 0.77 |\n| NIKE Investor Relations | 1 | 0 | 0.86 | 0.58 | 0.86 |\n| Nasdaq / Business Wire | 1 | 0 | 0.78 | 0.56 | 0.72 |\n| SEC EDGAR | 1 | 0 | 0.76 | 0.68 | 0.66 |\n| unknown | 0 | 1 | n/a | n/a | n/a |\n\n## Source Clustering\n\nClusters use replay-safe allowed evidence only. Future-dated source text stays quarantined.\n- Allowed sources clustered: 8\n- Blocked future sources excluded: 1\n- Cluster count: 6\n- Duplicate clusters: 2\n- Average derived originality: 0.75\n\n| Cluster | Basis | Sources | Publishers | Derived Originality | Representative Claim |\n| --- | --- | --- | --- | ---: | --- |\n| earnings-transcript | independence_cluster_id | NKE-MB-001 | MarketBeat / Quartr | 1.00 | The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook. |\n| financial-news | independence_cluster_id | NKE-INVEST-001, NKE-INVEST-002 | Investopedia | 0.50 | Investopedia reported after the release that NIKE revenue missed analyst estimates, the company said results drove it to update fiscal 2025 guidance, and shares fell in extended trading despite net income and EPS coming in above year-earlier levels and estimates. |\n| issuer-release | independence_cluster_id | NKE-IR-001 | NIKE Investor Relations | 1.00 | NIKE reported fiscal 2024 fourth-quarter revenue of $12.6 billion, down 2% reported, NIKE Direct revenue down 8% reported, gross margin up 110 basis points to 44.7%, diluted EPS of $0.99, and management said fourth-quarter challenges led it to update the fiscal 2025 outlook. |\n| issuer-release-mirrors | independence_cluster_id | NKE-NASDAQ-001 | Nasdaq / Business Wire | 1.00 | Nasdaq carried the Business Wire version of NIKE fiscal 2024 fourth-quarter results at 4:15 p.m. EDT, including the revenue decline, NIKE Direct decline, gross-margin increase, EPS result, and management comments about updating fiscal 2025 outlook. |\n| market-bars | independence_cluster_id | NKE-MKT-001, NKE-MKT-BENCH-001 | Frozen market bars | 0.50 | Frozen market bars use NIKE close-to-close prices around the event: $90.52 on June 27, 2024 and $72.44 on June 28, 2024, implying a -19.97% event move before peer adjustment. |\n| sec-edgar | independence_cluster_id | NKE-SEC-001 | SEC EDGAR | 1.00 | NIKE filed a Form 8-K on June 27, 2024 stating it issued a press release disclosing financial results for the fiscal quarter and year ended May 31, 2024 and furnished the release as Exhibit 99.1. |\n\n## Narrative Verification Ranking\n\n| Rank | Narrative | Direction | Score | Horizon |\n| ---: | --- | --- | ---: | --- |\n| 1 | Fiscal 2025 demand reset | bearish | 0.80 | 60 trading days |\n| 2 | Direct channel reset | bearish | 0.72 | 60 trading days |\n| 3 | China and consumer softness | bearish | 0.61 | 60 trading days |\n| 4 | Margin and EPS resilience | mixed | 0.51 | 60 trading days |\n\n## #1: Fiscal 2025 demand reset\n\nInvestors repriced NIKE after the company lowered the fiscal 2025 revenue outlook, with the selloff centered on weaker forward demand rather than the reported quarter alone.\n\nMechanism: The event-time evidence showed a revenue miss, explicit fiscal 2025 outlook reset, a first-quarter decline guide, and weak digital/lifestyle demand. That created a direct mechanism from lower future revenue expectations to the abnormal stock move.\n\nExpected observables:\n- Later reported results should show revenue pressure extending beyond the fourth-quarter release.\n- Follow-up commentary should keep turnaround timing, demand, or guidance credibility central.\n- The explanation should survive even if gross margin and EPS were stronger than the headline revenue story.\n\nSupporting evidence:\n- `NKE-IR-001` (company_release): NIKE reported fiscal 2024 fourth-quarter revenue of $12.6 billion, down 2% reported, NIKE Direct revenue down 8% reported, gross margin up 110 basis points to 44.7%, diluted EPS of $0.99, and management said fourth-quarter challenges led it to update the fiscal 2025 outlook.\n- `NKE-SEC-001` (filing): NIKE filed a Form 8-K on June 27, 2024 stating it issued a press release disclosing financial results for the fiscal quarter and year ended May 31, 2024 and furnished the release as Exhibit 99.1.\n- `NKE-NASDAQ-001` (company_release): Nasdaq carried the Business Wire version of NIKE fiscal 2024 fourth-quarter results at 4:15 p.m. EDT, including the revenue decline, NIKE Direct decline, gross-margin increase, EPS result, and management comments about updating fiscal 2025 outlook.\n- `NKE-INVEST-001` (news): Investopedia reported after the release that NIKE revenue missed analyst estimates, the company said results drove it to update fiscal 2025 guidance, and shares fell in extended trading despite net income and EPS coming in above year-earlier levels and estimates.\n- `NKE-INVEST-002` (news): Investopedia reported before the market open on June 28, 2024 that NIKE shares were down about 15% premarket after lower-than-expected quarterly revenue and lowered fiscal 2025 sales guidance, including management commentary that first-quarter revenue was expected to decline approximately 10%.\n- `NKE-MB-001` (transcript): The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.\n- `NKE-MKT-001` (market_data): Frozen market bars use NIKE close-to-close prices around the event: $90.52 on June 27, 2024 and $72.44 on June 28, 2024, implying a -19.97% event move before peer adjustment.\n- `NKE-MKT-BENCH-001` (market_data): Frozen benchmark bars use SPY close-to-close prices around the NIKE event: $538.15 on June 27, 2024 and $536.03 on June 28, 2024, making NIKE underperform the broad-market benchmark on the event day.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.86\n- mechanism_specificity: 0.87\n- source_independence: 0.72\n- cross_sectional_fit: 0.82\n- contradiction_resistance: 0.78\n- timestamp_advantage: 0.90\n- forward_observable_quality: 0.84\n- crowding_risk: 0.38\n- unsupported_claim_penalty: 0.04\n\n## #2: Direct channel reset\n\nThe move could be explained by investors reassessing NIKE Direct and digital channel execution after the company reported declines in Direct, digital, and key lifestyle franchises.\n\nMechanism: Direct and digital weakness made the channel strategy look less durable, but the explanation is narrower than the full fiscal 2025 demand reset because it does not fully explain the guide-down and broad revenue repricing.\n\nExpected observables:\n- Future results should keep NIKE Direct and digital revenue declines central.\n- Management should continue discussing franchise management or channel rebalancing.\n- The narrative should weaken if total revenue pressure, not channel mix alone, dominates validation evidence.\n\nSupporting evidence:\n- `NKE-IR-001` (company_release): NIKE reported fiscal 2024 fourth-quarter revenue of $12.6 billion, down 2% reported, NIKE Direct revenue down 8% reported, gross margin up 110 basis points to 44.7%, diluted EPS of $0.99, and management said fourth-quarter challenges led it to update the fiscal 2025 outlook.\n- `NKE-SEC-001` (filing): NIKE filed a Form 8-K on June 27, 2024 stating it issued a press release disclosing financial results for the fiscal quarter and year ended May 31, 2024 and furnished the release as Exhibit 99.1.\n- `NKE-NASDAQ-001` (company_release): Nasdaq carried the Business Wire version of NIKE fiscal 2024 fourth-quarter results at 4:15 p.m. EDT, including the revenue decline, NIKE Direct decline, gross-margin increase, EPS result, and management comments about updating fiscal 2025 outlook.\n- `NKE-MB-001` (transcript): The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.\n- `NKE-MKT-001` (market_data): Frozen market bars use NIKE close-to-close prices around the event: $90.52 on June 27, 2024 and $72.44 on June 28, 2024, implying a -19.97% event move before peer adjustment.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.78\n- mechanism_specificity: 0.79\n- source_independence: 0.66\n- cross_sectional_fit: 0.70\n- contradiction_resistance: 0.68\n- timestamp_advantage: 0.86\n- forward_observable_quality: 0.74\n- crowding_risk: 0.44\n- unsupported_claim_penalty: 0.06\n\n## #3: China and consumer softness\n\nThe selloff may have reflected macro and geographic concerns, especially weaker Greater China and uneven consumer trends across discretionary markets.\n\nMechanism: China and consumer caution are plausible contributors, but they are less specific to the observed abnormal move than the company-level fiscal 2025 revenue reset and channel details available before the lock.\n\nExpected observables:\n- Future commentary should cite Greater China or macro uncertainty as the main driver.\n- Peer consumer discretionary names should show related pressure if the explanation is mostly macro.\n- The narrative should weaken if company-specific guide-down evidence explains more of the move.\n\nSupporting evidence:\n- `NKE-INVEST-002` (news): Investopedia reported before the market open on June 28, 2024 that NIKE shares were down about 15% premarket after lower-than-expected quarterly revenue and lowered fiscal 2025 sales guidance, including management commentary that first-quarter revenue was expected to decline approximately 10%.\n- `NKE-MB-001` (transcript): The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.\n- `NKE-MKT-BENCH-001` (market_data): Frozen benchmark bars use SPY close-to-close prices around the NIKE event: $538.15 on June 27, 2024 and $536.03 on June 28, 2024, making NIKE underperform the broad-market benchmark on the event day.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.66\n- mechanism_specificity: 0.62\n- source_independence: 0.64\n- cross_sectional_fit: 0.56\n- contradiction_resistance: 0.60\n- timestamp_advantage: 0.84\n- forward_observable_quality: 0.62\n- crowding_risk: 0.50\n- unsupported_claim_penalty: 0.10\n\n## #4: Margin and EPS resilience\n\nA competing interpretation was that investors could look past the sales outlook because fourth-quarter EPS and gross margin were resilient.\n\nMechanism: Gross margin and EPS evidence supported operational resilience, but the large negative price reaction and guidance reset contradicted a margin-led explanation for the abnormal move.\n\nExpected observables:\n- Follow-up discussion should emphasize margin expansion and EPS resilience over demand weakness.\n- The stock reaction should be less negative if margin resilience dominates investor interpretation.\n- The narrative should weaken if later results show revenue declines despite margin progress.\n\nSupporting evidence:\n- `NKE-NASDAQ-001` (company_release): Nasdaq carried the Business Wire version of NIKE fiscal 2024 fourth-quarter results at 4:15 p.m. EDT, including the revenue decline, NIKE Direct decline, gross-margin increase, EPS result, and management comments about updating fiscal 2025 outlook.\n\nContradicting evidence:\n- `NKE-IR-001` (company_release): NIKE reported fiscal 2024 fourth-quarter revenue of $12.6 billion, down 2% reported, NIKE Direct revenue down 8% reported, gross margin up 110 basis points to 44.7%, diluted EPS of $0.99, and management said fourth-quarter challenges led it to update the fiscal 2025 outlook.\n- `NKE-INVEST-001` (news): Investopedia reported after the release that NIKE revenue missed analyst estimates, the company said results drove it to update fiscal 2025 guidance, and shares fell in extended trading despite net income and EPS coming in above year-earlier levels and estimates.\n- `NKE-INVEST-002` (news): Investopedia reported before the market open on June 28, 2024 that NIKE shares were down about 15% premarket after lower-than-expected quarterly revenue and lowered fiscal 2025 sales guidance, including management commentary that first-quarter revenue was expected to decline approximately 10%.\n- `NKE-MB-001` (transcript): The MarketBeat/Quartr earnings transcript recorded CFO Matthew Friend saying NIKE expected fiscal 2025 reported revenue to be down mid-single digits, the first half down high single digits, and first-quarter revenue down approximately 10%, citing classic footwear franchise management, digital challenges, muted wholesale order books, and a softer Greater China outlook.\n- `NKE-MKT-001` (market_data): Frozen market bars use NIKE close-to-close prices around the event: $90.52 on June 27, 2024 and $72.44 on June 28, 2024, implying a -19.97% event move before peer adjustment.\n\nScore components:\n- evidence_strength: 0.58\n- mechanism_specificity: 0.54\n- source_independence: 0.54\n- cross_sectional_fit: 0.36\n- contradiction_resistance: 0.40\n- timestamp_advantage: 0.82\n- forward_observable_quality: 0.50\n- crowding_risk: 0.34\n- unsupported_claim_penalty: 0.14\n\n## Scoring Weights\n\n- evidence_strength: 0.20\n- mechanism_specificity: 0.15\n- source_independence: 0.15\n- cross_sectional_fit: 0.10\n- contradiction_resistance: 0.10\n- timestamp_advantage: 0.10\n- forward_observable_quality: 0.10\n- crowding_risk: 0.05\n- unsupported_claim_penalty: 0.05\n"
+    },
+    {
+      "bundle_integrity": {
+        "artifact_hashes_ok": true,
+        "blocked_future_source_count": 2,
+        "note": "Real-curated replay bundle verified from timestamped, replay-locked source artifacts.",
+        "readiness_status": "ready_to_ingest",
+        "replay_integrity_ok": true,
+        "validation_future_source_count": 2,
+        "verified_by_bundle_verify": true
+      },
+      "case_id": "EVT-REAL-CRWD-2024-07-19",
+      "label": "CRWD July 2024 outage real-curated replay",
+      "ledger": {
+        "citation_qa": {
+          "allowed_source_count": 7,
+          "blocked_future_source_count": 2,
+          "citation_qa_pass": true,
+          "event_time_integrity_pass": true,
+          "low_quality_evidence_count": 0,
+          "missing_content_hash_count": 0,
+          "missing_publisher_count": 0,
+          "missing_url_count": 0,
+          "narrative_count": 4,
+          "narratives_with_support_count": 4,
+          "provenance_ready": true,
+          "replay_filter_pass": true,
+          "returned_blocked_source_count": 0,
+          "support_coverage_pass": true
+        },
+        "event": {
+          "abnormal_return": -0.102172,
+          "case_id": "EVT-REAL-CRWD-2024-07-19",
+          "company_name": "CrowdStrike Holdings, Inc.",
+          "daily_return": -0.111033,
+          "data_provenance_mode": "real-curated",
+          "event_date": "2024-07-19",
+          "event_id": "EVT-REAL-CRWD-2024-07-19",
+          "event_summary": "Real-curated CrowdStrike July 2024 global outage replay with timestamped citations, replay-locked evidence, and held-out validation. Research and education only; not investment advice.",
+          "event_timestamp": "2024-07-19T16:10:00-04:00",
+          "event_type": "operational/product incident",
+          "peer_median_return": -0.008861,
+          "sector_etf_return": -0.008861,
+          "ticker": "CRWD",
+          "volume_ratio": null
+        },
+        "narratives": [
+          {
+            "confidence": null,
+            "contradicting_evidence": [],
+            "directional_implication": "bearish",
+            "event_id": "EVT-REAL-CRWD-2024-07-19",
+            "expected_observables": [
+              "Post-lock technical evidence should confirm a CrowdStrike-controlled update mechanism rather than an outside attack.",
+              "Future company commentary should discuss customer recovery, remediation, concessions, or incident costs.",
+              "The abnormal move should remain company-specific relative to broad technology benchmarks."
+            ],
+            "mechanism": "Replay-time evidence tied the outage to a defective Falcon update, global customer disruption, and direct trust damage for an endpoint-security vendor. That gave the market a concrete mechanism from operational reliability risk to customer concessions, remediation cost, and future revenue-risk repricing.",
+            "narrative": "Investors repriced CrowdStrike because the outage exposed an operational reliability liability in a mission-critical security platform, not because the market had discovered a cyberattack.",
+            "narrative_id": "NARR-CRWD-001",
+            "overall_narrative_score": 0.8077777777777778,
+            "rank": 1,
+            "scores": {
+              "contradiction_resistance": 0.07800000000000001,
+              "cross_sectional_fit": 0.08600000000000001,
+              "crowding_risk_penalty": 0.018,
+              "evidence_strength": 0.168,
+              "forward_observable_quality": 0.082,
+              "mechanism_specificity": 0.129,
+              "overall_narrative_score": 0.8077777777777778,
+              "penalty_score_normalized": 0.02222222222222222,
+              "positive_score_normalized": 0.8300000000000001,
+              "source_independence": 0.11399999999999999,
+              "timestamp_advantage": 0.09000000000000001,
+              "unsupported_claim_penalty": 0.002
+            },
+            "scoring_inputs": {
+              "contradiction_resistance": 0.78,
+              "cross_sectional_fit": 0.86,
+              "crowding_risk": 0.36,
+              "evidence_strength": 0.84,
+              "forward_observable_quality": 0.82,
+              "mechanism_specificity": 0.86,
+              "source_independence": 0.76,
+              "timestamp_advantage": 0.9,
+              "unsupported_claim_penalty": 0.04
+            },
+            "supporting_evidence": [
+              {
+                "availability_status": "allowed",
+                "claim": "MacRumors reported at 3:12 a.m. PDT on July 19, 2024 that a widespread Windows system failure was affecting industries including banks, rail networks, airlines, broadcasters, healthcare, and retailers; it carried CrowdStrike's statement that the cause was a defect in a single content update for Windows hosts, Mac and Linux hosts were not impacted, and the issue was not a security incident or cyberattack.",
+                "claim_extracted": "MacRumors reported at 3:12 a.m. PDT on July 19, 2024 that a widespread Windows system failure was affecting industries including banks, rail networks, airlines, broadcasters, healthcare, and retailers; it carried CrowdStrike's statement that the cause was a defect in a single content update for Windows hosts, Mac and Linux hosts were not impacted, and the issue was not a security incident or cyberattack.",
+                "content_hash": "sha256:05041894b37da1cc376afbe9b848a9f6bb638cf8a1da8f0ed4d2dff73baa2b00",
+                "contradicted_narrative_ids": [
+                  "NARR-CRWD-002"
+                ],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.08,
+                "independence": 0.72,
+                "independence_cluster_id": "technology-news",
+                "originality_score": 0.78,
+                "published_at": "2024-07-19T10:12:00+00:00",
+                "publisher": "MacRumors",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-MR-001",
+                "source_type": "company_statement",
+                "support_strength": 0.8,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001",
+                  "NARR-CRWD-003",
+                  "NARR-CRWD-004"
+                ],
+                "title": "CrowdStrike Says Global IT Outage Impacting Windows PCs, But Mac and Linux Hosts Not Affected",
+                "url": "https://www.macrumors.com/2024/07/19/global-it-outage-limited-to-windows-pcs/"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Markets Insider / Business Insider reported at 2024-07-19T10:23:30Z that CrowdStrike shares had plunged after a global IT outage disrupted airlines, banks, supermarkets, emergency services, and the London Stock Exchange Group news service; the article said CRWD was trading about 12% lower near $302 at 10 a.m. ET and quoted CrowdStrike's CEO statement that the issue was a defect in a single content update for Windows hosts, not a cyberattack.",
+                "claim_extracted": "Markets Insider / Business Insider reported at 2024-07-19T10:23:30Z that CrowdStrike shares had plunged after a global IT outage disrupted airlines, banks, supermarkets, emergency services, and the London Stock Exchange Group news service; the article said CRWD was trading about 12% lower near $302 at 10 a.m. ET and quoted CrowdStrike's CEO statement that the issue was a defect in a single content update for Windows hosts, not a cyberattack.",
+                "content_hash": "sha256:81b3b9726a819cc4a8b104e1225460c4b9174d289db6a75870310ad332976247",
+                "contradicted_narrative_ids": [
+                  "NARR-CRWD-002",
+                  "NARR-CRWD-004"
+                ],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.08,
+                "independence": 0.76,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.78,
+                "published_at": "2024-07-19T10:23:30+00:00",
+                "publisher": "Markets Insider / Business Insider",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-BI-001",
+                "source_type": "news",
+                "support_strength": 0.8,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001"
+                ],
+                "title": "Crowdstrike shares plunge 12% after massive global IT outage",
+                "url": "https://markets.businessinsider.com/news/stocks/microsoft-and-crowdstrike-shares-plunge-amid-massive-global-it-outage-2024-7"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "CNBC reported on July 19, 2024 that CrowdStrike shares opened down more than 14% and closed down about 11% after an update affecting Falcon Sensor caused a major outage across businesses worldwide; the article tied the move to a defect in a single content update for Windows hosts and said CrowdStrike was rolling back the update globally.",
+                "claim_extracted": "CNBC reported on July 19, 2024 that CrowdStrike shares opened down more than 14% and closed down about 11% after an update affecting Falcon Sensor caused a major outage across businesses worldwide; the article tied the move to a defect in a single content update for Windows hosts and said CrowdStrike was rolling back the update globally.",
+                "content_hash": "sha256:2f55a54049f16f45e395c6750702c940a7db1a14373b82efa8d9ab96b50c06d2",
+                "contradicted_narrative_ids": [
+                  "NARR-CRWD-004"
+                ],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.08,
+                "independence": 0.76,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.78,
+                "published_at": "2024-07-19T20:03:00+00:00",
+                "publisher": "CNBC",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-CNBC-001",
+                "source_type": "news",
+                "support_strength": 0.8,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001",
+                  "NARR-CRWD-003"
+                ],
+                "title": "CrowdStrike shares close down 11% after major outage hits businesses worldwide",
+                "url": "https://www.cnbc.com/2024/07/19/microsoft-crowdstrike-shares-fall-after-major-it-outage.html"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Investopedia reported on July 19, 2024 at 1:59 p.m. EDT that CrowdStrike shares had plunged about 12% while rival cybersecurity shares rose after the company said an update defect caused a worldwide outage; the article noted the disruption hit airlines, banks, and other businesses and cited CrowdStrike's prior close of $343.05.",
+                "claim_extracted": "Investopedia reported on July 19, 2024 at 1:59 p.m. EDT that CrowdStrike shares had plunged about 12% while rival cybersecurity shares rose after the company said an update defect caused a worldwide outage; the article noted the disruption hit airlines, banks, and other businesses and cited CrowdStrike's prior close of $343.05.",
+                "content_hash": "sha256:608c6700124dba084b5495ec57aac152129b8753555d1185a21c57b87e581c0d",
+                "contradicted_narrative_ids": [
+                  "NARR-CRWD-004"
+                ],
+                "evidence_quality": 0.76,
+                "incentive_conflict": 0.08,
+                "independence": 0.76,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.76,
+                "published_at": "2024-07-19T17:59:00+00:00",
+                "publisher": "Investopedia",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-INVEST-001",
+                "source_type": "news",
+                "support_strength": 0.78,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001",
+                  "NARR-CRWD-002"
+                ],
+                "title": "CrowdStrike Stock Plunges, Rivals' Rise, as Update 'Defect' Causes Microsoft Outage",
+                "url": "https://www.investopedia.com/crowdstrike-stock-plunges-rivals-jump-as-update-defect-microsoft-outage-8680631"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "CNBC's July 19, 2024 explainer said the outage stemmed from a cybersecurity software update, caused Windows systems to crash across sectors including banking, airlines, healthcare, and broadcasters, and centered the operational mechanism on CrowdStrike's update rather than a broad market move alone.",
+                "claim_extracted": "CNBC's July 19, 2024 explainer said the outage stemmed from a cybersecurity software update, caused Windows systems to crash across sectors including banking, airlines, healthcare, and broadcasters, and centered the operational mechanism on CrowdStrike's update rather than a broad market move alone.",
+                "content_hash": "sha256:08d038b422bc54c286726d6a11868f601f2272a9a12d7b070635c21a17438462",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.74,
+                "incentive_conflict": 0.08,
+                "independence": 0.74,
+                "independence_cluster_id": "technology-news",
+                "originality_score": 0.74,
+                "published_at": "2024-07-19T15:42:00+00:00",
+                "publisher": "CNBC",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-CNBC-EXPL-001",
+                "source_type": "explainer",
+                "support_strength": 0.74,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001",
+                  "NARR-CRWD-003"
+                ],
+                "title": "How a software update from cyber firm CrowdStrike caused one of the world's biggest IT blackouts",
+                "url": "https://www.cnbc.com/2024/07/19/what-is-crowdstrike-crwd-and-how-did-it-cause-global-it-outages.html"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Frozen market bars use CRWD close-to-close prices around the outage day: $343.05 on July 18, 2024 and $304.96 on July 19, 2024, implying an approximately -11.1% event-day move before peer adjustment.",
+                "claim_extracted": "Frozen market bars use CRWD close-to-close prices around the outage day: $343.05 on July 18, 2024 and $304.96 on July 19, 2024, implying an approximately -11.1% event-day move before peer adjustment.",
+                "content_hash": "sha256:62d724ecc8f8940cb60de0ecdc8a64adba6ca1ad091f7f739df6730095a8457e",
+                "contradicted_narrative_ids": [
+                  "NARR-CRWD-004"
+                ],
+                "evidence_quality": 0.82,
+                "incentive_conflict": 0.04,
+                "independence": 0.84,
+                "independence_cluster_id": "market-bars",
+                "originality_score": 0.82,
+                "published_at": "2024-07-19T20:05:00+00:00",
+                "publisher": "Frozen market bars",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-MKT-001",
+                "source_type": "market_data",
+                "support_strength": 0.82,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001"
+                ],
+                "title": "CRWD frozen event market bar",
+                "url": "https://www.statmuse.com/money/ask/what-is-the-average-closing-price-of-crwd-stock-in-july-2024"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Frozen benchmark bars use QQQ close-to-close prices around the CRWD outage event: $476.25 on July 18, 2024 and $472.03 on July 19, 2024, implying the company-specific CRWD selloff was much larger than the technology benchmark move.",
+                "claim_extracted": "Frozen benchmark bars use QQQ close-to-close prices around the CRWD outage event: $476.25 on July 18, 2024 and $472.03 on July 19, 2024, implying the company-specific CRWD selloff was much larger than the technology benchmark move.",
+                "content_hash": "sha256:5239be768007e74dd1a714c33501af423bb5d9c2ee8805b759ca0a2b18ad6fd3",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.8,
+                "incentive_conflict": 0.04,
+                "independence": 0.84,
+                "independence_cluster_id": "market-bars",
+                "originality_score": 0.8,
+                "published_at": "2024-07-19T20:05:00+00:00",
+                "publisher": "Frozen market bars",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-MKT-BENCH-001",
+                "source_type": "market_data",
+                "support_strength": 0.78,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001",
+                  "NARR-CRWD-003"
+                ],
+                "title": "QQQ frozen benchmark market bar",
+                "url": "https://www.statmuse.com/money/ask/qqq-daily-returns-july-2024"
+              }
+            ],
+            "ticker": "CRWD",
+            "time_horizon": "60 trading days",
+            "timestamp_created": "2024-07-19T16:10:00-04:00",
+            "title": "Operational reliability liability",
+            "validation_status": "pending"
+          },
+          {
+            "confidence": null,
+            "contradicting_evidence": [],
+            "directional_implication": "bearish",
+            "event_id": "EVT-REAL-CRWD-2024-07-19",
+            "expected_observables": [
+              "Later evidence should continue to emphasize Windows-host scope and Microsoft ecosystem exposure.",
+              "The narrative should weaken if financial validation centers on CrowdStrike customer commitments rather than Microsoft platform risk.",
+              "Peer and benchmark context should show whether the selloff was broader than CrowdStrike."
+            ],
+            "mechanism": "The outage hit Windows hosts and interacted with Microsoft-dependent enterprise infrastructure, making platform dependency a plausible explanation. It remained less specific than the CrowdStrike-controlled update mechanism because the abnormal move was concentrated in CrowdStrike shares.",
+            "narrative": "The market could have read the outage as a Microsoft and Windows ecosystem dependency shock rather than a CrowdStrike-specific trust shock.",
+            "narrative_id": "NARR-CRWD-003",
+            "overall_narrative_score": 0.6438888888888888,
+            "rank": 2,
+            "scores": {
+              "contradiction_resistance": 0.057999999999999996,
+              "cross_sectional_fit": 0.062,
+              "crowding_risk_penalty": 0.034,
+              "evidence_strength": 0.13999999999999999,
+              "forward_observable_quality": 0.062,
+              "mechanism_specificity": 0.111,
+              "overall_narrative_score": 0.6438888888888888,
+              "penalty_score_normalized": 0.04277777777777778,
+              "positive_score_normalized": 0.6866666666666666,
+              "source_independence": 0.099,
+              "timestamp_advantage": 0.08600000000000001,
+              "unsupported_claim_penalty": 0.0045
+            },
+            "scoring_inputs": {
+              "contradiction_resistance": 0.58,
+              "cross_sectional_fit": 0.62,
+              "crowding_risk": 0.68,
+              "evidence_strength": 0.7,
+              "forward_observable_quality": 0.62,
+              "mechanism_specificity": 0.74,
+              "source_independence": 0.66,
+              "timestamp_advantage": 0.86,
+              "unsupported_claim_penalty": 0.09
+            },
+            "supporting_evidence": [
+              {
+                "availability_status": "allowed",
+                "claim": "MacRumors reported at 3:12 a.m. PDT on July 19, 2024 that a widespread Windows system failure was affecting industries including banks, rail networks, airlines, broadcasters, healthcare, and retailers; it carried CrowdStrike's statement that the cause was a defect in a single content update for Windows hosts, Mac and Linux hosts were not impacted, and the issue was not a security incident or cyberattack.",
+                "claim_extracted": "MacRumors reported at 3:12 a.m. PDT on July 19, 2024 that a widespread Windows system failure was affecting industries including banks, rail networks, airlines, broadcasters, healthcare, and retailers; it carried CrowdStrike's statement that the cause was a defect in a single content update for Windows hosts, Mac and Linux hosts were not impacted, and the issue was not a security incident or cyberattack.",
+                "content_hash": "sha256:05041894b37da1cc376afbe9b848a9f6bb638cf8a1da8f0ed4d2dff73baa2b00",
+                "contradicted_narrative_ids": [
+                  "NARR-CRWD-002"
+                ],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.08,
+                "independence": 0.72,
+                "independence_cluster_id": "technology-news",
+                "originality_score": 0.78,
+                "published_at": "2024-07-19T10:12:00+00:00",
+                "publisher": "MacRumors",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-MR-001",
+                "source_type": "company_statement",
+                "support_strength": 0.8,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001",
+                  "NARR-CRWD-003",
+                  "NARR-CRWD-004"
+                ],
+                "title": "CrowdStrike Says Global IT Outage Impacting Windows PCs, But Mac and Linux Hosts Not Affected",
+                "url": "https://www.macrumors.com/2024/07/19/global-it-outage-limited-to-windows-pcs/"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "CNBC reported on July 19, 2024 that CrowdStrike shares opened down more than 14% and closed down about 11% after an update affecting Falcon Sensor caused a major outage across businesses worldwide; the article tied the move to a defect in a single content update for Windows hosts and said CrowdStrike was rolling back the update globally.",
+                "claim_extracted": "CNBC reported on July 19, 2024 that CrowdStrike shares opened down more than 14% and closed down about 11% after an update affecting Falcon Sensor caused a major outage across businesses worldwide; the article tied the move to a defect in a single content update for Windows hosts and said CrowdStrike was rolling back the update globally.",
+                "content_hash": "sha256:2f55a54049f16f45e395c6750702c940a7db1a14373b82efa8d9ab96b50c06d2",
+                "contradicted_narrative_ids": [
+                  "NARR-CRWD-004"
+                ],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.08,
+                "independence": 0.76,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.78,
+                "published_at": "2024-07-19T20:03:00+00:00",
+                "publisher": "CNBC",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-CNBC-001",
+                "source_type": "news",
+                "support_strength": 0.8,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001",
+                  "NARR-CRWD-003"
+                ],
+                "title": "CrowdStrike shares close down 11% after major outage hits businesses worldwide",
+                "url": "https://www.cnbc.com/2024/07/19/microsoft-crowdstrike-shares-fall-after-major-it-outage.html"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "CNBC's July 19, 2024 explainer said the outage stemmed from a cybersecurity software update, caused Windows systems to crash across sectors including banking, airlines, healthcare, and broadcasters, and centered the operational mechanism on CrowdStrike's update rather than a broad market move alone.",
+                "claim_extracted": "CNBC's July 19, 2024 explainer said the outage stemmed from a cybersecurity software update, caused Windows systems to crash across sectors including banking, airlines, healthcare, and broadcasters, and centered the operational mechanism on CrowdStrike's update rather than a broad market move alone.",
+                "content_hash": "sha256:08d038b422bc54c286726d6a11868f601f2272a9a12d7b070635c21a17438462",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.74,
+                "incentive_conflict": 0.08,
+                "independence": 0.74,
+                "independence_cluster_id": "technology-news",
+                "originality_score": 0.74,
+                "published_at": "2024-07-19T15:42:00+00:00",
+                "publisher": "CNBC",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-CNBC-EXPL-001",
+                "source_type": "explainer",
+                "support_strength": 0.74,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001",
+                  "NARR-CRWD-003"
+                ],
+                "title": "How a software update from cyber firm CrowdStrike caused one of the world's biggest IT blackouts",
+                "url": "https://www.cnbc.com/2024/07/19/what-is-crowdstrike-crwd-and-how-did-it-cause-global-it-outages.html"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Frozen benchmark bars use QQQ close-to-close prices around the CRWD outage event: $476.25 on July 18, 2024 and $472.03 on July 19, 2024, implying the company-specific CRWD selloff was much larger than the technology benchmark move.",
+                "claim_extracted": "Frozen benchmark bars use QQQ close-to-close prices around the CRWD outage event: $476.25 on July 18, 2024 and $472.03 on July 19, 2024, implying the company-specific CRWD selloff was much larger than the technology benchmark move.",
+                "content_hash": "sha256:5239be768007e74dd1a714c33501af423bb5d9c2ee8805b759ca0a2b18ad6fd3",
+                "contradicted_narrative_ids": [],
+                "evidence_quality": 0.8,
+                "incentive_conflict": 0.04,
+                "independence": 0.84,
+                "independence_cluster_id": "market-bars",
+                "originality_score": 0.8,
+                "published_at": "2024-07-19T20:05:00+00:00",
+                "publisher": "Frozen market bars",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-MKT-BENCH-001",
+                "source_type": "market_data",
+                "support_strength": 0.78,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001",
+                  "NARR-CRWD-003"
+                ],
+                "title": "QQQ frozen benchmark market bar",
+                "url": "https://www.statmuse.com/money/ask/qqq-daily-returns-july-2024"
+              }
+            ],
+            "ticker": "CRWD",
+            "time_horizon": "60 trading days",
+            "timestamp_created": "2024-07-19T16:10:00-04:00",
+            "title": "Windows platform dependency",
+            "validation_status": "pending"
+          },
+          {
+            "confidence": null,
+            "contradicting_evidence": [
+              {
+                "availability_status": "allowed",
+                "claim": "MacRumors reported at 3:12 a.m. PDT on July 19, 2024 that a widespread Windows system failure was affecting industries including banks, rail networks, airlines, broadcasters, healthcare, and retailers; it carried CrowdStrike's statement that the cause was a defect in a single content update for Windows hosts, Mac and Linux hosts were not impacted, and the issue was not a security incident or cyberattack.",
+                "claim_extracted": "MacRumors reported at 3:12 a.m. PDT on July 19, 2024 that a widespread Windows system failure was affecting industries including banks, rail networks, airlines, broadcasters, healthcare, and retailers; it carried CrowdStrike's statement that the cause was a defect in a single content update for Windows hosts, Mac and Linux hosts were not impacted, and the issue was not a security incident or cyberattack.",
+                "content_hash": "sha256:05041894b37da1cc376afbe9b848a9f6bb638cf8a1da8f0ed4d2dff73baa2b00",
+                "contradicted_narrative_ids": [
+                  "NARR-CRWD-002"
+                ],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.08,
+                "independence": 0.72,
+                "independence_cluster_id": "technology-news",
+                "originality_score": 0.78,
+                "published_at": "2024-07-19T10:12:00+00:00",
+                "publisher": "MacRumors",
+                "relation": "contradict",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-MR-001",
+                "source_type": "company_statement",
+                "support_strength": 0.8,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001",
+                  "NARR-CRWD-003",
+                  "NARR-CRWD-004"
+                ],
+                "title": "CrowdStrike Says Global IT Outage Impacting Windows PCs, But Mac and Linux Hosts Not Affected",
+                "url": "https://www.macrumors.com/2024/07/19/global-it-outage-limited-to-windows-pcs/"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Markets Insider / Business Insider reported at 2024-07-19T10:23:30Z that CrowdStrike shares had plunged after a global IT outage disrupted airlines, banks, supermarkets, emergency services, and the London Stock Exchange Group news service; the article said CRWD was trading about 12% lower near $302 at 10 a.m. ET and quoted CrowdStrike's CEO statement that the issue was a defect in a single content update for Windows hosts, not a cyberattack.",
+                "claim_extracted": "Markets Insider / Business Insider reported at 2024-07-19T10:23:30Z that CrowdStrike shares had plunged after a global IT outage disrupted airlines, banks, supermarkets, emergency services, and the London Stock Exchange Group news service; the article said CRWD was trading about 12% lower near $302 at 10 a.m. ET and quoted CrowdStrike's CEO statement that the issue was a defect in a single content update for Windows hosts, not a cyberattack.",
+                "content_hash": "sha256:81b3b9726a819cc4a8b104e1225460c4b9174d289db6a75870310ad332976247",
+                "contradicted_narrative_ids": [
+                  "NARR-CRWD-002",
+                  "NARR-CRWD-004"
+                ],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.08,
+                "independence": 0.76,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.78,
+                "published_at": "2024-07-19T10:23:30+00:00",
+                "publisher": "Markets Insider / Business Insider",
+                "relation": "contradict",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-BI-001",
+                "source_type": "news",
+                "support_strength": 0.8,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001"
+                ],
+                "title": "Crowdstrike shares plunge 12% after massive global IT outage",
+                "url": "https://markets.businessinsider.com/news/stocks/microsoft-and-crowdstrike-shares-plunge-amid-massive-global-it-outage-2024-7"
+              }
+            ],
+            "directional_implication": "bearish",
+            "event_id": "EVT-REAL-CRWD-2024-07-19",
+            "expected_observables": [
+              "Later technical disclosures would need to identify malicious activity or breach mechanics.",
+              "Official remediation evidence would need to conflict with the company statement that the incident was not a cyberattack.",
+              "If this explanation loses, future details should keep the mechanism inside a faulty update path."
+            ],
+            "mechanism": "A cybersecurity vendor causing global system outages could initially invite breach or hostile-activity concern, but the replay-time official statement and follow-up technical evidence directly rejected that mechanism.",
+            "narrative": "A competing explanation was that the selloff reflected fear of a security incident or cyberattack at CrowdStrike itself.",
+            "narrative_id": "NARR-CRWD-002",
+            "overall_narrative_score": 0.6,
+            "rank": 3,
+            "scores": {
+              "contradiction_resistance": 0.038000000000000006,
+              "cross_sectional_fit": 0.052000000000000005,
+              "crowding_risk_penalty": 0.037,
+              "evidence_strength": 0.144,
+              "forward_observable_quality": 0.054000000000000006,
+              "mechanism_specificity": 0.105,
+              "overall_narrative_score": 0.6,
+              "penalty_score_normalized": 0.04777777777777778,
+              "positive_score_normalized": 0.6477777777777778,
+              "source_independence": 0.10200000000000001,
+              "timestamp_advantage": 0.08800000000000001,
+              "unsupported_claim_penalty": 0.006
+            },
+            "scoring_inputs": {
+              "contradiction_resistance": 0.38,
+              "cross_sectional_fit": 0.52,
+              "crowding_risk": 0.74,
+              "evidence_strength": 0.72,
+              "forward_observable_quality": 0.54,
+              "mechanism_specificity": 0.7,
+              "source_independence": 0.68,
+              "timestamp_advantage": 0.88,
+              "unsupported_claim_penalty": 0.12
+            },
+            "supporting_evidence": [
+              {
+                "availability_status": "allowed",
+                "claim": "Investopedia reported on July 19, 2024 at 1:59 p.m. EDT that CrowdStrike shares had plunged about 12% while rival cybersecurity shares rose after the company said an update defect caused a worldwide outage; the article noted the disruption hit airlines, banks, and other businesses and cited CrowdStrike's prior close of $343.05.",
+                "claim_extracted": "Investopedia reported on July 19, 2024 at 1:59 p.m. EDT that CrowdStrike shares had plunged about 12% while rival cybersecurity shares rose after the company said an update defect caused a worldwide outage; the article noted the disruption hit airlines, banks, and other businesses and cited CrowdStrike's prior close of $343.05.",
+                "content_hash": "sha256:608c6700124dba084b5495ec57aac152129b8753555d1185a21c57b87e581c0d",
+                "contradicted_narrative_ids": [
+                  "NARR-CRWD-004"
+                ],
+                "evidence_quality": 0.76,
+                "incentive_conflict": 0.08,
+                "independence": 0.76,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.76,
+                "published_at": "2024-07-19T17:59:00+00:00",
+                "publisher": "Investopedia",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-INVEST-001",
+                "source_type": "news",
+                "support_strength": 0.78,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001",
+                  "NARR-CRWD-002"
+                ],
+                "title": "CrowdStrike Stock Plunges, Rivals' Rise, as Update 'Defect' Causes Microsoft Outage",
+                "url": "https://www.investopedia.com/crowdstrike-stock-plunges-rivals-jump-as-update-defect-microsoft-outage-8680631"
+              }
+            ],
+            "ticker": "CRWD",
+            "time_horizon": "60 trading days",
+            "timestamp_created": "2024-07-19T16:10:00-04:00",
+            "title": "Cyberattack scare",
+            "validation_status": "pending"
+          },
+          {
+            "confidence": null,
+            "contradicting_evidence": [
+              {
+                "availability_status": "allowed",
+                "claim": "Markets Insider / Business Insider reported at 2024-07-19T10:23:30Z that CrowdStrike shares had plunged after a global IT outage disrupted airlines, banks, supermarkets, emergency services, and the London Stock Exchange Group news service; the article said CRWD was trading about 12% lower near $302 at 10 a.m. ET and quoted CrowdStrike's CEO statement that the issue was a defect in a single content update for Windows hosts, not a cyberattack.",
+                "claim_extracted": "Markets Insider / Business Insider reported at 2024-07-19T10:23:30Z that CrowdStrike shares had plunged after a global IT outage disrupted airlines, banks, supermarkets, emergency services, and the London Stock Exchange Group news service; the article said CRWD was trading about 12% lower near $302 at 10 a.m. ET and quoted CrowdStrike's CEO statement that the issue was a defect in a single content update for Windows hosts, not a cyberattack.",
+                "content_hash": "sha256:81b3b9726a819cc4a8b104e1225460c4b9174d289db6a75870310ad332976247",
+                "contradicted_narrative_ids": [
+                  "NARR-CRWD-002",
+                  "NARR-CRWD-004"
+                ],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.08,
+                "independence": 0.76,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.78,
+                "published_at": "2024-07-19T10:23:30+00:00",
+                "publisher": "Markets Insider / Business Insider",
+                "relation": "contradict",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-BI-001",
+                "source_type": "news",
+                "support_strength": 0.8,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001"
+                ],
+                "title": "Crowdstrike shares plunge 12% after massive global IT outage",
+                "url": "https://markets.businessinsider.com/news/stocks/microsoft-and-crowdstrike-shares-plunge-amid-massive-global-it-outage-2024-7"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "CNBC reported on July 19, 2024 that CrowdStrike shares opened down more than 14% and closed down about 11% after an update affecting Falcon Sensor caused a major outage across businesses worldwide; the article tied the move to a defect in a single content update for Windows hosts and said CrowdStrike was rolling back the update globally.",
+                "claim_extracted": "CNBC reported on July 19, 2024 that CrowdStrike shares opened down more than 14% and closed down about 11% after an update affecting Falcon Sensor caused a major outage across businesses worldwide; the article tied the move to a defect in a single content update for Windows hosts and said CrowdStrike was rolling back the update globally.",
+                "content_hash": "sha256:2f55a54049f16f45e395c6750702c940a7db1a14373b82efa8d9ab96b50c06d2",
+                "contradicted_narrative_ids": [
+                  "NARR-CRWD-004"
+                ],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.08,
+                "independence": 0.76,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.78,
+                "published_at": "2024-07-19T20:03:00+00:00",
+                "publisher": "CNBC",
+                "relation": "contradict",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-CNBC-001",
+                "source_type": "news",
+                "support_strength": 0.8,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001",
+                  "NARR-CRWD-003"
+                ],
+                "title": "CrowdStrike shares close down 11% after major outage hits businesses worldwide",
+                "url": "https://www.cnbc.com/2024/07/19/microsoft-crowdstrike-shares-fall-after-major-it-outage.html"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Investopedia reported on July 19, 2024 at 1:59 p.m. EDT that CrowdStrike shares had plunged about 12% while rival cybersecurity shares rose after the company said an update defect caused a worldwide outage; the article noted the disruption hit airlines, banks, and other businesses and cited CrowdStrike's prior close of $343.05.",
+                "claim_extracted": "Investopedia reported on July 19, 2024 at 1:59 p.m. EDT that CrowdStrike shares had plunged about 12% while rival cybersecurity shares rose after the company said an update defect caused a worldwide outage; the article noted the disruption hit airlines, banks, and other businesses and cited CrowdStrike's prior close of $343.05.",
+                "content_hash": "sha256:608c6700124dba084b5495ec57aac152129b8753555d1185a21c57b87e581c0d",
+                "contradicted_narrative_ids": [
+                  "NARR-CRWD-004"
+                ],
+                "evidence_quality": 0.76,
+                "incentive_conflict": 0.08,
+                "independence": 0.76,
+                "independence_cluster_id": "financial-news",
+                "originality_score": 0.76,
+                "published_at": "2024-07-19T17:59:00+00:00",
+                "publisher": "Investopedia",
+                "relation": "contradict",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-INVEST-001",
+                "source_type": "news",
+                "support_strength": 0.78,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001",
+                  "NARR-CRWD-002"
+                ],
+                "title": "CrowdStrike Stock Plunges, Rivals' Rise, as Update 'Defect' Causes Microsoft Outage",
+                "url": "https://www.investopedia.com/crowdstrike-stock-plunges-rivals-jump-as-update-defect-microsoft-outage-8680631"
+              },
+              {
+                "availability_status": "allowed",
+                "claim": "Frozen market bars use CRWD close-to-close prices around the outage day: $343.05 on July 18, 2024 and $304.96 on July 19, 2024, implying an approximately -11.1% event-day move before peer adjustment.",
+                "claim_extracted": "Frozen market bars use CRWD close-to-close prices around the outage day: $343.05 on July 18, 2024 and $304.96 on July 19, 2024, implying an approximately -11.1% event-day move before peer adjustment.",
+                "content_hash": "sha256:62d724ecc8f8940cb60de0ecdc8a64adba6ca1ad091f7f739df6730095a8457e",
+                "contradicted_narrative_ids": [
+                  "NARR-CRWD-004"
+                ],
+                "evidence_quality": 0.82,
+                "incentive_conflict": 0.04,
+                "independence": 0.84,
+                "independence_cluster_id": "market-bars",
+                "originality_score": 0.82,
+                "published_at": "2024-07-19T20:05:00+00:00",
+                "publisher": "Frozen market bars",
+                "relation": "contradict",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-MKT-001",
+                "source_type": "market_data",
+                "support_strength": 0.82,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001"
+                ],
+                "title": "CRWD frozen event market bar",
+                "url": "https://www.statmuse.com/money/ask/what-is-the-average-closing-price-of-crwd-stock-in-july-2024"
+              }
+            ],
+            "directional_implication": "mixed",
+            "event_id": "EVT-REAL-CRWD-2024-07-19",
+            "expected_observables": [
+              "Future company results should show limited customer, ARR, guidance, or incident-cost effects.",
+              "Follow-up commentary should frame the outage as short-lived and operationally contained.",
+              "The narrative should weaken if later filings or releases cite customer commitments, remediation costs, or guidance impact."
+            ],
+            "mechanism": "CrowdStrike identified the issue and deployed a fix quickly, which supported an argument that the market reaction was an overreaction. That explanation was weaker because same-day evidence showed broad customer disruption and a company-specific abnormal selloff.",
+            "narrative": "The selloff may have been a temporary outage overreaction because CrowdStrike identified, isolated, and began remediating the faulty update quickly.",
+            "narrative_id": "NARR-CRWD-004",
+            "overall_narrative_score": 0.49666666666666687,
+            "rank": 4,
+            "scores": {
+              "contradiction_resistance": 0.034,
+              "cross_sectional_fit": 0.038000000000000006,
+              "crowding_risk_penalty": 0.03900000000000001,
+              "evidence_strength": 0.124,
+              "forward_observable_quality": 0.048,
+              "mechanism_specificity": 0.081,
+              "overall_narrative_score": 0.49666666666666687,
+              "penalty_score_normalized": 0.05222222222222223,
+              "positive_score_normalized": 0.5488888888888891,
+              "source_independence": 0.087,
+              "timestamp_advantage": 0.082,
+              "unsupported_claim_penalty": 0.008
+            },
+            "scoring_inputs": {
+              "contradiction_resistance": 0.34,
+              "cross_sectional_fit": 0.38,
+              "crowding_risk": 0.78,
+              "evidence_strength": 0.62,
+              "forward_observable_quality": 0.48,
+              "mechanism_specificity": 0.54,
+              "source_independence": 0.58,
+              "timestamp_advantage": 0.82,
+              "unsupported_claim_penalty": 0.16
+            },
+            "supporting_evidence": [
+              {
+                "availability_status": "allowed",
+                "claim": "MacRumors reported at 3:12 a.m. PDT on July 19, 2024 that a widespread Windows system failure was affecting industries including banks, rail networks, airlines, broadcasters, healthcare, and retailers; it carried CrowdStrike's statement that the cause was a defect in a single content update for Windows hosts, Mac and Linux hosts were not impacted, and the issue was not a security incident or cyberattack.",
+                "claim_extracted": "MacRumors reported at 3:12 a.m. PDT on July 19, 2024 that a widespread Windows system failure was affecting industries including banks, rail networks, airlines, broadcasters, healthcare, and retailers; it carried CrowdStrike's statement that the cause was a defect in a single content update for Windows hosts, Mac and Linux hosts were not impacted, and the issue was not a security incident or cyberattack.",
+                "content_hash": "sha256:05041894b37da1cc376afbe9b848a9f6bb638cf8a1da8f0ed4d2dff73baa2b00",
+                "contradicted_narrative_ids": [
+                  "NARR-CRWD-002"
+                ],
+                "evidence_quality": 0.78,
+                "incentive_conflict": 0.08,
+                "independence": 0.72,
+                "independence_cluster_id": "technology-news",
+                "originality_score": 0.78,
+                "published_at": "2024-07-19T10:12:00+00:00",
+                "publisher": "MacRumors",
+                "relation": "support",
+                "retrieved_at": "2026-05-12T00:00:00+00:00",
+                "source_id": "CRWD-MR-001",
+                "source_type": "company_statement",
+                "support_strength": 0.8,
+                "supported_narrative_ids": [
+                  "NARR-CRWD-001",
+                  "NARR-CRWD-003",
+                  "NARR-CRWD-004"
+                ],
+                "title": "CrowdStrike Says Global IT Outage Impacting Windows PCs, But Mac and Linux Hosts Not Affected",
+                "url": "https://www.macrumors.com/2024/07/19/global-it-outage-limited-to-windows-pcs/"
+              }
+            ],
+            "ticker": "CRWD",
+            "time_horizon": "60 trading days",
+            "timestamp_created": "2024-07-19T16:10:00-04:00",
+            "title": "Temporary outage overreaction",
+            "validation_status": "pending"
+          }
+        ],
+        "replay_audit": {
+          "allowed_source_ids": [
+            "CRWD-BI-001",
+            "CRWD-CNBC-001",
+            "CRWD-CNBC-EXPL-001",
+            "CRWD-INVEST-001",
+            "CRWD-MKT-001",
+            "CRWD-MKT-BENCH-001",
+            "CRWD-MR-001"
+          ],
+          "blocked_evidence": [
+            {
+              "availability_status": "blocked_future",
+              "blocked_reason": "marked_blocked_future",
+              "narrative_id": "NARR-CRWD-001",
+              "published_at": "2024-08-28T20:05:00+00:00",
+              "relation": "support",
+              "replay_status": "blocked_future",
+              "source_id": "CRWD-IR-FUT-001",
+              "source_type": "company_release"
+            },
+            {
+              "availability_status": "blocked_future",
+              "blocked_reason": "marked_blocked_future",
+              "narrative_id": "NARR-CRWD-001",
+              "published_at": "2024-07-20T12:00:00+00:00",
+              "relation": "support",
+              "replay_status": "blocked_future",
+              "source_id": "CRWD-TECH-FUT-001",
+              "source_type": "post_incident_review"
+            },
+            {
+              "availability_status": "blocked_future",
+              "blocked_reason": "marked_blocked_future",
+              "narrative_id": "NARR-CRWD-002",
+              "published_at": "2024-07-20T12:00:00+00:00",
+              "relation": "contradict",
+              "replay_status": "blocked_future",
+              "source_id": "CRWD-TECH-FUT-001",
+              "source_type": "post_incident_review"
+            },
+            {
+              "availability_status": "blocked_future",
+              "blocked_reason": "marked_blocked_future",
+              "narrative_id": "NARR-CRWD-003",
+              "published_at": "2024-07-20T12:00:00+00:00",
+              "relation": "support",
+              "replay_status": "blocked_future",
+              "source_id": "CRWD-TECH-FUT-001",
+              "source_type": "post_incident_review"
+            },
+            {
+              "availability_status": "blocked_future",
+              "blocked_reason": "marked_blocked_future",
+              "narrative_id": "NARR-CRWD-004",
+              "published_at": "2024-08-28T20:05:00+00:00",
+              "relation": "contradict",
+              "replay_status": "blocked_future",
+              "source_id": "CRWD-IR-FUT-001",
+              "source_type": "company_release"
+            },
+            {
+              "availability_status": "blocked_future",
+              "blocked_reason": "marked_blocked_future",
+              "narrative_id": "NARR-CRWD-004",
+              "published_at": "2024-07-20T12:00:00+00:00",
+              "relation": "contradict",
+              "replay_status": "blocked_future",
+              "source_id": "CRWD-TECH-FUT-001",
+              "source_type": "post_incident_review"
+            }
+          ],
+          "blocked_source_ids": [
+            "CRWD-IR-FUT-001",
+            "CRWD-TECH-FUT-001"
+          ],
+          "removed_evidence_by_narrative": {
+            "NARR-CRWD-001": [
+              "CRWD-TECH-FUT-001",
+              "CRWD-IR-FUT-001"
+            ],
+            "NARR-CRWD-002": [
+              "CRWD-TECH-FUT-001"
+            ],
+            "NARR-CRWD-003": [
+              "CRWD-TECH-FUT-001"
+            ],
+            "NARR-CRWD-004": [
+              "CRWD-TECH-FUT-001",
+              "CRWD-IR-FUT-001"
+            ]
+          },
+          "replay_timestamp": "2024-07-19T16:10:00-04:00"
+        },
+        "source_clustering": {
+          "allowed_source_count": 7,
+          "average_cluster_size": 2.3333,
+          "average_derived_originality_score": 0.642871,
+          "blocked_future_source_count": 2,
+          "blocked_future_source_ids": [
+            "CRWD-IR-FUT-001",
+            "CRWD-TECH-FUT-001"
+          ],
+          "cluster_count": 3,
+          "clusters": [
+            {
+              "average_fixture_originality_score": 0.7733,
+              "cluster_basis": "independence_cluster_id",
+              "cluster_id": "financial-news",
+              "derived_originality_score": 0.6667,
+              "narrative_ids": [
+                "NARR-CRWD-001",
+                "NARR-CRWD-002",
+                "NARR-CRWD-003",
+                "NARR-CRWD-004"
+              ],
+              "publishers": [
+                "CNBC",
+                "Investopedia",
+                "Markets Insider / Business Insider"
+              ],
+              "relation_counts": {
+                "contradict": 4,
+                "support": 5
+              },
+              "representative_claim": "Markets Insider / Business Insider reported at 2024-07-19T10:23:30Z that CrowdStrike shares had plunged after a global IT outage disrupted airlines, banks, supermarkets, emergency services, and the London Stock Exchange Group news service; the article said CRWD was trading about 12% lower near $302 at 10 a.m. ET and quoted CrowdStrike's CEO statement that the issue was a defect in a single content update for Windows hosts, not a cyberattack.",
+              "source_count": 3,
+              "source_ids": [
+                "CRWD-BI-001",
+                "CRWD-CNBC-001",
+                "CRWD-INVEST-001"
+              ],
+              "source_types": [
+                "news"
+              ]
+            },
+            {
+              "average_fixture_originality_score": 0.81,
+              "cluster_basis": "independence_cluster_id",
+              "cluster_id": "market-bars",
+              "derived_originality_score": 0.5,
+              "narrative_ids": [
+                "NARR-CRWD-001",
+                "NARR-CRWD-003",
+                "NARR-CRWD-004"
+              ],
+              "publishers": [
+                "Frozen market bars"
+              ],
+              "relation_counts": {
+                "contradict": 1,
+                "support": 3
+              },
+              "representative_claim": "Frozen market bars use CRWD close-to-close prices around the outage day: $343.05 on July 18, 2024 and $304.96 on July 19, 2024, implying an approximately -11.1% event-day move before peer adjustment.",
+              "source_count": 2,
+              "source_ids": [
+                "CRWD-MKT-001",
+                "CRWD-MKT-BENCH-001"
+              ],
+              "source_types": [
+                "market_data"
+              ]
+            },
+            {
+              "average_fixture_originality_score": 0.76,
+              "cluster_basis": "independence_cluster_id",
+              "cluster_id": "technology-news",
+              "derived_originality_score": 0.75,
+              "narrative_ids": [
+                "NARR-CRWD-001",
+                "NARR-CRWD-002",
+                "NARR-CRWD-003",
+                "NARR-CRWD-004"
+              ],
+              "publishers": [
+                "CNBC",
+                "MacRumors"
+              ],
+              "relation_counts": {
+                "contradict": 1,
+                "support": 5
+              },
+              "representative_claim": "MacRumors reported at 3:12 a.m. PDT on July 19, 2024 that a widespread Windows system failure was affecting industries including banks, rail networks, airlines, broadcasters, healthcare, and retailers; it carried CrowdStrike's statement that the cause was a defect in a single content update for Windows hosts, Mac and Linux hosts were not impacted, and the issue was not a security incident or cyberattack.",
+              "source_count": 2,
+              "source_ids": [
+                "CRWD-CNBC-EXPL-001",
+                "CRWD-MR-001"
+              ],
+              "source_types": [
+                "company_statement",
+                "explainer"
+              ]
+            }
+          ],
+          "duplicate_cluster_count": 3
+        },
+        "source_reliability": {
+          "by_publisher": [
+            {
+              "allowed_source_count": 2,
+              "average_evidence_quality": 0.76,
+              "average_independence": 0.75,
+              "average_originality_score": 0.76,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "CNBC",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "CRWD-CNBC-001",
+                "CRWD-CNBC-EXPL-001"
+              ]
+            },
+            {
+              "allowed_source_count": 2,
+              "average_evidence_quality": 0.81,
+              "average_independence": 0.84,
+              "average_originality_score": 0.81,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "Frozen market bars",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "CRWD-MKT-001",
+                "CRWD-MKT-BENCH-001"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.76,
+              "average_independence": 0.76,
+              "average_originality_score": 0.76,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "Investopedia",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "CRWD-INVEST-001"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.78,
+              "average_independence": 0.72,
+              "average_originality_score": 0.78,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "MacRumors",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "CRWD-MR-001"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.78,
+              "average_independence": 0.76,
+              "average_originality_score": 0.78,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "publisher",
+              "key": "Markets Insider / Business Insider",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "CRWD-BI-001"
+              ]
+            },
+            {
+              "allowed_source_count": 0,
+              "average_evidence_quality": null,
+              "average_independence": null,
+              "average_originality_score": null,
+              "blocked_future_count": 2,
+              "blocked_future_source_ids": [
+                "CRWD-IR-FUT-001",
+                "CRWD-TECH-FUT-001"
+              ],
+              "group": "publisher",
+              "key": "unknown",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "CRWD-IR-FUT-001",
+                "CRWD-TECH-FUT-001"
+              ]
+            }
+          ],
+          "by_source_type": [
+            {
+              "allowed_source_count": 0,
+              "average_evidence_quality": null,
+              "average_independence": null,
+              "average_originality_score": null,
+              "blocked_future_count": 1,
+              "blocked_future_source_ids": [
+                "CRWD-IR-FUT-001"
+              ],
+              "group": "source_type",
+              "key": "company_release",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "CRWD-IR-FUT-001"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.78,
+              "average_independence": 0.72,
+              "average_originality_score": 0.78,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "source_type",
+              "key": "company_statement",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "CRWD-MR-001"
+              ]
+            },
+            {
+              "allowed_source_count": 1,
+              "average_evidence_quality": 0.74,
+              "average_independence": 0.74,
+              "average_originality_score": 0.74,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "source_type",
+              "key": "explainer",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "CRWD-CNBC-EXPL-001"
+              ]
+            },
+            {
+              "allowed_source_count": 2,
+              "average_evidence_quality": 0.81,
+              "average_independence": 0.84,
+              "average_originality_score": 0.81,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "source_type",
+              "key": "market_data",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "CRWD-MKT-001",
+                "CRWD-MKT-BENCH-001"
+              ]
+            },
+            {
+              "allowed_source_count": 3,
+              "average_evidence_quality": 0.7733,
+              "average_independence": 0.76,
+              "average_originality_score": 0.7733,
+              "blocked_future_count": 0,
+              "blocked_future_source_ids": [],
+              "group": "source_type",
+              "key": "news",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "CRWD-BI-001",
+                "CRWD-CNBC-001",
+                "CRWD-INVEST-001"
+              ]
+            },
+            {
+              "allowed_source_count": 0,
+              "average_evidence_quality": null,
+              "average_independence": null,
+              "average_originality_score": null,
+              "blocked_future_count": 1,
+              "blocked_future_source_ids": [
+                "CRWD-TECH-FUT-001"
+              ],
+              "group": "source_type",
+              "key": "post_incident_review",
+              "low_quality_source_count": 0,
+              "source_ids": [
+                "CRWD-TECH-FUT-001"
+              ]
+            }
+          ],
+          "overall": {
+            "allowed_source_count": 7,
+            "average_evidence_quality": 0.78,
+            "average_independence": 0.7743,
+            "average_originality_score": 0.78,
+            "blocked_future_count": 2,
+            "blocked_future_source_ids": [
+              "CRWD-IR-FUT-001",
+              "CRWD-TECH-FUT-001"
+            ],
+            "group": "overall",
+            "key": "all_sources",
+            "low_quality_source_count": 0,
+            "source_ids": [
+              "CRWD-BI-001",
+              "CRWD-CNBC-001",
+              "CRWD-CNBC-EXPL-001",
+              "CRWD-INVEST-001",
+              "CRWD-IR-FUT-001",
+              "CRWD-MKT-001",
+              "CRWD-MKT-BENCH-001",
+              "CRWD-MR-001",
+              "CRWD-TECH-FUT-001"
+            ]
+          }
+        }
+      },
+      "report": "# NarrativeDesk Event Report: CRWD\n\n> Research support output. Not investment advice.\n\n## Data Note\n\nThis report is generated from a real-curated replay bundle. Treat it as research support only; public use requires curator review of source URLs, publication timestamps, raw document hashes, and validation status.\n\n## Event\n\n- Event ID: `EVT-REAL-CRWD-2024-07-19`\n- Company: CrowdStrike Holdings, Inc. (`CRWD`)\n- Timestamp lock: `2024-07-19T16:10:00-04:00`\n- Event type: operational/product incident\n- Daily return: -11.1%\n- Abnormal return: -10.2%\n- Volume ratio: n/a\n- Sector ETF return: -0.9%\n- Peer median return: -0.9%\n\nReal-curated CrowdStrike July 2024 global outage replay with timestamped citations, replay-locked evidence, and held-out validation. Research and education only; not investment advice.\n\n## Replay Audit\n\n- Allowed sources: CRWD-BI-001, CRWD-CNBC-001, CRWD-CNBC-EXPL-001, CRWD-INVEST-001, CRWD-MKT-001, CRWD-MKT-BENCH-001, CRWD-MR-001\n- Blocked future sources: CRWD-IR-FUT-001, CRWD-TECH-FUT-001\n- Removed from `NARR-CRWD-001`: CRWD-TECH-FUT-001, CRWD-IR-FUT-001\n- Removed from `NARR-CRWD-002`: CRWD-TECH-FUT-001\n- Removed from `NARR-CRWD-003`: CRWD-TECH-FUT-001\n- Removed from `NARR-CRWD-004`: CRWD-TECH-FUT-001, CRWD-IR-FUT-001\n\n## Source Map\n\n| Source | Status | Type | Publisher | Narratives | Relations |\n| --- | --- | --- | --- | --- | --- |\n| CRWD-BI-001 | allowed | news | Markets Insider / Business Insider | NARR-CRWD-001, NARR-CRWD-002, NARR-CRWD-004 | contradict, support |\n| CRWD-CNBC-001 | allowed | news | CNBC | NARR-CRWD-001, NARR-CRWD-003, NARR-CRWD-004 | contradict, support |\n| CRWD-CNBC-EXPL-001 | allowed | explainer | CNBC | NARR-CRWD-001, NARR-CRWD-003 | support |\n| CRWD-INVEST-001 | allowed | news | Investopedia | NARR-CRWD-001, NARR-CRWD-002, NARR-CRWD-004 | contradict, support |\n| CRWD-MKT-001 | allowed | market_data | Frozen market bars | NARR-CRWD-001, NARR-CRWD-004 | contradict, support |\n| CRWD-MKT-BENCH-001 | allowed | market_data | Frozen market bars | NARR-CRWD-001, NARR-CRWD-003 | support |\n| CRWD-MR-001 | allowed | company_statement | MacRumors | NARR-CRWD-001, NARR-CRWD-002, NARR-CRWD-003, NARR-CRWD-004 | contradict, support |\n| CRWD-IR-FUT-001 | blocked_future | company_release | n/a | NARR-CRWD-001, NARR-CRWD-004 | contradict, support |\n| CRWD-TECH-FUT-001 | blocked_future | post_incident_review | n/a | NARR-CRWD-001, NARR-CRWD-002, NARR-CRWD-003, NARR-CRWD-004 | contradict, support |\n\n## Citation QA\n\n- Replay filter: pass\n- Support coverage: pass\n- Event-time integrity: pass\n- Citation QA: pass\n- Provenance-ready allowed sources: pass\n- Returned blocked sources: 0\n- Narratives with support: 4/4\n- Missing URLs: 0\n- Missing content hashes: 0\n- Low-quality evidence sources: 0\n\n## Source Reliability\n\nBlocked future sources are counted for auditability but excluded from scoring and ranking.\n- Allowed sources: 7\n- Blocked future sources: 2\n- Average evidence quality: 0.78\n- Average independence: 0.77\n- Average originality score: 0.78\n- Low-quality evidence sources: 0\n- Blocked source IDs: CRWD-IR-FUT-001, CRWD-TECH-FUT-001\n\n| Publisher | Allowed | Blocked Future | Evidence Quality | Independence | Originality |\n| --- | ---: | ---: | ---: | ---: | ---: |\n| CNBC | 2 | 0 | 0.76 | 0.75 | 0.76 |\n| Frozen market bars | 2 | 0 | 0.81 | 0.84 | 0.81 |\n| Investopedia | 1 | 0 | 0.76 | 0.76 | 0.76 |\n| MacRumors | 1 | 0 | 0.78 | 0.72 | 0.78 |\n| Markets Insider / Business Insider | 1 | 0 | 0.78 | 0.76 | 0.78 |\n| unknown | 0 | 2 | n/a | n/a | n/a |\n\n## Source Clustering\n\nClusters use replay-safe allowed evidence only. Future-dated source text stays quarantined.\n- Allowed sources clustered: 7\n- Blocked future sources excluded: 2\n- Cluster count: 3\n- Duplicate clusters: 3\n- Average derived originality: 0.64\n\n| Cluster | Basis | Sources | Publishers | Derived Originality | Representative Claim |\n| --- | --- | --- | --- | ---: | --- |\n| financial-news | independence_cluster_id | CRWD-BI-001, CRWD-CNBC-001, CRWD-INVEST-001 | CNBC, Investopedia, Markets Insider / Business Insider | 0.67 | Markets Insider / Business Insider reported at 2024-07-19T10:23:30Z that CrowdStrike shares had plunged after a global IT outage disrupted airlines, banks, supermarkets, emergency services, and the London Stock Exchange Group news service; the article said CRWD was trading about 12% lower near $302 at 10 a.m. ET and quoted CrowdStrike's CEO statement that the issue was a defect in a single content update for Windows hosts, not a cyberattack. |\n| market-bars | independence_cluster_id | CRWD-MKT-001, CRWD-MKT-BENCH-001 | Frozen market bars | 0.50 | Frozen market bars use CRWD close-to-close prices around the outage day: $343.05 on July 18, 2024 and $304.96 on July 19, 2024, implying an approximately -11.1% event-day move before peer adjustment. |\n| technology-news | independence_cluster_id | CRWD-CNBC-EXPL-001, CRWD-MR-001 | CNBC, MacRumors | 0.75 | MacRumors reported at 3:12 a.m. PDT on July 19, 2024 that a widespread Windows system failure was affecting industries including banks, rail networks, airlines, broadcasters, healthcare, and retailers; it carried CrowdStrike's statement that the cause was a defect in a single content update for Windows hosts, Mac and Linux hosts were not impacted, and the issue was not a security incident or cyberattack. |\n\n## Narrative Verification Ranking\n\n| Rank | Narrative | Direction | Score | Horizon |\n| ---: | --- | --- | ---: | --- |\n| 1 | Operational reliability liability | bearish | 0.81 | 60 trading days |\n| 2 | Windows platform dependency | bearish | 0.64 | 60 trading days |\n| 3 | Cyberattack scare | bearish | 0.60 | 60 trading days |\n| 4 | Temporary outage overreaction | mixed | 0.50 | 60 trading days |\n\n## #1: Operational reliability liability\n\nInvestors repriced CrowdStrike because the outage exposed an operational reliability liability in a mission-critical security platform, not because the market had discovered a cyberattack.\n\nMechanism: Replay-time evidence tied the outage to a defective Falcon update, global customer disruption, and direct trust damage for an endpoint-security vendor. That gave the market a concrete mechanism from operational reliability risk to customer concessions, remediation cost, and future revenue-risk repricing.\n\nExpected observables:\n- Post-lock technical evidence should confirm a CrowdStrike-controlled update mechanism rather than an outside attack.\n- Future company commentary should discuss customer recovery, remediation, concessions, or incident costs.\n- The abnormal move should remain company-specific relative to broad technology benchmarks.\n\nSupporting evidence:\n- `CRWD-MR-001` (company_statement): MacRumors reported at 3:12 a.m. PDT on July 19, 2024 that a widespread Windows system failure was affecting industries including banks, rail networks, airlines, broadcasters, healthcare, and retailers; it carried CrowdStrike's statement that the cause was a defect in a single content update for Windows hosts, Mac and Linux hosts were not impacted, and the issue was not a security incident or cyberattack.\n- `CRWD-BI-001` (news): Markets Insider / Business Insider reported at 2024-07-19T10:23:30Z that CrowdStrike shares had plunged after a global IT outage disrupted airlines, banks, supermarkets, emergency services, and the London Stock Exchange Group news service; the article said CRWD was trading about 12% lower near $302 at 10 a.m. ET and quoted CrowdStrike's CEO statement that the issue was a defect in a single content update for Windows hosts, not a cyberattack.\n- `CRWD-CNBC-001` (news): CNBC reported on July 19, 2024 that CrowdStrike shares opened down more than 14% and closed down about 11% after an update affecting Falcon Sensor caused a major outage across businesses worldwide; the article tied the move to a defect in a single content update for Windows hosts and said CrowdStrike was rolling back the update globally.\n- `CRWD-INVEST-001` (news): Investopedia reported on July 19, 2024 at 1:59 p.m. EDT that CrowdStrike shares had plunged about 12% while rival cybersecurity shares rose after the company said an update defect caused a worldwide outage; the article noted the disruption hit airlines, banks, and other businesses and cited CrowdStrike's prior close of $343.05.\n- `CRWD-CNBC-EXPL-001` (explainer): CNBC's July 19, 2024 explainer said the outage stemmed from a cybersecurity software update, caused Windows systems to crash across sectors including banking, airlines, healthcare, and broadcasters, and centered the operational mechanism on CrowdStrike's update rather than a broad market move alone.\n- `CRWD-MKT-001` (market_data): Frozen market bars use CRWD close-to-close prices around the outage day: $343.05 on July 18, 2024 and $304.96 on July 19, 2024, implying an approximately -11.1% event-day move before peer adjustment.\n- `CRWD-MKT-BENCH-001` (market_data): Frozen benchmark bars use QQQ close-to-close prices around the CRWD outage event: $476.25 on July 18, 2024 and $472.03 on July 19, 2024, implying the company-specific CRWD selloff was much larger than the technology benchmark move.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.84\n- mechanism_specificity: 0.86\n- source_independence: 0.76\n- cross_sectional_fit: 0.86\n- contradiction_resistance: 0.78\n- timestamp_advantage: 0.90\n- forward_observable_quality: 0.82\n- crowding_risk: 0.36\n- unsupported_claim_penalty: 0.04\n\n## #2: Windows platform dependency\n\nThe market could have read the outage as a Microsoft and Windows ecosystem dependency shock rather than a CrowdStrike-specific trust shock.\n\nMechanism: The outage hit Windows hosts and interacted with Microsoft-dependent enterprise infrastructure, making platform dependency a plausible explanation. It remained less specific than the CrowdStrike-controlled update mechanism because the abnormal move was concentrated in CrowdStrike shares.\n\nExpected observables:\n- Later evidence should continue to emphasize Windows-host scope and Microsoft ecosystem exposure.\n- The narrative should weaken if financial validation centers on CrowdStrike customer commitments rather than Microsoft platform risk.\n- Peer and benchmark context should show whether the selloff was broader than CrowdStrike.\n\nSupporting evidence:\n- `CRWD-MR-001` (company_statement): MacRumors reported at 3:12 a.m. PDT on July 19, 2024 that a widespread Windows system failure was affecting industries including banks, rail networks, airlines, broadcasters, healthcare, and retailers; it carried CrowdStrike's statement that the cause was a defect in a single content update for Windows hosts, Mac and Linux hosts were not impacted, and the issue was not a security incident or cyberattack.\n- `CRWD-CNBC-001` (news): CNBC reported on July 19, 2024 that CrowdStrike shares opened down more than 14% and closed down about 11% after an update affecting Falcon Sensor caused a major outage across businesses worldwide; the article tied the move to a defect in a single content update for Windows hosts and said CrowdStrike was rolling back the update globally.\n- `CRWD-CNBC-EXPL-001` (explainer): CNBC's July 19, 2024 explainer said the outage stemmed from a cybersecurity software update, caused Windows systems to crash across sectors including banking, airlines, healthcare, and broadcasters, and centered the operational mechanism on CrowdStrike's update rather than a broad market move alone.\n- `CRWD-MKT-BENCH-001` (market_data): Frozen benchmark bars use QQQ close-to-close prices around the CRWD outage event: $476.25 on July 18, 2024 and $472.03 on July 19, 2024, implying the company-specific CRWD selloff was much larger than the technology benchmark move.\n\nContradicting evidence:\n- None after replay filtering.\n\nScore components:\n- evidence_strength: 0.70\n- mechanism_specificity: 0.74\n- source_independence: 0.66\n- cross_sectional_fit: 0.62\n- contradiction_resistance: 0.58\n- timestamp_advantage: 0.86\n- forward_observable_quality: 0.62\n- crowding_risk: 0.68\n- unsupported_claim_penalty: 0.09\n\n## #3: Cyberattack scare\n\nA competing explanation was that the selloff reflected fear of a security incident or cyberattack at CrowdStrike itself.\n\nMechanism: A cybersecurity vendor causing global system outages could initially invite breach or hostile-activity concern, but the replay-time official statement and follow-up technical evidence directly rejected that mechanism.\n\nExpected observables:\n- Later technical disclosures would need to identify malicious activity or breach mechanics.\n- Official remediation evidence would need to conflict with the company statement that the incident was not a cyberattack.\n- If this explanation loses, future details should keep the mechanism inside a faulty update path.\n\nSupporting evidence:\n- `CRWD-INVEST-001` (news): Investopedia reported on July 19, 2024 at 1:59 p.m. EDT that CrowdStrike shares had plunged about 12% while rival cybersecurity shares rose after the company said an update defect caused a worldwide outage; the article noted the disruption hit airlines, banks, and other businesses and cited CrowdStrike's prior close of $343.05.\n\nContradicting evidence:\n- `CRWD-MR-001` (company_statement): MacRumors reported at 3:12 a.m. PDT on July 19, 2024 that a widespread Windows system failure was affecting industries including banks, rail networks, airlines, broadcasters, healthcare, and retailers; it carried CrowdStrike's statement that the cause was a defect in a single content update for Windows hosts, Mac and Linux hosts were not impacted, and the issue was not a security incident or cyberattack.\n- `CRWD-BI-001` (news): Markets Insider / Business Insider reported at 2024-07-19T10:23:30Z that CrowdStrike shares had plunged after a global IT outage disrupted airlines, banks, supermarkets, emergency services, and the London Stock Exchange Group news service; the article said CRWD was trading about 12% lower near $302 at 10 a.m. ET and quoted CrowdStrike's CEO statement that the issue was a defect in a single content update for Windows hosts, not a cyberattack.\n\nScore components:\n- evidence_strength: 0.72\n- mechanism_specificity: 0.70\n- source_independence: 0.68\n- cross_sectional_fit: 0.52\n- contradiction_resistance: 0.38\n- timestamp_advantage: 0.88\n- forward_observable_quality: 0.54\n- crowding_risk: 0.74\n- unsupported_claim_penalty: 0.12\n\n## #4: Temporary outage overreaction\n\nThe selloff may have been a temporary outage overreaction because CrowdStrike identified, isolated, and began remediating the faulty update quickly.\n\nMechanism: CrowdStrike identified the issue and deployed a fix quickly, which supported an argument that the market reaction was an overreaction. That explanation was weaker because same-day evidence showed broad customer disruption and a company-specific abnormal selloff.\n\nExpected observables:\n- Future company results should show limited customer, ARR, guidance, or incident-cost effects.\n- Follow-up commentary should frame the outage as short-lived and operationally contained.\n- The narrative should weaken if later filings or releases cite customer commitments, remediation costs, or guidance impact.\n\nSupporting evidence:\n- `CRWD-MR-001` (company_statement): MacRumors reported at 3:12 a.m. PDT on July 19, 2024 that a widespread Windows system failure was affecting industries including banks, rail networks, airlines, broadcasters, healthcare, and retailers; it carried CrowdStrike's statement that the cause was a defect in a single content update for Windows hosts, Mac and Linux hosts were not impacted, and the issue was not a security incident or cyberattack.\n\nContradicting evidence:\n- `CRWD-BI-001` (news): Markets Insider / Business Insider reported at 2024-07-19T10:23:30Z that CrowdStrike shares had plunged after a global IT outage disrupted airlines, banks, supermarkets, emergency services, and the London Stock Exchange Group news service; the article said CRWD was trading about 12% lower near $302 at 10 a.m. ET and quoted CrowdStrike's CEO statement that the issue was a defect in a single content update for Windows hosts, not a cyberattack.\n- `CRWD-CNBC-001` (news): CNBC reported on July 19, 2024 that CrowdStrike shares opened down more than 14% and closed down about 11% after an update affecting Falcon Sensor caused a major outage across businesses worldwide; the article tied the move to a defect in a single content update for Windows hosts and said CrowdStrike was rolling back the update globally.\n- `CRWD-INVEST-001` (news): Investopedia reported on July 19, 2024 at 1:59 p.m. EDT that CrowdStrike shares had plunged about 12% while rival cybersecurity shares rose after the company said an update defect caused a worldwide outage; the article noted the disruption hit airlines, banks, and other businesses and cited CrowdStrike's prior close of $343.05.\n- `CRWD-MKT-001` (market_data): Frozen market bars use CRWD close-to-close prices around the outage day: $343.05 on July 18, 2024 and $304.96 on July 19, 2024, implying an approximately -11.1% event-day move before peer adjustment.\n\nScore components:\n- evidence_strength: 0.62\n- mechanism_specificity: 0.54\n- source_independence: 0.58\n- cross_sectional_fit: 0.38\n- contradiction_resistance: 0.34\n- timestamp_advantage: 0.82\n- forward_observable_quality: 0.48\n- crowding_risk: 0.78\n- unsupported_claim_penalty: 0.16\n\n## Scoring Weights\n\n- evidence_strength: 0.20\n- mechanism_specificity: 0.15\n- source_independence: 0.15\n- cross_sectional_fit: 0.10\n- contradiction_resistance: 0.10\n- timestamp_advantage: 0.10\n- forward_observable_quality: 0.10\n- crowding_risk: 0.05\n- unsupported_claim_penalty: 0.05\n"
     }
   ],
   "default_case_id": "EVT-REAL-AAPL-2024-05-02"

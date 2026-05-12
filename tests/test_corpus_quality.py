@@ -19,9 +19,11 @@ class PublicCorpusQualityTests(unittest.TestCase):
 
         self.assertTrue(result["ok"], result["next_action"])
         self.assertEqual(result["status"], "serious_corpus_ready")
-        self.assertEqual(result["metrics"]["case_count"], 3)
-        self.assertEqual(result["metrics"]["unique_ticker_count"], 3)
-        self.assertEqual(result["metrics"]["blocked_future_source_count"], 4)
+        self.assertEqual(result["metrics"]["case_count"], 4)
+        self.assertEqual(result["metrics"]["unique_ticker_count"], 4)
+        self.assertEqual(result["metrics"]["unique_event_type_count"], 2)
+        self.assertIn("operational/product incident", result["metrics"]["event_types"])
+        self.assertEqual(result["metrics"]["blocked_future_source_count"], 6)
         self.assertEqual(result["aggregate"]["top_ranked_validated_rate"], 1)
         self.assertGreater(
             result["aggregate"]["narrativedesk_tournament_validated_rate"],
@@ -34,7 +36,14 @@ class PublicCorpusQualityTests(unittest.TestCase):
 
         self.assertFalse(result["ok"])
         self.assertFalse(result["checks"]["minimum_case_count"]["ok"])
-        self.assertEqual(result["checks"]["minimum_case_count"]["actual"], 3)
+        self.assertEqual(result["checks"]["minimum_case_count"]["actual"], 4)
+
+    def test_public_corpus_reports_event_type_breadth_failure(self) -> None:
+        result = assess_public_corpus_quality(PUBLIC_CASE_INDEX, min_unique_event_types=99)
+
+        self.assertFalse(result["ok"])
+        self.assertFalse(result["checks"]["unique_event_type_breadth"]["ok"])
+        self.assertEqual(result["checks"]["unique_event_type_breadth"]["actual"], 2)
 
     def test_public_corpus_quality_cli(self) -> None:
         completed = subprocess.run(

@@ -1,0 +1,120 @@
+{
+  "case_id": "EVT-REAL-CRWD-2024-07-19",
+  "checks": {
+    "ingestion_ready": {
+      "errors": [],
+      "ok": true
+    },
+    "narrative_linkage": {
+      "allowed_sources_without_links": [],
+      "errors": [],
+      "narrative_link_counts": [
+        {
+          "allowed_contradiction_source_count": 0,
+          "allowed_support_source_count": 7,
+          "blocked_future_source_count": 2,
+          "narrative_id": "NARR-CRWD-001"
+        },
+        {
+          "allowed_contradiction_source_count": 2,
+          "allowed_support_source_count": 1,
+          "blocked_future_source_count": 1,
+          "narrative_id": "NARR-CRWD-002"
+        },
+        {
+          "allowed_contradiction_source_count": 0,
+          "allowed_support_source_count": 4,
+          "blocked_future_source_count": 1,
+          "narrative_id": "NARR-CRWD-003"
+        },
+        {
+          "allowed_contradiction_source_count": 4,
+          "allowed_support_source_count": 1,
+          "blocked_future_source_count": 2,
+          "narrative_id": "NARR-CRWD-004"
+        }
+      ],
+      "narratives_without_allowed_support": [],
+      "ok": true
+    },
+    "preview_valid": {
+      "errors": [],
+      "ok": true
+    },
+    "provenance_ready": {
+      "document_text_source_ids": [
+        "CRWD-MR-001",
+        "CRWD-BI-001",
+        "CRWD-CNBC-001",
+        "CRWD-INVEST-001",
+        "CRWD-CNBC-EXPL-001",
+        "CRWD-MKT-001",
+        "CRWD-MKT-BENCH-001",
+        "CRWD-TECH-FUT-001",
+        "CRWD-IR-FUT-001"
+      ],
+      "errors": [],
+      "hash_mismatch_source_ids": [],
+      "missing_hash_source_ids": [],
+      "missing_retrieved_at_source_ids": [],
+      "missing_stable_url_source_ids": [],
+      "ok": true
+    },
+    "replay_safe": {
+      "allowed_after_lock_source_ids": [],
+      "blocked_before_lock_source_ids": [],
+      "blocked_future_source_ids": [
+        "CRWD-TECH-FUT-001",
+        "CRWD-IR-FUT-001"
+      ],
+      "errors": [],
+      "ok": true
+    }
+  },
+  "ok": true,
+  "preview": {
+    "allowed_source_ids": [
+      "CRWD-MR-001",
+      "CRWD-BI-001",
+      "CRWD-CNBC-001",
+      "CRWD-INVEST-001",
+      "CRWD-CNBC-EXPL-001",
+      "CRWD-MKT-001",
+      "CRWD-MKT-BENCH-001"
+    ],
+    "blocked_future_source_ids": [
+      "CRWD-TECH-FUT-001",
+      "CRWD-IR-FUT-001"
+    ],
+    "case_id": "EVT-REAL-CRWD-2024-07-19",
+    "narrative_count": 4,
+    "provenance_mode": "real-curated",
+    "source_counts": {
+      "allowed": 7,
+      "blocked_future": 2,
+      "total": 9
+    },
+    "source_ids": [
+      "CRWD-MR-001",
+      "CRWD-BI-001",
+      "CRWD-CNBC-001",
+      "CRWD-INVEST-001",
+      "CRWD-CNBC-EXPL-001",
+      "CRWD-MKT-001",
+      "CRWD-MKT-BENCH-001",
+      "CRWD-TECH-FUT-001",
+      "CRWD-IR-FUT-001"
+    ],
+    "source_type_counts": {
+      "company_release": 1,
+      "company_statement": 1,
+      "explainer": 1,
+      "market_data": 2,
+      "news": 3,
+      "post_incident_review": 1
+    },
+    "ticker": "CRWD"
+  },
+  "status": "ready_to_ingest",
+  "ticker": "CRWD"
+}

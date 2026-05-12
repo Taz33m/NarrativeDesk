@@ -560,6 +560,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Minimum distinct tickers in the public corpus.",
     )
     corpus_quality.add_argument(
+        "--min-unique-event-types",
+        type=int,
+        default=2,
+        help="Minimum distinct event types in the public corpus.",
+    )
+    corpus_quality.add_argument(
         "--min-blocked-future-sources-per-case",
         type=int,
         default=1,
@@ -2066,6 +2072,7 @@ def run_public_corpus_quality(args: argparse.Namespace) -> int:
         args.case_index,
         min_cases=args.min_cases,
         min_unique_tickers=args.min_unique_tickers,
+        min_unique_event_types=args.min_unique_event_types,
         min_blocked_future_sources_per_case=args.min_blocked_future_sources_per_case,
         min_top_ranked_validated_rate=args.min_top_ranked_validated_rate,
     )
