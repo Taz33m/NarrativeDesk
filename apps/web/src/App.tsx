@@ -508,7 +508,7 @@ function App() {
           </div>
         </div>
 
-        <div className="case-selector-panel">
+        <div className="case-selector-panel" data-testid="case-library-panel">
           <label>
             Case library
             <select
@@ -523,6 +523,7 @@ function App() {
               ))}
             </select>
           </label>
+          <CaseLibraryStats cases={cases} validationCases={validationCases} />
           <span className="provenance-chip">Provenance: {provenanceCopy(ledger.event.data_provenance_mode)}</span>
         </div>
       </header>
@@ -622,6 +623,43 @@ function App() {
         </>
       ) : null}
     </main>
+  );
+}
+
+function CaseLibraryStats({
+  cases,
+  validationCases,
+}: {
+  cases: CasesPayload | null;
+  validationCases: ValidationCasesPayload | null;
+}) {
+  const caseCount = cases?.cases.length ?? 0;
+  const verifiedCount = cases?.cases.filter((caseItem) => caseItem.bundle_integrity?.verified_by_bundle_verify).length ?? 0;
+  const blockedFutureCount = cases?.cases.reduce(
+    (total, caseItem) => total + (caseItem.bundle_integrity?.blocked_future_source_count ?? 0),
+    0,
+  ) ?? 0;
+  const topRankHit = validationCases?.aggregate?.top_ranked_validated_rate;
+
+  return (
+    <div className="case-library-stats" data-testid="case-library-stats">
+      <span>
+        Real cases
+        <strong>{caseCount}</strong>
+      </span>
+      <span>
+        Verified
+        <strong>{verifiedCount}</strong>
+      </span>
+      <span>
+        Blocked future
+        <strong>{blockedFutureCount}</strong>
+      </span>
+      <span>
+        Rank #1 hit
+        <strong>{pct(topRankHit)}</strong>
+      </span>
+    </div>
   );
 }
 
