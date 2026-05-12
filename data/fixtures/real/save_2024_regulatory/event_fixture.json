@@ -1,0 +1,815 @@
+{
+  "event": {
+    "case_id": "EVT-REAL-SAVE-2024-01-16",
+    "company_name": "Spirit Airlines, Inc.",
+    "data_provenance_mode": "real-curated",
+    "event_date": "2024-01-16",
+    "event_id": "EVT-REAL-SAVE-2024-01-16",
+    "event_summary": "Real-curated Spirit Airlines regulatory shock replay after the JetBlue acquisition was blocked. Research and education only; not investment advice.",
+    "event_timestamp": "2024-01-16T16:10:00-05:00",
+    "event_type": "regulatory/antitrust shock",
+    "ticker": "SAVE"
+  },
+  "market_snapshot": {
+    "event_bar": {
+      "as_of": "2024-01-16T21:00:00Z",
+      "close": 7.92,
+      "open": 14.97,
+      "symbol": "SAVE",
+      "volume": 150000000.0
+    },
+    "peer_bars": [
+      {
+        "as_of": "2024-01-16T21:00:00Z",
+        "close": 13.19,
+        "open": 13.08,
+        "symbol": "AAL",
+        "volume": 55891500.0
+      },
+      {
+        "as_of": "2024-01-16T21:00:00Z",
+        "close": 36.63,
+        "open": 37.29,
+        "symbol": "DAL",
+        "volume": 27511600.0
+      }
+    ],
+    "sector_bar": {
+      "as_of": "2024-01-16T21:00:00Z",
+      "close": 13.19,
+      "open": 13.08,
+      "symbol": "AAL",
+      "volume": 55891500.0
+    }
+  },
+  "narratives": [
+    {
+      "contradicting_evidence": [],
+      "directional_implication": "bearish",
+      "event_id": "EVT-REAL-SAVE-2024-01-16",
+      "expected_observables": [
+        "Future company statements should confirm that legal and regulatory conditions made the transaction impossible to close.",
+        "Held-out validation should show the merger agreement terminated rather than merely delayed.",
+        "The abnormal move should remain much larger than airline peer moves around the replay lock."
+      ],
+      "mechanism": "The ruling directly blocked the $3.8 billion acquisition path, turning a deal-spread security back into a standalone ultra-low-cost carrier with weaker financing optionality. Same-day market evidence showed the move was concentrated in Spirit rather than airline peers.",
+      "narrative": "Investors repriced Spirit after the court ruling removed most of the embedded JetBlue acquisition optionality from the equity story.",
+      "narrative_id": "NARR-SAVE-001",
+      "scoring_inputs": {
+        "contradiction_resistance": 0.8,
+        "cross_sectional_fit": 0.88,
+        "crowding_risk": 0.36,
+        "evidence_strength": 0.87,
+        "forward_observable_quality": 0.84,
+        "mechanism_specificity": 0.9,
+        "source_independence": 0.82,
+        "timestamp_advantage": 0.92,
+        "unsupported_claim_penalty": 0.04
+      },
+      "supporting_evidence": [
+        {
+          "availability_status": "allowed",
+          "claim": "The Justice Department stated on January 16, 2024 that the U.S. District Court blocked JetBlue's $3.8 billion acquisition of Spirit and described the ruling as protection against anticompetitive harm.",
+          "claim_extracted": "The Justice Department stated on January 16, 2024 that the U.S. District Court blocked JetBlue's $3.8 billion acquisition of Spirit and described the ruling as protection against anticompetitive harm.",
+          "content_hash": "sha256:dca57c8c8cefa3c6bc9d78e821e4c62863f9370dc2051c7e3e202e0041db4595",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-003"
+          ],
+          "document_text": "The Justice Department stated on January 16, 2024 that the U.S. District Court blocked JetBlue's $3.8 billion acquisition of Spirit and described the ruling as protection against anticompetitive harm.",
+          "evidence_quality": 0.88,
+          "incentive_conflict": 0.08,
+          "independence": 0.88,
+          "independence_cluster_id": "government-antitrust",
+          "originality_score": 0.9,
+          "published_at": "2024-01-16T15:30:00-05:00",
+          "publisher": "U.S. Department of Justice",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-DOJ-001",
+          "source_type": "agency_statement",
+          "support_strength": 0.86,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-004"
+          ],
+          "title": "Justice Department Statements on District Court Decision to Block JetBlue's Acquisition of Spirit Airlines",
+          "url": "https://www.justice.gov/archives/opa/pr/justice-department-statements-district-court-decision-block-jetblues-acquisition-spirit"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "CNBC reported at 1:04 p.m. EST on January 16, 2024 that a federal judge blocked JetBlue's purchase of Spirit, that the DOJ argued the deal was anticompetitive, that the companies disagreed and were evaluating next steps, and that Spirit shares lost 47% Tuesday while JetBlue gained about 5%.",
+          "claim_extracted": "CNBC reported at 1:04 p.m. EST on January 16, 2024 that a federal judge blocked JetBlue's purchase of Spirit, that the DOJ argued the deal was anticompetitive, that the companies disagreed and were evaluating next steps, and that Spirit shares lost 47% Tuesday while JetBlue gained about 5%.",
+          "content_hash": "sha256:39d4382faaf6c1a0e12eb1c45381a991c6b9d17fe3bd3ee7547faf449f4c5689",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-004"
+          ],
+          "document_text": "CNBC reported at 1:04 p.m. EST on January 16, 2024 that a federal judge blocked JetBlue's purchase of Spirit, that the DOJ argued the deal was anticompetitive, that the companies disagreed and were evaluating next steps, and that Spirit shares lost 47% Tuesday while JetBlue gained about 5%.",
+          "evidence_quality": 0.8,
+          "incentive_conflict": 0.08,
+          "independence": 0.76,
+          "independence_cluster_id": "financial-news-cnbc",
+          "originality_score": 0.78,
+          "published_at": "2024-01-16T13:04:00-05:00",
+          "publisher": "CNBC",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-CNBC-001",
+          "source_type": "news",
+          "support_strength": 0.82,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-002",
+            "NARR-SAVE-003"
+          ],
+          "title": "Judge blocks JetBlue-Spirit merger after DOJ's antitrust challenge",
+          "url": "https://www.cnbc.com/2024/01/16/jetblue-spirit-merger-block-in-win-for-bidens-justice-department.html"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Associated Press reporting carried by WBUR said a federal judge blocked JetBlue from buying Spirit, said the deal would reduce competition, and emphasized Spirit as an important low-cost airline for price-sensitive travelers.",
+          "claim_extracted": "Associated Press reporting carried by WBUR said a federal judge blocked JetBlue from buying Spirit, said the deal would reduce competition, and emphasized Spirit as an important low-cost airline for price-sensitive travelers.",
+          "content_hash": "sha256:023aefb87b28f0af80cb7988a085c156d723ec4ad00b6ffdebb02d585155fe20",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-003"
+          ],
+          "document_text": "Associated Press reporting carried by WBUR said a federal judge blocked JetBlue from buying Spirit, said the deal would reduce competition, and emphasized Spirit as an important low-cost airline for price-sensitive travelers.",
+          "evidence_quality": 0.76,
+          "incentive_conflict": 0.08,
+          "independence": 0.78,
+          "independence_cluster_id": "wire-news-ap",
+          "originality_score": 0.74,
+          "published_at": "2024-01-16T14:30:00-05:00",
+          "publisher": "Associated Press / WBUR",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-AP-001",
+          "source_type": "news",
+          "support_strength": 0.76,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-004"
+          ],
+          "title": "Judge blocks $3.8 billion JetBlue-Spirit merger",
+          "url": "https://www.wbur.org/news/2024/01/16/jetblue-spirit-merger-blocked"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Reuters reporting through Investing.com said the court blocked JetBlue's planned $3.8 billion acquisition of Spirit after agreeing with the DOJ that the deal was anticompetitive and would harm ticket buyers.",
+          "claim_extracted": "Reuters reporting through Investing.com said the court blocked JetBlue's planned $3.8 billion acquisition of Spirit after agreeing with the DOJ that the deal was anticompetitive and would harm ticket buyers.",
+          "content_hash": "sha256:076ac7a27fe512bdd7ce66964de85e473a96e02379c9260a2b24e8476e912fab",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-003"
+          ],
+          "document_text": "Reuters reporting through Investing.com said the court blocked JetBlue's planned $3.8 billion acquisition of Spirit after agreeing with the DOJ that the deal was anticompetitive and would harm ticket buyers.",
+          "evidence_quality": 0.76,
+          "incentive_conflict": 0.08,
+          "independence": 0.78,
+          "independence_cluster_id": "wire-news-reuters",
+          "originality_score": 0.74,
+          "published_at": "2024-01-16T13:09:00-05:00",
+          "publisher": "Reuters / Investing.com",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-REUTERS-001",
+          "source_type": "news",
+          "support_strength": 0.78,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-004"
+          ],
+          "title": "US judge blocks JetBlue from acquiring Spirit Airlines",
+          "url": "https://www.investing.com/news/stock-market-news/us-judge-blocks-jetblue-from-acquiring-spirit-airlines-3275494"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "The Motley Fool reported on January 16, 2024 that Spirit shares were down more than 50% while JetBlue rose after the federal court blocked the proposed acquisition, sending both companies back to stand-alone planning.",
+          "claim_extracted": "The Motley Fool reported on January 16, 2024 that Spirit shares were down more than 50% while JetBlue rose after the federal court blocked the proposed acquisition, sending both companies back to stand-alone planning.",
+          "content_hash": "sha256:23055ca2fbd3fa847efa0e340889748e34fccf9a7df74085f77ff2cbb4379041",
+          "contradicted_narrative_ids": [],
+          "document_text": "The Motley Fool reported on January 16, 2024 that Spirit shares were down more than 50% while JetBlue rose after the federal court blocked the proposed acquisition, sending both companies back to stand-alone planning.",
+          "evidence_quality": 0.66,
+          "incentive_conflict": 0.12,
+          "independence": 0.68,
+          "independence_cluster_id": "market-commentary",
+          "originality_score": 0.66,
+          "published_at": "2024-01-16T15:13:00-05:00",
+          "publisher": "The Motley Fool",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-MF-001",
+          "source_type": "market_commentary",
+          "support_strength": 0.68,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-002"
+          ],
+          "title": "Why JetBlue Stock Is Soaring and Spirit Airlines Is Plummeting Today",
+          "url": "https://www.fool.com/investing/2024/01/16/why-jetblue-stock-is-soaring-and-spirit-airlines-i/"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Frozen market bars use SAVE close-to-close prices around the ruling: $14.97 before the decision and $7.92 at the January 16, 2024 close, implying a roughly -47.1% event move before peer adjustment.",
+          "claim_extracted": "Frozen market bars use SAVE close-to-close prices around the ruling: $14.97 before the decision and $7.92 at the January 16, 2024 close, implying a roughly -47.1% event move before peer adjustment.",
+          "content_hash": "sha256:4836eea40a9c73ea9f7e1d38c53c20bea5b6bf4657014101b369f19d71512747",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-004"
+          ],
+          "document_text": "Frozen market bars use SAVE close-to-close prices around the ruling: $14.97 before the decision and $7.92 at the January 16, 2024 close, implying a roughly -47.1% event move before peer adjustment.",
+          "evidence_quality": 0.72,
+          "incentive_conflict": 0.0,
+          "independence": 0.7,
+          "independence_cluster_id": "market-bars",
+          "originality_score": 0.62,
+          "published_at": "2024-01-16T16:00:00-05:00",
+          "publisher": "Frozen market bars",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-MKT-001",
+          "source_type": "market_data",
+          "support_strength": 0.7,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001"
+          ],
+          "title": "SAVE close-to-close market move for January 16, 2024",
+          "url": "local://market_bars.csv#SAVE-MKT-001"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Frozen airline peer bars use AAL from $13.08 to $13.19 and DAL from $37.29 to $36.63 on January 16, 2024, showing the Spirit decline was far larger than peer airline moves.",
+          "claim_extracted": "Frozen airline peer bars use AAL from $13.08 to $13.19 and DAL from $37.29 to $36.63 on January 16, 2024, showing the Spirit decline was far larger than peer airline moves.",
+          "content_hash": "sha256:1866e4128980f282a6c2d3a1dc6de6e84419f84300c8f916197bdac3fe83c512",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-004"
+          ],
+          "document_text": "Frozen airline peer bars use AAL from $13.08 to $13.19 and DAL from $37.29 to $36.63 on January 16, 2024, showing the Spirit decline was far larger than peer airline moves.",
+          "evidence_quality": 0.7,
+          "incentive_conflict": 0.0,
+          "independence": 0.72,
+          "independence_cluster_id": "market-bars",
+          "originality_score": 0.62,
+          "published_at": "2024-01-16T16:00:00-05:00",
+          "publisher": "Frozen market bars",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-MKT-002",
+          "source_type": "market_data",
+          "support_strength": 0.66,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001"
+          ],
+          "title": "AAL and DAL peer bars for January 16, 2024",
+          "url": "local://market_bars.csv#SAVE-MKT-002"
+        },
+        {
+          "availability_status": "blocked_future",
+          "claim": "Spirit announced on March 4, 2024 that the JetBlue merger agreement had been terminated by mutual agreement because current regulatory obstacles would not permit timely closing, and said JetBlue would pay Spirit $69 million.",
+          "claim_extracted": "Spirit announced on March 4, 2024 that the JetBlue merger agreement had been terminated by mutual agreement because current regulatory obstacles would not permit timely closing, and said JetBlue would pay Spirit $69 million.",
+          "content_hash": "sha256:8f4f6660e480acd789092af3bea452cf325e5ca4b8bf468865d3632826ff2eca",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-003"
+          ],
+          "document_text": "Spirit announced on March 4, 2024 that the JetBlue merger agreement had been terminated by mutual agreement because current regulatory obstacles would not permit timely closing, and said JetBlue would pay Spirit $69 million.",
+          "evidence_quality": 0.86,
+          "incentive_conflict": 0.25,
+          "independence": 0.58,
+          "independence_cluster_id": "issuer-release",
+          "originality_score": 0.86,
+          "published_at": "2024-03-04T08:30:00-05:00",
+          "publisher": "Spirit Airlines / PRNewswire",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-FUT-001",
+          "source_type": "company_statement",
+          "support_strength": 0.9,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-002"
+          ],
+          "title": "Spirit Announces Termination of Merger Agreement with JetBlue",
+          "url": "https://www.prnewswire.com/news-releases/spirit-announces-termination-of-merger-agreement-with-jetblue-302078477.html"
+        },
+        {
+          "availability_status": "blocked_future",
+          "claim": "CNBC reported on March 4, 2024 that JetBlue and Spirit ended their $3.8 billion merger agreement weeks after losing the federal antitrust lawsuit, with the companies citing regulatory hurdles.",
+          "claim_extracted": "CNBC reported on March 4, 2024 that JetBlue and Spirit ended their $3.8 billion merger agreement weeks after losing the federal antitrust lawsuit, with the companies citing regulatory hurdles.",
+          "content_hash": "sha256:be744cb8be2adddaa7af8befe82e856b70882c1323a3264cce3d893d4dabe636",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-003"
+          ],
+          "document_text": "CNBC reported on March 4, 2024 that JetBlue and Spirit ended their $3.8 billion merger agreement weeks after losing the federal antitrust lawsuit, with the companies citing regulatory hurdles.",
+          "evidence_quality": 0.78,
+          "incentive_conflict": 0.08,
+          "independence": 0.76,
+          "independence_cluster_id": "financial-news-cnbc",
+          "originality_score": 0.72,
+          "published_at": "2024-03-04T08:35:00-05:00",
+          "publisher": "CNBC",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-FUT-002",
+          "source_type": "news",
+          "support_strength": 0.84,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001"
+          ],
+          "title": "JetBlue, Spirit end $3.8 billion merger agreement after losing antitrust suit",
+          "url": "https://www.cnbc.com/2024/03/04/jetblue-spirit-airlines-merger-called-off.html"
+        }
+      ],
+      "ticker": "SAVE",
+      "time_horizon": "60 trading days",
+      "timestamp_created": "2024-01-16T16:10:00-05:00",
+      "title": "Merger optionality collapse",
+      "validation_status": "pending"
+    },
+    {
+      "contradicting_evidence": [],
+      "directional_implication": "bearish",
+      "event_id": "EVT-REAL-SAVE-2024-01-16",
+      "expected_observables": [
+        "Future disclosures should emphasize refinancing, liquidity, or profitability actions.",
+        "Validation should separate standalone stress from the immediate loss of merger consideration.",
+        "If this narrative is primary, later sources should focus more on solvency than antitrust termination."
+      ],
+      "mechanism": "Replay-time reporting already noted Spirit had been struggling with grounded airplanes and softer travel demand. The ruling mattered partly because it forced those standalone operating risks back into the valuation.",
+      "narrative": "The selloff could also reflect investors refocusing on Spirit as a standalone airline with debt, aircraft, and demand pressures once the deal support weakened.",
+      "narrative_id": "NARR-SAVE-002",
+      "scoring_inputs": {
+        "contradiction_resistance": 0.58,
+        "cross_sectional_fit": 0.66,
+        "crowding_risk": 0.72,
+        "evidence_strength": 0.74,
+        "forward_observable_quality": 0.68,
+        "mechanism_specificity": 0.72,
+        "source_independence": 0.7,
+        "timestamp_advantage": 0.86,
+        "unsupported_claim_penalty": 0.09
+      },
+      "supporting_evidence": [
+        {
+          "availability_status": "allowed",
+          "claim": "CNBC reported at 1:04 p.m. EST on January 16, 2024 that a federal judge blocked JetBlue's purchase of Spirit, that the DOJ argued the deal was anticompetitive, that the companies disagreed and were evaluating next steps, and that Spirit shares lost 47% Tuesday while JetBlue gained about 5%.",
+          "claim_extracted": "CNBC reported at 1:04 p.m. EST on January 16, 2024 that a federal judge blocked JetBlue's purchase of Spirit, that the DOJ argued the deal was anticompetitive, that the companies disagreed and were evaluating next steps, and that Spirit shares lost 47% Tuesday while JetBlue gained about 5%.",
+          "content_hash": "sha256:39d4382faaf6c1a0e12eb1c45381a991c6b9d17fe3bd3ee7547faf449f4c5689",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-004"
+          ],
+          "document_text": "CNBC reported at 1:04 p.m. EST on January 16, 2024 that a federal judge blocked JetBlue's purchase of Spirit, that the DOJ argued the deal was anticompetitive, that the companies disagreed and were evaluating next steps, and that Spirit shares lost 47% Tuesday while JetBlue gained about 5%.",
+          "evidence_quality": 0.8,
+          "incentive_conflict": 0.08,
+          "independence": 0.76,
+          "independence_cluster_id": "financial-news-cnbc",
+          "originality_score": 0.78,
+          "published_at": "2024-01-16T13:04:00-05:00",
+          "publisher": "CNBC",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-CNBC-001",
+          "source_type": "news",
+          "support_strength": 0.82,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-002",
+            "NARR-SAVE-003"
+          ],
+          "title": "Judge blocks JetBlue-Spirit merger after DOJ's antitrust challenge",
+          "url": "https://www.cnbc.com/2024/01/16/jetblue-spirit-merger-block-in-win-for-bidens-justice-department.html"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "The Motley Fool reported on January 16, 2024 that Spirit shares were down more than 50% while JetBlue rose after the federal court blocked the proposed acquisition, sending both companies back to stand-alone planning.",
+          "claim_extracted": "The Motley Fool reported on January 16, 2024 that Spirit shares were down more than 50% while JetBlue rose after the federal court blocked the proposed acquisition, sending both companies back to stand-alone planning.",
+          "content_hash": "sha256:23055ca2fbd3fa847efa0e340889748e34fccf9a7df74085f77ff2cbb4379041",
+          "contradicted_narrative_ids": [],
+          "document_text": "The Motley Fool reported on January 16, 2024 that Spirit shares were down more than 50% while JetBlue rose after the federal court blocked the proposed acquisition, sending both companies back to stand-alone planning.",
+          "evidence_quality": 0.66,
+          "incentive_conflict": 0.12,
+          "independence": 0.68,
+          "independence_cluster_id": "market-commentary",
+          "originality_score": 0.66,
+          "published_at": "2024-01-16T15:13:00-05:00",
+          "publisher": "The Motley Fool",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-MF-001",
+          "source_type": "market_commentary",
+          "support_strength": 0.68,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-002"
+          ],
+          "title": "Why JetBlue Stock Is Soaring and Spirit Airlines Is Plummeting Today",
+          "url": "https://www.fool.com/investing/2024/01/16/why-jetblue-stock-is-soaring-and-spirit-airlines-i/"
+        },
+        {
+          "availability_status": "blocked_future",
+          "claim": "Spirit announced on March 4, 2024 that the JetBlue merger agreement had been terminated by mutual agreement because current regulatory obstacles would not permit timely closing, and said JetBlue would pay Spirit $69 million.",
+          "claim_extracted": "Spirit announced on March 4, 2024 that the JetBlue merger agreement had been terminated by mutual agreement because current regulatory obstacles would not permit timely closing, and said JetBlue would pay Spirit $69 million.",
+          "content_hash": "sha256:8f4f6660e480acd789092af3bea452cf325e5ca4b8bf468865d3632826ff2eca",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-003"
+          ],
+          "document_text": "Spirit announced on March 4, 2024 that the JetBlue merger agreement had been terminated by mutual agreement because current regulatory obstacles would not permit timely closing, and said JetBlue would pay Spirit $69 million.",
+          "evidence_quality": 0.86,
+          "incentive_conflict": 0.25,
+          "independence": 0.58,
+          "independence_cluster_id": "issuer-release",
+          "originality_score": 0.86,
+          "published_at": "2024-03-04T08:30:00-05:00",
+          "publisher": "Spirit Airlines / PRNewswire",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-FUT-001",
+          "source_type": "company_statement",
+          "support_strength": 0.9,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-002"
+          ],
+          "title": "Spirit Announces Termination of Merger Agreement with JetBlue",
+          "url": "https://www.prnewswire.com/news-releases/spirit-announces-termination-of-merger-agreement-with-jetblue-302078477.html"
+        }
+      ],
+      "ticker": "SAVE",
+      "time_horizon": "60 trading days",
+      "timestamp_created": "2024-01-16T16:10:00-05:00",
+      "title": "Standalone balance sheet stress",
+      "validation_status": "pending"
+    },
+    {
+      "contradicting_evidence": [
+        {
+          "availability_status": "allowed",
+          "claim": "The Justice Department stated on January 16, 2024 that the U.S. District Court blocked JetBlue's $3.8 billion acquisition of Spirit and described the ruling as protection against anticompetitive harm.",
+          "claim_extracted": "The Justice Department stated on January 16, 2024 that the U.S. District Court blocked JetBlue's $3.8 billion acquisition of Spirit and described the ruling as protection against anticompetitive harm.",
+          "content_hash": "sha256:dca57c8c8cefa3c6bc9d78e821e4c62863f9370dc2051c7e3e202e0041db4595",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-003"
+          ],
+          "document_text": "The Justice Department stated on January 16, 2024 that the U.S. District Court blocked JetBlue's $3.8 billion acquisition of Spirit and described the ruling as protection against anticompetitive harm.",
+          "evidence_quality": 0.88,
+          "incentive_conflict": 0.08,
+          "independence": 0.88,
+          "independence_cluster_id": "government-antitrust",
+          "originality_score": 0.9,
+          "published_at": "2024-01-16T15:30:00-05:00",
+          "publisher": "U.S. Department of Justice",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-DOJ-001",
+          "source_type": "agency_statement",
+          "support_strength": 0.86,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-004"
+          ],
+          "title": "Justice Department Statements on District Court Decision to Block JetBlue's Acquisition of Spirit Airlines",
+          "url": "https://www.justice.gov/archives/opa/pr/justice-department-statements-district-court-decision-block-jetblues-acquisition-spirit"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Associated Press reporting carried by WBUR said a federal judge blocked JetBlue from buying Spirit, said the deal would reduce competition, and emphasized Spirit as an important low-cost airline for price-sensitive travelers.",
+          "claim_extracted": "Associated Press reporting carried by WBUR said a federal judge blocked JetBlue from buying Spirit, said the deal would reduce competition, and emphasized Spirit as an important low-cost airline for price-sensitive travelers.",
+          "content_hash": "sha256:023aefb87b28f0af80cb7988a085c156d723ec4ad00b6ffdebb02d585155fe20",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-003"
+          ],
+          "document_text": "Associated Press reporting carried by WBUR said a federal judge blocked JetBlue from buying Spirit, said the deal would reduce competition, and emphasized Spirit as an important low-cost airline for price-sensitive travelers.",
+          "evidence_quality": 0.76,
+          "incentive_conflict": 0.08,
+          "independence": 0.78,
+          "independence_cluster_id": "wire-news-ap",
+          "originality_score": 0.74,
+          "published_at": "2024-01-16T14:30:00-05:00",
+          "publisher": "Associated Press / WBUR",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-AP-001",
+          "source_type": "news",
+          "support_strength": 0.76,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-004"
+          ],
+          "title": "Judge blocks $3.8 billion JetBlue-Spirit merger",
+          "url": "https://www.wbur.org/news/2024/01/16/jetblue-spirit-merger-blocked"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Reuters reporting through Investing.com said the court blocked JetBlue's planned $3.8 billion acquisition of Spirit after agreeing with the DOJ that the deal was anticompetitive and would harm ticket buyers.",
+          "claim_extracted": "Reuters reporting through Investing.com said the court blocked JetBlue's planned $3.8 billion acquisition of Spirit after agreeing with the DOJ that the deal was anticompetitive and would harm ticket buyers.",
+          "content_hash": "sha256:076ac7a27fe512bdd7ce66964de85e473a96e02379c9260a2b24e8476e912fab",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-003"
+          ],
+          "document_text": "Reuters reporting through Investing.com said the court blocked JetBlue's planned $3.8 billion acquisition of Spirit after agreeing with the DOJ that the deal was anticompetitive and would harm ticket buyers.",
+          "evidence_quality": 0.76,
+          "incentive_conflict": 0.08,
+          "independence": 0.78,
+          "independence_cluster_id": "wire-news-reuters",
+          "originality_score": 0.74,
+          "published_at": "2024-01-16T13:09:00-05:00",
+          "publisher": "Reuters / Investing.com",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-REUTERS-001",
+          "source_type": "news",
+          "support_strength": 0.78,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-004"
+          ],
+          "title": "US judge blocks JetBlue from acquiring Spirit Airlines",
+          "url": "https://www.investing.com/news/stock-market-news/us-judge-blocks-jetblue-from-acquiring-spirit-airlines-3275494"
+        },
+        {
+          "availability_status": "blocked_future",
+          "claim": "Spirit announced on March 4, 2024 that the JetBlue merger agreement had been terminated by mutual agreement because current regulatory obstacles would not permit timely closing, and said JetBlue would pay Spirit $69 million.",
+          "claim_extracted": "Spirit announced on March 4, 2024 that the JetBlue merger agreement had been terminated by mutual agreement because current regulatory obstacles would not permit timely closing, and said JetBlue would pay Spirit $69 million.",
+          "content_hash": "sha256:8f4f6660e480acd789092af3bea452cf325e5ca4b8bf468865d3632826ff2eca",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-003"
+          ],
+          "document_text": "Spirit announced on March 4, 2024 that the JetBlue merger agreement had been terminated by mutual agreement because current regulatory obstacles would not permit timely closing, and said JetBlue would pay Spirit $69 million.",
+          "evidence_quality": 0.86,
+          "incentive_conflict": 0.25,
+          "independence": 0.58,
+          "independence_cluster_id": "issuer-release",
+          "originality_score": 0.86,
+          "published_at": "2024-03-04T08:30:00-05:00",
+          "publisher": "Spirit Airlines / PRNewswire",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-FUT-001",
+          "source_type": "company_statement",
+          "support_strength": 0.9,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-002"
+          ],
+          "title": "Spirit Announces Termination of Merger Agreement with JetBlue",
+          "url": "https://www.prnewswire.com/news-releases/spirit-announces-termination-of-merger-agreement-with-jetblue-302078477.html"
+        },
+        {
+          "availability_status": "blocked_future",
+          "claim": "CNBC reported on March 4, 2024 that JetBlue and Spirit ended their $3.8 billion merger agreement weeks after losing the federal antitrust lawsuit, with the companies citing regulatory hurdles.",
+          "claim_extracted": "CNBC reported on March 4, 2024 that JetBlue and Spirit ended their $3.8 billion merger agreement weeks after losing the federal antitrust lawsuit, with the companies citing regulatory hurdles.",
+          "content_hash": "sha256:be744cb8be2adddaa7af8befe82e856b70882c1323a3264cce3d893d4dabe636",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-003"
+          ],
+          "document_text": "CNBC reported on March 4, 2024 that JetBlue and Spirit ended their $3.8 billion merger agreement weeks after losing the federal antitrust lawsuit, with the companies citing regulatory hurdles.",
+          "evidence_quality": 0.78,
+          "incentive_conflict": 0.08,
+          "independence": 0.76,
+          "independence_cluster_id": "financial-news-cnbc",
+          "originality_score": 0.72,
+          "published_at": "2024-03-04T08:35:00-05:00",
+          "publisher": "CNBC",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-FUT-002",
+          "source_type": "news",
+          "support_strength": 0.84,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001"
+          ],
+          "title": "JetBlue, Spirit end $3.8 billion merger agreement after losing antitrust suit",
+          "url": "https://www.cnbc.com/2024/03/04/jetblue-spirit-airlines-merger-called-off.html"
+        }
+      ],
+      "directional_implication": "mixed",
+      "event_id": "EVT-REAL-SAVE-2024-01-16",
+      "expected_observables": [
+        "Future evidence should show a successful appeal or revived merger path if this narrative wins.",
+        "The narrative should weaken if the companies terminate the agreement because closing conditions cannot be met.",
+        "Market recovery should be broad and durable if appeal optionality remains central."
+      ],
+      "mechanism": "The companies disagreed with the ruling and evaluated next steps, but that path was lower quality at the replay lock because the court and DOJ evidence directly blocked the transaction mechanism.",
+      "narrative": "A competing explanation was that the market reaction over-discounted the ruling because JetBlue and Spirit could still appeal or evaluate legal next steps.",
+      "narrative_id": "NARR-SAVE-003",
+      "scoring_inputs": {
+        "contradiction_resistance": 0.38,
+        "cross_sectional_fit": 0.42,
+        "crowding_risk": 0.8,
+        "evidence_strength": 0.62,
+        "forward_observable_quality": 0.6,
+        "mechanism_specificity": 0.58,
+        "source_independence": 0.64,
+        "timestamp_advantage": 0.82,
+        "unsupported_claim_penalty": 0.13
+      },
+      "supporting_evidence": [
+        {
+          "availability_status": "allowed",
+          "claim": "CNBC reported at 1:04 p.m. EST on January 16, 2024 that a federal judge blocked JetBlue's purchase of Spirit, that the DOJ argued the deal was anticompetitive, that the companies disagreed and were evaluating next steps, and that Spirit shares lost 47% Tuesday while JetBlue gained about 5%.",
+          "claim_extracted": "CNBC reported at 1:04 p.m. EST on January 16, 2024 that a federal judge blocked JetBlue's purchase of Spirit, that the DOJ argued the deal was anticompetitive, that the companies disagreed and were evaluating next steps, and that Spirit shares lost 47% Tuesday while JetBlue gained about 5%.",
+          "content_hash": "sha256:39d4382faaf6c1a0e12eb1c45381a991c6b9d17fe3bd3ee7547faf449f4c5689",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-004"
+          ],
+          "document_text": "CNBC reported at 1:04 p.m. EST on January 16, 2024 that a federal judge blocked JetBlue's purchase of Spirit, that the DOJ argued the deal was anticompetitive, that the companies disagreed and were evaluating next steps, and that Spirit shares lost 47% Tuesday while JetBlue gained about 5%.",
+          "evidence_quality": 0.8,
+          "incentive_conflict": 0.08,
+          "independence": 0.76,
+          "independence_cluster_id": "financial-news-cnbc",
+          "originality_score": 0.78,
+          "published_at": "2024-01-16T13:04:00-05:00",
+          "publisher": "CNBC",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-CNBC-001",
+          "source_type": "news",
+          "support_strength": 0.82,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-002",
+            "NARR-SAVE-003"
+          ],
+          "title": "Judge blocks JetBlue-Spirit merger after DOJ's antitrust challenge",
+          "url": "https://www.cnbc.com/2024/01/16/jetblue-spirit-merger-block-in-win-for-bidens-justice-department.html"
+        }
+      ],
+      "ticker": "SAVE",
+      "time_horizon": "60 trading days",
+      "timestamp_created": "2024-01-16T16:10:00-05:00",
+      "title": "Appeal path preserved value",
+      "validation_status": "pending"
+    },
+    {
+      "contradicting_evidence": [
+        {
+          "availability_status": "allowed",
+          "claim": "CNBC reported at 1:04 p.m. EST on January 16, 2024 that a federal judge blocked JetBlue's purchase of Spirit, that the DOJ argued the deal was anticompetitive, that the companies disagreed and were evaluating next steps, and that Spirit shares lost 47% Tuesday while JetBlue gained about 5%.",
+          "claim_extracted": "CNBC reported at 1:04 p.m. EST on January 16, 2024 that a federal judge blocked JetBlue's purchase of Spirit, that the DOJ argued the deal was anticompetitive, that the companies disagreed and were evaluating next steps, and that Spirit shares lost 47% Tuesday while JetBlue gained about 5%.",
+          "content_hash": "sha256:39d4382faaf6c1a0e12eb1c45381a991c6b9d17fe3bd3ee7547faf449f4c5689",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-004"
+          ],
+          "document_text": "CNBC reported at 1:04 p.m. EST on January 16, 2024 that a federal judge blocked JetBlue's purchase of Spirit, that the DOJ argued the deal was anticompetitive, that the companies disagreed and were evaluating next steps, and that Spirit shares lost 47% Tuesday while JetBlue gained about 5%.",
+          "evidence_quality": 0.8,
+          "incentive_conflict": 0.08,
+          "independence": 0.76,
+          "independence_cluster_id": "financial-news-cnbc",
+          "originality_score": 0.78,
+          "published_at": "2024-01-16T13:04:00-05:00",
+          "publisher": "CNBC",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-CNBC-001",
+          "source_type": "news",
+          "support_strength": 0.82,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-002",
+            "NARR-SAVE-003"
+          ],
+          "title": "Judge blocks JetBlue-Spirit merger after DOJ's antitrust challenge",
+          "url": "https://www.cnbc.com/2024/01/16/jetblue-spirit-merger-block-in-win-for-bidens-justice-department.html"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Frozen market bars use SAVE close-to-close prices around the ruling: $14.97 before the decision and $7.92 at the January 16, 2024 close, implying a roughly -47.1% event move before peer adjustment.",
+          "claim_extracted": "Frozen market bars use SAVE close-to-close prices around the ruling: $14.97 before the decision and $7.92 at the January 16, 2024 close, implying a roughly -47.1% event move before peer adjustment.",
+          "content_hash": "sha256:4836eea40a9c73ea9f7e1d38c53c20bea5b6bf4657014101b369f19d71512747",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-004"
+          ],
+          "document_text": "Frozen market bars use SAVE close-to-close prices around the ruling: $14.97 before the decision and $7.92 at the January 16, 2024 close, implying a roughly -47.1% event move before peer adjustment.",
+          "evidence_quality": 0.72,
+          "incentive_conflict": 0.0,
+          "independence": 0.7,
+          "independence_cluster_id": "market-bars",
+          "originality_score": 0.62,
+          "published_at": "2024-01-16T16:00:00-05:00",
+          "publisher": "Frozen market bars",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-MKT-001",
+          "source_type": "market_data",
+          "support_strength": 0.7,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001"
+          ],
+          "title": "SAVE close-to-close market move for January 16, 2024",
+          "url": "local://market_bars.csv#SAVE-MKT-001"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Frozen airline peer bars use AAL from $13.08 to $13.19 and DAL from $37.29 to $36.63 on January 16, 2024, showing the Spirit decline was far larger than peer airline moves.",
+          "claim_extracted": "Frozen airline peer bars use AAL from $13.08 to $13.19 and DAL from $37.29 to $36.63 on January 16, 2024, showing the Spirit decline was far larger than peer airline moves.",
+          "content_hash": "sha256:1866e4128980f282a6c2d3a1dc6de6e84419f84300c8f916197bdac3fe83c512",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-004"
+          ],
+          "document_text": "Frozen airline peer bars use AAL from $13.08 to $13.19 and DAL from $37.29 to $36.63 on January 16, 2024, showing the Spirit decline was far larger than peer airline moves.",
+          "evidence_quality": 0.7,
+          "incentive_conflict": 0.0,
+          "independence": 0.72,
+          "independence_cluster_id": "market-bars",
+          "originality_score": 0.62,
+          "published_at": "2024-01-16T16:00:00-05:00",
+          "publisher": "Frozen market bars",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-MKT-002",
+          "source_type": "market_data",
+          "support_strength": 0.66,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001"
+          ],
+          "title": "AAL and DAL peer bars for January 16, 2024",
+          "url": "local://market_bars.csv#SAVE-MKT-002"
+        }
+      ],
+      "directional_implication": "bearish",
+      "event_id": "EVT-REAL-SAVE-2024-01-16",
+      "expected_observables": [
+        "Other airline merger targets or peers should show similar abnormal pressure if this narrative dominates.",
+        "Future regulatory commentary should generalize the ruling beyond Spirit and JetBlue.",
+        "The explanation should weaken if Spirit-specific termination evidence becomes the validation anchor."
+      ],
+      "mechanism": "News coverage raised questions about other airline deals, but peer market bars showed the extreme move was isolated in Spirit, making the read-through less specific than lost merger optionality.",
+      "narrative": "The ruling may have been read as a broader regulatory warning for airline consolidation rather than a Spirit-specific deal-value collapse.",
+      "narrative_id": "NARR-SAVE-004",
+      "scoring_inputs": {
+        "contradiction_resistance": 0.46,
+        "cross_sectional_fit": 0.32,
+        "crowding_risk": 0.62,
+        "evidence_strength": 0.58,
+        "forward_observable_quality": 0.46,
+        "mechanism_specificity": 0.5,
+        "source_independence": 0.68,
+        "timestamp_advantage": 0.8,
+        "unsupported_claim_penalty": 0.12
+      },
+      "supporting_evidence": [
+        {
+          "availability_status": "allowed",
+          "claim": "The Justice Department stated on January 16, 2024 that the U.S. District Court blocked JetBlue's $3.8 billion acquisition of Spirit and described the ruling as protection against anticompetitive harm.",
+          "claim_extracted": "The Justice Department stated on January 16, 2024 that the U.S. District Court blocked JetBlue's $3.8 billion acquisition of Spirit and described the ruling as protection against anticompetitive harm.",
+          "content_hash": "sha256:dca57c8c8cefa3c6bc9d78e821e4c62863f9370dc2051c7e3e202e0041db4595",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-003"
+          ],
+          "document_text": "The Justice Department stated on January 16, 2024 that the U.S. District Court blocked JetBlue's $3.8 billion acquisition of Spirit and described the ruling as protection against anticompetitive harm.",
+          "evidence_quality": 0.88,
+          "incentive_conflict": 0.08,
+          "independence": 0.88,
+          "independence_cluster_id": "government-antitrust",
+          "originality_score": 0.9,
+          "published_at": "2024-01-16T15:30:00-05:00",
+          "publisher": "U.S. Department of Justice",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-DOJ-001",
+          "source_type": "agency_statement",
+          "support_strength": 0.86,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-004"
+          ],
+          "title": "Justice Department Statements on District Court Decision to Block JetBlue's Acquisition of Spirit Airlines",
+          "url": "https://www.justice.gov/archives/opa/pr/justice-department-statements-district-court-decision-block-jetblues-acquisition-spirit"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Associated Press reporting carried by WBUR said a federal judge blocked JetBlue from buying Spirit, said the deal would reduce competition, and emphasized Spirit as an important low-cost airline for price-sensitive travelers.",
+          "claim_extracted": "Associated Press reporting carried by WBUR said a federal judge blocked JetBlue from buying Spirit, said the deal would reduce competition, and emphasized Spirit as an important low-cost airline for price-sensitive travelers.",
+          "content_hash": "sha256:023aefb87b28f0af80cb7988a085c156d723ec4ad00b6ffdebb02d585155fe20",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-003"
+          ],
+          "document_text": "Associated Press reporting carried by WBUR said a federal judge blocked JetBlue from buying Spirit, said the deal would reduce competition, and emphasized Spirit as an important low-cost airline for price-sensitive travelers.",
+          "evidence_quality": 0.76,
+          "incentive_conflict": 0.08,
+          "independence": 0.78,
+          "independence_cluster_id": "wire-news-ap",
+          "originality_score": 0.74,
+          "published_at": "2024-01-16T14:30:00-05:00",
+          "publisher": "Associated Press / WBUR",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-AP-001",
+          "source_type": "news",
+          "support_strength": 0.76,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-004"
+          ],
+          "title": "Judge blocks $3.8 billion JetBlue-Spirit merger",
+          "url": "https://www.wbur.org/news/2024/01/16/jetblue-spirit-merger-blocked"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Reuters reporting through Investing.com said the court blocked JetBlue's planned $3.8 billion acquisition of Spirit after agreeing with the DOJ that the deal was anticompetitive and would harm ticket buyers.",
+          "claim_extracted": "Reuters reporting through Investing.com said the court blocked JetBlue's planned $3.8 billion acquisition of Spirit after agreeing with the DOJ that the deal was anticompetitive and would harm ticket buyers.",
+          "content_hash": "sha256:076ac7a27fe512bdd7ce66964de85e473a96e02379c9260a2b24e8476e912fab",
+          "contradicted_narrative_ids": [
+            "NARR-SAVE-003"
+          ],
+          "document_text": "Reuters reporting through Investing.com said the court blocked JetBlue's planned $3.8 billion acquisition of Spirit after agreeing with the DOJ that the deal was anticompetitive and would harm ticket buyers.",
+          "evidence_quality": 0.76,
+          "incentive_conflict": 0.08,
+          "independence": 0.78,
+          "independence_cluster_id": "wire-news-reuters",
+          "originality_score": 0.74,
+          "published_at": "2024-01-16T13:09:00-05:00",
+          "publisher": "Reuters / Investing.com",
+          "retrieved_at": "2026-05-12T00:00:00Z",
+          "source_id": "SAVE-REUTERS-001",
+          "source_type": "news",
+          "support_strength": 0.78,
+          "supported_narrative_ids": [
+            "NARR-SAVE-001",
+            "NARR-SAVE-004"
+          ],
+          "title": "US judge blocks JetBlue from acquiring Spirit Airlines",
+          "url": "https://www.investing.com/news/stock-market-news/us-judge-blocks-jetblue-from-acquiring-spirit-airlines-3275494"
+        }
+      ],
+      "ticker": "SAVE",
+      "time_horizon": "60 trading days",
+      "timestamp_created": "2024-01-16T16:10:00-05:00",
+      "title": "Airline regulatory read-through",
+      "validation_status": "pending"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "event_id": "EVT-REAL-SAVE-2024-01-16",
+  "future_source_count": 2,
+  "future_source_ids": [
+    "SAVE-FUT-001",
+    "SAVE-FUT-002"
+  ],
+  "note": "Real-curated validation fixture. Held-out future evidence stays separate from event-time replay inputs.",
+  "rows": [
+    {
+      "expected_observable": "Held-out validation should show the merger agreement terminated rather than merely delayed.",
+      "future_source_ids": [
+        "SAVE-FUT-001",
+        "SAVE-FUT-002"
+      ],
+      "label": "validated",
+      "narrative_id": "NARR-SAVE-001",
+      "what_happened": "Held-out March 4 company and news evidence showed JetBlue and Spirit terminated the merger agreement because regulatory obstacles made timely closing unlikely, validating merger optionality collapse as the replay winner.",
+      "window": "T+60"
+    },
+    {
+      "expected_observable": "Future disclosures should emphasize refinancing, liquidity, or profitability actions.",
+      "future_source_ids": [
+        "SAVE-FUT-001"
+      ],
+      "label": "partial",
+      "narrative_id": "NARR-SAVE-002",
+      "what_happened": "Spirit did discuss standalone initiatives, refinancing, and profitability steps, but the validation source was still anchored to termination of the merger path.",
+      "window": "T+60"
+    },
+    {
+      "expected_observable": "The narrative should weaken if the companies terminate the agreement because closing conditions cannot be met.",
+      "future_source_ids": [
+        "SAVE-FUT-001",
+        "SAVE-FUT-002"
+      ],
+      "label": "invalidated",
+      "narrative_id": "NARR-SAVE-003",
+      "what_happened": "The companies terminated the agreement rather than preserving a live appeal-led deal path, weakening the appeal optionality explanation.",
+      "window": "T+60"
+    },
+    {
+      "expected_observable": "Other airline merger targets or peers should show similar abnormal pressure if this narrative dominates.",
+      "future_source_ids": [],
+      "label": "pending",
+      "narrative_id": "NARR-SAVE-004",
+      "what_happened": "The validation fixture keeps broader airline regulatory read-through pending because the held-out evidence was specific to JetBlue and Spirit.",
+      "window": "T+60"
+    }
+  ],
+  "status": "validated"
+}

@@ -14,9 +14,9 @@ from narrativedesk.source_pack import assess_real_case_quality, load_source_pack
 def assess_public_corpus_quality(
     case_index_path: str | Path,
     *,
-    min_cases: int = 3,
-    min_unique_tickers: int = 3,
-    min_unique_event_types: int = 2,
+    min_cases: int = 6,
+    min_unique_tickers: int = 6,
+    min_unique_event_types: int = 4,
     min_blocked_future_sources_per_case: int = 1,
     min_top_ranked_validated_rate: float = 1.0,
 ) -> dict[str, Any]:
@@ -178,18 +178,47 @@ def _assess_case(
 
     evaluation = evaluate_replay(narratives, audit, validation).to_dict()
     validated_ids = validated_narrative_ids(validation)
+    top_ranked = next((narrative for narrative in narratives if narrative.rank == 1), narratives[0] if narratives else None)
+    quality_checks = quality.get("checks", {}) if isinstance(quality.get("checks"), dict) else {}
+    public_evidence = (
+        quality_checks.get("public_replay_evidence", {})
+        if isinstance(quality_checks.get("public_replay_evidence"), dict)
+        else {}
+    )
+    validation_future_source_ids = [
+        str(source_id)
+        for source_id in validation.get("future_source_ids", [])
+        if isinstance(source_id, str)
+    ] if isinstance(validation, dict) else []
     result.update(
         {
             "loaded": True,
             "ticker": event.ticker,
+            "company_name": event.company_name,
             "event_type": event.event_type,
+            "abnormal_return": event.abnormal_return,
+            "daily_return": event.daily_return,
+            "peer_median_return": event.peer_median_return,
+            "winning_narrative_id": top_ranked.narrative_id if top_ranked else None,
+            "winning_narrative_title": top_ranked.title if top_ranked else None,
             "bundle_verified": bool(bundle_verification.get("ok")),
+            "bundle_status": "verified" if bundle_verification.get("ok") else "failed",
             "public_quality_ok": bool(quality.get("ok")),
             "public_quality_status": quality.get("status"),
             "blocked_future_source_count": len(audit.blocked_source_ids),
             "allowed_source_count": len(audit.allowed_source_ids),
+            "non_market_evidence_count": public_evidence.get("actual", 0),
+            "publisher_count": public_evidence.get("publisher_actual", 0),
+            "publishers": public_evidence.get("publishers", []),
+            "source_type_count": public_evidence.get("source_type_actual", 0),
+            "source_types": public_evidence.get("source_types", []),
+            "validation_source_count": len(validation_future_source_ids),
+            "validation_future_source_count": len(validation_future_source_ids),
             "validated_narrative_ids": validated_ids,
             "top_ranked_validated": evaluation.get("top_ranked_validated"),
+            "top_ranked_validation_status": _top_ranked_validation_status(
+                evaluation.get("top_ranked_validated")
+            ),
             "citation_qa_pass": ledger["citation_qa"].get("citation_qa_pass"),
         }
     )
@@ -210,6 +239,14 @@ def _assess_case(
         "source_clustering": ledger["source_clustering"],
     }
     return result, evaluation_row
+
+
+def _top_ranked_validation_status(value: Any) -> str:
+    if value is True:
+        return "validated"
+    if value is False:
+        return "miss"
+    return "pending"
 
 
 def _aggregate_evaluation_check(
