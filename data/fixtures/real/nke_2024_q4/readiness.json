@@ -1,0 +1,118 @@
+{
+  "case_id": "EVT-REAL-NKE-2024-06-27",
+  "checks": {
+    "ingestion_ready": {
+      "errors": [],
+      "ok": true
+    },
+    "narrative_linkage": {
+      "allowed_sources_without_links": [],
+      "errors": [],
+      "narrative_link_counts": [
+        {
+          "allowed_contradiction_source_count": 0,
+          "allowed_support_source_count": 8,
+          "blocked_future_source_count": 1,
+          "narrative_id": "NARR-NKE-001"
+        },
+        {
+          "allowed_contradiction_source_count": 0,
+          "allowed_support_source_count": 5,
+          "blocked_future_source_count": 1,
+          "narrative_id": "NARR-NKE-002"
+        },
+        {
+          "allowed_contradiction_source_count": 0,
+          "allowed_support_source_count": 3,
+          "blocked_future_source_count": 0,
+          "narrative_id": "NARR-NKE-003"
+        },
+        {
+          "allowed_contradiction_source_count": 5,
+          "allowed_support_source_count": 1,
+          "blocked_future_source_count": 1,
+          "narrative_id": "NARR-NKE-004"
+        }
+      ],
+      "narratives_without_allowed_support": [],
+      "ok": true
+    },
+    "preview_valid": {
+      "errors": [],
+      "ok": true
+    },
+    "provenance_ready": {
+      "document_text_source_ids": [
+        "NKE-IR-001",
+        "NKE-SEC-001",
+        "NKE-NASDAQ-001",
+        "NKE-INVEST-001",
+        "NKE-INVEST-002",
+        "NKE-MB-001",
+        "NKE-MKT-001",
+        "NKE-MKT-BENCH-001",
+        "NKE-IR-FUT-001"
+      ],
+      "errors": [],
+      "hash_mismatch_source_ids": [],
+      "missing_hash_source_ids": [],
+      "missing_retrieved_at_source_ids": [],
+      "missing_stable_url_source_ids": [],
+      "ok": true
+    },
+    "replay_safe": {
+      "allowed_after_lock_source_ids": [],
+      "blocked_before_lock_source_ids": [],
+      "blocked_future_source_ids": [
+        "NKE-IR-FUT-001"
+      ],
+      "errors": [],
+      "ok": true
+    }
+  },
+  "ok": true,
+  "preview": {
+    "allowed_source_ids": [
+      "NKE-IR-001",
+      "NKE-SEC-001",
+      "NKE-NASDAQ-001",
+      "NKE-INVEST-001",
+      "NKE-INVEST-002",
+      "NKE-MB-001",
+      "NKE-MKT-001",
+      "NKE-MKT-BENCH-001"
+    ],
+    "blocked_future_source_ids": [
+      "NKE-IR-FUT-001"
+    ],
+    "case_id": "EVT-REAL-NKE-2024-06-27",
+    "narrative_count": 4,
+    "provenance_mode": "real-curated",
+    "source_counts": {
+      "allowed": 8,
+      "blocked_future": 1,
+      "total": 9
+    },
+    "source_ids": [
+      "NKE-IR-001",
+      "NKE-SEC-001",
+      "NKE-NASDAQ-001",
+      "NKE-INVEST-001",
+      "NKE-INVEST-002",
+      "NKE-MB-001",
+      "NKE-MKT-001",
+      "NKE-MKT-BENCH-001",
+      "NKE-IR-FUT-001"
+    ],
+    "source_type_counts": {
+      "company_release": 3,
+      "filing": 1,
+      "market_data": 2,
+      "news": 2,
+      "transcript": 1
+    },
+    "ticker": "NKE"
+  },
+  "status": "ready_to_ingest",
+  "ticker": "NKE"
+}

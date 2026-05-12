@@ -6,7 +6,7 @@ It is not the AI that tells people what to think about a stock. It is the audit 
 
 ## What the app does
 
-The public browser workbench now opens real-curated replay cases for AAPL Q2 2024 and NVIDIA Q1 fiscal 2025 earnings. Each case uses timestamped source provenance, replay-locked evidence, blocked future validation evidence, deterministic ranking, and bundle verification. NarrativeDesk ranks the selected explanation above competing narratives using only evidence available at the replay lock.
+The public browser workbench now opens real-curated replay cases for AAPL Q2 2024, NVIDIA Q1 fiscal 2025, and NIKE fiscal 2024 Q4 earnings/guidance events. Each case uses timestamped source provenance, replay-locked evidence, blocked future validation evidence, deterministic ranking, and bundle verification. NarrativeDesk ranks the selected explanation above competing narratives using only evidence available at the replay lock.
 
 The browser workbench shows:
 
@@ -33,9 +33,10 @@ The public shell uses frozen real-curated replay bundles, not live market data a
 4. Inspect the audit: future source `SEC-027` is quarantined and removed from replay scoring.
 5. Compare the verification bracket: capital return reset ranks above Services mix resilience, hardware demand pressure, and Greater China pressure.
 6. Open the evidence inspector: sources include frozen market bars, SEC EDGAR, MacRumors, and Nasdaq / Business Wire.
-7. Read expected observables: each narrative makes falsifiable future claims.
-8. Reveal validation: held-out future evidence supports the rank #1 narrative after the replay lock.
-9. Export the Markdown report or ledger JSON.
+7. Switch to NVDA or NKE from the case selector to compare another real-curated replay with the same anti-leakage gates.
+8. Read expected observables: each narrative makes falsifiable future claims.
+9. Reveal validation: held-out future evidence supports the rank #1 narrative after the replay lock.
+10. Export the Markdown report or ledger JSON.
 
 ## Why anti-leakage matters
 

@@ -1,0 +1,11 @@
+{
+  "cases": [
+    {
+      "case_id": "EVT-REAL-NKE-2024-06-27",
+      "event_fixture": "event_fixture.json",
+      "label": "NKE FY2024 Q4 real-curated replay",
+      "validation_fixture": "validation_fixture.json"
+    }
+  ],
+  "default_case_id": "EVT-REAL-NKE-2024-06-27"
+}
