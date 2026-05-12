@@ -231,3 +231,46 @@ Score components:
 - forward_observable_quality: 0.10
 - crowding_risk: 0.05
 - unsupported_claim_penalty: 0.05
+
+## Evaluation Checks
+
+These deterministic checks use the ranked replay output plus separately loaded validation rows.
+- Validated narrative IDs: NARR-AAPL-001
+- Validated narrative rank: #1
+- Narrative Recall@3: pass
+- Replay rank #1 validated: pass
+- Average unsupported claim penalty: 0.08
+- Max unsupported claim penalty: 0.10
+- High unsupported-claim penalty narratives: 1
+- Blocked future source count: 1
+
+## Model Comparison
+
+| System | Selected Narrative | Rank | Validated | Selection Rule |
+| --- | --- | ---: | --- | --- |
+| headline_baseline | NARR-AAPL-002 | #2 | miss | Selects the most crowded allowed narrative as a proxy for surface consensus. |
+| evidence_only | NARR-AAPL-001 | #1 | pass | Ablation that selects the strongest evidence score without mechanism or contradiction terms. |
+| no_contradiction_penalty | NARR-AAPL-001 | #1 | pass | Ablation that reranks without contradiction resistance or unsupported-claim penalty. |
+| quality_weighted | NARR-AAPL-001 | #1 | pass | Ablation that selects the strongest evidence score weighted by allowed source quality. |
+| narrativedesk_tournament | NARR-AAPL-001 | #1 | pass | Selects the highest deterministic narrative score after replay filtering. |
+
+## Future Validation Fixture
+
+Validation data is shown separately from event-time evidence so it cannot leak into generation.
+- Note: Real-curated validation fixture. Held-out future evidence stays separate from event-time replay inputs.
+- Future validation source IDs: SEC-027
+
+| Window | Label | Expected Observable | Future Sources | Validation Outcome |
+| --- | --- | --- | --- | --- |
+| T+20 | pending | Capital return should be prominent in near-term investor discussion. | SEC-027 | Pending future validation; fill only after the validation window closes. |
+| T+20 | pending | Per-share support should matter more than reported product revenue weakness if the buyback narrative dominates. | SEC-027 | Pending future validation; fill only after the validation window closes. |
+| T+60 | validated | Follow-up filings should preserve evidence of the newly authorized repurchase program. | SEC-027 | Held-out SEC-027, Apple's Q3 2024 Form 10-Q filed after the replay lock, preserved the May 2, 2024 additional $110 billion share repurchase authorization disclosure. |
+| T+20 | pending | Services should remain a central offset to hardware category declines. | none | Pending future validation; fill only after the validation window closes. |
+| T+20 | pending | Gross margin resilience should matter in interpretation of the quarter. | none | Pending future validation; fill only after the validation window closes. |
+| T+20 | pending | Future discussion should compare Services growth with product revenue softness. | none | Pending future validation; fill only after the validation window closes. |
+| T+20 | pending | Hardware-focused analysis should emphasize iPhone, iPad, and Wearables declines. | none | Pending future validation; fill only after the validation window closes. |
+| T+20 | pending | If this narrative dominates, later commentary should focus on unit demand or product-cycle weakness. | none | Pending future validation; fill only after the validation window closes. |
+| T+20 | pending | Capital return and Services growth would need to be treated as offsets rather than primary drivers. | none | Pending future validation; fill only after the validation window closes. |
+| T+20 | pending | Greater China should remain a named risk if the regional narrative is correct. | none | Pending future validation; fill only after the validation window closes. |
+| T+20 | pending | Later filings or commentary should show whether China weakness persists or stabilizes. | none | Pending future validation; fill only after the validation window closes. |
+| T+20 | pending | The explanation should be weaker if non-China regions and Services carry the investment debate. | none | Pending future validation; fill only after the validation window closes. |

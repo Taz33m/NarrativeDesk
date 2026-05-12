@@ -1,0 +1,58 @@
+{
+  "artifacts": [
+    {
+      "bytes": 67253,
+      "path": "source_pack.json",
+      "sha256": "22cfc07376ccf825305c81c3ead99536b53ce19fa5b20f4f7e9ef113f795e60f"
+    },
+    {
+      "bytes": 6067,
+      "path": "readiness.json",
+      "sha256": "64edd698da57f9452e8585d4259dbcfc724095b2817f803830517f5f3424db59"
+    },
+    {
+      "bytes": 55908,
+      "path": "event_fixture.json",
+      "sha256": "911a2d4afad819126df1d28186d83dc074f80469bd3ddb9b1e9cd90c51414931"
+    },
+    {
+      "bytes": 4636,
+      "path": "validation_fixture.json",
+      "sha256": "2d42ca186918c6622b5cf91e871c4e6e9b92741f2eec8f93fe89d883f94e1538"
+    },
+    {
+      "bytes": 57307,
+      "path": "ledger.json",
+      "sha256": "2d5e47c62a63236f56979eef257d819189c12222cba4c7e3b2c7c1152ee6f3b9"
+    },
+    {
+      "bytes": 24173,
+      "path": "report.md",
+      "sha256": "5f1fec110a113f07e2d93b63db1afdedaecaeec7fb1d70087967eb41f04ed53b"
+    },
+    {
+      "bytes": 277,
+      "path": "case_index.json",
+      "sha256": "e1e12db6e30c8327c97ddcd8682943b6f550ea13d032a3c826a63fb7fd0b8695"
+    }
+  ],
+  "bundle_type": "narrativedesk_replay_bundle",
+  "case_id": "EVT-REAL-AAPL-2024-05-02",
+  "data_provenance_mode": "real-curated",
+  "event_id": "EVT-REAL-AAPL-2024-05-02",
+  "readiness_status": "ready_to_ingest",
+  "replay_integrity": {
+    "blocked_future_source_count": 1,
+    "blocked_future_source_ids": [
+      "SEC-027"
+    ],
+    "future_validation_separate": true,
+    "validation_future_source_count": 1,
+    "validation_future_source_ids": [
+      "SEC-027"
+    ]
+  },
+  "replay_timestamp": "2024-05-03T10:00:00-04:00",
+  "schema_version": 1,
+  "ticker": "AAPL"
+}

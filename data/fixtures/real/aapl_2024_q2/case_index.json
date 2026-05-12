@@ -1,0 +1,11 @@
+{
+  "cases": [
+    {
+      "case_id": "EVT-REAL-AAPL-2024-05-02",
+      "event_fixture": "event_fixture.json",
+      "label": "AAPL Q2 2024 real-curated replay",
+      "validation_fixture": "validation_fixture.json"
+    }
+  ],
+  "default_case_id": "EVT-REAL-AAPL-2024-05-02"
+}

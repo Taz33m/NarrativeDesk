@@ -43,11 +43,14 @@ class PublicHygieneTests(unittest.TestCase):
             _write_minimal_public_repo(root)
             finnhub_env_name = "FINNHUB" + "_API_KEY"
             openrouter_env_name = "OPENROUTER" + "_API_KEY"
+            perplexity_env_name = "PERPLEXITY" + "_API_KEY"
             openrouter_token = "sk-or-v1-" + "thisisarealisticlookingtoken12345"
+            perplexity_token = "pplx-" + "thisisarealisticlookingtoken12345"
             private_email = "person" + "@" + "private.test"
             (root / ".env.local").write_text(f"{finnhub_env_name}=real-looking-value\n")
             (root / "leaky.py").write_text(
                 f"{openrouter_env_name}='{openrouter_token}'\n"
+                f"{perplexity_env_name}='{perplexity_token}'\n"
                 f"SEC_USER_AGENT='Analyst App ({private_email})'\n"
             )
 
@@ -60,6 +63,7 @@ class PublicHygieneTests(unittest.TestCase):
 
         self.assertTrue(any("forbidden generated/private path is tracked: .env.local" in error for error in errors))
         self.assertTrue(any("OpenRouter token found in tracked file: leaky.py" in error for error in errors))
+        self.assertTrue(any("Perplexity token found in tracked file: leaky.py" in error for error in errors))
         self.assertTrue(any("SEC User-Agent contact found in tracked file: leaky.py" in error for error in errors))
         self.assertTrue(any("provider env assignment found in tracked file: .env.local" in error for error in errors))
 

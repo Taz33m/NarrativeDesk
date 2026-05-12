@@ -6,13 +6,13 @@ It is not the AI that tells people what to think about a stock. It is the audit 
 
 ## What the app does
 
-The v0.2 demo is a synthetic multi-case historical replay and verification infrastructure. ORION remains the default synthetic case, AURORA adds a provenance-ready guidance-miss replay, and LYRA adds a hard case where the later-validated narrative ranks #2 instead of #1. A fictional streaming company, ORION, sells off after earnings. The surface-level explanation is margin disappointment, but NarrativeDesk audits forward demand slowdown as the replay rank #1 after scoring mechanism specificity, evidence strength, source independence, contradictions, crowding risk, and forward observables.
+The public browser workbench now opens a real-curated AAPL Q2 2024 earnings replay. The case uses timestamped source provenance, replay-locked evidence, blocked future validation evidence, deterministic ranking, and bundle verification. NarrativeDesk ranks the capital-return-reset explanation above competing Services, hardware-demand, and Greater China narratives using only evidence available at the replay lock.
 
 The browser workbench shows:
 
 - Event header with abnormal move, peer move, sector move, volume spike, and leakage lock timestamp.
-- Synthetic case-index summary with aggregate Recall@3 and baseline comparison rates.
-- Historical analogs showing how similar narrative structures validated or missed in other replay cases.
+- Case-index summary with Recall@3, baseline comparison rates, citation QA, and replay-integrity checks.
+- Historical analogs when the loaded case corpus contains comparable replay cases.
 - Narrative verification bracket with ranked competing explanations.
 - Evidence and contradiction inspector with source timestamps.
 - Replay audit showing allowed sources and blocked future sources.
@@ -23,20 +23,19 @@ The browser workbench shows:
 - Future validation panel kept separate from event-time replay evidence.
 - Export links for ledger JSON and report Markdown.
 
-The demo data is synthetic by design. Real-curated cases require timestamped source packs with source provenance metadata and replay-lock validation. Do not treat ORION, AURORA, or LYRA as real companies or real investment cases.
+The public shell uses a real-curated replay bundle, not live market data and not investment advice. Synthetic ORION/AURORA/LYRA fixtures remain in the repo for deterministic regression tests and examples.
 
 ## Demo loop
 
-1. Open the ORION replay workbench.
-2. Read the event strip: the stock is down 11.4 percent, with a -10.2 percent abnormal move.
-3. Check the replay lock: the event-time system is locked at `2025-08-07T10:00:00-04:00`.
-4. Inspect the audit: future source `SRC-009` is quarantined and removed from `NARR-001`.
-5. Compare the verification bracket: forward demand slowdown ranks above margin compression.
-6. Open the evidence inspector: margin compression has headline support but a direct contradiction.
+1. Open the AAPL Q2 2024 replay workbench.
+2. Read the event strip: AAPL is replayed against frozen market and benchmark bars.
+3. Check the replay lock: the event-time system is locked at `2024-05-03T10:00:00-04:00`.
+4. Inspect the audit: future source `SEC-027` is quarantined and removed from replay scoring.
+5. Compare the verification bracket: capital return reset ranks above Services mix resilience, hardware demand pressure, and Greater China pressure.
+6. Open the evidence inspector: sources include frozen market bars, SEC EDGAR, MacRumors, and Nasdaq / Business Wire.
 7. Read expected observables: each narrative makes falsifiable future claims.
-8. Compare historical analogs: similar demand-slowdown narratives validated in other synthetic replay cases.
-9. Reveal validation: T+20 later supports replay rank #1 in the synthetic replay.
-10. Export the Markdown report or ledger JSON.
+8. Reveal validation: held-out future evidence supports the rank #1 narrative after the replay lock.
+9. Export the Markdown report or ledger JSON.
 
 ## Why anti-leakage matters
 
@@ -51,13 +50,13 @@ The repo keeps the deterministic research kernel separate from the product surfa
 - `src/narrativedesk/`: typed ledger models, replay filtering, scoring, validation helpers, pipeline, CLI, and report export.
 - `apps/api/`: FastAPI service exposing event ID based endpoints around the kernel.
 - `apps/web/`: Vite React workbench that renders kernel-generated demo artifacts.
-- `data/fixtures/`: synthetic event and validation fixtures.
+- `data/fixtures/`: public real-curated AAPL replay bundle plus synthetic regression fixtures.
 - `schemas/`: Narrative Ledger, Source Pack, Real Case Config, Validation Fixture, and Replay Bundle Manifest JSON schemas.
 - `tests/`: unit and API tests.
 
 The browser demo reads generated JSON from `apps/web/public/demo/`. Generate those artifacts from the Python kernel with `make web-data`. Replay bundles stay separate from future validation and evaluation bundles.
 
-The generated example report lives at [`examples/sample_report.md`](examples/sample_report.md).
+The generated example report lives at [`examples/sample_report.md`](examples/sample_report.md), and the bundled real-curated AAPL report lives at [`data/fixtures/real/aapl_2024_q2/report.md`](data/fixtures/real/aapl_2024_q2/report.md).
 
 ## Deterministic vs future AI/data work
 
@@ -79,7 +78,7 @@ Implemented deterministically:
 - Real-data source-pack builder for Finnhub candles/news, frozen price CSVs, SEC EDGAR submissions/facts, local transcripts, and frozen estimate revisions.
 - Ledger JSON export.
 - Markdown report export.
-- Synthetic validation display.
+- Replay-safe validation display.
 - API endpoints for event, replay, ledger, report, and validation.
 
 Future work:
@@ -177,6 +176,8 @@ PYTHONPATH=src python3 -m narrativedesk.cli real-case-rehearse \
 ```
 
 Live-provider rehearsal requires `FINNHUB_API_KEY` and `SEC_USER_AGENT`; `NEWS_API_KEY` is optional when using `--providers newsapi`. Outputs remain scratch until a human adds competing narratives, `real-pack-build --require-narratives` passes, and the final bundle verifies.
+
+Optional Sonar discovery can scout for source URLs, but it is not evidence. Keep `PERPLEXITY_API_KEY` local, run `real-source-discover` into `.codex-work/source-discovery/`, then run `real-source-freeze` so NarrativeDesk refetches each URL, hashes page text, and applies the replay lock before any source candidate enters the real-case draft path.
 
 If you have a frozen, timestamped market CSV from another trusted local source, pass it during draft repair with `real-case-draft --market-bars path/to/market_bars.csv`; the file is copied into the scratch draft and still goes through the normal readiness and bundle checks.
 
@@ -385,16 +386,16 @@ Replay, ledger, and default report endpoints do not include future validation da
 
 ## Limitations
 
-- v0.2 defaults to synthetic fixtures; real-curated cases require timestamped source packs and explicit provenance metadata.
+- The public workbench defaults to a frozen real-curated AAPL replay bundle; it is not live market data.
 - Real-data builder output is not automatically an investment thesis; a human still curates source-to-narrative links and uncertainty.
 - Scores are transparent heuristics, not learned truth labels.
-- Validation rows are synthetic and separate from event-time replay.
+- Validation rows remain separate from event-time replay and may include pending outcomes.
 - The browser demo is a single workbench, not a live terminal.
 - No investment recommendations, brokerage integration, or real-money trading exist.
 
 ## Roadmap
 
-1. Add real historical event fixtures with timestamped citations.
+1. Add more real historical replay cases with timestamped citations.
 2. Add transcript, estimate-revision, and analyst-consensus adapters.
 3. Add optional agent generation grounded in structured source packs, with every generated claim tied back to source IDs.
 4. Expand case evaluation to T+5, T+20, and T+60 validation windows.

@@ -28,6 +28,7 @@ ALLOWED_MARKDOWN = {
     "AGENTS.md",
     "README.md",
     "apps/web/public/demo/report.md",
+    "data/fixtures/real/aapl_2024_q2/report.md",
     "examples/sample_report.md",
 }
 PACKAGE_FILES = (

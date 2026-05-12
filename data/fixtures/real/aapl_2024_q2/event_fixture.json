@@ -1,39 +1,51 @@
 {
-  "citation_qa": {
-    "allowed_source_count": 7,
-    "blocked_future_source_count": 1,
-    "citation_qa_pass": true,
-    "event_time_integrity_pass": true,
-    "low_quality_evidence_count": 0,
-    "missing_content_hash_count": 0,
-    "missing_publisher_count": 0,
-    "missing_url_count": 0,
-    "narrative_count": 4,
-    "narratives_with_support_count": 4,
-    "provenance_ready": true,
-    "replay_filter_pass": true,
-    "returned_blocked_source_count": 0,
-    "support_coverage_pass": true
-  },
   "event": {
-    "abnormal_return": 0.078715,
     "case_id": "EVT-REAL-AAPL-2024-05-02",
     "company_name": "Apple Inc.",
-    "daily_return": 0.078715,
     "data_provenance_mode": "real-curated",
     "event_date": "2024-05-02",
     "event_id": "EVT-REAL-AAPL-2024-05-02",
     "event_summary": "Real-curated Apple Q2 2024 earnings replay with timestamped citations, replay-locked evidence, and held-out validation. Research and education only; not investment advice.",
     "event_timestamp": "2024-05-03T10:00:00-04:00",
     "event_type": "earnings/guidance",
-    "peer_median_return": 0.0,
-    "sector_etf_return": 0.0,
-    "ticker": "AAPL",
-    "volume_ratio": null
+    "ticker": "AAPL"
+  },
+  "market_snapshot": {
+    "event_bar": {
+      "as_of": "2024-05-03T13:30:00Z",
+      "close": 186.649994,
+      "open": 173.029999,
+      "symbol": "AAPL"
+    },
+    "peer_bars": [
+      {
+        "as_of": "2024-05-03T13:30:00Z",
+        "close": 97.292664,
+        "open": 97.292664,
+        "symbol": "XLK"
+      },
+      {
+        "as_of": "2024-05-03T13:30:00Z",
+        "close": 77.522942,
+        "open": 77.522942,
+        "symbol": "XLC"
+      },
+      {
+        "as_of": "2024-05-03T13:30:00Z",
+        "close": 86.89447,
+        "open": 86.89447,
+        "symbol": "XLY"
+      }
+    ],
+    "sector_bar": {
+      "as_of": "2024-05-03T13:30:00Z",
+      "close": 97.292664,
+      "open": 97.292664,
+      "symbol": "XLK"
+    }
   },
   "narratives": [
     {
-      "confidence": null,
       "contradicting_evidence": [
         {
           "availability_status": "allowed",
@@ -43,15 +55,15 @@
           "contradicted_narrative_ids": [
             "NARR-AAPL-001"
           ],
+          "document_text": "Segment Operating Performance The following table shows net sales by reportable segment for the three months ended December 30, 2023 and December 31, 2022 (dollars in millions): Three Months Ended December 30, 2023 December 31, 2022 Change Net sales by reportable segment: Americas $ 50,430 $ 49,278 2 % Europe 30,397 27,681 10 % Greater China 20,819 23,905 (13) % Japan 7,767 6,755 15 % Rest of Asia Pacific 10,162 9,535 7 % Total net sales $ 119,575 $ 117,154 2 % Americas Americas net sales increased 2% or $1.2 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to higher net sales of Services and iPhone, partially offset by lower net sales of iPad. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Americas net sales during the first quarter of 2024. Europe Europe net sales increased 10% or $2.7 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to hi",
           "evidence_quality": 0.65,
           "incentive_conflict": 0.15,
           "independence": 0.7,
           "independence_cluster_id": "manual-sec-edgar",
           "originality_score": 0.7,
-          "published_at": "2024-02-01T23:03:38+00:00",
+          "published_at": "2024-02-01T23:03:38Z",
           "publisher": "SEC EDGAR",
-          "relation": "contradict",
-          "retrieved_at": "2026-05-11T21:54:10.759271+00:00",
+          "retrieved_at": "2026-05-11T21:54:10.759271Z",
           "source_id": "SEC-033",
           "source_type": "filing",
           "support_strength": 0.5,
@@ -73,22 +85,6 @@
       "mechanism": "A larger repurchase authorization and higher dividend can change the near-term equity story from reported revenue softness to capital-return support for per-share value.",
       "narrative": "Investors focused on Apple's capital return reset after the company disclosed a new authorization to repurchase up to $110 billion of common stock and raised the quarterly dividend.",
       "narrative_id": "NARR-AAPL-001",
-      "overall_narrative_score": 0.6844444444444445,
-      "rank": 1,
-      "scores": {
-        "contradiction_resistance": 0.06999999999999999,
-        "cross_sectional_fit": 0.057999999999999996,
-        "crowding_risk_penalty": 0.022000000000000002,
-        "evidence_strength": 0.164,
-        "forward_observable_quality": 0.06999999999999999,
-        "mechanism_specificity": 0.126,
-        "overall_narrative_score": 0.6844444444444445,
-        "penalty_score_normalized": 0.027777777777777783,
-        "positive_score_normalized": 0.7122222222222223,
-        "source_independence": 0.063,
-        "timestamp_advantage": 0.09000000000000001,
-        "unsupported_claim_penalty": 0.003
-      },
       "scoring_inputs": {
         "contradiction_resistance": 0.7,
         "cross_sectional_fit": 0.58,
@@ -102,20 +98,44 @@
       },
       "supporting_evidence": [
         {
-          "availability_status": "allowed",
-          "claim": "Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s",
-          "claim_extracted": "Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s",
-          "content_hash": "sha256:1e893d173ce4d9400216a2fc2117ddf1f32478e963621d2e0a24e5e49639f17e",
+          "availability_status": "blocked_future",
+          "claim": "Apple Inc. filed 10-Q on 2024-08-02.",
+          "claim_extracted": "Apple Inc. filed 10-Q on 2024-08-02.",
+          "content_hash": "sha256:b7a221f8353130d92aa5696e155f8eb094cd977058b5820fec1a4a0bb0997016",
           "contradicted_narrative_ids": [],
+          "document_text": "Apple Inc. filed 10-Q on 2024-08-02.",
           "evidence_quality": 0.65,
           "incentive_conflict": 0.15,
           "independence": 0.7,
           "independence_cluster_id": "manual-sec-edgar",
           "originality_score": 0.7,
-          "published_at": "2024-05-02T22:04:25+00:00",
+          "published_at": "2024-08-01T22:03:34Z",
           "publisher": "SEC EDGAR",
-          "relation": "support",
-          "retrieved_at": "2026-05-11T21:54:10.759271+00:00",
+          "retrieved_at": "2026-05-11T21:54:10.759271Z",
+          "source_id": "SEC-027",
+          "source_type": "filing",
+          "support_strength": 0.5,
+          "supported_narrative_ids": [
+            "NARR-AAPL-001"
+          ],
+          "title": "Apple Inc. 10-Q filed 2024-08-02",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019324000081/aapl-20240629.htm"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s",
+          "claim_extracted": "Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s",
+          "content_hash": "sha256:1e893d173ce4d9400216a2fc2117ddf1f32478e963621d2e0a24e5e49639f17e",
+          "contradicted_narrative_ids": [],
+          "document_text": "Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s",
+          "evidence_quality": 0.65,
+          "incentive_conflict": 0.15,
+          "independence": 0.7,
+          "independence_cluster_id": "manual-sec-edgar",
+          "originality_score": 0.7,
+          "published_at": "2024-05-02T22:04:25Z",
+          "publisher": "SEC EDGAR",
+          "retrieved_at": "2026-05-11T21:54:10.759271Z",
           "source_id": "SEC-030",
           "source_type": "filing",
           "support_strength": 0.5,
@@ -134,15 +154,15 @@
           "claim_extracted": "Item 2.02 Results of Operations and Financial Condition. On May 2, 2024, Apple Inc. (\u201cApple\u201d) issued a press release regarding Apple\u2019s financial results for its second fiscal quarter ended March 30, 2024. A copy of Apple\u2019s press release is attached hereto as Exhibit 99.1. The information contained in this Current Report shall not be deemed \u201cfiled\u201d for purposes of Section 18 of the Securities Exchange Act of 1934, as amended (the \u201cExchange Act\u201d), or incorporated by reference in any filing under the Securities Act of 1933, as amended, or the Exchange Act, except as shall be expressly set forth by specific reference in such a filing. Item 9.01 Financial Statements and Exhibits. (d) Exhibits. Exhibit Number Exhibit Description 99.1 Press release issued by Apple Inc. on May 2, 2024. 104 Inline XBRL for the cover page of this Current Report on Form 8-K. SIGNATURE Pursuant to the requirements of the Securities Exchange Act of 1934, the Registrant has duly caused this report to be signed on it",
           "content_hash": "sha256:63876afd5cce19daedb26b10cbc0bbcb3799d8e9a64ec7c401c923c035a11c5b",
           "contradicted_narrative_ids": [],
+          "document_text": "Item 2.02 Results of Operations and Financial Condition. On May 2, 2024, Apple Inc. (\u201cApple\u201d) issued a press release regarding Apple\u2019s financial results for its second fiscal quarter ended March 30, 2024. A copy of Apple\u2019s press release is attached hereto as Exhibit 99.1. The information contained in this Current Report shall not be deemed \u201cfiled\u201d for purposes of Section 18 of the Securities Exchange Act of 1934, as amended (the \u201cExchange Act\u201d), or incorporated by reference in any filing under the Securities Act of 1933, as amended, or the Exchange Act, except as shall be expressly set forth by specific reference in such a filing. Item 9.01 Financial Statements and Exhibits. (d) Exhibits. Exhibit Number Exhibit Description 99.1 Press release issued by Apple Inc. on May 2, 2024. 104 Inline XBRL for the cover page of this Current Report on Form 8-K. SIGNATURE Pursuant to the requirements of the Securities Exchange Act of 1934, the Registrant has duly caused this report to be signed on it",
           "evidence_quality": 0.65,
           "incentive_conflict": 0.15,
           "independence": 0.7,
           "independence_cluster_id": "manual-sec-edgar",
           "originality_score": 0.7,
-          "published_at": "2024-05-02T20:30:34+00:00",
+          "published_at": "2024-05-02T20:30:34Z",
           "publisher": "SEC EDGAR",
-          "relation": "support",
-          "retrieved_at": "2026-05-11T21:54:10.759271+00:00",
+          "retrieved_at": "2026-05-11T21:54:10.759271Z",
           "source_id": "SEC-031",
           "source_type": "filing",
           "support_strength": 0.5,
@@ -158,6 +178,7 @@
           "claim_extracted": "AAPL frozen market bar: opened at 173.03, closed at 186.65, with volume unavailable on 2024-05-03T09:30:00-04:00.",
           "content_hash": "sha256:170b2bf1deada44b1266f24606451251cc3d67b4f5a587cede8f9bc3a21f04e8",
           "contradicted_narrative_ids": [],
+          "document_text": "AAPL frozen market bar: opened at 173.03, closed at 186.65, with volume unavailable on 2024-05-03T09:30:00-04:00.",
           "evidence_quality": 0.8,
           "incentive_conflict": 0.05,
           "independence": 0.85,
@@ -165,7 +186,6 @@
           "originality_score": 0.8,
           "published_at": "2024-05-03T09:30:00-04:00",
           "publisher": "Frozen market bars",
-          "relation": "support",
           "retrieved_at": "2024-05-03T10:00:00-04:00",
           "source_id": "MKT-AAPL-001",
           "source_type": "market_data",
@@ -182,6 +202,7 @@
           "claim_extracted": "Frozen benchmark market bars showed daily returns of XLK 0.00%, XLC 0.00%, XLY 0.00%; benchmark median return was 0.00%.",
           "content_hash": "sha256:52d2e2d5aef035e71102c9fb485802167e9d4735432bdbed93cf502ace8c3d62",
           "contradicted_narrative_ids": [],
+          "document_text": "Frozen benchmark market bars showed daily returns of XLK 0.00%, XLC 0.00%, XLY 0.00%; benchmark median return was 0.00%.",
           "evidence_quality": 0.8,
           "incentive_conflict": 0.05,
           "independence": 0.85,
@@ -189,7 +210,6 @@
           "originality_score": 0.8,
           "published_at": "2024-05-03T09:30:00-04:00",
           "publisher": "Frozen market bars",
-          "relation": "support",
           "retrieved_at": "2024-05-03T10:00:00-04:00",
           "source_id": "MKT-BENCH-001",
           "source_type": "market_data",
@@ -208,6 +228,7 @@
           "claim_extracted": "MacRumors reported shortly after Apple's Q2 2024 release that Services set an all-time quarterly record, iPhone revenue fell by more than $5 billion year over year, and Apple authorized an additional $110 billion for share repurchases.",
           "content_hash": "sha256:762b000712fdb7971986a58863f5e5fe3a3aa776fe2b55f590ab01a017c0d49b",
           "contradicted_narrative_ids": [],
+          "document_text": "MacRumors published a May 2, 2024 1:38 PM PDT report on Apple fiscal Q2 2024. The report summarized revenue of $90.8 billion and profit of $23.6 billion, said Services set an all-time quarterly record at $23.9 billion, noted iPhone revenue dropped by more than $5 billion versus the year-ago quarter, and noted Apple authorized an additional $110 billion for share repurchases.",
           "evidence_quality": 0.76,
           "incentive_conflict": 0.08,
           "independence": 0.72,
@@ -215,8 +236,7 @@
           "originality_score": 0.72,
           "published_at": "2024-05-02T13:38:00-07:00",
           "publisher": "MacRumors",
-          "relation": "support",
-          "retrieved_at": "2026-05-11T22:28:43+00:00",
+          "retrieved_at": "2026-05-11T22:28:43Z",
           "source_id": "PUB-MACRUMORS-001",
           "source_type": "news",
           "support_strength": 0.68,
@@ -234,6 +254,7 @@
           "claim_extracted": "Nasdaq / Business Wire published Apple's fiscal Q2 2024 results release at 4:30 PM EDT on May 2, 2024, including lower year-over-year revenue, an all-time Services revenue record, a March-quarter EPS record, a dividend increase, and authorization for up to $110 billion in additional share repurchases.",
           "content_hash": "sha256:f2c1393f3815b645600616ccd550bdcd40c04414c551953ada316a99c674044c",
           "contradicted_narrative_ids": [],
+          "document_text": "Nasdaq / Business Wire published Apple's fiscal Q2 2024 results release at 4:30 PM EDT on May 2, 2024. The release reported quarterly revenue of $90.8 billion, down 4 percent year over year; Services revenue at a new all-time record; March-quarter diluted EPS of $1.53; a higher quarterly dividend; and a new authorization to repurchase up to $110 billion of common stock.",
           "evidence_quality": 0.82,
           "incentive_conflict": 0.3,
           "independence": 0.55,
@@ -241,8 +262,7 @@
           "originality_score": 0.82,
           "published_at": "2024-05-02T16:30:00-04:00",
           "publisher": "Nasdaq / Business Wire",
-          "relation": "support",
-          "retrieved_at": "2026-05-11T22:28:43+00:00",
+          "retrieved_at": "2026-05-11T22:28:43Z",
           "source_id": "PUB-NASDAQ-001",
           "source_type": "company_release",
           "support_strength": 0.72,
@@ -261,7 +281,6 @@
       "validation_status": "pending"
     },
     {
-      "confidence": null,
       "contradicting_evidence": [],
       "directional_implication": "bullish",
       "event_id": "EVT-REAL-AAPL-2024-05-02",
@@ -273,22 +292,6 @@
       "mechanism": "Services growth and mix can protect gross margin and earnings quality even when hardware categories decline.",
       "narrative": "The quarter was interpreted through Services resilience: Services revenue grew while several product categories declined, giving investors a higher-margin offset to weaker hardware demand.",
       "narrative_id": "NARR-AAPL-002",
-      "overall_narrative_score": 0.66,
-      "rank": 2,
-      "scores": {
-        "contradiction_resistance": 0.066,
-        "cross_sectional_fit": 0.05500000000000001,
-        "crowding_risk_penalty": 0.025,
-        "evidence_strength": 0.15600000000000003,
-        "forward_observable_quality": 0.068,
-        "mechanism_specificity": 0.12,
-        "overall_narrative_score": 0.66,
-        "penalty_score_normalized": 0.03222222222222223,
-        "positive_score_normalized": 0.6922222222222223,
-        "source_independence": 0.072,
-        "timestamp_advantage": 0.08600000000000001,
-        "unsupported_claim_penalty": 0.004
-      },
       "scoring_inputs": {
         "contradiction_resistance": 0.66,
         "cross_sectional_fit": 0.55,
@@ -307,15 +310,15 @@
           "claim_extracted": "Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s",
           "content_hash": "sha256:1e893d173ce4d9400216a2fc2117ddf1f32478e963621d2e0a24e5e49639f17e",
           "contradicted_narrative_ids": [],
+          "document_text": "Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s",
           "evidence_quality": 0.65,
           "incentive_conflict": 0.15,
           "independence": 0.7,
           "independence_cluster_id": "manual-sec-edgar",
           "originality_score": 0.7,
-          "published_at": "2024-05-02T22:04:25+00:00",
+          "published_at": "2024-05-02T22:04:25Z",
           "publisher": "SEC EDGAR",
-          "relation": "support",
-          "retrieved_at": "2026-05-11T21:54:10.759271+00:00",
+          "retrieved_at": "2026-05-11T21:54:10.759271Z",
           "source_id": "SEC-030",
           "source_type": "filing",
           "support_strength": 0.5,
@@ -334,6 +337,7 @@
           "claim_extracted": "MacRumors reported shortly after Apple's Q2 2024 release that Services set an all-time quarterly record, iPhone revenue fell by more than $5 billion year over year, and Apple authorized an additional $110 billion for share repurchases.",
           "content_hash": "sha256:762b000712fdb7971986a58863f5e5fe3a3aa776fe2b55f590ab01a017c0d49b",
           "contradicted_narrative_ids": [],
+          "document_text": "MacRumors published a May 2, 2024 1:38 PM PDT report on Apple fiscal Q2 2024. The report summarized revenue of $90.8 billion and profit of $23.6 billion, said Services set an all-time quarterly record at $23.9 billion, noted iPhone revenue dropped by more than $5 billion versus the year-ago quarter, and noted Apple authorized an additional $110 billion for share repurchases.",
           "evidence_quality": 0.76,
           "incentive_conflict": 0.08,
           "independence": 0.72,
@@ -341,8 +345,7 @@
           "originality_score": 0.72,
           "published_at": "2024-05-02T13:38:00-07:00",
           "publisher": "MacRumors",
-          "relation": "support",
-          "retrieved_at": "2026-05-11T22:28:43+00:00",
+          "retrieved_at": "2026-05-11T22:28:43Z",
           "source_id": "PUB-MACRUMORS-001",
           "source_type": "news",
           "support_strength": 0.68,
@@ -360,6 +363,7 @@
           "claim_extracted": "Nasdaq / Business Wire published Apple's fiscal Q2 2024 results release at 4:30 PM EDT on May 2, 2024, including lower year-over-year revenue, an all-time Services revenue record, a March-quarter EPS record, a dividend increase, and authorization for up to $110 billion in additional share repurchases.",
           "content_hash": "sha256:f2c1393f3815b645600616ccd550bdcd40c04414c551953ada316a99c674044c",
           "contradicted_narrative_ids": [],
+          "document_text": "Nasdaq / Business Wire published Apple's fiscal Q2 2024 results release at 4:30 PM EDT on May 2, 2024. The release reported quarterly revenue of $90.8 billion, down 4 percent year over year; Services revenue at a new all-time record; March-quarter diluted EPS of $1.53; a higher quarterly dividend; and a new authorization to repurchase up to $110 billion of common stock.",
           "evidence_quality": 0.82,
           "incentive_conflict": 0.3,
           "independence": 0.55,
@@ -367,8 +371,7 @@
           "originality_score": 0.82,
           "published_at": "2024-05-02T16:30:00-04:00",
           "publisher": "Nasdaq / Business Wire",
-          "relation": "support",
-          "retrieved_at": "2026-05-11T22:28:43+00:00",
+          "retrieved_at": "2026-05-11T22:28:43Z",
           "source_id": "PUB-NASDAQ-001",
           "source_type": "company_release",
           "support_strength": 0.72,
@@ -387,7 +390,6 @@
       "validation_status": "pending"
     },
     {
-      "confidence": null,
       "contradicting_evidence": [],
       "directional_implication": "bearish",
       "event_id": "EVT-REAL-AAPL-2024-05-02",
@@ -399,22 +401,6 @@
       "mechanism": "Broad product-category declines can signal weaker hardware demand and pressure the durability of future revenue growth.",
       "narrative": "The event exposed hardware demand weakness: iPhone, iPad, and Wearables revenue declined year over year while total net sales fell.",
       "narrative_id": "NARR-AAPL-003",
-      "overall_narrative_score": 0.6022222222222222,
-      "rank": 3,
-      "scores": {
-        "contradiction_resistance": 0.052000000000000005,
-        "cross_sectional_fit": 0.05,
-        "crowding_risk_penalty": 0.023000000000000003,
-        "evidence_strength": 0.15000000000000002,
-        "forward_observable_quality": 0.062,
-        "mechanism_specificity": 0.1095,
-        "overall_narrative_score": 0.6022222222222222,
-        "penalty_score_normalized": 0.03055555555555556,
-        "positive_score_normalized": 0.6327777777777778,
-        "source_independence": 0.06,
-        "timestamp_advantage": 0.08600000000000001,
-        "unsupported_claim_penalty": 0.0045
-      },
       "scoring_inputs": {
         "contradiction_resistance": 0.52,
         "cross_sectional_fit": 0.5,
@@ -433,15 +419,15 @@
           "claim_extracted": "Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s",
           "content_hash": "sha256:1e893d173ce4d9400216a2fc2117ddf1f32478e963621d2e0a24e5e49639f17e",
           "contradicted_narrative_ids": [],
+          "document_text": "Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s",
           "evidence_quality": 0.65,
           "incentive_conflict": 0.15,
           "independence": 0.7,
           "independence_cluster_id": "manual-sec-edgar",
           "originality_score": 0.7,
-          "published_at": "2024-05-02T22:04:25+00:00",
+          "published_at": "2024-05-02T22:04:25Z",
           "publisher": "SEC EDGAR",
-          "relation": "support",
-          "retrieved_at": "2026-05-11T21:54:10.759271+00:00",
+          "retrieved_at": "2026-05-11T21:54:10.759271Z",
           "source_id": "SEC-030",
           "source_type": "filing",
           "support_strength": 0.5,
@@ -462,15 +448,15 @@
           "contradicted_narrative_ids": [
             "NARR-AAPL-001"
           ],
+          "document_text": "Segment Operating Performance The following table shows net sales by reportable segment for the three months ended December 30, 2023 and December 31, 2022 (dollars in millions): Three Months Ended December 30, 2023 December 31, 2022 Change Net sales by reportable segment: Americas $ 50,430 $ 49,278 2 % Europe 30,397 27,681 10 % Greater China 20,819 23,905 (13) % Japan 7,767 6,755 15 % Rest of Asia Pacific 10,162 9,535 7 % Total net sales $ 119,575 $ 117,154 2 % Americas Americas net sales increased 2% or $1.2 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to higher net sales of Services and iPhone, partially offset by lower net sales of iPad. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Americas net sales during the first quarter of 2024. Europe Europe net sales increased 10% or $2.7 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to hi",
           "evidence_quality": 0.65,
           "incentive_conflict": 0.15,
           "independence": 0.7,
           "independence_cluster_id": "manual-sec-edgar",
           "originality_score": 0.7,
-          "published_at": "2024-02-01T23:03:38+00:00",
+          "published_at": "2024-02-01T23:03:38Z",
           "publisher": "SEC EDGAR",
-          "relation": "support",
-          "retrieved_at": "2026-05-11T21:54:10.759271+00:00",
+          "retrieved_at": "2026-05-11T21:54:10.759271Z",
           "source_id": "SEC-033",
           "source_type": "filing",
           "support_strength": 0.5,
@@ -487,6 +473,7 @@
           "claim_extracted": "Frozen benchmark market bars showed daily returns of XLK 0.00%, XLC 0.00%, XLY 0.00%; benchmark median return was 0.00%.",
           "content_hash": "sha256:52d2e2d5aef035e71102c9fb485802167e9d4735432bdbed93cf502ace8c3d62",
           "contradicted_narrative_ids": [],
+          "document_text": "Frozen benchmark market bars showed daily returns of XLK 0.00%, XLC 0.00%, XLY 0.00%; benchmark median return was 0.00%.",
           "evidence_quality": 0.8,
           "incentive_conflict": 0.05,
           "independence": 0.85,
@@ -494,7 +481,6 @@
           "originality_score": 0.8,
           "published_at": "2024-05-03T09:30:00-04:00",
           "publisher": "Frozen market bars",
-          "relation": "support",
           "retrieved_at": "2024-05-03T10:00:00-04:00",
           "source_id": "MKT-BENCH-001",
           "source_type": "market_data",
@@ -513,6 +499,7 @@
           "claim_extracted": "MacRumors reported shortly after Apple's Q2 2024 release that Services set an all-time quarterly record, iPhone revenue fell by more than $5 billion year over year, and Apple authorized an additional $110 billion for share repurchases.",
           "content_hash": "sha256:762b000712fdb7971986a58863f5e5fe3a3aa776fe2b55f590ab01a017c0d49b",
           "contradicted_narrative_ids": [],
+          "document_text": "MacRumors published a May 2, 2024 1:38 PM PDT report on Apple fiscal Q2 2024. The report summarized revenue of $90.8 billion and profit of $23.6 billion, said Services set an all-time quarterly record at $23.9 billion, noted iPhone revenue dropped by more than $5 billion versus the year-ago quarter, and noted Apple authorized an additional $110 billion for share repurchases.",
           "evidence_quality": 0.76,
           "incentive_conflict": 0.08,
           "independence": 0.72,
@@ -520,8 +507,7 @@
           "originality_score": 0.72,
           "published_at": "2024-05-02T13:38:00-07:00",
           "publisher": "MacRumors",
-          "relation": "support",
-          "retrieved_at": "2026-05-11T22:28:43+00:00",
+          "retrieved_at": "2026-05-11T22:28:43Z",
           "source_id": "PUB-MACRUMORS-001",
           "source_type": "news",
           "support_strength": 0.68,
@@ -541,7 +527,6 @@
       "validation_status": "pending"
     },
     {
-      "confidence": null,
       "contradicting_evidence": [],
       "directional_implication": "bearish",
       "event_id": "EVT-REAL-AAPL-2024-05-02",
@@ -553,22 +538,6 @@
       "mechanism": "Weakness in Greater China can create a region-specific demand concern that investors may separate from company-wide category mix.",
       "narrative": "Investors were weighing regional pressure, especially Greater China, where reported net sales declined and iPhone represented a larger proportion of segment sales.",
       "narrative_id": "NARR-AAPL-004",
-      "overall_narrative_score": 0.5755555555555555,
-      "rank": 4,
-      "scores": {
-        "contradiction_resistance": 0.05,
-        "cross_sectional_fit": 0.048,
-        "crowding_risk_penalty": 0.022000000000000002,
-        "evidence_strength": 0.13799999999999998,
-        "forward_observable_quality": 0.06,
-        "mechanism_specificity": 0.10200000000000001,
-        "overall_narrative_score": 0.5755555555555555,
-        "penalty_score_normalized": 0.030000000000000006,
-        "positive_score_normalized": 0.6055555555555555,
-        "source_independence": 0.063,
-        "timestamp_advantage": 0.084,
-        "unsupported_claim_penalty": 0.005000000000000001
-      },
       "scoring_inputs": {
         "contradiction_resistance": 0.5,
         "cross_sectional_fit": 0.48,
@@ -587,15 +556,15 @@
           "claim_extracted": "Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s",
           "content_hash": "sha256:1e893d173ce4d9400216a2fc2117ddf1f32478e963621d2e0a24e5e49639f17e",
           "contradicted_narrative_ids": [],
+          "document_text": "Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s",
           "evidence_quality": 0.65,
           "incentive_conflict": 0.15,
           "independence": 0.7,
           "independence_cluster_id": "manual-sec-edgar",
           "originality_score": 0.7,
-          "published_at": "2024-05-02T22:04:25+00:00",
+          "published_at": "2024-05-02T22:04:25Z",
           "publisher": "SEC EDGAR",
-          "relation": "support",
-          "retrieved_at": "2026-05-11T21:54:10.759271+00:00",
+          "retrieved_at": "2026-05-11T21:54:10.759271Z",
           "source_id": "SEC-030",
           "source_type": "filing",
           "support_strength": 0.5,
@@ -616,15 +585,15 @@
           "contradicted_narrative_ids": [
             "NARR-AAPL-001"
           ],
+          "document_text": "Segment Operating Performance The following table shows net sales by reportable segment for the three months ended December 30, 2023 and December 31, 2022 (dollars in millions): Three Months Ended December 30, 2023 December 31, 2022 Change Net sales by reportable segment: Americas $ 50,430 $ 49,278 2 % Europe 30,397 27,681 10 % Greater China 20,819 23,905 (13) % Japan 7,767 6,755 15 % Rest of Asia Pacific 10,162 9,535 7 % Total net sales $ 119,575 $ 117,154 2 % Americas Americas net sales increased 2% or $1.2 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to higher net sales of Services and iPhone, partially offset by lower net sales of iPad. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Americas net sales during the first quarter of 2024. Europe Europe net sales increased 10% or $2.7 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to hi",
           "evidence_quality": 0.65,
           "incentive_conflict": 0.15,
           "independence": 0.7,
           "independence_cluster_id": "manual-sec-edgar",
           "originality_score": 0.7,
-          "published_at": "2024-02-01T23:03:38+00:00",
+          "published_at": "2024-02-01T23:03:38Z",
           "publisher": "SEC EDGAR",
-          "relation": "support",
-          "retrieved_at": "2026-05-11T21:54:10.759271+00:00",
+          "retrieved_at": "2026-05-11T21:54:10.759271Z",
           "source_id": "SEC-033",
           "source_type": "filing",
           "support_strength": 0.5,
@@ -641,6 +610,7 @@
           "claim_extracted": "Frozen benchmark market bars showed daily returns of XLK 0.00%, XLC 0.00%, XLY 0.00%; benchmark median return was 0.00%.",
           "content_hash": "sha256:52d2e2d5aef035e71102c9fb485802167e9d4735432bdbed93cf502ace8c3d62",
           "contradicted_narrative_ids": [],
+          "document_text": "Frozen benchmark market bars showed daily returns of XLK 0.00%, XLC 0.00%, XLY 0.00%; benchmark median return was 0.00%.",
           "evidence_quality": 0.8,
           "incentive_conflict": 0.05,
           "independence": 0.85,
@@ -648,7 +618,6 @@
           "originality_score": 0.8,
           "published_at": "2024-05-03T09:30:00-04:00",
           "publisher": "Frozen market bars",
-          "relation": "support",
           "retrieved_at": "2024-05-03T10:00:00-04:00",
           "source_id": "MKT-BENCH-001",
           "source_type": "market_data",
@@ -668,323 +637,5 @@
       "title": "Greater China pressure",
       "validation_status": "pending"
     }
-  ],
-  "replay_audit": {
-    "allowed_source_ids": [
-      "MKT-AAPL-001",
-      "MKT-BENCH-001",
-      "PUB-MACRUMORS-001",
-      "PUB-NASDAQ-001",
-      "SEC-030",
-      "SEC-031",
-      "SEC-033"
-    ],
-    "blocked_evidence": [
-      {
-        "availability_status": "blocked_future",
-        "blocked_reason": "marked_blocked_future",
-        "narrative_id": "NARR-AAPL-001",
-        "published_at": "2024-08-01T22:03:34+00:00",
-        "relation": "support",
-        "replay_status": "blocked_future",
-        "source_id": "SEC-027",
-        "source_type": "filing"
-      }
-    ],
-    "blocked_source_ids": [
-      "SEC-027"
-    ],
-    "removed_evidence_by_narrative": {
-      "NARR-AAPL-001": [
-        "SEC-027"
-      ]
-    },
-    "replay_timestamp": "2024-05-03T10:00:00-04:00"
-  },
-  "source_clustering": {
-    "allowed_source_count": 7,
-    "average_cluster_size": 1.75,
-    "average_derived_originality_score": 0.571414,
-    "blocked_future_source_count": 1,
-    "blocked_future_source_ids": [
-      "SEC-027"
-    ],
-    "cluster_count": 4,
-    "clusters": [
-      {
-        "average_fixture_originality_score": 0.82,
-        "cluster_basis": "independence_cluster_id",
-        "cluster_id": "issuer-release-mirrors",
-        "derived_originality_score": 1.0,
-        "narrative_ids": [
-          "NARR-AAPL-001",
-          "NARR-AAPL-002"
-        ],
-        "publishers": [
-          "Nasdaq / Business Wire"
-        ],
-        "relation_counts": {
-          "contradict": 0,
-          "support": 2
-        },
-        "representative_claim": "Nasdaq / Business Wire published Apple's fiscal Q2 2024 results release at 4:30 PM EDT on May 2, 2024, including lower year-over-year revenue, an all-time Services revenue record, a March-quarter EPS record, a dividend increase, and authorization for up to $110 billion in additional share repurchases.",
-        "source_count": 1,
-        "source_ids": [
-          "PUB-NASDAQ-001"
-        ],
-        "source_types": [
-          "company_release"
-        ]
-      },
-      {
-        "average_fixture_originality_score": 0.7,
-        "cluster_basis": "independence_cluster_id",
-        "cluster_id": "manual-sec-edgar",
-        "derived_originality_score": 0.3333,
-        "narrative_ids": [
-          "NARR-AAPL-001",
-          "NARR-AAPL-002",
-          "NARR-AAPL-003",
-          "NARR-AAPL-004"
-        ],
-        "publishers": [
-          "SEC EDGAR"
-        ],
-        "relation_counts": {
-          "contradict": 1,
-          "support": 7
-        },
-        "representative_claim": "Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s",
-        "source_count": 3,
-        "source_ids": [
-          "SEC-030",
-          "SEC-031",
-          "SEC-033"
-        ],
-        "source_types": [
-          "filing"
-        ]
-      },
-      {
-        "average_fixture_originality_score": 0.8,
-        "cluster_basis": "independence_cluster_id",
-        "cluster_id": "market-bars",
-        "derived_originality_score": 0.5,
-        "narrative_ids": [
-          "NARR-AAPL-001",
-          "NARR-AAPL-003",
-          "NARR-AAPL-004"
-        ],
-        "publishers": [
-          "Frozen market bars"
-        ],
-        "relation_counts": {
-          "contradict": 0,
-          "support": 4
-        },
-        "representative_claim": "AAPL frozen market bar: opened at 173.03, closed at 186.65, with volume unavailable on 2024-05-03T09:30:00-04:00.",
-        "source_count": 2,
-        "source_ids": [
-          "MKT-AAPL-001",
-          "MKT-BENCH-001"
-        ],
-        "source_types": [
-          "market_data"
-        ]
-      },
-      {
-        "average_fixture_originality_score": 0.72,
-        "cluster_basis": "independence_cluster_id",
-        "cluster_id": "technology-news",
-        "derived_originality_score": 1.0,
-        "narrative_ids": [
-          "NARR-AAPL-001",
-          "NARR-AAPL-002",
-          "NARR-AAPL-003"
-        ],
-        "publishers": [
-          "MacRumors"
-        ],
-        "relation_counts": {
-          "contradict": 0,
-          "support": 3
-        },
-        "representative_claim": "MacRumors reported shortly after Apple's Q2 2024 release that Services set an all-time quarterly record, iPhone revenue fell by more than $5 billion year over year, and Apple authorized an additional $110 billion for share repurchases.",
-        "source_count": 1,
-        "source_ids": [
-          "PUB-MACRUMORS-001"
-        ],
-        "source_types": [
-          "news"
-        ]
-      }
-    ],
-    "duplicate_cluster_count": 2
-  },
-  "source_reliability": {
-    "by_publisher": [
-      {
-        "allowed_source_count": 2,
-        "average_evidence_quality": 0.8,
-        "average_independence": 0.85,
-        "average_originality_score": 0.8,
-        "blocked_future_count": 0,
-        "blocked_future_source_ids": [],
-        "group": "publisher",
-        "key": "Frozen market bars",
-        "low_quality_source_count": 0,
-        "source_ids": [
-          "MKT-AAPL-001",
-          "MKT-BENCH-001"
-        ]
-      },
-      {
-        "allowed_source_count": 1,
-        "average_evidence_quality": 0.76,
-        "average_independence": 0.72,
-        "average_originality_score": 0.72,
-        "blocked_future_count": 0,
-        "blocked_future_source_ids": [],
-        "group": "publisher",
-        "key": "MacRumors",
-        "low_quality_source_count": 0,
-        "source_ids": [
-          "PUB-MACRUMORS-001"
-        ]
-      },
-      {
-        "allowed_source_count": 1,
-        "average_evidence_quality": 0.82,
-        "average_independence": 0.55,
-        "average_originality_score": 0.82,
-        "blocked_future_count": 0,
-        "blocked_future_source_ids": [],
-        "group": "publisher",
-        "key": "Nasdaq / Business Wire",
-        "low_quality_source_count": 0,
-        "source_ids": [
-          "PUB-NASDAQ-001"
-        ]
-      },
-      {
-        "allowed_source_count": 3,
-        "average_evidence_quality": 0.65,
-        "average_independence": 0.7,
-        "average_originality_score": 0.7,
-        "blocked_future_count": 0,
-        "blocked_future_source_ids": [],
-        "group": "publisher",
-        "key": "SEC EDGAR",
-        "low_quality_source_count": 0,
-        "source_ids": [
-          "SEC-030",
-          "SEC-031",
-          "SEC-033"
-        ]
-      },
-      {
-        "allowed_source_count": 0,
-        "average_evidence_quality": null,
-        "average_independence": null,
-        "average_originality_score": null,
-        "blocked_future_count": 1,
-        "blocked_future_source_ids": [
-          "SEC-027"
-        ],
-        "group": "publisher",
-        "key": "unknown",
-        "low_quality_source_count": 0,
-        "source_ids": [
-          "SEC-027"
-        ]
-      }
-    ],
-    "by_source_type": [
-      {
-        "allowed_source_count": 1,
-        "average_evidence_quality": 0.82,
-        "average_independence": 0.55,
-        "average_originality_score": 0.82,
-        "blocked_future_count": 0,
-        "blocked_future_source_ids": [],
-        "group": "source_type",
-        "key": "company_release",
-        "low_quality_source_count": 0,
-        "source_ids": [
-          "PUB-NASDAQ-001"
-        ]
-      },
-      {
-        "allowed_source_count": 3,
-        "average_evidence_quality": 0.65,
-        "average_independence": 0.7,
-        "average_originality_score": 0.7,
-        "blocked_future_count": 1,
-        "blocked_future_source_ids": [
-          "SEC-027"
-        ],
-        "group": "source_type",
-        "key": "filing",
-        "low_quality_source_count": 0,
-        "source_ids": [
-          "SEC-027",
-          "SEC-030",
-          "SEC-031",
-          "SEC-033"
-        ]
-      },
-      {
-        "allowed_source_count": 2,
-        "average_evidence_quality": 0.8,
-        "average_independence": 0.85,
-        "average_originality_score": 0.8,
-        "blocked_future_count": 0,
-        "blocked_future_source_ids": [],
-        "group": "source_type",
-        "key": "market_data",
-        "low_quality_source_count": 0,
-        "source_ids": [
-          "MKT-AAPL-001",
-          "MKT-BENCH-001"
-        ]
-      },
-      {
-        "allowed_source_count": 1,
-        "average_evidence_quality": 0.76,
-        "average_independence": 0.72,
-        "average_originality_score": 0.72,
-        "blocked_future_count": 0,
-        "blocked_future_source_ids": [],
-        "group": "source_type",
-        "key": "news",
-        "low_quality_source_count": 0,
-        "source_ids": [
-          "PUB-MACRUMORS-001"
-        ]
-      }
-    ],
-    "overall": {
-      "allowed_source_count": 7,
-      "average_evidence_quality": 0.7329,
-      "average_independence": 0.7243,
-      "average_originality_score": 0.7486,
-      "blocked_future_count": 1,
-      "blocked_future_source_ids": [
-        "SEC-027"
-      ],
-      "group": "overall",
-      "key": "all_sources",
-      "low_quality_source_count": 0,
-      "source_ids": [
-        "MKT-AAPL-001",
-        "MKT-BENCH-001",
-        "PUB-MACRUMORS-001",
-        "PUB-NASDAQ-001",
-        "SEC-027",
-        "SEC-030",
-        "SEC-031",
-        "SEC-033"
-      ]
-    }
-  }
+  ]
 }

@@ -770,7 +770,9 @@ def _quality_next_action(checks: dict[str, dict[str, Any]]) -> str:
         return "Add non-SEC replay-time evidence from multiple non-market sources before public demo use."
     if checks.get("public_validation_evidence", {}).get("ok") is False:
         return "Link held-out validation outcomes to blocked future source IDs before public demo use."
-    return "Review the report and decide whether this private case is demo-worthy."
+    if checks.get("public_replay_evidence", {}).get("ok") and checks.get("public_validation_evidence", {}).get("ok"):
+        return "Public demo gate passed; review report copy and publish only with the research/education disclaimer intact."
+    return "Review the report and decide whether this case is demo-worthy."
 
 
 def _readiness_replay_check(payload: dict[str, Any], meta: dict[str, Any]) -> dict[str, Any]:

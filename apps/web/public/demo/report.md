@@ -1,216 +1,223 @@
-# NarrativeDesk Event Report: ORION
+# NarrativeDesk Event Report: AAPL
 
 > Research support output. Not investment advice.
 
 ## Data Note
 
-This sample report is generated from a synthetic fixture. Real event reports must include source URLs, publication timestamps, and raw document hashes.
+This report is generated from a real-curated replay bundle. Treat it as research support only; public use requires curator review of source URLs, publication timestamps, raw document hashes, and validation status.
 
 ## Event
 
-- Event ID: `EVT-ORION-2025-08-07`
-- Company: Orion Streaming Holdings (`ORION`)
-- Timestamp lock: `2025-08-07T10:00:00-04:00`
+- Event ID: `EVT-REAL-AAPL-2024-05-02`
+- Company: Apple Inc. (`AAPL`)
+- Timestamp lock: `2024-05-03T10:00:00-04:00`
 - Event type: earnings/guidance
-- Daily return: -11.4%
-- Abnormal return: -10.2%
-- Volume ratio: 2.40x
-- Sector ETF return: -0.8%
-- Peer median return: -1.2%
+- Daily return: 7.9%
+- Abnormal return: 7.9%
+- Volume ratio: n/a
+- Sector ETF return: 0.0%
+- Peer median return: 0.0%
 
-Synthetic demo event: a liquid streaming company sells off after earnings. The fixture is designed to exercise replay filtering, narrative verification, and validation separation.
+Real-curated Apple Q2 2024 earnings replay with timestamped citations, replay-locked evidence, and held-out validation. Research and education only; not investment advice.
 
 ## Replay Audit
 
-- Allowed sources: SRC-001, SRC-002, SRC-003, SRC-004, SRC-005, SRC-006, SRC-007, SRC-008
-- Blocked future sources: SRC-009
-- Removed from `NARR-001`: SRC-009
+- Allowed sources: MKT-AAPL-001, MKT-BENCH-001, PUB-MACRUMORS-001, PUB-NASDAQ-001, SEC-030, SEC-031, SEC-033
+- Blocked future sources: SEC-027
+- Removed from `NARR-AAPL-001`: SEC-027
 
 ## Source Map
 
 | Source | Status | Type | Publisher | Narratives | Relations |
 | --- | --- | --- | --- | --- | --- |
-| SRC-001 | allowed | earnings_release | Orion Streaming Holdings | NARR-001 | support |
-| SRC-002 | allowed | earnings_transcript | Orion Streaming Holdings | NARR-001, NARR-004 | contradict, support |
-| SRC-003 | allowed | earnings_release | Orion Streaming Holdings | NARR-001 | contradict |
-| SRC-004 | allowed | financial_media | Synthetic Market News | NARR-002 | support |
-| SRC-005 | allowed | earnings_release | Orion Streaming Holdings | NARR-002 | contradict |
-| SRC-006 | allowed | market_data | Synthetic Price Feed | NARR-003 | support |
-| SRC-007 | allowed | market_data | Synthetic Price Feed | NARR-003 | contradict |
-| SRC-008 | allowed | earnings_release | Orion Streaming Holdings | NARR-004 | support |
-| SRC-009 | blocked_future | analyst_revision | n/a | NARR-001 | support |
+| MKT-AAPL-001 | allowed | market_data | Frozen market bars | NARR-AAPL-001 | support |
+| MKT-BENCH-001 | allowed | market_data | Frozen market bars | NARR-AAPL-001, NARR-AAPL-003, NARR-AAPL-004 | support |
+| PUB-MACRUMORS-001 | allowed | news | MacRumors | NARR-AAPL-001, NARR-AAPL-002, NARR-AAPL-003 | support |
+| PUB-NASDAQ-001 | allowed | company_release | Nasdaq / Business Wire | NARR-AAPL-001, NARR-AAPL-002 | support |
+| SEC-030 | allowed | filing | SEC EDGAR | NARR-AAPL-001, NARR-AAPL-002, NARR-AAPL-003, NARR-AAPL-004 | support |
+| SEC-031 | allowed | filing | SEC EDGAR | NARR-AAPL-001 | support |
+| SEC-033 | allowed | filing | SEC EDGAR | NARR-AAPL-001, NARR-AAPL-003, NARR-AAPL-004 | contradict, support |
+| SEC-027 | blocked_future | filing | n/a | NARR-AAPL-001 | support |
 
 ## Citation QA
 
 - Replay filter: pass
 - Support coverage: pass
 - Event-time integrity: pass
-- Citation QA: miss
-- Provenance-ready allowed sources: miss
+- Citation QA: pass
+- Provenance-ready allowed sources: pass
 - Returned blocked sources: 0
 - Narratives with support: 4/4
-- Missing URLs: 8
-- Missing content hashes: 8
-- Low-quality evidence sources: 1
+- Missing URLs: 0
+- Missing content hashes: 0
+- Low-quality evidence sources: 0
 
 ## Source Reliability
 
 Blocked future sources are counted for auditability but excluded from scoring and ranking.
-- Allowed sources: 8
+- Allowed sources: 7
 - Blocked future sources: 1
-- Average evidence quality: 0.80
-- Average independence: 0.82
-- Average originality score: 0.50
-- Low-quality evidence sources: 1
-- Blocked source IDs: SRC-009
+- Average evidence quality: 0.73
+- Average independence: 0.72
+- Average originality score: 0.75
+- Low-quality evidence sources: 0
+- Blocked source IDs: SEC-027
 
 | Publisher | Allowed | Blocked Future | Evidence Quality | Independence | Originality |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Orion Streaming Holdings | 5 | 0 | 0.84 | 0.88 | 0.50 |
-| Synthetic Market News | 1 | 0 | 0.45 | 0.38 | 0.50 |
-| Synthetic Price Feed | 2 | 0 | 0.86 | 0.90 | 0.50 |
+| Frozen market bars | 2 | 0 | 0.80 | 0.85 | 0.80 |
+| MacRumors | 1 | 0 | 0.76 | 0.72 | 0.72 |
+| Nasdaq / Business Wire | 1 | 0 | 0.82 | 0.55 | 0.82 |
+| SEC EDGAR | 3 | 0 | 0.65 | 0.70 | 0.70 |
 | unknown | 0 | 1 | n/a | n/a | n/a |
 
 ## Source Clustering
 
 Clusters use replay-safe allowed evidence only. Future-dated source text stays quarantined.
-- Allowed sources clustered: 8
+- Allowed sources clustered: 7
 - Blocked future sources excluded: 1
-- Cluster count: 8
-- Duplicate clusters: 0
-- Average derived originality: 1.00
+- Cluster count: 4
+- Duplicate clusters: 2
+- Average derived originality: 0.57
 
 | Cluster | Basis | Sources | Publishers | Derived Originality | Representative Claim |
 | --- | --- | --- | --- | ---: | --- |
-| claim-0f01554a436c | claim_text_fingerprint | SRC-003 | Orion Streaming Holdings | 1.00 | Current-quarter revenue still exceeded consensus expectations. |
-| claim-182dc277689d | claim_text_fingerprint | SRC-002 | Orion Streaming Holdings | 1.00 | Multiple analyst questions focused on churn, customer acquisition costs, and net additions. |
-| claim-280d3ca6e07b | claim_text_fingerprint | SRC-005 | Orion Streaming Holdings | 1.00 | Gross margin improved year over year despite higher content spend. |
-| claim-38006d17fd5a | claim_text_fingerprint | SRC-008 | Orion Streaming Holdings | 1.00 | Full-year free cash flow guidance was maintained despite lower near-term net additions. |
-| claim-580edf61be2d | claim_text_fingerprint | SRC-001 | Orion Streaming Holdings | 1.00 | The company lowered next-quarter net addition guidance relative to prior management commentary. |
-| claim-6bdb98326c41 | claim_text_fingerprint | SRC-007 | Synthetic Price Feed | 1.00 | Orion underperformed its peer median by roughly ten percentage points during the event window. |
-| claim-772595a6ed95 | claim_text_fingerprint | SRC-006 | Synthetic Price Feed | 1.00 | The sector ETF was negative on the event morning. |
-| claim-8a13cc3153f0 | claim_text_fingerprint | SRC-004 | Synthetic Market News | 1.00 | Early headlines framed the selloff around margin disappointment and rising content spend. |
+| issuer-release-mirrors | independence_cluster_id | PUB-NASDAQ-001 | Nasdaq / Business Wire | 1.00 | Nasdaq / Business Wire published Apple's fiscal Q2 2024 results release at 4:30 PM EDT on May 2, 2024, including lower year-over-year revenue, an all-time Services revenue record, a March-quarter EPS record, a dividend increase, and authorization for up to $110 billion in additional share repurchases. |
+| manual-sec-edgar | independence_cluster_id | SEC-030, SEC-031, SEC-033 | SEC EDGAR | 0.33 | Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s |
+| market-bars | independence_cluster_id | MKT-AAPL-001, MKT-BENCH-001 | Frozen market bars | 0.50 | AAPL frozen market bar: opened at 173.03, closed at 186.65, with volume unavailable on 2024-05-03T09:30:00-04:00. |
+| technology-news | independence_cluster_id | PUB-MACRUMORS-001 | MacRumors | 1.00 | MacRumors reported shortly after Apple's Q2 2024 release that Services set an all-time quarterly record, iPhone revenue fell by more than $5 billion year over year, and Apple authorized an additional $110 billion for share repurchases. |
 
 ## Narrative Verification Ranking
 
 | Rank | Narrative | Direction | Score | Horizon |
 | ---: | --- | --- | ---: | --- |
-| 1 | Forward demand slowdown | bearish | 0.78 | 20 trading days |
-| 2 | Overreaction to noisy guidance | bullish | 0.60 | 20 trading days |
-| 3 | Sector-wide derating | mixed | 0.51 | 5 trading days |
-| 4 | Margin compression | bearish | 0.51 | 5 trading days |
+| 1 | Capital return reset | bullish | 0.68 | 20 trading days |
+| 2 | Services mix resilience | bullish | 0.66 | 20 trading days |
+| 3 | Hardware demand pressure | bearish | 0.60 | 20 trading days |
+| 4 | Greater China pressure | bearish | 0.58 | 20 trading days |
 
-## #1: Forward demand slowdown
+## #1: Capital return reset
 
-The selloff is primarily driven by concern that future subscriber and revenue growth are slowing, not by a one-time margin issue.
+Investors focused on Apple's capital return reset after the company disclosed a new authorization to repurchase up to $110 billion of common stock and raised the quarterly dividend.
 
-Mechanism: Lower expected subscriber growth would reduce forward revenue estimates and compress the valuation multiple for a growth-sensitive equity.
-
-Expected observables:
-- Analysts reduce forward revenue or subscriber estimates within 30 days
-- The stock underperforms a peer basket over the next 20 trading days
-- Future company commentary focuses on acquisition efficiency or churn
-
-Supporting evidence:
-- `SRC-001` (earnings_release): The company lowered next-quarter net addition guidance relative to prior management commentary.
-- `SRC-002` (earnings_transcript): Multiple analyst questions focused on churn, customer acquisition costs, and net additions.
-
-Contradicting evidence:
-- `SRC-003` (earnings_release): Current-quarter revenue still exceeded consensus expectations.
-
-Score components:
-- evidence_strength: 0.84
-- mechanism_specificity: 0.88
-- source_independence: 0.75
-- cross_sectional_fit: 0.76
-- contradiction_resistance: 0.62
-- timestamp_advantage: 0.82
-- forward_observable_quality: 0.90
-- crowding_risk: 0.31
-- unsupported_claim_penalty: 0.03
-
-## #2: Overreaction to noisy guidance
-
-The market may be overreacting to conservative guidance that does not materially change long-term cash-flow power.
-
-Mechanism: If the guidance reset is conservative and fundamentals stabilize, the initial selloff could reverse as investors reprice the event as temporary noise.
+Mechanism: A larger repurchase authorization and higher dividend can change the near-term equity story from reported revenue softness to capital-return support for per-share value.
 
 Expected observables:
-- Revenue estimates stabilize after the first wave of revisions
-- Management or channel data indicates demand is not deteriorating
-- The stock recovers relative to peers after headline pressure fades
+- Capital return should be prominent in near-term investor discussion.
+- Per-share support should matter more than reported product revenue weakness if the buyback narrative dominates.
+- Follow-up filings should preserve evidence of the newly authorized repurchase program.
 
 Supporting evidence:
-- `SRC-008` (earnings_release): Full-year free cash flow guidance was maintained despite lower near-term net additions.
+- `SEC-030` (filing): Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s
+- `SEC-031` (filing): Item 2.02 Results of Operations and Financial Condition. On May 2, 2024, Apple Inc. (“Apple”) issued a press release regarding Apple’s financial results for its second fiscal quarter ended March 30, 2024. A copy of Apple’s press release is attached hereto as Exhibit 99.1. The information contained in this Current Report shall not be deemed “filed” for purposes of Section 18 of the Securities Exchange Act of 1934, as amended (the “Exchange Act”), or incorporated by reference in any filing under the Securities Act of 1933, as amended, or the Exchange Act, except as shall be expressly set forth by specific reference in such a filing. Item 9.01 Financial Statements and Exhibits. (d) Exhibits. Exhibit Number Exhibit Description 99.1 Press release issued by Apple Inc. on May 2, 2024. 104 Inline XBRL for the cover page of this Current Report on Form 8-K. SIGNATURE Pursuant to the requirements of the Securities Exchange Act of 1934, the Registrant has duly caused this report to be signed on it
+- `MKT-AAPL-001` (market_data): AAPL frozen market bar: opened at 173.03, closed at 186.65, with volume unavailable on 2024-05-03T09:30:00-04:00.
+- `MKT-BENCH-001` (market_data): Frozen benchmark market bars showed daily returns of XLK 0.00%, XLC 0.00%, XLY 0.00%; benchmark median return was 0.00%.
+- `PUB-MACRUMORS-001` (news): MacRumors reported shortly after Apple's Q2 2024 release that Services set an all-time quarterly record, iPhone revenue fell by more than $5 billion year over year, and Apple authorized an additional $110 billion for share repurchases.
+- `PUB-NASDAQ-001` (company_release): Nasdaq / Business Wire published Apple's fiscal Q2 2024 results release at 4:30 PM EDT on May 2, 2024, including lower year-over-year revenue, an all-time Services revenue record, a March-quarter EPS record, a dividend increase, and authorization for up to $110 billion in additional share repurchases.
 
 Contradicting evidence:
-- `SRC-002` (earnings_transcript): Multiple analyst questions focused on churn, customer acquisition costs, and net additions.
+- `SEC-033` (filing): Segment Operating Performance The following table shows net sales by reportable segment for the three months ended December 30, 2023 and December 31, 2022 (dollars in millions): Three Months Ended December 30, 2023 December 31, 2022 Change Net sales by reportable segment: Americas $ 50,430 $ 49,278 2 % Europe 30,397 27,681 10 % Greater China 20,819 23,905 (13) % Japan 7,767 6,755 15 % Rest of Asia Pacific 10,162 9,535 7 % Total net sales $ 119,575 $ 117,154 2 % Americas Americas net sales increased 2% or $1.2 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to higher net sales of Services and iPhone, partially offset by lower net sales of iPad. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Americas net sales during the first quarter of 2024. Europe Europe net sales increased 10% or $2.7 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to hi
 
 Score components:
-- evidence_strength: 0.52
-- mechanism_specificity: 0.70
-- source_independence: 0.66
-- cross_sectional_fit: 0.48
-- contradiction_resistance: 0.42
-- timestamp_advantage: 0.78
-- forward_observable_quality: 0.82
-- crowding_risk: 0.22
+- evidence_strength: 0.82
+- mechanism_specificity: 0.84
+- source_independence: 0.42
+- cross_sectional_fit: 0.58
+- contradiction_resistance: 0.70
+- timestamp_advantage: 0.90
+- forward_observable_quality: 0.70
+- crowding_risk: 0.44
 - unsupported_claim_penalty: 0.06
 
-## #3: Sector-wide derating
+## #2: Services mix resilience
 
-The move reflects a broader derating of streaming and internet media equities rather than a company-specific issue.
+The quarter was interpreted through Services resilience: Services revenue grew while several product categories declined, giving investors a higher-margin offset to weaker hardware demand.
 
-Mechanism: Higher discount rates or weaker risk appetite would compress multiples across the group, causing peer-correlated price action.
+Mechanism: Services growth and mix can protect gross margin and earnings quality even when hardware categories decline.
 
 Expected observables:
-- Peers and sector ETF experience comparable drawdowns
-- Company-specific estimate revisions are limited
-- Price action tracks macro or sector factors more than company disclosures
+- Services should remain a central offset to hardware category declines.
+- Gross margin resilience should matter in interpretation of the quarter.
+- Future discussion should compare Services growth with product revenue softness.
 
 Supporting evidence:
-- `SRC-006` (market_data): The sector ETF was negative on the event morning.
+- `SEC-030` (filing): Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s
+- `PUB-MACRUMORS-001` (news): MacRumors reported shortly after Apple's Q2 2024 release that Services set an all-time quarterly record, iPhone revenue fell by more than $5 billion year over year, and Apple authorized an additional $110 billion for share repurchases.
+- `PUB-NASDAQ-001` (company_release): Nasdaq / Business Wire published Apple's fiscal Q2 2024 results release at 4:30 PM EDT on May 2, 2024, including lower year-over-year revenue, an all-time Services revenue record, a March-quarter EPS record, a dividend increase, and authorization for up to $110 billion in additional share repurchases.
 
 Contradicting evidence:
-- `SRC-007` (market_data): Orion underperformed its peer median by roughly ten percentage points during the event window.
+- None after replay filtering.
 
 Score components:
-- evidence_strength: 0.40
-- mechanism_specificity: 0.67
-- source_independence: 0.71
-- cross_sectional_fit: 0.18
-- contradiction_resistance: 0.28
+- evidence_strength: 0.78
+- mechanism_specificity: 0.80
+- source_independence: 0.48
+- cross_sectional_fit: 0.55
+- contradiction_resistance: 0.66
 - timestamp_advantage: 0.86
-- forward_observable_quality: 0.55
-- crowding_risk: 0.26
-- unsupported_claim_penalty: 0.04
+- forward_observable_quality: 0.68
+- crowding_risk: 0.50
+- unsupported_claim_penalty: 0.08
 
-## #4: Margin compression
+## #3: Hardware demand pressure
 
-The stock moved because investors focused on near-term gross margin pressure from content spend and platform costs.
+The event exposed hardware demand weakness: iPhone, iPad, and Wearables revenue declined year over year while total net sales fell.
 
-Mechanism: Lower margins would reduce near-term earnings and free cash flow, pressuring valuation if investors view the cost increase as recurring.
+Mechanism: Broad product-category declines can signal weaker hardware demand and pressure the durability of future revenue growth.
 
 Expected observables:
-- Near-term EPS estimates decline more than revenue estimates
-- Management emphasizes cost control in follow-up commentary
-- Peers with similar margin pressure also trade down
+- Hardware-focused analysis should emphasize iPhone, iPad, and Wearables declines.
+- If this narrative dominates, later commentary should focus on unit demand or product-cycle weakness.
+- Capital return and Services growth would need to be treated as offsets rather than primary drivers.
 
 Supporting evidence:
-- `SRC-004` (financial_media): Early headlines framed the selloff around margin disappointment and rising content spend.
+- `SEC-030` (filing): Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s
+- `SEC-033` (filing): Segment Operating Performance The following table shows net sales by reportable segment for the three months ended December 30, 2023 and December 31, 2022 (dollars in millions): Three Months Ended December 30, 2023 December 31, 2022 Change Net sales by reportable segment: Americas $ 50,430 $ 49,278 2 % Europe 30,397 27,681 10 % Greater China 20,819 23,905 (13) % Japan 7,767 6,755 15 % Rest of Asia Pacific 10,162 9,535 7 % Total net sales $ 119,575 $ 117,154 2 % Americas Americas net sales increased 2% or $1.2 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to higher net sales of Services and iPhone, partially offset by lower net sales of iPad. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Americas net sales during the first quarter of 2024. Europe Europe net sales increased 10% or $2.7 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to hi
+- `MKT-BENCH-001` (market_data): Frozen benchmark market bars showed daily returns of XLK 0.00%, XLC 0.00%, XLY 0.00%; benchmark median return was 0.00%.
+- `PUB-MACRUMORS-001` (news): MacRumors reported shortly after Apple's Q2 2024 release that Services set an all-time quarterly record, iPhone revenue fell by more than $5 billion year over year, and Apple authorized an additional $110 billion for share repurchases.
 
 Contradicting evidence:
-- `SRC-005` (earnings_release): Gross margin improved year over year despite higher content spend.
+- None after replay filtering.
 
 Score components:
-- evidence_strength: 0.54
-- mechanism_specificity: 0.72
+- evidence_strength: 0.75
+- mechanism_specificity: 0.73
+- source_independence: 0.40
+- cross_sectional_fit: 0.50
+- contradiction_resistance: 0.52
+- timestamp_advantage: 0.86
+- forward_observable_quality: 0.62
+- crowding_risk: 0.46
+- unsupported_claim_penalty: 0.09
+
+## #4: Greater China pressure
+
+Investors were weighing regional pressure, especially Greater China, where reported net sales declined and iPhone represented a larger proportion of segment sales.
+
+Mechanism: Weakness in Greater China can create a region-specific demand concern that investors may separate from company-wide category mix.
+
+Expected observables:
+- Greater China should remain a named risk if the regional narrative is correct.
+- Later filings or commentary should show whether China weakness persists or stabilizes.
+- The explanation should be weaker if non-China regions and Services carry the investment debate.
+
+Supporting evidence:
+- `SEC-030` (filing): Segment Operating Performance The following table shows net sales by reportable segment for the three- and six-month periods ended March 30, 2024 and April 1, 2023 (dollars in millions): Three Months Ended Six Months Ended March 30, 2024 April 1, 2023 Change March 30, 2024 April 1, 2023 Change Net sales by reportable segment: Americas $ 37,273 $ 37,784 (1) % $ 87,703 $ 87,062 1 % Europe 24,123 23,945 1 % 54,520 51,626 6 % Greater China 16,372 17,812 (8) % 37,191 41,717 (11) % Japan 6,262 7,176 (13) % 14,029 13,931 1 % Rest of Asia Pacific 6,723 8,119 (17) % 16,885 17,654 (4) % Total net sales $ 90,753 $ 94,836 (4) % $ 210,328 $ 211,990 (1) % Americas Americas net sales were relatively flat during the second quarter of 2024 compared to the second quarter of 2023, with lower net sales of iPhone and iPad offset by higher net sales of Services. Year-over-year Americas net sales were relatively flat during the first six months of 2024, with higher net sales of Services offset by lower net s
+- `SEC-033` (filing): Segment Operating Performance The following table shows net sales by reportable segment for the three months ended December 30, 2023 and December 31, 2022 (dollars in millions): Three Months Ended December 30, 2023 December 31, 2022 Change Net sales by reportable segment: Americas $ 50,430 $ 49,278 2 % Europe 30,397 27,681 10 % Greater China 20,819 23,905 (13) % Japan 7,767 6,755 15 % Rest of Asia Pacific 10,162 9,535 7 % Total net sales $ 119,575 $ 117,154 2 % Americas Americas net sales increased 2% or $1.2 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to higher net sales of Services and iPhone, partially offset by lower net sales of iPad. The strength in foreign currencies relative to the U.S. dollar had a net favorable year-over-year impact on Americas net sales during the first quarter of 2024. Europe Europe net sales increased 10% or $2.7 billion during the first quarter of 2024 compared to the same quarter in 2023 due primarily to hi
+- `MKT-BENCH-001` (market_data): Frozen benchmark market bars showed daily returns of XLK 0.00%, XLC 0.00%, XLY 0.00%; benchmark median return was 0.00%.
+
+Contradicting evidence:
+- None after replay filtering.
+
+Score components:
+- evidence_strength: 0.69
+- mechanism_specificity: 0.68
 - source_independence: 0.42
-- cross_sectional_fit: 0.39
-- contradiction_resistance: 0.35
-- timestamp_advantage: 0.76
-- forward_observable_quality: 0.63
-- crowding_risk: 0.58
+- cross_sectional_fit: 0.48
+- contradiction_resistance: 0.50
+- timestamp_advantage: 0.84
+- forward_observable_quality: 0.60
+- crowding_risk: 0.44
 - unsupported_claim_penalty: 0.10
 
 ## Scoring Weights

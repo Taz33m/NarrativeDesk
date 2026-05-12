@@ -6,9 +6,11 @@ from pathlib import Path
 from narrativedesk.evaluation import evaluate_replay, summarize_case_evaluations
 from narrativedesk.pipeline import ledger_export, load_event_fixture, load_validation_fixture, run_replay
 from narrativedesk.report import generate_markdown_report
+from narrativedesk.replay_bundle import verify_replay_bundle
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
-CASE_INDEX_FIXTURE = ROOT_DIR / "data" / "fixtures" / "case_index.json"
+SYNTHETIC_CASE_INDEX_FIXTURE = ROOT_DIR / "data" / "fixtures" / "case_index.json"
+PUBLIC_CASE_INDEX_FIXTURE = ROOT_DIR / "data" / "fixtures" / "public_case_index.json"
 WEB_DEMO_DIR = ROOT_DIR / "apps" / "web" / "public" / "demo"
 EXAMPLES_DIR = ROOT_DIR / "examples"
 ARTIFACTS_DIR = ROOT_DIR / "artifacts"
@@ -19,14 +21,27 @@ def write_json(path: Path, payload: dict[str, object]) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
 
 
+def resolve_fixture_path(case_index_path: Path, fixture_path: str) -> Path:
+    path = Path(fixture_path)
+    if path.is_absolute():
+        return path
+    root_relative = ROOT_DIR / path
+    if root_relative.exists():
+        return root_relative
+    return case_index_path.parent / path
+
+
 def main() -> int:
-    case_index = json.loads(CASE_INDEX_FIXTURE.read_text())
+    case_index_path = PUBLIC_CASE_INDEX_FIXTURE if PUBLIC_CASE_INDEX_FIXTURE.exists() else SYNTHETIC_CASE_INDEX_FIXTURE
+    case_index = json.loads(case_index_path.read_text())
     case_payload = {"default_case_id": case_index["default_case_id"], "cases": []}
     validation_payload = {"default_case_id": case_index["default_case_id"], "cases": []}
     case_evaluations = []
     for case in case_index["cases"]:
-        event, narratives, audit, _validation = run_replay(ROOT_DIR / case["event_fixture"])
-        validation = load_validation_fixture(ROOT_DIR / case["validation_fixture"])
+        event_fixture_path = resolve_fixture_path(case_index_path, case["event_fixture"])
+        validation_fixture_path = resolve_fixture_path(case_index_path, case["validation_fixture"])
+        event, narratives, audit, _validation = run_replay(event_fixture_path)
+        validation = load_validation_fixture(validation_fixture_path)
         ledger = ledger_export(event, narratives, audit)
         report = generate_markdown_report(event, narratives, audit)
         evaluation = evaluate_replay(narratives, audit, validation).to_dict()
@@ -44,7 +59,7 @@ def main() -> int:
             "label": case["label"],
             "ledger": ledger,
             "report": report,
-            "bundle_integrity": bundle_integrity_summary(ledger, validation),
+            "bundle_integrity": bundle_integrity_summary(ledger, validation, event_fixture_path),
         })
         validation_payload["cases"].append({
             "case_id": case["case_id"],
@@ -74,7 +89,11 @@ def main() -> int:
     return 0
 
 
-def bundle_integrity_summary(ledger: dict[str, object], validation: dict[str, object]) -> dict[str, object]:
+def bundle_integrity_summary(
+    ledger: dict[str, object],
+    validation: dict[str, object],
+    event_fixture_path: Path,
+) -> dict[str, object]:
     audit = ledger["replay_audit"]
     citation_qa = ledger["citation_qa"]
     if not isinstance(audit, dict) or not isinstance(citation_qa, dict):
@@ -85,6 +104,30 @@ def bundle_integrity_summary(ledger: dict[str, object], validation: dict[str, ob
     blocked_source_ids = audit.get("blocked_source_ids", [])
     if not isinstance(blocked_source_ids, list):
         blocked_source_ids = []
+    bundle_dir = event_fixture_path.parent
+    if (bundle_dir / "manifest.json").exists():
+        verification = verify_replay_bundle(bundle_dir)
+        manifest = json.loads((bundle_dir / "manifest.json").read_text())
+        checks = verification.get("checks", {})
+        artifacts_ok = bool(
+            isinstance(checks, dict)
+            and checks.get("artifacts", {}).get("ok")
+            and checks.get("manifest", {}).get("ok")
+        )
+        replay_integrity_ok = bool(
+            isinstance(checks, dict)
+            and checks.get("replay_integrity", {}).get("ok")
+            and checks.get("replay", {}).get("ok")
+        )
+        return {
+            "verified_by_bundle_verify": bool(verification.get("ok")),
+            "artifact_hashes_ok": artifacts_ok,
+            "replay_integrity_ok": replay_integrity_ok,
+            "readiness_status": str(manifest.get("readiness_status", "unknown")),
+            "blocked_future_source_count": len(blocked_source_ids),
+            "validation_future_source_count": len(future_source_ids),
+            "note": "Real-curated replay bundle verified from timestamped, replay-locked source artifacts.",
+        }
     return {
         "verified_by_bundle_verify": False,
         "artifact_hashes_ok": None,

@@ -2,7 +2,7 @@
   "name": "narrativedesk",
   "private": true,
   "version": "0.1.0",
-  "description": "NarrativeDesk synthetic replay workbench and deterministic research kernel.",
+  "description": "NarrativeDesk replay-safe market narrative verification workbench.",
   "workspaces": [
     "apps/web"
   ],

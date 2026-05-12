@@ -46,6 +46,11 @@ from narrativedesk.source_pack import (
     sanitize_source_pack_payload,
     validate_source_pack,
 )
+from narrativedesk.source_discovery import (
+    SourceDiscoveryError,
+    discover_sources_with_sonar,
+    freeze_discovery_candidates,
+)
 from narrativedesk.validation_fixture import (
     load_validation_fixture_payload,
     preview_validation_fixture,
@@ -308,6 +313,51 @@ def build_parser() -> argparse.ArgumentParser:
     real_normalize.add_argument("fetch_dir", help="Directory containing fetch_manifest.json.")
     real_normalize.add_argument("--replay-lock", required=True, help="Replay lock timestamp with timezone.")
     real_normalize.add_argument("--out-dir", help="Optional normalized output directory.")
+
+    real_source_discover = sub.add_parser(
+        "real-source-discover",
+        help="Use Perplexity Sonar as scratch-only source discovery; discovered text is not evidence.",
+    )
+    real_source_discover.add_argument("--ticker", required=True, help="Ticker symbol.")
+    real_source_discover.add_argument("--company-name", required=True, help="Company name.")
+    real_source_discover.add_argument("--event-date", required=True, help="Event date, YYYY-MM-DD.")
+    real_source_discover.add_argument("--replay-lock", required=True, help="Replay lock timestamp with timezone.")
+    real_source_discover.add_argument("--query", required=True, help="Public source-discovery query.")
+    real_source_discover.add_argument(
+        "--out-dir",
+        help="Output directory. Defaults to .codex-work/source-discovery/<ticker>-<event-date>.",
+    )
+    real_source_discover.add_argument(
+        "--perplexity-key-env",
+        default="PERPLEXITY_API_KEY",
+        help="Environment variable containing the Perplexity API token.",
+    )
+    real_source_discover.add_argument(
+        "--perplexity-model-env",
+        default="PERPLEXITY_MODEL",
+        help="Optional environment variable containing the Sonar model name.",
+    )
+    real_source_discover.add_argument("--model", help="Optional Sonar model override. Defaults to PERPLEXITY_MODEL or sonar.")
+    real_source_discover.add_argument(
+        "--env-file",
+        help="Optional dotenv-style file with provider credentials. Environment variables override file values.",
+    )
+    real_source_discover.add_argument("--search-domains", help="Optional comma-separated Sonar domain filter.")
+    real_source_discover.add_argument("--search-before-date", help="Optional Sonar date filter, MM/DD/YYYY.")
+    real_source_discover.add_argument("--search-after-date", help="Optional Sonar date filter, MM/DD/YYYY.")
+
+    real_source_freeze = sub.add_parser(
+        "real-source-freeze",
+        help="Refetch discovered URLs and freeze verified pages into SourceCandidate artifacts.",
+    )
+    real_source_freeze.add_argument("--discovery-dir", required=True, help="Directory containing discovery_candidates.json.")
+    real_source_freeze.add_argument("--replay-lock", required=True, help="Replay lock timestamp with timezone.")
+    real_source_freeze.add_argument("--out-dir", help="Optional frozen output directory.")
+    real_source_freeze.add_argument(
+        "--normalized-dir",
+        help="Optional existing real-data normalized directory to append frozen source candidates into.",
+    )
+    real_source_freeze.add_argument("--source-type", default="news", help="Source type for frozen pages, default news.")
 
     real_draft = sub.add_parser(
         "real-case-draft",
@@ -1208,6 +1258,49 @@ def run_real_data_normalize(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_real_source_discover(args: argparse.Namespace) -> int:
+    out_dir = Path(args.out_dir) if args.out_dir else Path(".codex-work") / "source-discovery" / (
+        _safe_path_slug(f"{args.ticker.lower()}-{args.event_date}")
+    )
+    try:
+        env_file_values = _load_env_file(args.env_file) if args.env_file else {}
+        model = args.model or _env_value(args.perplexity_model_env, env_file_values)
+        summary = discover_sources_with_sonar(
+            ticker=args.ticker,
+            company_name=args.company_name,
+            event_date=args.event_date,
+            replay_lock=args.replay_lock,
+            query=args.query,
+            out_dir=out_dir,
+            api_key=_env_value(args.perplexity_key_env, env_file_values),
+            model=model,
+            search_domains=_split_csv_arg(args.search_domains),
+            search_before_date=args.search_before_date,
+            search_after_date=args.search_after_date,
+        )
+    except (OSError, json.JSONDecodeError, SourceDiscoveryError, RealProvenanceError) as exc:
+        print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
+        return 1
+    print(json.dumps(summary, indent=2, sort_keys=True))
+    return 0
+
+
+def run_real_source_freeze(args: argparse.Namespace) -> int:
+    try:
+        summary = freeze_discovery_candidates(
+            discovery_dir=args.discovery_dir,
+            replay_lock=args.replay_lock,
+            out_dir=args.out_dir,
+            normalized_dir=args.normalized_dir,
+            source_type=args.source_type,
+        )
+    except (OSError, json.JSONDecodeError, SourceDiscoveryError, RealProvenanceError) as exc:
+        print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
+        return 1
+    print(json.dumps(summary, indent=2, sort_keys=True))
+    return 0
+
+
 def run_real_case_draft(args: argparse.Namespace) -> int:
     try:
         response = draft_real_case(
@@ -1997,6 +2090,10 @@ def main() -> int:
         return run_real_case_preflight(args)
     if args.command == "real-data-normalize":
         return run_real_data_normalize(args)
+    if args.command == "real-source-discover":
+        return run_real_source_discover(args)
+    if args.command == "real-source-freeze":
+        return run_real_source_freeze(args)
     if args.command == "real-case-draft":
         return run_real_case_draft(args)
     if args.command == "real-market-bars-check":
