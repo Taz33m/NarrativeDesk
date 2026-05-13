@@ -3,6 +3,9 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
+import shlex
+import shutil
 from hashlib import sha256
 from pathlib import Path
 from typing import Any
@@ -466,6 +469,49 @@ def build_parser() -> argparse.ArgumentParser:
     real_rehearsal.add_argument("--blocked-limit", type=int, default=10, help="Maximum blocked future sources to render.")
     real_rehearsal.add_argument("--template-narrative-count", type=int, default=5, help="Number of narrative template slots to write.")
 
+    real_workflow = sub.add_parser(
+        "real-case-workflow",
+        help="Write a deterministic scratch workflow status and command sequence for real-case curation.",
+    )
+    real_workflow.add_argument("--ticker", required=True, help="Ticker symbol to rehearse.")
+    real_workflow.add_argument("--company-name", required=True, help="Company name for provider queries.")
+    real_workflow.add_argument("--event-type", required=True, help="Event type label.")
+    real_workflow.add_argument("--event-date", required=True, help="Event date, YYYY-MM-DD.")
+    real_workflow.add_argument("--replay-lock", required=True, help="Replay lock timestamp with timezone.")
+    real_workflow.add_argument("--from", dest="date_from", required=True, help="Oldest provider date, YYYY-MM-DD.")
+    real_workflow.add_argument("--to", dest="date_to", required=True, help="Newest provider date, YYYY-MM-DD.")
+    real_workflow.add_argument(
+        "--providers",
+        default="finnhub,sec",
+        help="Comma-separated provider list for live fetch commands: finnhub,sec,newsapi.",
+    )
+    real_workflow.add_argument("--out-root", default=".codex-work", help="Scratch root for default output paths.")
+    real_workflow.add_argument("--fetch-dir", help="Expected frozen fetch directory.")
+    real_workflow.add_argument("--draft-dir", help="Expected real-case draft directory.")
+    real_workflow.add_argument("--bundle-dir", help="Expected replay bundle directory.")
+    real_workflow.add_argument("--narratives", help="Expected curated narratives JSON path.")
+    real_workflow.add_argument("--validation-fixture", help="Optional held-out validation fixture path.")
+    real_workflow.add_argument("--market-bars", help="Optional frozen market_bars.csv path.")
+    real_workflow.add_argument("--market-peers", help="Optional comma-separated peer symbols.")
+    real_workflow.add_argument("--sector-symbol", help="Optional sector or ETF symbol.")
+    real_workflow.add_argument("--sonar-query", help="Optional scratch-only Sonar discovery query.")
+    real_workflow.add_argument("--sonar-domains", help="Optional comma-separated Sonar domain filter.")
+    real_workflow.add_argument("--env-file", help="Optional dotenv-style provider credential file.")
+
+    real_promote = sub.add_parser(
+        "real-case-promote",
+        help="Promote a verified scratch replay bundle into data/fixtures/real and register it.",
+    )
+    real_promote.add_argument("--bundle-dir", required=True, help="Verified source bundle directory to promote.")
+    real_promote.add_argument("--public-slug", required=True, help="Destination slug under data/fixtures/real.")
+    real_promote.add_argument("--label", required=True, help="Public case-library label.")
+    real_promote.add_argument("--real-root", default="data/fixtures/real", help="Public real fixture root.")
+    real_promote.add_argument(
+        "--case-index",
+        default="data/fixtures/public_case_index.json",
+        help="Public case index to update.",
+    )
+
     real_apply_narratives = sub.add_parser(
         "real-case-apply-narratives",
         help="Apply human-curated narratives and source links to a real-case draft config.",
@@ -552,17 +598,17 @@ def build_parser() -> argparse.ArgumentParser:
         default="data/fixtures/public_case_index.json",
         help="Path to a public case index JSON file.",
     )
-    corpus_quality.add_argument("--min-cases", type=int, default=3, help="Minimum public cases.")
+    corpus_quality.add_argument("--min-cases", type=int, default=6, help="Minimum public cases.")
     corpus_quality.add_argument(
         "--min-unique-tickers",
         type=int,
-        default=3,
+        default=6,
         help="Minimum distinct tickers in the public corpus.",
     )
     corpus_quality.add_argument(
         "--min-unique-event-types",
         type=int,
-        default=2,
+        default=4,
         help="Minimum distinct event types in the public corpus.",
     )
     corpus_quality.add_argument(
@@ -1427,6 +1473,753 @@ def run_real_case_rehearse(args: argparse.Namespace) -> int:
     return 0 if response["ok"] else 1
 
 
+def run_real_case_workflow(args: argparse.Namespace) -> int:
+    out_root = Path(args.out_root)
+    default_fetch, default_draft, default_bundle = _default_real_case_paths(
+        ticker=args.ticker,
+        event_date=args.event_date,
+        out_root=out_root,
+    )
+    fetch_dir = Path(args.fetch_dir) if args.fetch_dir else default_fetch
+    draft_dir = Path(args.draft_dir) if args.draft_dir else default_draft
+    bundle_dir = Path(args.bundle_dir) if args.bundle_dir else default_bundle
+    narratives_path = Path(args.narratives) if args.narratives else draft_dir / "curated_narratives.json"
+    workflow_dir = draft_dir
+    workflow_dir.mkdir(parents=True, exist_ok=True)
+
+    try:
+        env_file_values = _load_env_file(args.env_file) if args.env_file else {}
+    except OSError as exc:
+        print(json.dumps({"ok": False, "errors": [str(exc)]}, indent=2, sort_keys=True))
+        return 1
+
+    preflight = _real_case_preflight(
+        ticker=args.ticker,
+        event_date=args.event_date,
+        providers=args.providers,
+        out_root=out_root,
+        fetch_dir=fetch_dir,
+        draft_dir=draft_dir,
+        bundle_dir=bundle_dir,
+        narratives_path=narratives_path,
+        env_file=args.env_file,
+        env_file_values=env_file_values,
+        finnhub_token_env="FINNHUB_API_KEY",
+        sec_user_agent_env="SEC_USER_AGENT",
+        news_api_key_env="NEWS_API_KEY",
+    )
+    commands = _real_case_workflow_commands(
+        args,
+        fetch_dir=fetch_dir,
+        draft_dir=draft_dir,
+        bundle_dir=bundle_dir,
+        narratives_path=narratives_path,
+    )
+    stage_statuses = _real_case_workflow_stage_statuses(
+        commands,
+        preflight=preflight,
+        args=args,
+        fetch_dir=fetch_dir,
+        draft_dir=draft_dir,
+        bundle_dir=bundle_dir,
+        narratives_path=narratives_path,
+    )
+    next_stage = next((stage["stage"] for stage in stage_statuses if stage["status"] == "next"), None)
+    completed_stages = sum(1 for stage in stage_statuses if stage["status"] in {"complete", "skipped"})
+    response = {
+        "ok": bool(preflight.get("ok")),
+        "status": _real_case_workflow_status(preflight, stage_statuses, next_stage),
+        "ticker": args.ticker.upper(),
+        "event_date": args.event_date,
+        "workflow_dir": str(workflow_dir),
+        "workflow_status_out": str(workflow_dir / "workflow_status.json"),
+        "workflow_commands_out": str(workflow_dir / "workflow_commands.md"),
+        "paths": {
+            "fetch_dir": str(fetch_dir),
+            "draft_dir": str(draft_dir),
+            "bundle_dir": str(bundle_dir),
+            "narratives": str(narratives_path),
+        },
+        "preflight": preflight,
+        "commands": commands,
+        "stage_statuses": stage_statuses,
+        "completed_stage_count": completed_stages,
+        "total_stage_count": len(stage_statuses),
+        "next_stage": next_stage,
+        "next_action": preflight.get("next_action")
+        or _real_case_workflow_next_action(next_stage),
+    }
+    _write_json(workflow_dir / "workflow_status.json", response)
+    (workflow_dir / "workflow_commands.md").write_text(
+        _real_case_workflow_markdown(response, commands),
+        encoding="utf-8",
+    )
+    print(json.dumps(response, indent=2, sort_keys=True))
+    return 0 if response["ok"] else 1
+
+
+def _real_case_workflow_status(
+    preflight: dict[str, Any],
+    stage_statuses: list[dict[str, Any]],
+    next_stage: str | None,
+) -> str:
+    if not preflight.get("ok"):
+        return str(preflight.get("status") or "preflight_blocked")
+    if all(stage["status"] in {"complete", "skipped"} for stage in stage_statuses):
+        return "workflow_complete"
+    return f"ready_to_{next_stage}" if next_stage else "workflow_written"
+
+
+def _real_case_workflow_next_action(next_stage: str | None) -> str:
+    if not next_stage:
+        return "Workflow is complete; promote only if the case is intentionally public-ready."
+    actions = {
+        "fetch": "Fetch and freeze provider artifacts into scratch space.",
+        "discover": "Run optional source discovery, then freeze URLs before treating anything as candidate evidence.",
+        "freeze": "Refetch discovered URLs and promote only page-derived, timestamped candidates.",
+        "normalize": "Normalize frozen provider artifacts without network access.",
+        "draft": "Draft a curator-ready real_case_config from normalized candidates.",
+        "curation-template": "Write the narrative curation template and replace placeholders with human-curated source links.",
+        "bundle": "Build a verified replay bundle after curation.",
+        "verify": "Run bundle-verify before any public promotion.",
+        "quality": "Run the public quality gate and fix evidence, narrative, or validation gaps.",
+        "promote": "Promote only after verification and public quality both pass.",
+    }
+    return actions.get(next_stage, f"Run stage `{next_stage}`.")
+
+
+def _real_case_workflow_stage_statuses(
+    commands: list[dict[str, str]],
+    *,
+    preflight: dict[str, Any],
+    args: argparse.Namespace,
+    fetch_dir: Path,
+    draft_dir: Path,
+    bundle_dir: Path,
+    narratives_path: Path,
+) -> list[dict[str, Any]]:
+    command_by_stage = {item["stage"]: item["command"] for item in commands}
+    discovery_dir = Path(args.out_root) / "source-discovery" / _safe_path_slug(
+        f"{args.ticker.lower()}-{args.event_date}"
+    )
+    expected_outputs: dict[str, list[Path]] = {
+        "fetch": [fetch_dir / "fetch_manifest.json"],
+        "discover": [discovery_dir / "discovery_candidates.json", discovery_dir / "discovery_summary.json"],
+        "freeze": [
+            discovery_dir / "frozen" / "source_candidates.json",
+            discovery_dir / "frozen" / "rejected_candidates.json",
+        ],
+        "normalize": [
+            fetch_dir / "normalized" / "source_candidates.json",
+            fetch_dir / "normalized" / "rejected_candidates.json",
+        ],
+        "draft": [
+            draft_dir / "real_case_config.json",
+            draft_dir / "draft_summary.json",
+            draft_dir / "narratives.todo.json",
+            draft_dir / "validation_fixture.json",
+        ],
+        "curation-template": [draft_dir / "curated_narratives.template.json"],
+        "bundle": [
+            bundle_dir / "manifest.json",
+            bundle_dir / "source_pack.json",
+            bundle_dir / "ledger.json",
+            bundle_dir / "validation_fixture.json",
+        ],
+        "verify": [bundle_dir / "manifest.json"],
+        "quality": [bundle_dir / "source_pack.json"],
+        "promote": [],
+    }
+    ordered_stages = [
+        "preflight",
+        "fetch",
+        "discover",
+        "freeze",
+        "normalize",
+        "draft",
+        "curation-template",
+        "bundle",
+        "verify",
+        "quality",
+        "promote",
+    ]
+    statuses: list[dict[str, Any]] = []
+    prior_required_complete = True
+    for stage in ordered_stages:
+        if stage not in command_by_stage and stage not in {"preflight"}:
+            statuses.append(
+                {
+                    "stage": stage,
+                    "status": "skipped",
+                    "expected_outputs": [],
+                    "missing_outputs": [],
+                    "command": None,
+                    "note": "Stage not enabled for this workflow.",
+                }
+            )
+            continue
+
+        if stage == "preflight":
+            complete = bool(preflight.get("ok"))
+            missing: list[str] = []
+            note = preflight.get("next_action", "")
+        elif stage == "verify":
+            complete = _workflow_bundle_verify_ok(bundle_dir)
+            missing = [] if complete else [str(bundle_dir / "manifest.json")]
+            note = "bundle-verify passes" if complete else "bundle-verify has not passed yet."
+        elif stage == "quality":
+            complete = _workflow_public_quality_ok(bundle_dir)
+            missing = [] if complete else [str(bundle_dir / "source_pack.json")]
+            note = "public-ready quality gate passes" if complete else "public-ready quality gate has not passed yet."
+        elif stage == "promote":
+            complete = _workflow_case_promoted(bundle_dir, Path("data/fixtures/public_case_index.json"))
+            missing = [] if complete else ["public case-index registration"]
+            note = "Case is registered in the public case index." if complete else "Promotion is explicit and remains manual."
+        else:
+            outputs = expected_outputs.get(stage, [])
+            missing_paths = [path for path in outputs if not path.exists()]
+            complete = not missing_paths
+            missing = [str(path) for path in missing_paths]
+            note = ""
+
+        if complete:
+            status = "complete"
+        elif not prior_required_complete:
+            status = "blocked"
+        else:
+            status = "next"
+        statuses.append(
+            {
+                "stage": stage,
+                "status": status,
+                "expected_outputs": [str(path) for path in expected_outputs.get(stage, [])],
+                "missing_outputs": missing,
+                "command": command_by_stage.get(stage),
+                "note": note,
+            }
+        )
+        if status != "complete":
+            prior_required_complete = False
+    return statuses
+
+
+def _workflow_bundle_verify_ok(bundle_dir: Path) -> bool:
+    if not (bundle_dir / "manifest.json").exists():
+        return False
+    try:
+        return bool(verify_replay_bundle(bundle_dir).get("ok"))
+    except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError):
+        return False
+
+
+def _workflow_public_quality_ok(bundle_dir: Path) -> bool:
+    if not (bundle_dir / "source_pack.json").exists():
+        return False
+    try:
+        source_pack = load_source_pack(bundle_dir / "source_pack.json")
+        validation_fixture = None
+        validation_path = bundle_dir / "validation_fixture.json"
+        if validation_path.exists():
+            validation_fixture = json.loads(validation_path.read_text())
+        verification = verify_replay_bundle(bundle_dir)
+        quality = assess_real_case_quality(
+            source_pack,
+            require_public_ready=True,
+            bundle_verification=verification,
+            validation_fixture=validation_fixture,
+        )
+        return bool(quality.get("ok"))
+    except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError):
+        return False
+
+
+def _workflow_case_promoted(bundle_dir: Path, case_index_path: Path) -> bool:
+    if not case_index_path.exists() or not (bundle_dir / "source_pack.json").exists():
+        return False
+    try:
+        source_pack = load_source_pack(bundle_dir / "source_pack.json")
+        case_id = source_pack.get("case_metadata", {}).get("case_id")
+        index = json.loads(case_index_path.read_text())
+    except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError):
+        return False
+    return any(case.get("case_id") == case_id for case in index.get("cases", []) if isinstance(case, dict))
+
+
+def _real_case_workflow_commands(
+    args: argparse.Namespace,
+    *,
+    fetch_dir: Path,
+    draft_dir: Path,
+    bundle_dir: Path,
+    narratives_path: Path,
+) -> list[dict[str, str]]:
+    env_file = ["--env-file", args.env_file] if args.env_file else []
+    market_symbols = ",".join(
+        item
+        for item in [
+            *_split_csv_arg(args.market_peers),
+            *( [args.sector_symbol] if args.sector_symbol else [] ),
+        ]
+        if item
+    )
+    fetch_market_args = ["--market-symbols", market_symbols] if market_symbols else []
+    market_args: list[str] = []
+    if args.market_bars:
+        market_args.extend(["--market-bars", args.market_bars])
+    if args.market_peers:
+        market_args.extend(["--market-peers", args.market_peers])
+    if args.sector_symbol:
+        market_args.extend(["--sector-symbol", args.sector_symbol])
+
+    commands = [
+        {
+            "stage": "preflight",
+            "command": _command_line(
+                [
+                    "PYTHONPATH=src",
+                    "python3",
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-case-preflight",
+                    "--ticker",
+                    args.ticker,
+                    "--event-date",
+                    args.event_date,
+                    "--providers",
+                    args.providers,
+                    "--out-root",
+                    args.out_root,
+                    "--fetch-dir",
+                    str(fetch_dir),
+                    "--draft-dir",
+                    str(draft_dir),
+                    "--bundle-dir",
+                    str(bundle_dir),
+                    "--narratives",
+                    str(narratives_path),
+                    *env_file,
+                ]
+            ),
+        },
+        {
+            "stage": "fetch",
+            "command": _command_line(
+                [
+                    "PYTHONPATH=src",
+                    "python3",
+                    "-m",
+                    "narrativedesk.cli",
+                    "real-data-fetch",
+                    "--ticker",
+                    args.ticker,
+                    "--company-name",
+                    args.company_name,
+                    "--from",
+                    args.date_from,
+                    "--to",
+                    args.date_to,
+                    "--providers",
+                    args.providers,
+                    "--out-dir",
+                    str(fetch_dir),
+                    *fetch_market_args,
+                    *env_file,
+                ]
+            ),
+        },
+    ]
+    if args.sonar_query:
+        discovery_dir = Path(args.out_root) / "source-discovery" / _safe_path_slug(
+            f"{args.ticker.lower()}-{args.event_date}"
+        )
+        discovery_args: list[str] = []
+        if args.sonar_domains:
+            discovery_args.extend(["--search-domains", args.sonar_domains])
+        commands.extend(
+            [
+                {
+                    "stage": "discover",
+                    "command": _command_line(
+                        [
+                            "PYTHONPATH=src",
+                            "python3",
+                            "-m",
+                            "narrativedesk.cli",
+                            "real-source-discover",
+                            "--ticker",
+                            args.ticker,
+                            "--company-name",
+                            args.company_name,
+                            "--event-date",
+                            args.event_date,
+                            "--replay-lock",
+                            args.replay_lock,
+                            "--query",
+                            args.sonar_query,
+                            "--out-dir",
+                            str(discovery_dir),
+                            *discovery_args,
+                            *env_file,
+                        ]
+                    ),
+                },
+                {
+                    "stage": "freeze",
+                    "command": _command_line(
+                        [
+                            "PYTHONPATH=src",
+                            "python3",
+                            "-m",
+                            "narrativedesk.cli",
+                            "real-source-freeze",
+                            "--discovery-dir",
+                            str(discovery_dir),
+                            "--normalized-dir",
+                            str(fetch_dir / "normalized"),
+                            "--replay-lock",
+                            args.replay_lock,
+                        ]
+                    ),
+                },
+            ]
+        )
+
+    commands.extend(
+        [
+            {
+                "stage": "normalize",
+                "command": _command_line(
+                    [
+                        "PYTHONPATH=src",
+                        "python3",
+                        "-m",
+                        "narrativedesk.cli",
+                        "real-data-normalize",
+                        str(fetch_dir),
+                        "--replay-lock",
+                        args.replay_lock,
+                    ]
+                ),
+            },
+            {
+                "stage": "draft",
+                "command": _command_line(
+                    [
+                        "PYTHONPATH=src",
+                        "python3",
+                        "-m",
+                        "narrativedesk.cli",
+                        "real-case-draft",
+                        "--ticker",
+                        args.ticker,
+                        "--company-name",
+                        args.company_name,
+                        "--event-type",
+                        args.event_type,
+                        "--event-date",
+                        args.event_date,
+                        "--replay-lock",
+                        args.replay_lock,
+                        "--normalized-dir",
+                        str(fetch_dir / "normalized"),
+                        "--out-dir",
+                        str(draft_dir),
+                        *market_args,
+                    ]
+                ),
+            },
+            {
+                "stage": "curation-template",
+                "command": _command_line(
+                    [
+                        "PYTHONPATH=src",
+                        "python3",
+                        "-m",
+                        "narrativedesk.cli",
+                        "real-case-curation-template",
+                        "--draft-dir",
+                        str(draft_dir),
+                    ]
+                ),
+            },
+            {
+                "stage": "bundle",
+                "command": _command_line(
+                    [
+                        "PYTHONPATH=src",
+                        "python3",
+                        "-m",
+                        "narrativedesk.cli",
+                        "real-case-curated-bundle",
+                        "--draft-dir",
+                        str(draft_dir),
+                        "--narratives",
+                        str(narratives_path),
+                        "--out-dir",
+                        str(bundle_dir),
+                        *(
+                            ["--validation-fixture", args.validation_fixture]
+                            if args.validation_fixture
+                            else []
+                        ),
+                    ]
+                ),
+            },
+            {
+                "stage": "verify",
+                "command": _command_line(
+                    [
+                        "PYTHONPATH=src",
+                        "python3",
+                        "-m",
+                        "narrativedesk.cli",
+                        "bundle-verify",
+                        str(bundle_dir),
+                    ]
+                ),
+            },
+            {
+                "stage": "quality",
+                "command": _command_line(
+                    [
+                        "PYTHONPATH=src",
+                        "python3",
+                        "-m",
+                        "narrativedesk.cli",
+                        "real-case-quality",
+                        "--bundle-dir",
+                        str(bundle_dir),
+                        "--require-public-ready",
+                    ]
+                ),
+            },
+            {
+                "stage": "promote",
+                "command": _command_line(
+                    [
+                        "PYTHONPATH=src",
+                        "python3",
+                        "-m",
+                        "narrativedesk.cli",
+                        "real-case-promote",
+                        "--bundle-dir",
+                        str(bundle_dir),
+                        "--public-slug",
+                        _safe_path_slug(f"{args.ticker.lower()}-{args.event_date}"),
+                        "--label",
+                        f"{args.ticker.upper()} real-curated replay",
+                    ]
+                ),
+            },
+        ]
+    )
+    return commands
+
+
+def _command_line(parts: list[str]) -> str:
+    return " ".join(part if "=" in part and part.startswith("PYTHONPATH=") else shlex.quote(str(part)) for part in parts)
+
+
+def _real_case_workflow_markdown(response: dict[str, Any], commands: list[dict[str, str]]) -> str:
+    lines = [
+        f"# Real Case Workflow: {response['ticker']} {response['event_date']}",
+        "",
+        "Scratch-only workflow. Model and Sonar output are discovery aids only; they are never evidence.",
+        "",
+        f"- Status: `{response['status']}`",
+        f"- Progress: {response.get('completed_stage_count', 0)}/{response.get('total_stage_count', len(commands))} stages",
+        f"- Next stage: `{response.get('next_stage') or 'none'}`",
+        f"- Next action: {response['next_action']}",
+        "",
+        "## Stage Status",
+        "",
+        "| Stage | Status | Missing outputs |",
+        "| --- | --- | --- |",
+    ]
+    for stage in response.get("stage_statuses", []):
+        missing = stage.get("missing_outputs") or []
+        lines.append(
+            f"| {stage['stage']} | {stage['status']} | {', '.join(missing) if missing else 'none'} |"
+        )
+    lines.extend(
+        [
+        "",
+        "## Commands",
+        "",
+        ]
+    )
+    for item in commands:
+        lines.extend(
+            [
+                f"### {item['stage']}",
+                "",
+                "```bash",
+                item["command"],
+                "```",
+                "",
+            ]
+        )
+    lines.extend(
+        [
+            "## Promotion",
+            "",
+            "Promote only after `bundle-verify` and `real-case-quality --require-public-ready` pass.",
+        ]
+    )
+    return "\n".join(lines) + "\n"
+
+
+def run_real_case_promote(args: argparse.Namespace) -> int:
+    bundle_dir = Path(args.bundle_dir)
+    real_root = Path(args.real_root)
+    case_index_path = Path(args.case_index)
+    destination = real_root / _safe_path_slug(args.public_slug)
+
+    response, status = _promote_real_case_bundle(
+        bundle_dir=bundle_dir,
+        destination=destination,
+        real_root=real_root,
+        case_index_path=case_index_path,
+        label=args.label,
+    )
+    print(json.dumps(response, indent=2, sort_keys=True))
+    return status
+
+
+def _promote_real_case_bundle(
+    *,
+    bundle_dir: Path,
+    destination: Path,
+    real_root: Path,
+    case_index_path: Path,
+    label: str,
+) -> tuple[dict[str, Any], int]:
+    errors: list[str] = []
+    if not bundle_dir.exists() or not bundle_dir.is_dir():
+        errors.append(f"bundle directory does not exist: {bundle_dir}")
+    if destination.exists():
+        errors.append(f"destination already exists: {destination}")
+    try:
+        _assert_path_inside(destination, real_root)
+    except ValueError as exc:
+        errors.append(str(exc))
+
+    verification = verify_replay_bundle(bundle_dir) if bundle_dir.exists() else {"ok": False}
+    if not verification.get("ok"):
+        errors.append("bundle-verify must pass before promotion")
+
+    quality: dict[str, Any] = {"ok": False}
+    validation_fixture = None
+    try:
+        source_pack = load_source_pack(bundle_dir / "source_pack.json")
+        validation_path = bundle_dir / "validation_fixture.json"
+        if validation_path.exists():
+            validation_fixture = json.loads(validation_path.read_text())
+        quality = assess_real_case_quality(
+            source_pack,
+            require_public_ready=True,
+            bundle_verification=verification,
+            validation_fixture=validation_fixture,
+        )
+        if not quality.get("ok"):
+            errors.append("real-case-quality --require-public-ready must pass before promotion")
+        case_id = str(source_pack.get("case_metadata", {}).get("case_id", ""))
+    except (OSError, json.JSONDecodeError, KeyError, TypeError) as exc:
+        case_id = ""
+        errors.append(str(exc))
+
+    hygiene_errors = _promotion_hygiene_errors(bundle_dir) if bundle_dir.exists() else []
+    errors.extend(hygiene_errors)
+    if case_id and case_index_path.exists():
+        try:
+            payload = json.loads(case_index_path.read_text())
+            cases = payload.get("cases", [])
+            if isinstance(cases, list) and any(case.get("case_id") == case_id for case in cases if isinstance(case, dict)):
+                errors.append(f"case_id {case_id} already exists in {case_index_path}")
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(str(exc))
+
+    if errors:
+        return (
+            {
+                "ok": False,
+                "status": "promotion_refused",
+                "bundle_dir": str(bundle_dir),
+                "destination": str(destination),
+                "bundle_verified": bool(verification.get("ok")),
+                "public_quality_ok": bool(quality.get("ok")),
+                "errors": errors,
+            },
+            1,
+        )
+
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(bundle_dir, destination)
+    try:
+        registration = register_case_index_entry(
+            case_index_path,
+            destination / "event_fixture.json",
+            destination / "validation_fixture.json",
+            label=label,
+        )
+    except ValueError as exc:
+        shutil.rmtree(destination)
+        return (
+            {
+                "ok": False,
+                "status": "promotion_registration_failed",
+                "bundle_dir": str(bundle_dir),
+                "destination": str(destination),
+                "errors": [str(exc)],
+            },
+            1,
+        )
+
+    return (
+        {
+            "ok": True,
+            "status": "promoted",
+            "case_id": registration["case_id"],
+            "destination": str(destination),
+            "case_index": str(case_index_path),
+            "case_count": registration["case_count"],
+        },
+        0,
+    )
+
+
+def _assert_path_inside(path: Path, root: Path) -> None:
+    resolved_path = path.resolve()
+    resolved_root = root.resolve()
+    if resolved_path != resolved_root and resolved_root not in resolved_path.parents:
+        raise ValueError(f"destination must stay under {root}")
+
+
+SECRET_LIKE_PATTERNS = (
+    re.compile(r"pplx-[A-Za-z0-9_-]{20,}"),
+    re.compile(r"sk-or-v1-[A-Za-z0-9_-]{20,}"),
+    re.compile(r"\b(?:FINNHUB|ALPHA_VANTAGE|NEWS|OPENROUTER|PERPLEXITY)_API_KEY\s*="),
+    re.compile(r"\bSEC_USER_AGENT\s*="),
+)
+
+
+def _promotion_hygiene_errors(bundle_dir: Path) -> list[str]:
+    errors: list[str] = []
+    for path in sorted(bundle_dir.rglob("*")):
+        if not path.is_file():
+            continue
+        relative = path.relative_to(bundle_dir).as_posix()
+        if ".codex-work" in path.as_posix() or ".codex-work" in path.read_text(errors="ignore"):
+            errors.append(f"{relative} contains scratch .codex-work references")
+            continue
+        text = path.read_text(errors="ignore")
+        for pattern in SECRET_LIKE_PATTERNS:
+            if pattern.search(text):
+                errors.append(f"{relative} contains secret-like text")
+                break
+    return errors
+
+
 def run_real_case_apply_narratives(args: argparse.Namespace) -> int:
     try:
         response = apply_curated_narratives(
@@ -2152,6 +2945,10 @@ def main() -> int:
         return run_real_case_worksheet(args)
     if args.command == "real-case-rehearse":
         return run_real_case_rehearse(args)
+    if args.command == "real-case-workflow":
+        return run_real_case_workflow(args)
+    if args.command == "real-case-promote":
+        return run_real_case_promote(args)
     if args.command == "real-case-apply-narratives":
         return run_real_case_apply_narratives(args)
     if args.command == "real-case-curation-template":

@@ -1,0 +1,119 @@
+{
+  "case_id": "EVT-REAL-SAVE-2024-01-16",
+  "checks": {
+    "ingestion_ready": {
+      "errors": [],
+      "ok": true
+    },
+    "narrative_linkage": {
+      "allowed_sources_without_links": [],
+      "errors": [],
+      "narrative_link_counts": [
+        {
+          "allowed_contradiction_source_count": 0,
+          "allowed_support_source_count": 7,
+          "blocked_future_source_count": 2,
+          "narrative_id": "NARR-SAVE-001"
+        },
+        {
+          "allowed_contradiction_source_count": 0,
+          "allowed_support_source_count": 2,
+          "blocked_future_source_count": 1,
+          "narrative_id": "NARR-SAVE-002"
+        },
+        {
+          "allowed_contradiction_source_count": 3,
+          "allowed_support_source_count": 1,
+          "blocked_future_source_count": 2,
+          "narrative_id": "NARR-SAVE-003"
+        },
+        {
+          "allowed_contradiction_source_count": 3,
+          "allowed_support_source_count": 3,
+          "blocked_future_source_count": 0,
+          "narrative_id": "NARR-SAVE-004"
+        }
+      ],
+      "narratives_without_allowed_support": [],
+      "ok": true
+    },
+    "preview_valid": {
+      "errors": [],
+      "ok": true
+    },
+    "provenance_ready": {
+      "document_text_source_ids": [
+        "SAVE-DOJ-001",
+        "SAVE-CNBC-001",
+        "SAVE-AP-001",
+        "SAVE-REUTERS-001",
+        "SAVE-MF-001",
+        "SAVE-MKT-001",
+        "SAVE-MKT-002",
+        "SAVE-FUT-001",
+        "SAVE-FUT-002"
+      ],
+      "errors": [],
+      "hash_mismatch_source_ids": [],
+      "missing_hash_source_ids": [],
+      "missing_retrieved_at_source_ids": [],
+      "missing_stable_url_source_ids": [],
+      "ok": true
+    },
+    "replay_safe": {
+      "allowed_after_lock_source_ids": [],
+      "blocked_before_lock_source_ids": [],
+      "blocked_future_source_ids": [
+        "SAVE-FUT-001",
+        "SAVE-FUT-002"
+      ],
+      "errors": [],
+      "ok": true
+    }
+  },
+  "ok": true,
+  "preview": {
+    "allowed_source_ids": [
+      "SAVE-DOJ-001",
+      "SAVE-CNBC-001",
+      "SAVE-AP-001",
+      "SAVE-REUTERS-001",
+      "SAVE-MF-001",
+      "SAVE-MKT-001",
+      "SAVE-MKT-002"
+    ],
+    "blocked_future_source_ids": [
+      "SAVE-FUT-001",
+      "SAVE-FUT-002"
+    ],
+    "case_id": "EVT-REAL-SAVE-2024-01-16",
+    "narrative_count": 4,
+    "provenance_mode": "real-curated",
+    "source_counts": {
+      "allowed": 7,
+      "blocked_future": 2,
+      "total": 9
+    },
+    "source_ids": [
+      "SAVE-DOJ-001",
+      "SAVE-CNBC-001",
+      "SAVE-AP-001",
+      "SAVE-REUTERS-001",
+      "SAVE-MF-001",
+      "SAVE-MKT-001",
+      "SAVE-MKT-002",
+      "SAVE-FUT-001",
+      "SAVE-FUT-002"
+    ],
+    "source_type_counts": {
+      "agency_statement": 1,
+      "company_statement": 1,
+      "market_commentary": 1,
+      "market_data": 2,
+      "news": 4
+    },
+    "ticker": "SAVE"
+  },
+  "status": "ready_to_ingest",
+  "ticker": "SAVE"
+}

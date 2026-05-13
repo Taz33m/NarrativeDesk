@@ -1,31 +1,70 @@
-# NarrativeDesk
+<div align="center">
+  <img src="apps/web/public/logo.png" width="84" alt="NarrativeDesk logo" />
+  <h1>NarrativeDesk</h1>
+  <p><strong>Replay-safe narrative verification for abnormal market moves.</strong></p>
+  <p>Timestamped evidence, future-source quarantine, deterministic narrative ranking, and bundle-verified replay cases.</p>
+  <p>
+    <a href="assets/readme-demo.mp4"><strong>Watch the 45-second demo</strong></a>
+    · <a href="#run">Run locally</a>
+    · <a href="#architecture-summary">Architecture</a>
+    · <a href="#test">Quality gates</a>
+  </p>
+</div>
 
-NarrativeDesk is a research platform for verifying generated market narratives behind abnormal equity moves.
+---
 
-It is not the AI that tells people what to think about a stock. It is the audit layer that asks, given incomplete, noisy, time-bounded information, whether a generated explanation was sourced correctly, timestamp-valid, non-leaky, contradiction-aware, historically comparable, and eventually validated or falsified.
+NarrativeDesk is a research and education workbench for auditing generated market narratives. It is not the AI that tells people what to think about a stock. It is the verification layer that asks whether an explanation was sourced correctly, timestamp-valid, non-leaky, contradiction-aware, historically comparable, and eventually validated or falsified.
+
+The product question is simple:
+
+> Did this explanation win using only what was knowable at the time?
+
+## Demo
+
+NarrativeDesk ranks competing explanations under a replay lock. Sources after the cutoff are quarantined and cannot affect the winning narrative.
+
+<p align="center">
+  <a href="assets/readme-demo.mp4">
+    <img src="assets/readme-screenshot.png" alt="NarrativeDesk cockpit with replay lock, ranked narrative, and source timeline" width="100%" />
+  </a>
+</p>
+
+<p align="center">
+  <a href="assets/readme-demo.mp4"><strong>Watch the 45-second replay lock demo</strong></a>
+</p>
+
+<p align="center">
+  <img src="assets/readme-demo.webp" alt="NarrativeDesk demo loop showing future evidence quarantined by the replay lock" width="100%" />
+</p>
+
+## At a glance
+
+| Layer | Current public state |
+| --- | --- |
+| Product surface | Browser workbench with six frozen real-curated replay cases. |
+| Event coverage | Earnings/guidance, operational/product incident, regulatory/antitrust shock, and litigation settlement. |
+| Replay integrity | Future-dated sources are blocked before event-time scoring and kept separate for validation. |
+| Evidence model | Timestamped sources, contradiction links, source quality, clustering, citation QA, and exportable ledgers. |
+| Evaluation | Deterministic ranking, baseline comparison, validation windows, corpus quality gate, and bundle verification. |
+| Limits | Frozen historical research fixtures only; no live recommendations, brokerage actions, or investment advice. |
 
 ## What the app does
 
-The public browser workbench now opens real-curated replay cases for AAPL Q2 2024, NVIDIA Q1 fiscal 2025, NIKE fiscal 2024 Q4 earnings/guidance, and CrowdStrike's July 2024 operational outage. Each case uses timestamped source provenance, replay-locked evidence, blocked future validation evidence, deterministic ranking, and bundle verification. NarrativeDesk ranks the selected explanation above competing narratives using only evidence available at the replay lock.
+The public browser workbench opens six real-curated replay cases. Each case uses timestamped source provenance, replay-locked evidence, blocked future validation evidence, deterministic ranking, and bundle verification. NarrativeDesk ranks the selected explanation above competing narratives using only evidence available at the replay lock.
 
-The browser workbench shows:
+The workbench includes:
 
-- Event header with abnormal move, peer move, sector move, volume spike, and leakage lock timestamp.
-- Case-index summary with Recall@3, baseline comparison rates, citation QA, and replay-integrity checks.
-- Historical analogs when the loaded case corpus contains comparable replay cases.
-- Narrative verification bracket with ranked competing explanations.
-- Evidence and contradiction inspector with source timestamps.
+- Case cockpit with abnormal move, peer move, sector move, volume spike, and replay lock.
+- Corpus tab with public case breadth, source depth, event-type coverage, bundle status, filtering, and sorting.
+- Narrative verification bracket with ranked competing explanations and baseline comparison.
+- Evidence, contradiction, citation QA, source reliability, and source clustering inspectors.
 - Replay audit showing allowed sources and blocked future sources.
-- Citation QA panel for replay filtering, support coverage, and provenance gaps.
-- Source reliability panel with quality, independence, originality, and blocked-source breakdowns.
-- Source clustering panel with deterministic originality clusters from replay-safe evidence.
-- Deterministic research trail for the current fixture.
 - Future validation panel kept separate from event-time replay evidence.
 - Export links for ledger JSON and report Markdown.
 
-The public shell uses frozen real-curated replay bundles, not live market data and not investment advice. Synthetic ORION/AURORA/LYRA fixtures remain in the repo for deterministic regression tests and examples.
+The public shell uses frozen real-curated replay bundles, not live market data. Synthetic ORION/AURORA/LYRA fixtures remain in the repo for deterministic regression tests and examples.
 
-## Demo loop
+## Try the replay path
 
 1. Open the AAPL Q2 2024 replay workbench.
 2. Read the event strip: AAPL is replayed against frozen market and benchmark bars.
@@ -33,10 +72,9 @@ The public shell uses frozen real-curated replay bundles, not live market data a
 4. Inspect the audit: future source `SEC-027` is quarantined and removed from replay scoring.
 5. Compare the verification bracket: capital return reset ranks above Services mix resilience, hardware demand pressure, and Greater China pressure.
 6. Open the evidence inspector: sources include frozen market bars, SEC EDGAR, MacRumors, and Nasdaq / Business Wire.
-7. Switch to NVDA, NKE, or CRWD from the case selector to compare another real-curated replay with the same anti-leakage gates.
-8. Read expected observables: each narrative makes falsifiable future claims.
-9. Reveal validation: held-out future evidence supports the rank #1 narrative after the replay lock.
-10. Export the Markdown report or ledger JSON.
+7. Switch to NVDA, NKE, CRWD, SAVE, or MMM to compare another real-curated replay with the same anti-leakage gates.
+8. Reveal validation: held-out future evidence supports the rank #1 narrative after the replay lock.
+9. Export the Markdown report or ledger JSON.
 
 ## Why anti-leakage matters
 
@@ -179,6 +217,28 @@ PYTHONPATH=src python3 -m narrativedesk.cli real-case-rehearse \
 Live-provider rehearsal requires `FINNHUB_API_KEY` and `SEC_USER_AGENT`; `NEWS_API_KEY` is optional when using `--providers newsapi`. Outputs remain scratch until a human adds competing narratives, `real-pack-build --require-narratives` passes, and the final bundle verifies.
 
 Optional Sonar discovery can scout for source URLs, but it is not evidence. Keep `PERPLEXITY_API_KEY` local, run `real-source-discover` into `.codex-work/source-discovery/`, then run `real-source-freeze` so NarrativeDesk refetches each URL, hashes page text, and applies the replay lock before any source candidate enters the real-case draft path.
+
+For a scripted real-case path, generate a scratch workflow plan first. It writes only under `.codex-work/` and treats model/search output as discovery, never evidence:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli real-case-workflow \
+  --ticker SAVE --company-name "Spirit Airlines, Inc." \
+  --event-type "regulatory/antitrust shock" --event-date 2024-01-16 \
+  --from 2024-01-12 --to 2024-03-08 \
+  --replay-lock 2024-01-16T16:10:00-05:00 \
+  --providers finnhub,sec --env-file .env.local
+```
+
+The workflow writes `workflow_status.json` and `workflow_commands.md` with per-stage status, expected outputs, missing outputs, and the next runnable stage.
+
+Promote a private bundle only after bundle verification and the public quality gate pass:
+
+```bash
+PYTHONPATH=src python3 -m narrativedesk.cli real-case-promote \
+  --bundle-dir .codex-work/real-cases/save-2024-regulatory-bundle \
+  --public-slug save_2024_regulatory \
+  --label "SAVE January 2024 JetBlue merger block real-curated replay"
+```
 
 If you have a frozen, timestamped market CSV from another trusted local source, pass it during draft repair with `real-case-draft --market-bars path/to/market_bars.csv`; the file is copied into the scratch draft and still goes through the normal readiness and bundle checks.
 
@@ -333,6 +393,15 @@ Build the browser workbench:
 npm run web:build
 ```
 
+Deploy the static workbench:
+
+```bash
+npm run verify:release
+npx vercel --prod
+```
+
+The Vercel build uses `npm run web:build` and serves `apps/web/dist`. Do not deploy private `.codex-work/` scratch outputs or local `.env*` files.
+
 ## Test
 
 Run kernel and API tests:
@@ -359,7 +428,7 @@ Run the browser smoke test:
 npm run web:smoke
 ```
 
-Check that the registered public corpus clears the stricter product-quality gate. The gate requires verified real-curated bundles, ticker breadth, at least two event types, blocked future evidence per case, clean provenance, and replay rank #1 validation:
+Check that the registered public corpus clears the stricter product-quality gate. The gate currently requires six verified real-curated bundles, six tickers, four event types, blocked future evidence per case, clean provenance, and replay rank #1 validation:
 
 ```bash
 npm run public-corpus:quality
@@ -393,7 +462,7 @@ Replay, ledger, and default report endpoints do not include future validation da
 
 ## Limitations
 
-- The public workbench defaults to a frozen real-curated AAPL replay bundle; it is not live market data.
+- The public workbench defaults to a frozen real-curated AAPL replay bundle and includes five additional verified public cases; it is not live market data.
 - Real-data builder output is not automatically an investment thesis; a human still curates source-to-narrative links and uncertainty.
 - Scores are transparent heuristics, not learned truth labels.
 - Validation rows remain separate from event-time replay and may include pending outcomes.

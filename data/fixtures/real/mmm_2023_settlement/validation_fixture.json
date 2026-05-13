@@ -1,0 +1,51 @@
+{
+  "event_id": "EVT-REAL-MMM-2023-08-29",
+  "future_source_count": 2,
+  "future_source_ids": [
+    "MMM-FUT-001",
+    "MMM-FUT-002"
+  ],
+  "note": "Real-curated validation fixture. Held-out future evidence stays separate from event-time replay inputs.",
+  "rows": [
+    {
+      "expected_observable": "Future company evidence should show high claimant participation or settlement implementation progress.",
+      "future_source_ids": [
+        "MMM-FUT-001",
+        "MMM-FUT-002"
+      ],
+      "label": "validated",
+      "narrative_id": "NARR-MMM-001",
+      "what_happened": "Held-out 3M evidence said claimant participation was on track to exceed the 98% threshold and later filing language preserved the settlement structure, validating litigation overhang compression as the replay winner.",
+      "window": "T+60"
+    },
+    {
+      "expected_observable": "Future validation should center PFAS or other liabilities rather than earplug settlement progress if this narrative wins.",
+      "future_source_ids": [
+        "MMM-FUT-001"
+      ],
+      "label": "partial",
+      "narrative_id": "NARR-MMM-002",
+      "what_happened": "Residual legal exposure remained relevant, but the held-out validation evidence directly centered Combat Arms participation and settlement implementation.",
+      "window": "T+60"
+    },
+    {
+      "expected_observable": "The burden narrative should weaken if future company evidence confirms participation progress and cash election clarity.",
+      "future_source_ids": [
+        "MMM-FUT-001"
+      ],
+      "label": "invalidated",
+      "narrative_id": "NARR-MMM-003",
+      "what_happened": "3M later said participation was on track to exceed the threshold and elected cash for the stock component, weakening the idea that settlement burden was the primary event narrative.",
+      "window": "T+60"
+    },
+    {
+      "expected_observable": "Future validation should cite litigation posture rather than participation milestones if this narrative wins.",
+      "future_source_ids": [],
+      "label": "pending",
+      "narrative_id": "NARR-MMM-004",
+      "what_happened": "The no-liability posture remained part of the case file but did not become the central held-out validation evidence.",
+      "window": "T+60"
+    }
+  ],
+  "status": "validated"
+}

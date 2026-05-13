@@ -3,7 +3,6 @@ import type {
   BenchmarkAggregate,
   BundleIntegritySummary,
   CasesPayload,
-  CorpusQualitySummary,
   EvidenceItem,
   EvaluationSummary,
   Ledger,
@@ -13,7 +12,7 @@ import type {
   ValidationRow,
 } from './types';
 
-type Mode = 'overview' | 'tournament' | 'evidence' | 'validation' | 'benchmark' | 'report';
+type Mode = 'overview' | 'tournament' | 'evidence' | 'validation' | 'corpus' | 'benchmark' | 'report';
 
 type HistoricalAnalog = {
   caseId: string;
@@ -27,6 +26,8 @@ type HistoricalAnalog = {
   validationWindow: string;
   validationCopy: string;
 };
+
+type CorpusSortKey = 'event_type' | 'ticker' | 'source_depth' | 'validation_depth' | 'abnormal_move';
 
 const scoreRows: Array<{ key: keyof Narrative['scoring_inputs']; label: string; penalty?: boolean }> = [
   { key: 'evidence_strength', label: 'Evidence strength' },
@@ -45,8 +46,16 @@ const modes: Array<{ id: Mode; label: string }> = [
   { id: 'tournament', label: 'Tournament' },
   { id: 'evidence', label: 'Evidence' },
   { id: 'validation', label: 'Validation' },
+  { id: 'corpus', label: 'Corpus' },
   { id: 'benchmark', label: 'Benchmark' },
   { id: 'report', label: 'Report' },
+];
+
+const requiredCorpusEventTypes = [
+  'earnings/guidance',
+  'operational/product incident',
+  'regulatory/antitrust shock',
+  'litigation settlement',
 ];
 
 const analogStopWords = new Set([
@@ -596,15 +605,23 @@ function App() {
         </>
       ) : null}
 
+      {activeMode === 'corpus' ? (
+        <CorpusMode
+          cases={cases}
+          validationCases={validationCases}
+          onOpenCase={(caseId) => {
+            setSelectedCaseId(caseId);
+            setActiveMode('overview');
+          }}
+        />
+      ) : null}
+
       {activeMode === 'benchmark' ? (
         <>
           <CaseContextBar ledger={ledger} topNarrative={topNarrative ?? selectedNarrative} evaluation={evaluation} validation={validation} />
           <div className="mode-grid mode-grid--benchmark">
             {validationCases?.aggregate ? (
-              <BenchmarkCorpusPanel
-                aggregate={validationCases.aggregate}
-                corpusQuality={cases?.corpus_quality}
-              />
+              <BenchmarkCorpusPanel aggregate={validationCases.aggregate} />
             ) : null}
             <HistoricalAnalogsPanel
               analogs={historicalAnalogs}
@@ -1058,6 +1075,260 @@ function ModeTabs({ activeMode, onChange }: { activeMode: Mode; onChange: (mode:
         </button>
       ))}
     </nav>
+  );
+}
+
+function CorpusMode({
+  cases,
+  validationCases,
+  onOpenCase,
+}: {
+  cases: CasesPayload | null;
+  validationCases: ValidationCasesPayload | null;
+  onOpenCase: (caseId: string) => void;
+}) {
+  const corpusQuality = cases?.corpus_quality ?? null;
+  const [eventFilter, setEventFilter] = useState('all');
+  const [sortKey, setSortKey] = useState<CorpusSortKey>('event_type');
+  const [publicReadyOnly, setPublicReadyOnly] = useState(false);
+  const qualityCases = corpusQuality?.cases ?? [];
+  const validationRate = corpusQuality?.metrics.top_ranked_validated_rate
+    ?? validationCases?.aggregate?.top_ranked_validated_rate
+    ?? null;
+  const coveredEventTypes = new Set(corpusQuality?.metrics.event_types ?? []);
+  const nextAction = corpusQuality?.next_action ?? 'Generate demo assets after adding verified real-curated bundles.';
+
+  const fallbackCases = (cases?.cases ?? []).map((caseItem) => {
+    const event = caseItem.ledger.event;
+    const topNarrative = caseItem.ledger.narratives.find((narrative) => narrative.rank === 1)
+      ?? caseItem.ledger.narratives[0];
+    const validationCase = validationCases?.cases.find((item) => item.case_id === caseItem.case_id);
+    return {
+      case_id: caseItem.case_id,
+      ticker: event.ticker,
+      company_name: event.company_name,
+      event_type: event.event_type,
+      winning_narrative_title: topNarrative?.title,
+      abnormal_return: event.abnormal_return,
+      allowed_source_count: caseItem.ledger.citation_qa.allowed_source_count,
+      blocked_future_source_count: caseItem.ledger.citation_qa.blocked_future_source_count,
+      bundle_verified: caseItem.bundle_integrity?.verified_by_bundle_verify ?? false,
+      bundle_status: caseItem.bundle_integrity?.verified_by_bundle_verify ? 'verified' : 'not_verified',
+      public_quality_ok: Boolean(caseItem.bundle_integrity?.verified_by_bundle_verify),
+      public_quality_status: caseItem.bundle_integrity?.verified_by_bundle_verify ? 'public_ready' : 'check',
+      top_ranked_validated: validationCase?.evaluation.top_ranked_validated ?? null,
+      top_ranked_validation_status: validationCase?.evaluation.top_ranked_validated ? 'validated' : 'pending',
+      validation_source_count: validationCase?.validation.future_source_count
+        ?? validationCase?.validation.future_source_ids?.length
+        ?? 0,
+      non_market_evidence_count: caseItem.ledger.replay_audit.allowed_source_ids.filter((sourceId) => (
+        caseItem.ledger.narratives.some((narrative) => (
+          [...narrative.supporting_evidence, ...narrative.contradicting_evidence]
+            .some((source) => source.source_id === sourceId && source.source_type !== 'market_data')
+        ))
+      )).length,
+      publisher_count: caseItem.ledger.source_reliability.by_publisher.length,
+      source_type_count: caseItem.ledger.source_reliability.by_source_type.length,
+      publishers: caseItem.ledger.source_reliability.by_publisher.map((bucket) => bucket.key),
+      source_types: caseItem.ledger.source_reliability.by_source_type.map((bucket) => bucket.key),
+    };
+  });
+  const corpusCases = qualityCases.length ? qualityCases : fallbackCases;
+  const eventTypes = [...new Set(corpusCases.map((caseItem) => caseItem.event_type))].sort();
+  const visibleCorpusCases = useMemo(() => {
+    return corpusCases
+      .filter((caseItem) => eventFilter === 'all' || caseItem.event_type === eventFilter)
+      .filter((caseItem) => !publicReadyOnly || caseItem.public_quality_ok)
+      .sort((left, right) => {
+        if (sortKey === 'ticker') return left.ticker.localeCompare(right.ticker);
+        if (sortKey === 'source_depth') {
+          return right.non_market_evidence_count - left.non_market_evidence_count
+            || right.allowed_source_count - left.allowed_source_count
+            || left.ticker.localeCompare(right.ticker);
+        }
+        if (sortKey === 'validation_depth') {
+          return right.validation_source_count - left.validation_source_count
+            || right.blocked_future_source_count - left.blocked_future_source_count
+            || left.ticker.localeCompare(right.ticker);
+        }
+        if (sortKey === 'abnormal_move') {
+          return Math.abs(right.abnormal_return ?? 0) - Math.abs(left.abnormal_return ?? 0)
+            || left.ticker.localeCompare(right.ticker);
+        }
+        return left.event_type.localeCompare(right.event_type) || left.ticker.localeCompare(right.ticker);
+      });
+  }, [corpusCases, eventFilter, publicReadyOnly, sortKey]);
+
+  return (
+    <section className="corpus-mode" data-testid="corpus-dashboard">
+      <div className="corpus-hero">
+        <div>
+          <span className="eyebrow">Corpus</span>
+          <h2>Public replay-case coverage</h2>
+          <p>
+            Six verified real-curated cases across four event types. The current milestone proves
+            the workflow can handle earnings, product incidents, regulatory shocks, and litigation
+            without loosening replay-lock or provenance gates.
+          </p>
+        </div>
+        <div className="corpus-gate-card">
+          <span className={`status-pill ${statusClass(corpusQuality?.status ?? 'check')}`}>
+            {corpusQuality?.ok ? 'pass' : 'check'} | {humanize(corpusQuality?.status ?? 'not generated')}
+          </span>
+          <strong>{corpusQuality?.ok ? 'Serious corpus ready' : 'Corpus needs work'}</strong>
+          <p>{nextAction}</p>
+        </div>
+      </div>
+
+      <div className="corpus-coverage-grid">
+        <MetricTile label="Cases" value={String(corpusQuality?.metrics.case_count ?? corpusCases.length)} />
+        <MetricTile label="Tickers" value={String(corpusQuality?.metrics.unique_ticker_count ?? new Set(corpusCases.map((item) => item.ticker)).size)} />
+        <MetricTile label="Event types" value={String(corpusQuality?.metrics.unique_event_type_count ?? new Set(corpusCases.map((item) => item.event_type)).size)} />
+        <MetricTile label="Blocked future" value={String(corpusQuality?.metrics.blocked_future_source_count ?? corpusCases.reduce((total, item) => total + item.blocked_future_source_count, 0))} />
+        <MetricTile label="Rank #1 validated" value={pct(validationRate)} />
+      </div>
+
+      <div className="corpus-controls" data-testid="corpus-controls">
+        <label>
+          Filter by event type
+          <select
+            value={eventFilter}
+            onChange={(event) => setEventFilter(event.target.value)}
+            data-testid="corpus-event-filter"
+          >
+            <option value="all">All event types</option>
+            {eventTypes.map((eventType) => (
+              <option value={eventType} key={eventType}>
+                {humanize(eventType)}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Sort cases
+          <select
+            value={sortKey}
+            onChange={(event) => setSortKey(event.target.value as CorpusSortKey)}
+            data-testid="corpus-sort"
+          >
+            <option value="event_type">Event type</option>
+            <option value="ticker">Ticker</option>
+            <option value="source_depth">Source depth</option>
+            <option value="validation_depth">Validation depth</option>
+            <option value="abnormal_move">Abnormal move</option>
+          </select>
+        </label>
+        <label className="corpus-toggle">
+          <input
+            type="checkbox"
+            checked={publicReadyOnly}
+            onChange={(event) => setPublicReadyOnly(event.target.checked)}
+            data-testid="corpus-ready-filter"
+          />
+          Public-ready only
+        </label>
+        <span>
+          Showing <strong>{visibleCorpusCases.length}</strong> of <strong>{corpusCases.length}</strong>
+        </span>
+      </div>
+
+      <div className="corpus-layout">
+        <section className="panel corpus-matrix-panel">
+          <PanelHeader kicker="Case matrix" title="Public bundle readiness" />
+          <div className="corpus-matrix" role="table" aria-label="Public replay cases">
+            <div className="corpus-matrix__row corpus-matrix__row--header" role="row">
+              <span>Ticker</span>
+              <span>Event type</span>
+              <span>Winning narrative</span>
+              <span>Abnormal move</span>
+              <span>Sources</span>
+              <span>Validation</span>
+              <span>Bundle</span>
+            </div>
+            {visibleCorpusCases.map((caseItem) => (
+              <button
+                className="corpus-matrix__row"
+                key={caseItem.case_id}
+                type="button"
+                role="row"
+                onClick={() => onOpenCase(caseItem.case_id)}
+              >
+                <span>
+                  <strong>{caseItem.ticker}</strong>
+                  {caseItem.company_name ?? caseItem.case_id}
+                </span>
+                <span>{humanize(caseItem.event_type)}</span>
+                <span>{caseItem.winning_narrative_title ?? 'Rank #1 narrative'}</span>
+                <span>{pct(caseItem.abnormal_return)}</span>
+                <span>
+                  {caseItem.allowed_source_count} allowed
+                  <small>{caseItem.blocked_future_source_count} blocked future</small>
+                </span>
+                <span className={`status-pill ${statusClass(caseItem.top_ranked_validation_status)}`}>
+                  {humanize(caseItem.top_ranked_validation_status)}
+                </span>
+                <span className={`status-pill ${statusClass(caseItem.bundle_status)}`}>
+                  {caseItem.bundle_verified ? 'verified' : humanize(caseItem.bundle_status)}
+                </span>
+              </button>
+            ))}
+            {!visibleCorpusCases.length ? (
+              <div className="corpus-matrix__empty">No cases match the selected corpus filters.</div>
+            ) : null}
+          </div>
+        </section>
+
+        <section className="panel corpus-event-panel">
+          <PanelHeader kicker="Coverage" title="Event-type map" />
+          <div className="event-type-grid">
+            {requiredCorpusEventTypes.map((eventType) => (
+              <div className="event-type-card" key={eventType}>
+                <span className={`status-pill ${statusClass(coveredEventTypes.has(eventType) ? 'pass' : 'missing')}`}>
+                  {coveredEventTypes.has(eventType) ? 'covered' : 'missing'}
+                </span>
+                <strong>{humanize(eventType)}</strong>
+                <p>
+                  {coveredEventTypes.has(eventType)
+                    ? `${corpusCases.filter((item) => item.event_type === eventType).length} replay case`
+                    : 'Required before the corpus is benchmark-grade.'}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="panel-note">
+            Benchmark target: the public corpus is now 6 cases; the next scale target is 25-50 verified
+            cases before treating aggregate rates as product evidence.
+          </p>
+        </section>
+      </div>
+
+      <section className="panel corpus-depth-panel">
+        <PanelHeader kicker="Source depth" title="Per-case evidence breadth" />
+        <div className="source-depth-grid">
+          {visibleCorpusCases.map((caseItem) => (
+            <article className="source-depth-card" key={caseItem.case_id}>
+              <div className="source-depth-card__top">
+                <span>
+                  <strong>{caseItem.ticker}</strong>
+                  {humanize(caseItem.event_type)}
+                </span>
+                <span className={`status-pill ${statusClass(caseItem.public_quality_status)}`}>
+                  {caseItem.public_quality_ok ? 'public ready' : humanize(caseItem.public_quality_status)}
+                </span>
+              </div>
+              <div className="source-depth-metrics">
+                <Metric label="Non-market" value={String(caseItem.non_market_evidence_count)} />
+                <Metric label="Publishers" value={String(caseItem.publisher_count)} />
+                <Metric label="Source types" value={String(caseItem.source_type_count)} />
+                <Metric label="Validation future" value={String(caseItem.validation_source_count)} />
+              </div>
+              <p>{caseItem.publishers.slice(0, 5).join(' | ')}</p>
+              <small>{caseItem.source_types.map(humanize).join(' | ')}</small>
+            </article>
+          ))}
+        </div>
+      </section>
+    </section>
   );
 }
 
@@ -1563,10 +1834,8 @@ function BundleIntegrityPanel({
 
 function BenchmarkCorpusPanel({
   aggregate,
-  corpusQuality,
 }: {
   aggregate: BenchmarkAggregate;
-  corpusQuality?: CorpusQualitySummary;
 }) {
   const primaryMetrics = [
     ['Cases', `${aggregate.evaluated_case_count}/${aggregate.case_count}`],
@@ -1590,19 +1859,9 @@ function BenchmarkCorpusPanel({
     ['Dup clusters', String(aggregate.source_duplicate_cluster_count ?? 0)],
     ['Unsupported avg', score(aggregate.unsupported_claim_penalty_avg)],
   ];
-  const qualityMetrics = corpusQuality ? [
-    ['Corpus gate', corpusQuality.ok ? 'pass' : 'check'],
-    ['Status', humanize(corpusQuality.status)],
-    ['Tickers', String(corpusQuality.metrics.unique_ticker_count)],
-    ['Event types', String(corpusQuality.metrics.unique_event_type_count)],
-    ['Verified cases', `${corpusQuality.metrics.evaluated_case_count}/${corpusQuality.metrics.case_count}`],
-    ['Blocked future', String(corpusQuality.metrics.blocked_future_source_count)],
-  ] : [];
-  const eventTypes = corpusQuality?.metrics.event_types ?? [];
-
   return (
     <section className="panel benchmark-corpus" data-testid="benchmark-corpus">
-      <PanelHeader kicker="Benchmark corpus" title="Case-index summary" />
+      <PanelHeader kicker="Benchmark" title="Evaluation summary" />
       <div className="benchmark-corpus__body">
         <div className="benchmark-primary">
           {primaryMetrics.map(([label, value]) => (
@@ -1628,22 +1887,10 @@ function BenchmarkCorpusPanel({
               </p>
             ))}
           </section>
-          {corpusQuality ? (
-            <section className="benchmark-stack benchmark-stack--corpus" data-testid="corpus-quality-summary">
-              <h3>Public corpus gate</h3>
-              {qualityMetrics.map(([label, value]) => (
-                <p key={label}>
-                  <span>{label}</span>
-                  <strong>{value}</strong>
-                </p>
-              ))}
-            </section>
-          ) : null}
         </div>
       </div>
       <p className="panel-note">
         Corpus gaps: {aggregate.missing_url_count ?? 0} missing URLs | {aggregate.missing_content_hash_count ?? 0} missing content hashes | {aggregate.low_quality_evidence_count ?? 0} low-quality sources
-        {eventTypes.length ? ` | event types: ${eventTypes.join(', ')}` : ''}
       </p>
     </section>
   );

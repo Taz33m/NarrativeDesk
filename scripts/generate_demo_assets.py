@@ -165,6 +165,11 @@ def corpus_quality_summary(result: dict[str, object]) -> dict[str, object]:
         "ok": bool(result.get("ok")),
         "status": str(result.get("status", "unknown")),
         "metrics": result.get("metrics", {}),
+        "cases": [
+            _public_case_quality_summary(case)
+            for case in result.get("cases", [])
+            if isinstance(case, dict)
+        ],
         "checks": {
             check_name: _public_check_summary(checks.get(check_name))
             for check_name in exposed_checks
@@ -195,6 +200,32 @@ def _public_check_summary(check: object) -> dict[str, object]:
         if key in check:
             summary[key] = check[key]
     return summary
+
+
+def _public_case_quality_summary(case: dict[str, object]) -> dict[str, object]:
+    return {
+        "case_id": case.get("case_id"),
+        "ticker": case.get("ticker"),
+        "company_name": case.get("company_name"),
+        "event_type": case.get("event_type"),
+        "winning_narrative_id": case.get("winning_narrative_id"),
+        "winning_narrative_title": case.get("winning_narrative_title"),
+        "abnormal_return": case.get("abnormal_return"),
+        "allowed_source_count": case.get("allowed_source_count", 0),
+        "blocked_future_source_count": case.get("blocked_future_source_count", 0),
+        "bundle_verified": bool(case.get("bundle_verified")),
+        "bundle_status": case.get("bundle_status", "unknown"),
+        "public_quality_ok": bool(case.get("public_quality_ok")),
+        "public_quality_status": case.get("public_quality_status", "unknown"),
+        "top_ranked_validated": case.get("top_ranked_validated"),
+        "top_ranked_validation_status": case.get("top_ranked_validation_status", "pending"),
+        "validation_source_count": case.get("validation_source_count", 0),
+        "non_market_evidence_count": case.get("non_market_evidence_count", 0),
+        "publisher_count": case.get("publisher_count", 0),
+        "source_type_count": case.get("source_type_count", 0),
+        "publishers": case.get("publishers", []),
+        "source_types": case.get("source_types", []),
+    }
 
 
 if __name__ == "__main__":

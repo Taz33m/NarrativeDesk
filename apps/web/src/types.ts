@@ -266,6 +266,29 @@ export interface CorpusQualitySummary {
     headline_baseline_validated_rate: number | null;
     narrativedesk_tournament_validated_rate: number | null;
   };
+  cases?: Array<{
+    case_id: string;
+    ticker: string;
+    company_name?: string;
+    event_type: string;
+    winning_narrative_id?: string;
+    winning_narrative_title?: string;
+    abnormal_return?: number | null;
+    allowed_source_count: number;
+    blocked_future_source_count: number;
+    bundle_verified: boolean;
+    bundle_status: string;
+    public_quality_ok: boolean;
+    public_quality_status: string;
+    top_ranked_validated: boolean | null;
+    top_ranked_validation_status: string;
+    validation_source_count: number;
+    non_market_evidence_count: number;
+    publisher_count: number;
+    source_type_count: number;
+    publishers: string[];
+    source_types: string[];
+  }>;
   checks: Record<string, CorpusQualityCheck>;
   next_action: string;
 }

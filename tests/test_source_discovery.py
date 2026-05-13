@@ -2,13 +2,14 @@ import contextlib
 import io
 import json
 import os
+import socket
 import sys
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from narrativedesk import cli
+from narrativedesk import cli, source_discovery
 from narrativedesk.real_provenance import draft_real_case
 from narrativedesk.source_discovery import (
     DiscoveryCandidate,
@@ -152,6 +153,15 @@ class SourceDiscoveryTests(unittest.TestCase):
         self.assertEqual(candidates, [])
         self.assertEqual(len(rejected), 2)
         self.assertTrue(all("safe_http_url" in str(item.rejection_reason) for item in rejected))
+
+    def test_live_refetch_url_check_rejects_private_dns_targets(self):
+        private_answer = [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("127.0.0.1", 443))]
+        public_answer = [(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("93.184.216.34", 443))]
+
+        with patch("narrativedesk.source_discovery.socket.getaddrinfo", return_value=private_answer):
+            self.assertFalse(source_discovery._is_publicly_resolvable_http_url("https://finance.example.com/story"))
+        with patch("narrativedesk.source_discovery.socket.getaddrinfo", return_value=public_answer):
+            self.assertTrue(source_discovery._is_publicly_resolvable_http_url("https://finance.example.com/story"))
 
     def test_freeze_refetches_pages_and_applies_replay_lock(self):
         eligible_url = "https://finance.example.com/apple-q2"

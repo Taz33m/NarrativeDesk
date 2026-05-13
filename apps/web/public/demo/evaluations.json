@@ -1,9 +1,9 @@
 {
   "aggregate": {
-    "blocked_future_source_count": 6,
-    "case_count": 4,
+    "blocked_future_source_count": 10,
+    "case_count": 6,
     "citation_qa_pass_rate": 1.0,
-    "evaluated_case_count": 4,
+    "evaluated_case_count": 6,
     "evidence_only_validated_rate": 1.0,
     "headline_baseline_validated_rate": 0.0,
     "low_quality_evidence_count": 0,
@@ -15,15 +15,15 @@
     "provenance_ready_rate": 1.0,
     "quality_weighted_validated_rate": 1.0,
     "replay_filter_pass_rate": 1.0,
-    "source_cluster_count": 18,
-    "source_clustering_avg_derived_originality": 0.689655,
-    "source_duplicate_cluster_count": 9,
-    "source_reliability_avg_evidence_quality": 0.770359,
-    "source_reliability_avg_independence": 0.72931,
-    "source_reliability_avg_originality": 0.763466,
+    "source_cluster_count": 30,
+    "source_clustering_avg_derived_originality": 0.727273,
+    "source_duplicate_cluster_count": 12,
+    "source_reliability_avg_evidence_quality": 0.76592,
+    "source_reliability_avg_independence": 0.735675,
+    "source_reliability_avg_originality": 0.752291,
     "support_coverage_pass_rate": 1.0,
     "top_ranked_validated_rate": 1.0,
-    "unsupported_claim_penalty_avg": 0.086875
+    "unsupported_claim_penalty_avg": 0.0875
   },
   "cases": [
     {
@@ -506,6 +506,219 @@
             "label": "invalidated",
             "narrative_id": "NARR-CRWD-004",
             "what_happened": "Held-out Q2 fiscal 2025 results referenced customer recovery work and Channel File 291 incident related costs, reducing confidence that the original selloff was only a temporary outage overreaction.",
+            "window": "T+60"
+          }
+        ],
+        "status": "validated"
+      }
+    },
+    {
+      "case_id": "EVT-REAL-SAVE-2024-01-16",
+      "evaluation": {
+        "allowed_source_count": 7,
+        "blocked_future_source_count": 2,
+        "high_unsupported_claim_count": 2,
+        "missing_validated_narrative_ids": [],
+        "model_comparisons": [
+          {
+            "selected_narrative_id": "NARR-SAVE-003",
+            "selected_rank": 3,
+            "selection_reason": "Selects the most crowded allowed narrative as a proxy for surface consensus.",
+            "system_id": "headline_baseline",
+            "validated": false
+          },
+          {
+            "selected_narrative_id": "NARR-SAVE-001",
+            "selected_rank": 1,
+            "selection_reason": "Ablation that selects the strongest evidence score without mechanism or contradiction terms.",
+            "system_id": "evidence_only",
+            "validated": true
+          },
+          {
+            "selected_narrative_id": "NARR-SAVE-001",
+            "selected_rank": 1,
+            "selection_reason": "Ablation that reranks without contradiction resistance or unsupported-claim penalty.",
+            "system_id": "no_contradiction_penalty",
+            "validated": true
+          },
+          {
+            "selected_narrative_id": "NARR-SAVE-001",
+            "selected_rank": 1,
+            "selection_reason": "Ablation that selects the strongest evidence score weighted by allowed source quality.",
+            "system_id": "quality_weighted",
+            "validated": true
+          },
+          {
+            "selected_narrative_id": "NARR-SAVE-001",
+            "selected_rank": 1,
+            "selection_reason": "Selects the highest deterministic narrative score after replay filtering.",
+            "system_id": "narrativedesk_tournament",
+            "validated": true
+          }
+        ],
+        "narrative_recall_at_3": true,
+        "top_ranked_validated": true,
+        "unsupported_claim_penalty_avg": 0.095,
+        "unsupported_claim_penalty_max": 0.13,
+        "validated_narrative_ids": [
+          "NARR-SAVE-001"
+        ],
+        "validated_rank": 1
+      },
+      "label": "SAVE January 2024 JetBlue merger block real-curated replay",
+      "validation": {
+        "event_id": "EVT-REAL-SAVE-2024-01-16",
+        "future_source_count": 2,
+        "future_source_ids": [
+          "SAVE-FUT-001",
+          "SAVE-FUT-002"
+        ],
+        "note": "Real-curated validation fixture. Held-out future evidence stays separate from event-time replay inputs.",
+        "rows": [
+          {
+            "expected_observable": "Held-out validation should show the merger agreement terminated rather than merely delayed.",
+            "future_source_ids": [
+              "SAVE-FUT-001",
+              "SAVE-FUT-002"
+            ],
+            "label": "validated",
+            "narrative_id": "NARR-SAVE-001",
+            "what_happened": "Held-out March 4 company and news evidence showed JetBlue and Spirit terminated the merger agreement because regulatory obstacles made timely closing unlikely, validating merger optionality collapse as the replay winner.",
+            "window": "T+60"
+          },
+          {
+            "expected_observable": "Future disclosures should emphasize refinancing, liquidity, or profitability actions.",
+            "future_source_ids": [
+              "SAVE-FUT-001"
+            ],
+            "label": "partial",
+            "narrative_id": "NARR-SAVE-002",
+            "what_happened": "Spirit did discuss standalone initiatives, refinancing, and profitability steps, but the validation source was still anchored to termination of the merger path.",
+            "window": "T+60"
+          },
+          {
+            "expected_observable": "The narrative should weaken if the companies terminate the agreement because closing conditions cannot be met.",
+            "future_source_ids": [
+              "SAVE-FUT-001",
+              "SAVE-FUT-002"
+            ],
+            "label": "invalidated",
+            "narrative_id": "NARR-SAVE-003",
+            "what_happened": "The companies terminated the agreement rather than preserving a live appeal-led deal path, weakening the appeal optionality explanation.",
+            "window": "T+60"
+          },
+          {
+            "expected_observable": "Other airline merger targets or peers should show similar abnormal pressure if this narrative dominates.",
+            "future_source_ids": [],
+            "label": "pending",
+            "narrative_id": "NARR-SAVE-004",
+            "what_happened": "The validation fixture keeps broader airline regulatory read-through pending because the held-out evidence was specific to JetBlue and Spirit.",
+            "window": "T+60"
+          }
+        ],
+        "status": "validated"
+      }
+    },
+    {
+      "case_id": "EVT-REAL-MMM-2023-08-29",
+      "evaluation": {
+        "allowed_source_count": 8,
+        "blocked_future_source_count": 2,
+        "high_unsupported_claim_count": 2,
+        "missing_validated_narrative_ids": [],
+        "model_comparisons": [
+          {
+            "selected_narrative_id": "NARR-MMM-002",
+            "selected_rank": 2,
+            "selection_reason": "Selects the most crowded allowed narrative as a proxy for surface consensus.",
+            "system_id": "headline_baseline",
+            "validated": false
+          },
+          {
+            "selected_narrative_id": "NARR-MMM-001",
+            "selected_rank": 1,
+            "selection_reason": "Ablation that selects the strongest evidence score without mechanism or contradiction terms.",
+            "system_id": "evidence_only",
+            "validated": true
+          },
+          {
+            "selected_narrative_id": "NARR-MMM-001",
+            "selected_rank": 1,
+            "selection_reason": "Ablation that reranks without contradiction resistance or unsupported-claim penalty.",
+            "system_id": "no_contradiction_penalty",
+            "validated": true
+          },
+          {
+            "selected_narrative_id": "NARR-MMM-001",
+            "selected_rank": 1,
+            "selection_reason": "Ablation that selects the strongest evidence score weighted by allowed source quality.",
+            "system_id": "quality_weighted",
+            "validated": true
+          },
+          {
+            "selected_narrative_id": "NARR-MMM-001",
+            "selected_rank": 1,
+            "selection_reason": "Selects the highest deterministic narrative score after replay filtering.",
+            "system_id": "narrativedesk_tournament",
+            "validated": true
+          }
+        ],
+        "narrative_recall_at_3": true,
+        "top_ranked_validated": true,
+        "unsupported_claim_penalty_avg": 0.0825,
+        "unsupported_claim_penalty_max": 0.11,
+        "validated_narrative_ids": [
+          "NARR-MMM-001"
+        ],
+        "validated_rank": 1
+      },
+      "label": "MMM August 2023 Combat Arms settlement real-curated replay",
+      "validation": {
+        "event_id": "EVT-REAL-MMM-2023-08-29",
+        "future_source_count": 2,
+        "future_source_ids": [
+          "MMM-FUT-001",
+          "MMM-FUT-002"
+        ],
+        "note": "Real-curated validation fixture. Held-out future evidence stays separate from event-time replay inputs.",
+        "rows": [
+          {
+            "expected_observable": "Future company evidence should show high claimant participation or settlement implementation progress.",
+            "future_source_ids": [
+              "MMM-FUT-001",
+              "MMM-FUT-002"
+            ],
+            "label": "validated",
+            "narrative_id": "NARR-MMM-001",
+            "what_happened": "Held-out 3M evidence said claimant participation was on track to exceed the 98% threshold and later filing language preserved the settlement structure, validating litigation overhang compression as the replay winner.",
+            "window": "T+60"
+          },
+          {
+            "expected_observable": "Future validation should center PFAS or other liabilities rather than earplug settlement progress if this narrative wins.",
+            "future_source_ids": [
+              "MMM-FUT-001"
+            ],
+            "label": "partial",
+            "narrative_id": "NARR-MMM-002",
+            "what_happened": "Residual legal exposure remained relevant, but the held-out validation evidence directly centered Combat Arms participation and settlement implementation.",
+            "window": "T+60"
+          },
+          {
+            "expected_observable": "The burden narrative should weaken if future company evidence confirms participation progress and cash election clarity.",
+            "future_source_ids": [
+              "MMM-FUT-001"
+            ],
+            "label": "invalidated",
+            "narrative_id": "NARR-MMM-003",
+            "what_happened": "3M later said participation was on track to exceed the threshold and elected cash for the stock component, weakening the idea that settlement burden was the primary event narrative.",
+            "window": "T+60"
+          },
+          {
+            "expected_observable": "Future validation should cite litigation posture rather than participation milestones if this narrative wins.",
+            "future_source_ids": [],
+            "label": "pending",
+            "narrative_id": "NARR-MMM-004",
+            "what_happened": "The no-liability posture remained part of the case file but did not become the central held-out validation evidence.",
             "window": "T+60"
           }
         ],

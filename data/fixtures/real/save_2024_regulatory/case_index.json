@@ -1,0 +1,11 @@
+{
+  "cases": [
+    {
+      "case_id": "EVT-REAL-SAVE-2024-01-16",
+      "event_fixture": "event_fixture.json",
+      "label": "SAVE January 2024 JetBlue merger block real-curated replay",
+      "validation_fixture": "validation_fixture.json"
+    }
+  ],
+  "default_case_id": "EVT-REAL-SAVE-2024-01-16"
+}

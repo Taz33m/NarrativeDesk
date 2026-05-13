@@ -1,0 +1,1162 @@
+{
+  "citation_qa": {
+    "allowed_source_count": 8,
+    "blocked_future_source_count": 2,
+    "citation_qa_pass": true,
+    "event_time_integrity_pass": true,
+    "low_quality_evidence_count": 0,
+    "missing_content_hash_count": 0,
+    "missing_publisher_count": 0,
+    "missing_url_count": 0,
+    "narrative_count": 4,
+    "narratives_with_support_count": 4,
+    "provenance_ready": true,
+    "replay_filter_pass": true,
+    "returned_blocked_source_count": 0,
+    "support_coverage_pass": true
+  },
+  "event": {
+    "abnormal_return": 0.003793,
+    "case_id": "EVT-REAL-MMM-2023-08-29",
+    "company_name": "3M Company",
+    "daily_return": 0.013962,
+    "data_provenance_mode": "real-curated",
+    "event_date": "2023-08-29",
+    "event_id": "EVT-REAL-MMM-2023-08-29",
+    "event_summary": "Real-curated 3M Combat Arms settlement replay with timestamped citations, replay-locked evidence, and held-out validation. Research and education only; not investment advice.",
+    "event_timestamp": "2023-08-29T16:10:00-04:00",
+    "event_type": "litigation settlement",
+    "peer_median_return": 0.010169,
+    "sector_etf_return": 0.011869,
+    "ticker": "MMM",
+    "volume_ratio": null
+  },
+  "narratives": [
+    {
+      "confidence": null,
+      "contradicting_evidence": [],
+      "directional_implication": "bullish",
+      "event_id": "EVT-REAL-MMM-2023-08-29",
+      "expected_observables": [
+        "Future company evidence should show high claimant participation or settlement implementation progress.",
+        "Held-out sources should preserve the settlement amount and timing rather than reopening the litigation overhang.",
+        "Residual PFAS and other liabilities may remain, but validation should center the Combat Arms overhang becoming more bounded."
+      ],
+      "mechanism": "The agreement converted a large mass-tort uncertainty into a structured payment schedule with participation thresholds and an identified charge, reducing tail-risk uncertainty enough to support a positive abnormal move.",
+      "narrative": "Investors treated the Combat Arms settlement as a measurable reduction in one of 3M's largest legal overhangs, even though other liabilities remained.",
+      "narrative_id": "NARR-MMM-001",
+      "overall_narrative_score": 0.7983333333333333,
+      "rank": 1,
+      "scores": {
+        "contradiction_resistance": 0.07600000000000001,
+        "cross_sectional_fit": 0.068,
+        "crowding_risk_penalty": 0.019000000000000003,
+        "evidence_strength": 0.17200000000000001,
+        "forward_observable_quality": 0.08600000000000001,
+        "mechanism_specificity": 0.1305,
+        "overall_narrative_score": 0.7983333333333333,
+        "penalty_score_normalized": 0.02333333333333334,
+        "positive_score_normalized": 0.8216666666666667,
+        "source_independence": 0.11699999999999999,
+        "timestamp_advantage": 0.09000000000000001,
+        "unsupported_claim_penalty": 0.002
+      },
+      "scoring_inputs": {
+        "contradiction_resistance": 0.76,
+        "cross_sectional_fit": 0.68,
+        "crowding_risk": 0.38,
+        "evidence_strength": 0.86,
+        "forward_observable_quality": 0.86,
+        "mechanism_specificity": 0.87,
+        "source_independence": 0.78,
+        "timestamp_advantage": 0.9,
+        "unsupported_claim_penalty": 0.04
+      },
+      "supporting_evidence": [
+        {
+          "availability_status": "allowed",
+          "claim": "3M announced on August 29, 2023 that it reached an agreement to resolve Combat Arms Earplug litigation for $6.0 billion from 2023 to 2029, structured as $5.0 billion in cash and $1.0 billion in 3M common stock, and said the agreement was not an admission of liability.",
+          "claim_extracted": "3M announced on August 29, 2023 that it reached an agreement to resolve Combat Arms Earplug litigation for $6.0 billion from 2023 to 2029, structured as $5.0 billion in cash and $1.0 billion in 3M common stock, and said the agreement was not an admission of liability.",
+          "content_hash": "sha256:512661b95ce1f15e1e506a7f10022da25b5704bdbb208231975b44585d19e8e7",
+          "contradicted_narrative_ids": [],
+          "evidence_quality": 0.86,
+          "incentive_conflict": 0.25,
+          "independence": 0.58,
+          "independence_cluster_id": "issuer-release",
+          "originality_score": 0.88,
+          "published_at": "2023-08-29T08:30:00-04:00",
+          "publisher": "3M News Center",
+          "relation": "support",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-IR-001",
+          "source_type": "company_release",
+          "support_strength": 0.86,
+          "supported_narrative_ids": [
+            "NARR-MMM-001",
+            "NARR-MMM-003",
+            "NARR-MMM-004"
+          ],
+          "title": "3M Announces Combat Arms Settlement",
+          "url": "https://news.3m.com/2023-08-29-3M-Announces-Combat-Arms-Settlement%2C1"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "3M's August 29, 2023 Form 8-K described the Combat Arms settlement, a $6.01 billion contribution from 2023 to 2029, a 98% participation threshold, no admission of liability, and an approximately $4.2 billion third-quarter pre-tax charge.",
+          "claim_extracted": "3M's August 29, 2023 Form 8-K described the Combat Arms settlement, a $6.01 billion contribution from 2023 to 2029, a 98% participation threshold, no admission of liability, and an approximately $4.2 billion third-quarter pre-tax charge.",
+          "content_hash": "sha256:be03ac33a6d937ba67dc674487f93fbca6c109425c001e43980177f2e15aeb31",
+          "contradicted_narrative_ids": [],
+          "evidence_quality": 0.88,
+          "incentive_conflict": 0.08,
+          "independence": 0.86,
+          "independence_cluster_id": "sec-edgar",
+          "originality_score": 0.88,
+          "published_at": "2023-08-29T09:00:00-04:00",
+          "publisher": "3M Investor Relations / SEC filing",
+          "relation": "support",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-SEC-001",
+          "source_type": "filing",
+          "support_strength": 0.84,
+          "supported_narrative_ids": [
+            "NARR-MMM-001",
+            "NARR-MMM-003",
+            "NARR-MMM-004"
+          ],
+          "title": "3M Form 8-K dated August 29, 2023",
+          "url": "https://investors.3m.com/financials/sec-filings/content/0000066740-23-000073/mmm-20230829.htm"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "CNBC reported that 3M agreed to pay $6.01 billion to settle nearly 260,000 military-earplug lawsuits, that the litigation had become the largest mass tort in U.S. history, and that some analyst estimates of potential liability had been as high as $10 billion.",
+          "claim_extracted": "CNBC reported that 3M agreed to pay $6.01 billion to settle nearly 260,000 military-earplug lawsuits, that the litigation had become the largest mass tort in U.S. history, and that some analyst estimates of potential liability had been as high as $10 billion.",
+          "content_hash": "sha256:c2f69435c7b1063f1937985fb104962a16beb8ec77cde9040cd02cbb1fdd1d75",
+          "contradicted_narrative_ids": [
+            "NARR-MMM-003"
+          ],
+          "evidence_quality": 0.76,
+          "incentive_conflict": 0.08,
+          "independence": 0.78,
+          "independence_cluster_id": "financial-news-cnbc",
+          "originality_score": 0.76,
+          "published_at": "2023-08-28T23:22:00-04:00",
+          "publisher": "CNBC",
+          "relation": "support",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-CNBC-001",
+          "source_type": "news",
+          "support_strength": 0.78,
+          "supported_narrative_ids": [
+            "NARR-MMM-001"
+          ],
+          "title": "3M agrees to pay $6 billion to settle lawsuits over U.S. military earplugs",
+          "url": "https://www.cnbc.com/2023/08/29/3m-agrees-to-pay-6-bln-to-settle-lawsuits-over-us-military-earplugs.html"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "CNBC reported at 3:39 p.m. EDT on August 29, 2023 that the earplug settlement relieved one major legal overhang but that 3M still faced PFAS and other legal exposure, including a $10.3 billion water-utilities settlement awaiting approval.",
+          "claim_extracted": "CNBC reported at 3:39 p.m. EDT on August 29, 2023 that the earplug settlement relieved one major legal overhang but that 3M still faced PFAS and other legal exposure, including a $10.3 billion water-utilities settlement awaiting approval.",
+          "content_hash": "sha256:5d3f39c6445a9d2a5cbc9fde2efd75daed64480994a7bd8b754a70aaf6d8da24",
+          "contradicted_narrative_ids": [],
+          "evidence_quality": 0.74,
+          "incentive_conflict": 0.08,
+          "independence": 0.76,
+          "independence_cluster_id": "financial-news-cnbc",
+          "originality_score": 0.72,
+          "published_at": "2023-08-29T15:39:00-04:00",
+          "publisher": "CNBC",
+          "relation": "support",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-CNBC-002",
+          "source_type": "news",
+          "support_strength": 0.72,
+          "supported_narrative_ids": [
+            "NARR-MMM-001",
+            "NARR-MMM-002"
+          ],
+          "title": "3M faces more legal headaches after $6 billion earplug settlement",
+          "url": "https://www.cnbc.com/2023/08/29/3m-faces-more-legal-headaches-after-earplug-settlement.html"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Associated Press reported on August 29, 2023 that 3M agreed to pay $6 billion to settle earplug lawsuits from U.S. service members, with payments through 2029 and no admission of liability.",
+          "claim_extracted": "Associated Press reported on August 29, 2023 that 3M agreed to pay $6 billion to settle earplug lawsuits from U.S. service members, with payments through 2029 and no admission of liability.",
+          "content_hash": "sha256:b1b7fc6d242e5d89321e32367f64339974ddda0e7280fc72b5b38b7f21b0140f",
+          "contradicted_narrative_ids": [],
+          "evidence_quality": 0.76,
+          "incentive_conflict": 0.08,
+          "independence": 0.8,
+          "independence_cluster_id": "wire-news-ap",
+          "originality_score": 0.74,
+          "published_at": "2023-08-29T10:49:02-04:00",
+          "publisher": "Associated Press",
+          "relation": "support",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-AP-001",
+          "source_type": "news",
+          "support_strength": 0.74,
+          "supported_narrative_ids": [
+            "NARR-MMM-001",
+            "NARR-MMM-004"
+          ],
+          "title": "3M agrees to pay $6 billion to settle earplug lawsuits from US service members",
+          "url": "https://apnews.com/article/f2b68a4222c77cfefef3608c70e62f6c"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Investopedia reported before markets opened on August 29, 2023 that 3M's board approved a $6 billion earplug settlement, below analyst expectations of $10 billion to $15 billion, and that the news was causing a slight rise in 3M shares.",
+          "claim_extracted": "Investopedia reported before markets opened on August 29, 2023 that 3M's board approved a $6 billion earplug settlement, below analyst expectations of $10 billion to $15 billion, and that the news was causing a slight rise in 3M shares.",
+          "content_hash": "sha256:c1e902b09129a4d5932955765b65a9f76579944413e45ce2b68099000de1ac1c",
+          "contradicted_narrative_ids": [
+            "NARR-MMM-003"
+          ],
+          "evidence_quality": 0.7,
+          "incentive_conflict": 0.1,
+          "independence": 0.72,
+          "independence_cluster_id": "market-commentary",
+          "originality_score": 0.68,
+          "published_at": "2023-08-29T07:17:00-04:00",
+          "publisher": "Investopedia",
+          "relation": "support",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-INVEST-001",
+          "source_type": "market_commentary",
+          "support_strength": 0.72,
+          "supported_narrative_ids": [
+            "NARR-MMM-001"
+          ],
+          "title": "5 Things to Know Before Markets Open, August 29, 2023",
+          "url": "https://www.investopedia.com/5-things-to-know-before-markets-open-august-29-2023-7963024"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Frozen market bars use MMM close-to-close prices around the settlement: $81.65 before the event day and $82.79 at the August 29, 2023 close, implying a positive event move before peer adjustment.",
+          "claim_extracted": "Frozen market bars use MMM close-to-close prices around the settlement: $81.65 before the event day and $82.79 at the August 29, 2023 close, implying a positive event move before peer adjustment.",
+          "content_hash": "sha256:bc25d4974244e3b98572f6307238fab2195e5d1aaeed27ead031775b8821f2fe",
+          "contradicted_narrative_ids": [
+            "NARR-MMM-002",
+            "NARR-MMM-003"
+          ],
+          "evidence_quality": 0.7,
+          "incentive_conflict": 0.0,
+          "independence": 0.7,
+          "independence_cluster_id": "market-bars",
+          "originality_score": 0.62,
+          "published_at": "2023-08-29T16:00:00-04:00",
+          "publisher": "Frozen market bars",
+          "relation": "support",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-MKT-001",
+          "source_type": "market_data",
+          "support_strength": 0.66,
+          "supported_narrative_ids": [
+            "NARR-MMM-001"
+          ],
+          "title": "MMM close-to-close market move for August 29, 2023",
+          "url": "local://market_bars.csv#MMM-MKT-001"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Frozen benchmark bars use DOW from $46.34 to $46.89 and the Dow Jones Industrial Average from 34,559.98 to 34,852.67 on August 29, 2023 to measure the MMM move against industrial and market context.",
+          "claim_extracted": "Frozen benchmark bars use DOW from $46.34 to $46.89 and the Dow Jones Industrial Average from 34,559.98 to 34,852.67 on August 29, 2023 to measure the MMM move against industrial and market context.",
+          "content_hash": "sha256:9a0bef39843b968741dbfac88e30ee25cd2796ba2ff3c9bd2d111284613cde6f",
+          "contradicted_narrative_ids": [],
+          "evidence_quality": 0.68,
+          "incentive_conflict": 0.0,
+          "independence": 0.72,
+          "independence_cluster_id": "market-bars",
+          "originality_score": 0.62,
+          "published_at": "2023-08-29T16:00:00-04:00",
+          "publisher": "Frozen market bars",
+          "relation": "support",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-MKT-002",
+          "source_type": "market_data",
+          "support_strength": 0.62,
+          "supported_narrative_ids": [
+            "NARR-MMM-001"
+          ],
+          "title": "DOW and DJI benchmark bars for August 29, 2023",
+          "url": "local://market_bars.csv#MMM-MKT-002"
+        }
+      ],
+      "ticker": "MMM",
+      "time_horizon": "120 trading days",
+      "timestamp_created": "2023-08-29T16:10:00-04:00",
+      "title": "Litigation overhang compression",
+      "validation_status": "pending"
+    },
+    {
+      "confidence": null,
+      "contradicting_evidence": [
+        {
+          "availability_status": "allowed",
+          "claim": "Frozen market bars use MMM close-to-close prices around the settlement: $81.65 before the event day and $82.79 at the August 29, 2023 close, implying a positive event move before peer adjustment.",
+          "claim_extracted": "Frozen market bars use MMM close-to-close prices around the settlement: $81.65 before the event day and $82.79 at the August 29, 2023 close, implying a positive event move before peer adjustment.",
+          "content_hash": "sha256:bc25d4974244e3b98572f6307238fab2195e5d1aaeed27ead031775b8821f2fe",
+          "contradicted_narrative_ids": [
+            "NARR-MMM-002",
+            "NARR-MMM-003"
+          ],
+          "evidence_quality": 0.7,
+          "incentive_conflict": 0.0,
+          "independence": 0.7,
+          "independence_cluster_id": "market-bars",
+          "originality_score": 0.62,
+          "published_at": "2023-08-29T16:00:00-04:00",
+          "publisher": "Frozen market bars",
+          "relation": "contradict",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-MKT-001",
+          "source_type": "market_data",
+          "support_strength": 0.66,
+          "supported_narrative_ids": [
+            "NARR-MMM-001"
+          ],
+          "title": "MMM close-to-close market move for August 29, 2023",
+          "url": "local://market_bars.csv#MMM-MKT-001"
+        }
+      ],
+      "directional_implication": "bearish",
+      "event_id": "EVT-REAL-MMM-2023-08-29",
+      "expected_observables": [
+        "Future validation should center PFAS or other liabilities rather than earplug settlement progress if this narrative wins.",
+        "The stock reaction should not show positive abnormal support if residual legal risk dominates.",
+        "The narrative should weaken if held-out sources confirm high participation in the Combat Arms settlement."
+      ],
+      "mechanism": "Same-day coverage emphasized that the earplug deal did not resolve all 3M legal liabilities. That was real counterevidence, but it did not explain why the settlement itself reduced a distinct mass-tort overhang.",
+      "narrative": "A competing explanation was that investors remained focused on 3M's broader legal stack, especially PFAS exposure, rather than assigning much value to the earplug settlement.",
+      "narrative_id": "NARR-MMM-002",
+      "overall_narrative_score": 0.6322222222222222,
+      "rank": 2,
+      "scores": {
+        "contradiction_resistance": 0.05,
+        "cross_sectional_fit": 0.048,
+        "crowding_risk_penalty": 0.041,
+        "evidence_strength": 0.144,
+        "forward_observable_quality": 0.068,
+        "mechanism_specificity": 0.105,
+        "overall_narrative_score": 0.6322222222222222,
+        "penalty_score_normalized": 0.051111111111111114,
+        "positive_score_normalized": 0.6833333333333333,
+        "source_independence": 0.11399999999999999,
+        "timestamp_advantage": 0.08600000000000001,
+        "unsupported_claim_penalty": 0.005000000000000001
+      },
+      "scoring_inputs": {
+        "contradiction_resistance": 0.5,
+        "cross_sectional_fit": 0.48,
+        "crowding_risk": 0.82,
+        "evidence_strength": 0.72,
+        "forward_observable_quality": 0.68,
+        "mechanism_specificity": 0.7,
+        "source_independence": 0.76,
+        "timestamp_advantage": 0.86,
+        "unsupported_claim_penalty": 0.1
+      },
+      "supporting_evidence": [
+        {
+          "availability_status": "allowed",
+          "claim": "CNBC reported at 3:39 p.m. EDT on August 29, 2023 that the earplug settlement relieved one major legal overhang but that 3M still faced PFAS and other legal exposure, including a $10.3 billion water-utilities settlement awaiting approval.",
+          "claim_extracted": "CNBC reported at 3:39 p.m. EDT on August 29, 2023 that the earplug settlement relieved one major legal overhang but that 3M still faced PFAS and other legal exposure, including a $10.3 billion water-utilities settlement awaiting approval.",
+          "content_hash": "sha256:5d3f39c6445a9d2a5cbc9fde2efd75daed64480994a7bd8b754a70aaf6d8da24",
+          "contradicted_narrative_ids": [],
+          "evidence_quality": 0.74,
+          "incentive_conflict": 0.08,
+          "independence": 0.76,
+          "independence_cluster_id": "financial-news-cnbc",
+          "originality_score": 0.72,
+          "published_at": "2023-08-29T15:39:00-04:00",
+          "publisher": "CNBC",
+          "relation": "support",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-CNBC-002",
+          "source_type": "news",
+          "support_strength": 0.72,
+          "supported_narrative_ids": [
+            "NARR-MMM-001",
+            "NARR-MMM-002"
+          ],
+          "title": "3M faces more legal headaches after $6 billion earplug settlement",
+          "url": "https://www.cnbc.com/2023/08/29/3m-faces-more-legal-headaches-after-earplug-settlement.html"
+        }
+      ],
+      "ticker": "MMM",
+      "time_horizon": "120 trading days",
+      "timestamp_created": "2023-08-29T16:10:00-04:00",
+      "title": "Residual legal stack dominates",
+      "validation_status": "pending"
+    },
+    {
+      "confidence": null,
+      "contradicting_evidence": [
+        {
+          "availability_status": "allowed",
+          "claim": "CNBC reported that 3M agreed to pay $6.01 billion to settle nearly 260,000 military-earplug lawsuits, that the litigation had become the largest mass tort in U.S. history, and that some analyst estimates of potential liability had been as high as $10 billion.",
+          "claim_extracted": "CNBC reported that 3M agreed to pay $6.01 billion to settle nearly 260,000 military-earplug lawsuits, that the litigation had become the largest mass tort in U.S. history, and that some analyst estimates of potential liability had been as high as $10 billion.",
+          "content_hash": "sha256:c2f69435c7b1063f1937985fb104962a16beb8ec77cde9040cd02cbb1fdd1d75",
+          "contradicted_narrative_ids": [
+            "NARR-MMM-003"
+          ],
+          "evidence_quality": 0.76,
+          "incentive_conflict": 0.08,
+          "independence": 0.78,
+          "independence_cluster_id": "financial-news-cnbc",
+          "originality_score": 0.76,
+          "published_at": "2023-08-28T23:22:00-04:00",
+          "publisher": "CNBC",
+          "relation": "contradict",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-CNBC-001",
+          "source_type": "news",
+          "support_strength": 0.78,
+          "supported_narrative_ids": [
+            "NARR-MMM-001"
+          ],
+          "title": "3M agrees to pay $6 billion to settle lawsuits over U.S. military earplugs",
+          "url": "https://www.cnbc.com/2023/08/29/3m-agrees-to-pay-6-bln-to-settle-lawsuits-over-us-military-earplugs.html"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Investopedia reported before markets opened on August 29, 2023 that 3M's board approved a $6 billion earplug settlement, below analyst expectations of $10 billion to $15 billion, and that the news was causing a slight rise in 3M shares.",
+          "claim_extracted": "Investopedia reported before markets opened on August 29, 2023 that 3M's board approved a $6 billion earplug settlement, below analyst expectations of $10 billion to $15 billion, and that the news was causing a slight rise in 3M shares.",
+          "content_hash": "sha256:c1e902b09129a4d5932955765b65a9f76579944413e45ce2b68099000de1ac1c",
+          "contradicted_narrative_ids": [
+            "NARR-MMM-003"
+          ],
+          "evidence_quality": 0.7,
+          "incentive_conflict": 0.1,
+          "independence": 0.72,
+          "independence_cluster_id": "market-commentary",
+          "originality_score": 0.68,
+          "published_at": "2023-08-29T07:17:00-04:00",
+          "publisher": "Investopedia",
+          "relation": "contradict",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-INVEST-001",
+          "source_type": "market_commentary",
+          "support_strength": 0.72,
+          "supported_narrative_ids": [
+            "NARR-MMM-001"
+          ],
+          "title": "5 Things to Know Before Markets Open, August 29, 2023",
+          "url": "https://www.investopedia.com/5-things-to-know-before-markets-open-august-29-2023-7963024"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Frozen market bars use MMM close-to-close prices around the settlement: $81.65 before the event day and $82.79 at the August 29, 2023 close, implying a positive event move before peer adjustment.",
+          "claim_extracted": "Frozen market bars use MMM close-to-close prices around the settlement: $81.65 before the event day and $82.79 at the August 29, 2023 close, implying a positive event move before peer adjustment.",
+          "content_hash": "sha256:bc25d4974244e3b98572f6307238fab2195e5d1aaeed27ead031775b8821f2fe",
+          "contradicted_narrative_ids": [
+            "NARR-MMM-002",
+            "NARR-MMM-003"
+          ],
+          "evidence_quality": 0.7,
+          "incentive_conflict": 0.0,
+          "independence": 0.7,
+          "independence_cluster_id": "market-bars",
+          "originality_score": 0.62,
+          "published_at": "2023-08-29T16:00:00-04:00",
+          "publisher": "Frozen market bars",
+          "relation": "contradict",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-MKT-001",
+          "source_type": "market_data",
+          "support_strength": 0.66,
+          "supported_narrative_ids": [
+            "NARR-MMM-001"
+          ],
+          "title": "MMM close-to-close market move for August 29, 2023",
+          "url": "local://market_bars.csv#MMM-MKT-001"
+        }
+      ],
+      "directional_implication": "bearish",
+      "event_id": "EVT-REAL-MMM-2023-08-29",
+      "expected_observables": [
+        "Future disclosures should focus on cash strain, financing pressure, or inability to satisfy settlement terms.",
+        "The burden narrative should weaken if future company evidence confirms participation progress and cash election clarity.",
+        "Market evidence should be negative relative to industrial peers if the charge burden dominates."
+      ],
+      "mechanism": "3M disclosed a $6.0 billion contribution schedule and a third-quarter pre-tax charge, creating a plausible burden narrative. The burden was visible, but it was also the price of reducing litigation uncertainty.",
+      "narrative": "The move could have reflected concern that the settlement still imposed a multi-year cash, stock, and earnings charge burden on 3M.",
+      "narrative_id": "NARR-MMM-003",
+      "overall_narrative_score": 0.6233333333333334,
+      "rank": 3,
+      "scores": {
+        "contradiction_resistance": 0.054000000000000006,
+        "cross_sectional_fit": 0.038000000000000006,
+        "crowding_risk_penalty": 0.028999999999999998,
+        "evidence_strength": 0.13999999999999999,
+        "forward_observable_quality": 0.06999999999999999,
+        "mechanism_specificity": 0.111,
+        "overall_narrative_score": 0.6233333333333334,
+        "penalty_score_normalized": 0.036666666666666674,
+        "positive_score_normalized": 0.66,
+        "source_independence": 0.093,
+        "timestamp_advantage": 0.08800000000000001,
+        "unsupported_claim_penalty": 0.004
+      },
+      "scoring_inputs": {
+        "contradiction_resistance": 0.54,
+        "cross_sectional_fit": 0.38,
+        "crowding_risk": 0.58,
+        "evidence_strength": 0.7,
+        "forward_observable_quality": 0.7,
+        "mechanism_specificity": 0.74,
+        "source_independence": 0.62,
+        "timestamp_advantage": 0.88,
+        "unsupported_claim_penalty": 0.08
+      },
+      "supporting_evidence": [
+        {
+          "availability_status": "allowed",
+          "claim": "3M announced on August 29, 2023 that it reached an agreement to resolve Combat Arms Earplug litigation for $6.0 billion from 2023 to 2029, structured as $5.0 billion in cash and $1.0 billion in 3M common stock, and said the agreement was not an admission of liability.",
+          "claim_extracted": "3M announced on August 29, 2023 that it reached an agreement to resolve Combat Arms Earplug litigation for $6.0 billion from 2023 to 2029, structured as $5.0 billion in cash and $1.0 billion in 3M common stock, and said the agreement was not an admission of liability.",
+          "content_hash": "sha256:512661b95ce1f15e1e506a7f10022da25b5704bdbb208231975b44585d19e8e7",
+          "contradicted_narrative_ids": [],
+          "evidence_quality": 0.86,
+          "incentive_conflict": 0.25,
+          "independence": 0.58,
+          "independence_cluster_id": "issuer-release",
+          "originality_score": 0.88,
+          "published_at": "2023-08-29T08:30:00-04:00",
+          "publisher": "3M News Center",
+          "relation": "support",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-IR-001",
+          "source_type": "company_release",
+          "support_strength": 0.86,
+          "supported_narrative_ids": [
+            "NARR-MMM-001",
+            "NARR-MMM-003",
+            "NARR-MMM-004"
+          ],
+          "title": "3M Announces Combat Arms Settlement",
+          "url": "https://news.3m.com/2023-08-29-3M-Announces-Combat-Arms-Settlement%2C1"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "3M's August 29, 2023 Form 8-K described the Combat Arms settlement, a $6.01 billion contribution from 2023 to 2029, a 98% participation threshold, no admission of liability, and an approximately $4.2 billion third-quarter pre-tax charge.",
+          "claim_extracted": "3M's August 29, 2023 Form 8-K described the Combat Arms settlement, a $6.01 billion contribution from 2023 to 2029, a 98% participation threshold, no admission of liability, and an approximately $4.2 billion third-quarter pre-tax charge.",
+          "content_hash": "sha256:be03ac33a6d937ba67dc674487f93fbca6c109425c001e43980177f2e15aeb31",
+          "contradicted_narrative_ids": [],
+          "evidence_quality": 0.88,
+          "incentive_conflict": 0.08,
+          "independence": 0.86,
+          "independence_cluster_id": "sec-edgar",
+          "originality_score": 0.88,
+          "published_at": "2023-08-29T09:00:00-04:00",
+          "publisher": "3M Investor Relations / SEC filing",
+          "relation": "support",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-SEC-001",
+          "source_type": "filing",
+          "support_strength": 0.84,
+          "supported_narrative_ids": [
+            "NARR-MMM-001",
+            "NARR-MMM-003",
+            "NARR-MMM-004"
+          ],
+          "title": "3M Form 8-K dated August 29, 2023",
+          "url": "https://investors.3m.com/financials/sec-filings/content/0000066740-23-000073/mmm-20230829.htm"
+        }
+      ],
+      "ticker": "MMM",
+      "time_horizon": "120 trading days",
+      "timestamp_created": "2023-08-29T16:10:00-04:00",
+      "title": "Settlement charge burden",
+      "validation_status": "pending"
+    },
+    {
+      "confidence": null,
+      "contradicting_evidence": [],
+      "directional_implication": "mixed",
+      "event_id": "EVT-REAL-MMM-2023-08-29",
+      "expected_observables": [
+        "Future validation should cite litigation posture rather than participation milestones if this narrative wins.",
+        "The explanation should remain secondary if held-out evidence centers economics and claimant participation.",
+        "Follow-up sources should maintain the distinction between settlement economics and admission of liability."
+      ],
+      "mechanism": "The no-admission language reduced reputational and legal read-through but was less directly tied to valuation than the quantified settlement amount, charge, and participation thresholds.",
+      "narrative": "Another explanation was that the market focused on 3M's no-admission language and continued product-defense posture rather than the economics of the settlement.",
+      "narrative_id": "NARR-MMM-004",
+      "overall_narrative_score": 0.5294444444444445,
+      "rank": 4,
+      "scores": {
+        "contradiction_resistance": 0.052000000000000005,
+        "cross_sectional_fit": 0.042,
+        "crowding_risk_penalty": 0.025,
+        "evidence_strength": 0.11599999999999999,
+        "forward_observable_quality": 0.046000000000000006,
+        "mechanism_specificity": 0.084,
+        "overall_narrative_score": 0.5294444444444445,
+        "penalty_score_normalized": 0.03388888888888889,
+        "positive_score_normalized": 0.5633333333333334,
+        "source_independence": 0.081,
+        "timestamp_advantage": 0.08600000000000001,
+        "unsupported_claim_penalty": 0.0055000000000000005
+      },
+      "scoring_inputs": {
+        "contradiction_resistance": 0.52,
+        "cross_sectional_fit": 0.42,
+        "crowding_risk": 0.5,
+        "evidence_strength": 0.58,
+        "forward_observable_quality": 0.46,
+        "mechanism_specificity": 0.56,
+        "source_independence": 0.54,
+        "timestamp_advantage": 0.86,
+        "unsupported_claim_penalty": 0.11
+      },
+      "supporting_evidence": [
+        {
+          "availability_status": "allowed",
+          "claim": "3M announced on August 29, 2023 that it reached an agreement to resolve Combat Arms Earplug litigation for $6.0 billion from 2023 to 2029, structured as $5.0 billion in cash and $1.0 billion in 3M common stock, and said the agreement was not an admission of liability.",
+          "claim_extracted": "3M announced on August 29, 2023 that it reached an agreement to resolve Combat Arms Earplug litigation for $6.0 billion from 2023 to 2029, structured as $5.0 billion in cash and $1.0 billion in 3M common stock, and said the agreement was not an admission of liability.",
+          "content_hash": "sha256:512661b95ce1f15e1e506a7f10022da25b5704bdbb208231975b44585d19e8e7",
+          "contradicted_narrative_ids": [],
+          "evidence_quality": 0.86,
+          "incentive_conflict": 0.25,
+          "independence": 0.58,
+          "independence_cluster_id": "issuer-release",
+          "originality_score": 0.88,
+          "published_at": "2023-08-29T08:30:00-04:00",
+          "publisher": "3M News Center",
+          "relation": "support",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-IR-001",
+          "source_type": "company_release",
+          "support_strength": 0.86,
+          "supported_narrative_ids": [
+            "NARR-MMM-001",
+            "NARR-MMM-003",
+            "NARR-MMM-004"
+          ],
+          "title": "3M Announces Combat Arms Settlement",
+          "url": "https://news.3m.com/2023-08-29-3M-Announces-Combat-Arms-Settlement%2C1"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "3M's August 29, 2023 Form 8-K described the Combat Arms settlement, a $6.01 billion contribution from 2023 to 2029, a 98% participation threshold, no admission of liability, and an approximately $4.2 billion third-quarter pre-tax charge.",
+          "claim_extracted": "3M's August 29, 2023 Form 8-K described the Combat Arms settlement, a $6.01 billion contribution from 2023 to 2029, a 98% participation threshold, no admission of liability, and an approximately $4.2 billion third-quarter pre-tax charge.",
+          "content_hash": "sha256:be03ac33a6d937ba67dc674487f93fbca6c109425c001e43980177f2e15aeb31",
+          "contradicted_narrative_ids": [],
+          "evidence_quality": 0.88,
+          "incentive_conflict": 0.08,
+          "independence": 0.86,
+          "independence_cluster_id": "sec-edgar",
+          "originality_score": 0.88,
+          "published_at": "2023-08-29T09:00:00-04:00",
+          "publisher": "3M Investor Relations / SEC filing",
+          "relation": "support",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-SEC-001",
+          "source_type": "filing",
+          "support_strength": 0.84,
+          "supported_narrative_ids": [
+            "NARR-MMM-001",
+            "NARR-MMM-003",
+            "NARR-MMM-004"
+          ],
+          "title": "3M Form 8-K dated August 29, 2023",
+          "url": "https://investors.3m.com/financials/sec-filings/content/0000066740-23-000073/mmm-20230829.htm"
+        },
+        {
+          "availability_status": "allowed",
+          "claim": "Associated Press reported on August 29, 2023 that 3M agreed to pay $6 billion to settle earplug lawsuits from U.S. service members, with payments through 2029 and no admission of liability.",
+          "claim_extracted": "Associated Press reported on August 29, 2023 that 3M agreed to pay $6 billion to settle earplug lawsuits from U.S. service members, with payments through 2029 and no admission of liability.",
+          "content_hash": "sha256:b1b7fc6d242e5d89321e32367f64339974ddda0e7280fc72b5b38b7f21b0140f",
+          "contradicted_narrative_ids": [],
+          "evidence_quality": 0.76,
+          "incentive_conflict": 0.08,
+          "independence": 0.8,
+          "independence_cluster_id": "wire-news-ap",
+          "originality_score": 0.74,
+          "published_at": "2023-08-29T10:49:02-04:00",
+          "publisher": "Associated Press",
+          "relation": "support",
+          "retrieved_at": "2026-05-12T00:00:00+00:00",
+          "source_id": "MMM-AP-001",
+          "source_type": "news",
+          "support_strength": 0.74,
+          "supported_narrative_ids": [
+            "NARR-MMM-001",
+            "NARR-MMM-004"
+          ],
+          "title": "3M agrees to pay $6 billion to settle earplug lawsuits from US service members",
+          "url": "https://apnews.com/article/f2b68a4222c77cfefef3608c70e62f6c"
+        }
+      ],
+      "ticker": "MMM",
+      "time_horizon": "120 trading days",
+      "timestamp_created": "2023-08-29T16:10:00-04:00",
+      "title": "No-liability optics",
+      "validation_status": "pending"
+    }
+  ],
+  "replay_audit": {
+    "allowed_source_ids": [
+      "MMM-AP-001",
+      "MMM-CNBC-001",
+      "MMM-CNBC-002",
+      "MMM-INVEST-001",
+      "MMM-IR-001",
+      "MMM-MKT-001",
+      "MMM-MKT-002",
+      "MMM-SEC-001"
+    ],
+    "blocked_evidence": [
+      {
+        "availability_status": "blocked_future",
+        "blocked_reason": "marked_blocked_future",
+        "narrative_id": "NARR-MMM-001",
+        "published_at": "2024-01-29T08:30:00-05:00",
+        "relation": "support",
+        "replay_status": "blocked_future",
+        "source_id": "MMM-FUT-001",
+        "source_type": "company_release"
+      },
+      {
+        "availability_status": "blocked_future",
+        "blocked_reason": "marked_blocked_future",
+        "narrative_id": "NARR-MMM-001",
+        "published_at": "2024-02-08T09:00:00-05:00",
+        "relation": "support",
+        "replay_status": "blocked_future",
+        "source_id": "MMM-FUT-002",
+        "source_type": "filing"
+      },
+      {
+        "availability_status": "blocked_future",
+        "blocked_reason": "marked_blocked_future",
+        "narrative_id": "NARR-MMM-002",
+        "published_at": "2024-01-29T08:30:00-05:00",
+        "relation": "contradict",
+        "replay_status": "blocked_future",
+        "source_id": "MMM-FUT-001",
+        "source_type": "company_release"
+      },
+      {
+        "availability_status": "blocked_future",
+        "blocked_reason": "marked_blocked_future",
+        "narrative_id": "NARR-MMM-003",
+        "published_at": "2024-01-29T08:30:00-05:00",
+        "relation": "contradict",
+        "replay_status": "blocked_future",
+        "source_id": "MMM-FUT-001",
+        "source_type": "company_release"
+      },
+      {
+        "availability_status": "blocked_future",
+        "blocked_reason": "marked_blocked_future",
+        "narrative_id": "NARR-MMM-003",
+        "published_at": "2024-02-08T09:00:00-05:00",
+        "relation": "contradict",
+        "replay_status": "blocked_future",
+        "source_id": "MMM-FUT-002",
+        "source_type": "filing"
+      }
+    ],
+    "blocked_source_ids": [
+      "MMM-FUT-001",
+      "MMM-FUT-002"
+    ],
+    "removed_evidence_by_narrative": {
+      "NARR-MMM-001": [
+        "MMM-FUT-001",
+        "MMM-FUT-002"
+      ],
+      "NARR-MMM-002": [
+        "MMM-FUT-001"
+      ],
+      "NARR-MMM-003": [
+        "MMM-FUT-001",
+        "MMM-FUT-002"
+      ]
+    },
+    "replay_timestamp": "2023-08-29T16:10:00-04:00"
+  },
+  "source_clustering": {
+    "allowed_source_count": 8,
+    "average_cluster_size": 1.3333,
+    "average_derived_originality_score": 0.75,
+    "blocked_future_source_count": 2,
+    "blocked_future_source_ids": [
+      "MMM-FUT-001",
+      "MMM-FUT-002"
+    ],
+    "cluster_count": 6,
+    "clusters": [
+      {
+        "average_fixture_originality_score": 0.74,
+        "cluster_basis": "independence_cluster_id",
+        "cluster_id": "financial-news-cnbc",
+        "derived_originality_score": 0.5,
+        "narrative_ids": [
+          "NARR-MMM-001",
+          "NARR-MMM-002",
+          "NARR-MMM-003"
+        ],
+        "publishers": [
+          "CNBC"
+        ],
+        "relation_counts": {
+          "contradict": 1,
+          "support": 3
+        },
+        "representative_claim": "CNBC reported that 3M agreed to pay $6.01 billion to settle nearly 260,000 military-earplug lawsuits, that the litigation had become the largest mass tort in U.S. history, and that some analyst estimates of potential liability had been as high as $10 billion.",
+        "source_count": 2,
+        "source_ids": [
+          "MMM-CNBC-001",
+          "MMM-CNBC-002"
+        ],
+        "source_types": [
+          "news"
+        ]
+      },
+      {
+        "average_fixture_originality_score": 0.88,
+        "cluster_basis": "independence_cluster_id",
+        "cluster_id": "issuer-release",
+        "derived_originality_score": 1.0,
+        "narrative_ids": [
+          "NARR-MMM-001",
+          "NARR-MMM-003",
+          "NARR-MMM-004"
+        ],
+        "publishers": [
+          "3M News Center"
+        ],
+        "relation_counts": {
+          "contradict": 0,
+          "support": 3
+        },
+        "representative_claim": "3M announced on August 29, 2023 that it reached an agreement to resolve Combat Arms Earplug litigation for $6.0 billion from 2023 to 2029, structured as $5.0 billion in cash and $1.0 billion in 3M common stock, and said the agreement was not an admission of liability.",
+        "source_count": 1,
+        "source_ids": [
+          "MMM-IR-001"
+        ],
+        "source_types": [
+          "company_release"
+        ]
+      },
+      {
+        "average_fixture_originality_score": 0.62,
+        "cluster_basis": "independence_cluster_id",
+        "cluster_id": "market-bars",
+        "derived_originality_score": 0.5,
+        "narrative_ids": [
+          "NARR-MMM-001",
+          "NARR-MMM-002",
+          "NARR-MMM-003"
+        ],
+        "publishers": [
+          "Frozen market bars"
+        ],
+        "relation_counts": {
+          "contradict": 2,
+          "support": 2
+        },
+        "representative_claim": "Frozen market bars use MMM close-to-close prices around the settlement: $81.65 before the event day and $82.79 at the August 29, 2023 close, implying a positive event move before peer adjustment.",
+        "source_count": 2,
+        "source_ids": [
+          "MMM-MKT-001",
+          "MMM-MKT-002"
+        ],
+        "source_types": [
+          "market_data"
+        ]
+      },
+      {
+        "average_fixture_originality_score": 0.68,
+        "cluster_basis": "independence_cluster_id",
+        "cluster_id": "market-commentary",
+        "derived_originality_score": 1.0,
+        "narrative_ids": [
+          "NARR-MMM-001",
+          "NARR-MMM-003"
+        ],
+        "publishers": [
+          "Investopedia"
+        ],
+        "relation_counts": {
+          "contradict": 1,
+          "support": 1
+        },
+        "representative_claim": "Investopedia reported before markets opened on August 29, 2023 that 3M's board approved a $6 billion earplug settlement, below analyst expectations of $10 billion to $15 billion, and that the news was causing a slight rise in 3M shares.",
+        "source_count": 1,
+        "source_ids": [
+          "MMM-INVEST-001"
+        ],
+        "source_types": [
+          "market_commentary"
+        ]
+      },
+      {
+        "average_fixture_originality_score": 0.88,
+        "cluster_basis": "independence_cluster_id",
+        "cluster_id": "sec-edgar",
+        "derived_originality_score": 1.0,
+        "narrative_ids": [
+          "NARR-MMM-001",
+          "NARR-MMM-003",
+          "NARR-MMM-004"
+        ],
+        "publishers": [
+          "3M Investor Relations / SEC filing"
+        ],
+        "relation_counts": {
+          "contradict": 0,
+          "support": 3
+        },
+        "representative_claim": "3M's August 29, 2023 Form 8-K described the Combat Arms settlement, a $6.01 billion contribution from 2023 to 2029, a 98% participation threshold, no admission of liability, and an approximately $4.2 billion third-quarter pre-tax charge.",
+        "source_count": 1,
+        "source_ids": [
+          "MMM-SEC-001"
+        ],
+        "source_types": [
+          "filing"
+        ]
+      },
+      {
+        "average_fixture_originality_score": 0.74,
+        "cluster_basis": "independence_cluster_id",
+        "cluster_id": "wire-news-ap",
+        "derived_originality_score": 1.0,
+        "narrative_ids": [
+          "NARR-MMM-001",
+          "NARR-MMM-004"
+        ],
+        "publishers": [
+          "Associated Press"
+        ],
+        "relation_counts": {
+          "contradict": 0,
+          "support": 2
+        },
+        "representative_claim": "Associated Press reported on August 29, 2023 that 3M agreed to pay $6 billion to settle earplug lawsuits from U.S. service members, with payments through 2029 and no admission of liability.",
+        "source_count": 1,
+        "source_ids": [
+          "MMM-AP-001"
+        ],
+        "source_types": [
+          "news"
+        ]
+      }
+    ],
+    "duplicate_cluster_count": 2
+  },
+  "source_reliability": {
+    "by_publisher": [
+      {
+        "allowed_source_count": 1,
+        "average_evidence_quality": 0.88,
+        "average_independence": 0.86,
+        "average_originality_score": 0.88,
+        "blocked_future_count": 0,
+        "blocked_future_source_ids": [],
+        "group": "publisher",
+        "key": "3M Investor Relations / SEC filing",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "MMM-SEC-001"
+        ]
+      },
+      {
+        "allowed_source_count": 1,
+        "average_evidence_quality": 0.86,
+        "average_independence": 0.58,
+        "average_originality_score": 0.88,
+        "blocked_future_count": 0,
+        "blocked_future_source_ids": [],
+        "group": "publisher",
+        "key": "3M News Center",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "MMM-IR-001"
+        ]
+      },
+      {
+        "allowed_source_count": 1,
+        "average_evidence_quality": 0.76,
+        "average_independence": 0.8,
+        "average_originality_score": 0.74,
+        "blocked_future_count": 0,
+        "blocked_future_source_ids": [],
+        "group": "publisher",
+        "key": "Associated Press",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "MMM-AP-001"
+        ]
+      },
+      {
+        "allowed_source_count": 2,
+        "average_evidence_quality": 0.75,
+        "average_independence": 0.77,
+        "average_originality_score": 0.74,
+        "blocked_future_count": 0,
+        "blocked_future_source_ids": [],
+        "group": "publisher",
+        "key": "CNBC",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "MMM-CNBC-001",
+          "MMM-CNBC-002"
+        ]
+      },
+      {
+        "allowed_source_count": 2,
+        "average_evidence_quality": 0.69,
+        "average_independence": 0.71,
+        "average_originality_score": 0.62,
+        "blocked_future_count": 0,
+        "blocked_future_source_ids": [],
+        "group": "publisher",
+        "key": "Frozen market bars",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "MMM-MKT-001",
+          "MMM-MKT-002"
+        ]
+      },
+      {
+        "allowed_source_count": 1,
+        "average_evidence_quality": 0.7,
+        "average_independence": 0.72,
+        "average_originality_score": 0.68,
+        "blocked_future_count": 0,
+        "blocked_future_source_ids": [],
+        "group": "publisher",
+        "key": "Investopedia",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "MMM-INVEST-001"
+        ]
+      },
+      {
+        "allowed_source_count": 0,
+        "average_evidence_quality": null,
+        "average_independence": null,
+        "average_originality_score": null,
+        "blocked_future_count": 2,
+        "blocked_future_source_ids": [
+          "MMM-FUT-001",
+          "MMM-FUT-002"
+        ],
+        "group": "publisher",
+        "key": "unknown",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "MMM-FUT-001",
+          "MMM-FUT-002"
+        ]
+      }
+    ],
+    "by_source_type": [
+      {
+        "allowed_source_count": 1,
+        "average_evidence_quality": 0.86,
+        "average_independence": 0.58,
+        "average_originality_score": 0.88,
+        "blocked_future_count": 1,
+        "blocked_future_source_ids": [
+          "MMM-FUT-001"
+        ],
+        "group": "source_type",
+        "key": "company_release",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "MMM-FUT-001",
+          "MMM-IR-001"
+        ]
+      },
+      {
+        "allowed_source_count": 1,
+        "average_evidence_quality": 0.88,
+        "average_independence": 0.86,
+        "average_originality_score": 0.88,
+        "blocked_future_count": 1,
+        "blocked_future_source_ids": [
+          "MMM-FUT-002"
+        ],
+        "group": "source_type",
+        "key": "filing",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "MMM-FUT-002",
+          "MMM-SEC-001"
+        ]
+      },
+      {
+        "allowed_source_count": 1,
+        "average_evidence_quality": 0.7,
+        "average_independence": 0.72,
+        "average_originality_score": 0.68,
+        "blocked_future_count": 0,
+        "blocked_future_source_ids": [],
+        "group": "source_type",
+        "key": "market_commentary",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "MMM-INVEST-001"
+        ]
+      },
+      {
+        "allowed_source_count": 2,
+        "average_evidence_quality": 0.69,
+        "average_independence": 0.71,
+        "average_originality_score": 0.62,
+        "blocked_future_count": 0,
+        "blocked_future_source_ids": [],
+        "group": "source_type",
+        "key": "market_data",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "MMM-MKT-001",
+          "MMM-MKT-002"
+        ]
+      },
+      {
+        "allowed_source_count": 3,
+        "average_evidence_quality": 0.7533,
+        "average_independence": 0.78,
+        "average_originality_score": 0.74,
+        "blocked_future_count": 0,
+        "blocked_future_source_ids": [],
+        "group": "source_type",
+        "key": "news",
+        "low_quality_source_count": 0,
+        "source_ids": [
+          "MMM-AP-001",
+          "MMM-CNBC-001",
+          "MMM-CNBC-002"
+        ]
+      }
+    ],
+    "overall": {
+      "allowed_source_count": 8,
+      "average_evidence_quality": 0.76,
+      "average_independence": 0.74,
+      "average_originality_score": 0.7375,
+      "blocked_future_count": 2,
+      "blocked_future_source_ids": [
+        "MMM-FUT-001",
+        "MMM-FUT-002"
+      ],
+      "group": "overall",
+      "key": "all_sources",
+      "low_quality_source_count": 0,
+      "source_ids": [
+        "MMM-AP-001",
+        "MMM-CNBC-001",
+        "MMM-CNBC-002",
+        "MMM-FUT-001",
+        "MMM-FUT-002",
+        "MMM-INVEST-001",
+        "MMM-IR-001",
+        "MMM-MKT-001",
+        "MMM-MKT-002",
+        "MMM-SEC-001"
+      ]
+    }
+  }
+}

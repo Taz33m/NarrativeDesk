@@ -63,14 +63,16 @@ async function main() {
     assert.match(bodyText, /NVDA/);
     assert.match(bodyText, /NKE/);
     assert.match(bodyText, /CRWD/);
+    assert.match(bodyText, /SAVE/);
+    assert.match(bodyText, /MMM/);
     assert.match(bodyText, /Real-curated replay/i);
     assert.match(bodyText, /Case library/i);
     const libraryText = await page.locator('[data-testid="case-library-stats"]').innerText();
-    assert.match(libraryText, /Real cases[\s\S]*4/i);
-    assert.match(libraryText, /Verified[\s\S]*4/i);
-    assert.match(libraryText, /Blocked future[\s\S]*6/i);
+    assert.match(libraryText, /Real cases[\s\S]*6/i);
+    assert.match(libraryText, /Verified[\s\S]*6/i);
+    assert.match(libraryText, /Blocked future[\s\S]*10/i);
     assert.match(libraryText, /Rank #1 hit[\s\S]*100\.0%/i);
-    assert.match(libraryText, /Event types[\s\S]*2/i);
+    assert.match(libraryText, /Event types[\s\S]*4/i);
     assert.match(libraryText, /Corpus gate[\s\S]*pass/i);
     assert.match(bodyText, /Historical analogs/i);
     assert.match(bodyText, /How similar narratives validated/i);
@@ -109,15 +111,40 @@ async function main() {
     assert.match(evidenceText, /Citation QA/i);
     assert.match(evidenceText, /Evidence integrity checks/i);
 
+    await page.getByRole('button', { name: /^Corpus$/i }).click();
+    const corpusText = await page.locator('[data-testid="corpus-dashboard"]').innerText();
+    assert.match(corpusText, /Public replay-case coverage/i);
+    assert.match(corpusText, /Serious corpus ready/i);
+    assert.match(corpusText, /Cases[\s\S]*6/i);
+    assert.match(corpusText, /Tickers[\s\S]*6/i);
+    assert.match(corpusText, /Event types[\s\S]*4/i);
+    assert.match(corpusText, /Blocked future[\s\S]*10/i);
+    assert.match(corpusText, /Rank #1 validated[\s\S]*100\.0%/i);
+    assert.match(corpusText, /Case matrix/i);
+    assert.match(corpusText, /Filter by event type/i);
+    assert.match(corpusText, /Sort cases/i);
+    assert.match(corpusText, /Showing[\s\S]*6[\s\S]*of[\s\S]*6/i);
+    assert.match(corpusText, /SAVE/i);
+    assert.match(corpusText, /Merger optionality collapse/i);
+    assert.match(corpusText, /MMM/i);
+    assert.match(corpusText, /Litigation overhang compression/i);
+    assert.match(corpusText, /Regulatory\/antitrust shock/i);
+    assert.match(corpusText, /Litigation settlement/i);
+    assert.match(corpusText, /Source depth/i);
+    assert.match(corpusText, /25-50 verified cases/i);
+    await page.locator('[data-testid="corpus-event-filter"]').selectOption('regulatory/antitrust shock');
+    const filteredCorpusText = await page.locator('[data-testid="corpus-dashboard"]').innerText();
+    assert.match(filteredCorpusText, /Showing[\s\S]*1[\s\S]*of[\s\S]*6/i);
+    assert.match(filteredCorpusText, /SAVE/i);
+    assert.match(filteredCorpusText, /Merger optionality collapse/i);
+    assert.doesNotMatch(filteredCorpusText, /Litigation overhang compression/i);
+    await page.locator('[data-testid="corpus-sort"]').selectOption('source_depth');
+    await page.locator('[data-testid="corpus-event-filter"]').selectOption('all');
+
     await page.getByRole('button', { name: /^Benchmark$/i }).click();
     const benchmarkText = await page.locator('body').innerText();
-    assert.match(benchmarkText, /Benchmark corpus/i);
-    assert.match(benchmarkText, /Public corpus gate/i);
-    assert.match(benchmarkText, /Serious Corpus Ready/i);
-    assert.match(benchmarkText, /Event types[\s\S]*2/i);
-    assert.match(benchmarkText, /earnings\/guidance, operational\/product incident/i);
+    assert.match(benchmarkText, /Evaluation summary/i);
     assert.match(benchmarkText, /Historical analogs/i);
-    assert.match(benchmarkText, /Case-index summary/i);
     assert.match(benchmarkText, /Source reliability/i);
     assert.match(benchmarkText, /Provenance quality ledger/i);
     assert.match(benchmarkText, /Source clustering/i);
@@ -223,6 +250,56 @@ async function main() {
     );
     const crwdBundleIntegrityText = await page.locator('[data-testid="bundle-integrity"]').innerText();
     assert.match(crwdBundleIntegrityText, /Blocked future[\s\S]*2/i);
+
+    await page.locator('[data-testid="case-selector"]').selectOption('EVT-REAL-SAVE-2024-01-16');
+    await page.getByRole('button', { name: /^Overview$/i }).click();
+    await assert.doesNotReject(async () => (
+      page.getByRole('heading', { name: 'Spirit Airlines, Inc.' }).waitFor()
+    ));
+    const saveOverview = await page.locator('[data-testid="event-header"]').innerText();
+    assert.match(saveOverview, /Narrative under audit[\s\S]*Merger optionality collapse/i);
+    assert.match(saveOverview, /Ranked #1 at the lock[\s\S]*T\+60 later supported replay rank #1/i);
+    await page.getByRole('button', { name: /^Evidence$/i }).click();
+    const saveEvidenceText = await page.locator('body').innerText();
+    assert.match(saveEvidenceText, /SAVE-FUT-001/);
+    assert.match(saveEvidenceText, /SAVE-FUT-002/);
+    assert.match(saveEvidenceText, /Blocked from ranking/i);
+    await page.getByRole('button', { name: /^Report$/i }).click();
+    assert.equal(
+      await page.locator('[data-testid="ledger-export"]').getAttribute('download'),
+      'evt-real-save-2024-01-16-ledger.json',
+    );
+    assert.equal(
+      await page.locator('[data-testid="report-export"]').getAttribute('download'),
+      'evt-real-save-2024-01-16-report.md',
+    );
+    const saveBundleIntegrityText = await page.locator('[data-testid="bundle-integrity"]').innerText();
+    assert.match(saveBundleIntegrityText, /Blocked future[\s\S]*2/i);
+
+    await page.locator('[data-testid="case-selector"]').selectOption('EVT-REAL-MMM-2023-08-29');
+    await page.getByRole('button', { name: /^Overview$/i }).click();
+    await assert.doesNotReject(async () => (
+      page.getByRole('heading', { name: '3M Company' }).waitFor()
+    ));
+    const mmmOverview = await page.locator('[data-testid="event-header"]').innerText();
+    assert.match(mmmOverview, /Narrative under audit[\s\S]*Litigation overhang compression/i);
+    assert.match(mmmOverview, /Ranked #1 at the lock[\s\S]*T\+60 later supported replay rank #1/i);
+    await page.getByRole('button', { name: /^Evidence$/i }).click();
+    const mmmEvidenceText = await page.locator('body').innerText();
+    assert.match(mmmEvidenceText, /MMM-FUT-001/);
+    assert.match(mmmEvidenceText, /MMM-FUT-002/);
+    assert.match(mmmEvidenceText, /Blocked from ranking/i);
+    await page.getByRole('button', { name: /^Report$/i }).click();
+    assert.equal(
+      await page.locator('[data-testid="ledger-export"]').getAttribute('download'),
+      'evt-real-mmm-2023-08-29-ledger.json',
+    );
+    assert.equal(
+      await page.locator('[data-testid="report-export"]').getAttribute('download'),
+      'evt-real-mmm-2023-08-29-report.md',
+    );
+    const mmmBundleIntegrityText = await page.locator('[data-testid="bundle-integrity"]').innerText();
+    assert.match(mmmBundleIntegrityText, /Blocked future[\s\S]*2/i);
 
     await page.setViewportSize({ width: 390, height: 1100 });
     await page.goto(baseUrl, { waitUntil: 'networkidle' });
